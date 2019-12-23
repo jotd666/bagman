@@ -1,0 +1,38 @@
+Main goal:
+
+Get the bags in the barrow before timer reaches 0
+
+Hazards:
+
+- The guards kill you on contact
+- A fall from a height greater than your height kills you
+- Elevators kill you if they fall onto you
+- The mine carts will kill you unless you can grab handles. In that case, you can even drop down to the cart
+- When you're in the cart, you are invincible, unless an elevator falls on you :)
+- When you're carrying bags, you move slower. When carrying the blue bag, you move even slower
+
+Assets:
+
+- use the mine carts to safely & quickly carry bags
+- elevators help you to cross screens with the barrow and to reach some otherwise unreachable areas
+- pick help you to reach blue bag, and frighten/kill the guards (does not work when you're on a ladder)
+- blocking a guard's path on the ladder when on top of it with the pick or the barrow causes the guard to fall down
+
+General tactics:
+
+- When the guards are not in your screen, they are guided to your screen automatically.
+- When the guards are not in your screen, they also never wait for elevators
+  You can use that to divert them from elevators by switching screens when you're waiting for a free elevator
+- clear screen 1 & all bags from screen 2 except the rightmost ones
+  get the blue & yellow bags of bottom screen 2 using the cart before guards come too close and bring them back to screen 1
+  when the guards are patrolling at the bottom of screen 1/2, get the bags from the dead end gallery in screen 2 & the other one,
+  still with the barrow on screen 1
+- when clear, move to screen 3 and clear remaining screen 2 bags and screen 3 bags from here
+- Don't try to play with barrow on screen 2: the guards are too much at advantage on this screen, the elevator is not safe.
+  Get all screen 2 bags when barrow is either on screen 1 or on screen 3 as stated above.
+- In screen 3, if you can keep the guards in the elevator or make them go out, you control the situation.
+- The higher score you get, the fastest the guards run. On the ladders, they always have the same speed.
+- The elevators moves are not independent. They only move when you're on the same screen. They also share direction. If you change
+  to screen 2 and make the elevator go down, when going back to screen 3, the elevator will also go down (and you'll lose a life :))
+
+JOTD 2010

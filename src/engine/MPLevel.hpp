@@ -227,10 +227,14 @@ private:
 
   int m_player_last_x = 0;
   int m_player_last_y = 0;
+  GfxObject *m_player_last_object = nullptr;
   int m_previous_bonus_value = 0;
   int m_previous_score = 0;
   MyVector<SDLRectangle> m_redraw_bounds;
   int m_nb_draw_bounds = 0;
+  int m_nb_background_refreshes = 0;
+  int m_nb_score_refreshes = 0;
+  int m_nb_bonus_refreshes = 0;
   #endif
   DEF_CLASS_COPY(MPLevel);
 };

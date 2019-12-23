@@ -382,11 +382,7 @@ public:
       while(true)
 	{
 	  //WaitTOF();
-	  while (true)
-	    {
-	      int x = custom.vhposr;
-	      if (x>0xFF00) break;
-	    }
+
 
 	  /*  while(old_ticks == SDL_GetTicks());
 	      ULONG ticks = SDL_GetTicks();

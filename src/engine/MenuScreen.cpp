@@ -39,8 +39,8 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   int y_start = 24;
 
    #ifdef PARTIAL_REFRESH
-  if (m_first_render) {
-    m_first_render = false;
+  if (m_nb_renders > 0) {
+    m_nb_renders--;
   #endif
     m_screen.fill_rect(0,0);
 
@@ -65,7 +65,8 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   // clear barrow / modifiable text
   SDLRectangle r(12,opts_y-8,16,50);
   m_screen.fill_rect(&r,0);
-  SDLRectangle r2(opts_x,opts_y,50,32);
+  SDLRectangle r2(opts_x,opts_y,80,32);
+  m_screen.fill_rect(&r2,0);
 
   #endif
 
@@ -83,11 +84,11 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   else
     {
 
-      m_domain->darker_font.write(m_screen,64,y_start+64+36+92,
+      m_domain->darker_font.write(m_screen,56,y_start+64+36+92,
     #ifdef _NDS
 				  "L AND R TO QUIT"
     #else
-				  "ESC TO QUIT"
+				  " ESC TO QUIT "
     #endif
       );
     }

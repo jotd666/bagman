@@ -20,14 +20,18 @@
 static SDLKey MISC_keymap[256];
 
 
-static struct Screen *screen =0;
+static struct Screen *screen[2] = {nullptr};
 static struct Window *window=0;
 static struct RastPort *rastport=0;
 static struct ViewPort *viewport=0;
-static PLANEPTR *planes;
+static PLANEPTR *planes_list[2];
+static UWORD *copperlist[2] = {nullptr};
+
+//static PLANEPTR *planes;
 
 struct Window *get_window();
 
+static bool first_copperlist_apply = true;
 
 extern struct Custom custom;
 
@@ -858,7 +862,7 @@ extern "C"
     screen->plane_size = width/8 * height;
     screen->buffer_size =  screen->plane_size * screen->nb_planes;
     // we assume that planes memory is contiguous...
-    screen->pixels = planes[0];
+    screen->pixels = planes_list[1][0];
     return screen;
   }
 
@@ -868,8 +872,67 @@ extern "C"
 
     return 0;
   }
-  int SDLCALL SDL_Flip(SDL_Surface *)
+
+  /*  On hardware that supports double-buffering, this function sets up a flip and returns.
+      The hardware will wait for vertical retrace, and then swap video buffers before the next video surface blit
+      or lock will return. On hardware that doesn't support double-buffering, this is equivalent to calling SDL_UpdateRect(screen, 0, 0, 0, 0) */
+
+  static int copper_index = 0;
+
+  static void apply_copperlist(UWORD *copperlist)
   {
+    if (first_copperlist_apply)
+      {
+	Forbid();
+	LoadView(nullptr);
+	WaitTOF();
+	WaitTOF();
+	// explicitly clear sprite DMA, we're not using sprites
+	// turn off dma
+	custom.dmacon = 0x3E0;
+
+
+      }
+
+    custom.cop1lc = (ULONG)copperlist;
+    custom.copjmp1 = 0;
+
+    if (first_copperlist_apply)
+      {
+	custom.diwstrt = 0x3081;
+	custom.diwstop = 0x18C1;  // empiric
+	custom.ddfstrt = 0x0038;
+	custom.ddfstop = 0x00D0;
+	custom.bplcon0 = 0x4200;
+	custom.bplcon1 = 0;
+	custom.bplcon2 = 0;
+	custom.bpl1mod = 0;
+	custom.bpl2mod = 0;
+
+	custom.dmacon = 0x83C0;
+
+	Permit();
+      }
+    first_copperlist_apply = false;
+  }
+
+  int SDLCALL SDL_Flip(SDL_Surface *screen)
+  {
+    screen->pixels = planes_list[copper_index][0];
+    copper_index ^= 1;
+
+    // set other copperlist
+
+    /*while (true)
+      {
+	int x = custom.vhposr;
+	if (x>0xFF00) break;
+      }*/
+    WaitTOF();
+
+    apply_copperlist(copperlist[copper_index]);
+
+    // toggle
     return 0;
   }
 
@@ -1110,15 +1173,17 @@ void close_screen()
       window = 0;
     }
 
-  if (screen)
+  for (int i=0;i<2;i++)
     {
-      CloseScreen(screen);
-      screen  =0;
+      if (screen[i])
+	{
+	  CloseScreen(screen[i]);
+	  screen[i]  =0;
+	}
+
+
     }
-
-
 }
-
 
 void fatal_error(const char *message)
 {
@@ -1136,30 +1201,43 @@ struct Window *get_window()
 }
 
 
-void set_colors(const UWORD rgb[], int nb_colors)
+
+static UWORD *make_copperlist(const UWORD rgb[], int nb_colors, PLANEPTR *planes)
 {
-  UWORD cmap[1<<NB_PLANES];
+  // size of copperlist: bitplane set + colors + end
+  UWORD *copperlist = (UWORD *)AllocMem((NB_PLANES * 8) + (1<<NB_PLANES)*4 + 20,MEMF_CHIP);
+  UWORD *cptr = copperlist;
+
   assert(1<<NB_PLANES >= nb_colors);
 
   int i;
+  // colormap
   for (i=0;i<std::min(nb_colors,1<<NB_PLANES);i++)
     {
-      int v = rgb[i];
-      // "downgrade" colors to fit into 4 bits & component
-      // no need since rgb is already a short, amiga compatible (extracted from copperlist)
-      /*int r = v >> 20;
-	int g = (v >> 12) & 0xF;
-	int b = (v >> 4) & 0xF;
-	 cmap[i] = (r << 8) | (g << 4) | b;
-       */
-      cmap[i] = v;
+      *(cptr++) = 0x180 + i*2;
+      *(cptr++) = rgb[i];
+    }
+  // bitplanes
 
+  for (i=0;i<NB_PLANES;i++)
+    {
+      ULONG p = (ULONG)planes[i];
+
+      *(cptr++) = 0x0E0 + i*4;
+      *(cptr++) = (p>>16);
+      *(cptr++) = 0x0E2 + i*4;
+      *(cptr++) = (p & 0xFFFF);
     }
 
-  LoadRGB4(viewport,cmap,nb_colors);
+  *(cptr++) = 0x102;
+  *(cptr++) = 0;
 
+  *(cptr++) = 0xFFFF;
+  *(cptr++) = 0xFFFE;
 
+  return copperlist;
 }
+
 
 
 void open_screen()
@@ -1189,14 +1267,24 @@ void open_screen()
     NULL,
     NULL
   };
-  screen = OpenScreen(&Screen1);
-
-  if (!screen)
+  for (int i = 0; i < 2; i++)
     {
-      fatal_error("Cannot open screen");
+      screen[i] = OpenScreen(&Screen1);
+
+      if (!screen[i])
+	{
+	  fatal_error("Cannot open screen");
+	}
+      viewport = &screen[i]->ViewPort;
+      rastport = &screen[i]->RastPort;
+      planes_list[i] = rastport->BitMap->Planes;
+
+      copperlist[i] = make_copperlist(palette,sizeof(palette)/sizeof(*palette),planes_list[i]);
+
     }
+
   window = OpenWindowTags(NULL,
-			  WA_CustomScreen, (ULONG)screen,
+			  WA_CustomScreen, (ULONG)screen[1],
 			  // WA_Title,       "Press Keys and Mouse in this Window",
 			  WA_Width,       320,
 			  WA_Height,      240,
@@ -1208,11 +1296,8 @@ void open_screen()
 			  IDCMP_RAWKEY,
 			  TAG_END);
 
-  viewport = &screen->ViewPort;
-  rastport = &screen->RastPort;
-  planes = rastport->BitMap->Planes;
 
-  set_colors(palette,sizeof(palette)/sizeof(*palette));
+  apply_copperlist(copperlist[0]);
 
 }
 

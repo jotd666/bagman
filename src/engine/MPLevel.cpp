@@ -692,7 +692,6 @@ void MPLevel::store_current_positions()
 
 
       bool is_player = c==m_player;
-      auto &bref = c->get_bounds();
       if (is_player and (m_player->get_state()==HumanCharacter::STATE_IN_WAGON or
 			 m_player->get_state()==HumanCharacter::STATE_IN_MOVING_ELEVATOR))
 	{
@@ -704,38 +703,28 @@ void MPLevel::store_current_positions()
 	  if (is_player or (!c->is_stand_by() and c->is_in_screen(cs)))
 	    {
 
-	      // when it's player, only draw zone if player is moving when in walk/climb state
-	      if (not is_player or
-		  ((m_player->get_state() != HumanCharacter::STATE_WALK and m_player->get_state() != HumanCharacter::STATE_CLIMB) or
-		   bref.x != m_player_last_x or bref.y != m_player_last_y))
+	      auto &bounds = m_redraw_bounds[m_nb_draw_bounds++];
+	      bounds = c->get_bounds();
+
+	      int maskx = bounds.x & 0xFF0;
+	      if (maskx == bounds.x)
 		{
-		  auto &bounds = m_redraw_bounds[m_nb_draw_bounds++];
-		  bounds = bref;
-
-		  int maskx = bounds.x & 0xFF0;
-		  if (maskx == bounds.x)
-		    {
-		      bounds.x -= 0x10;
-		      bounds.w += 0x20;
-		    }
-		  else
-		    {
-		      bounds.x = maskx;
-		      bounds.w += 0x30;
-		    }
-		  bounds.w &= 0xFF0;
-		  bounds.x -= 0x10 + 224*cs;
-
-		  bounds.y -= 18;
-		  bounds.h += 12;
+		  bounds.x -= 0x10;
+		  bounds.w += 0x20;
 		}
+	      else
+		{
+		  bounds.x = maskx;
+		  bounds.w += 0x30;
+		}
+	      bounds.w &= 0xFF0;
+	      bounds.x -= 0x10 + 224*cs;
+
+	      bounds.y -= 18;
+	      bounds.h += 12;
 	    }
 
-	  if (is_player)
-	    {
-	      m_player_last_x = bref.x;
-	      m_player_last_y = bref.y;
-	    }
+
 	}
 
 
@@ -1203,8 +1192,13 @@ void MPLevel::render_all_layers()
       #ifdef PARTIAL_REFRESH
       if (cs != m_last_rendered_screen)
 	{
+	  m_nb_background_refreshes = 2;  // double buffering: needs 2 draws
+	}
+      if (m_nb_background_refreshes > 0)
+	{
 	  m_nb_draw_bounds = 0;
 	  m_last_rendered_screen = cs;
+	  m_nb_background_refreshes--;
       #endif
 
 	  m_grid->render(m_screen, cs, false);
@@ -1266,7 +1260,7 @@ void MPLevel::render_all_layers()
 
 }
 
-#ifdef __amigaos__
+#ifdef __amigaos
 void MPLevel::render_score_and_bonus_right()
 {
   if (m_domain->full_screen)
@@ -1288,12 +1282,24 @@ void MPLevel::render_score_and_bonus_right()
       m_domain->dark_font.write(m_screen,0,0,"PLAYER 1");
     }
   int score = m_player->get_score();
+  #ifdef PARTIAL_REFRESH
   if (score != m_previous_score)
     {
+      m_nb_score_refreshes = 2;
+    }
+  if (m_nb_score_refreshes > 0)
+    #endif
+    {
+      #ifdef PARTIAL_REFRESH
+      m_nb_score_refreshes--;
+      #endif
+
       MyString s = score;
       s.pad('0',6,true);
       m_domain->light_font.write(m_screen,8,8,s);
+      #ifdef PARTIAL_REFRESH
       m_previous_score = score;
+      #endif
     }
 
   int bonus_y_pos = 24;
@@ -1301,16 +1307,27 @@ void MPLevel::render_score_and_bonus_right()
     {
       m_domain->dark_font.write(m_screen,0,bonus_y_pos,"BONUS");
     }
-
+#ifdef PARTIAL_REFRESH
   if (m_bonus_value != m_previous_bonus_value)
     {
+      m_nb_bonus_refreshes = 2;
+    }
+  if (m_nb_bonus_refreshes > 0)
+    #endif
+    {
+      #ifdef PARTIAL_REFRESH
+      m_nb_bonus_refreshes--;
+      #endif
+
       MyString b = m_bonus_value;
       b.pad('0',2,true);
 
       m_domain->light_font.write(m_screen,8,bonus_y_pos+8,b);
       m_domain->light_font.write(m_screen,24,bonus_y_pos+8,"00");
 
+      #ifdef PARTIAL_REFRESH
       m_previous_bonus_value = m_bonus_value;
+      #endif
     }
 
   int nb_lives = m_player->get_nb_lives();

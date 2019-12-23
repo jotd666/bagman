@@ -1,0 +1,60 @@
+V1.2 (23.08.2015):
+
+- All: added "trainer" difficulty level: more time, less points, same bag layout when finishing the level
+- All: could not leave barrow on the top left of screen 3
+- All: do not drop objects anymore when clinging to handle/releasing it (original game does that sometimes, this is annoying)
+- All: grip handle zone was too wide
+- All: sometimes player lost a life while hitting the guard with the pickaxe
+- All: better and nicer collision between player and wagon/guards
+- All: in screen 3, player was killed by the elevator when in the wagon and elevator not moving.
+- All: use frame with arm in the air when releasing handle
+- All: guard was coming too fast from screen 3 to screen 2 (start direction error vs original game)
+- All: better "pickaxe-breaks-the-wall" collision threshold
+- All: on ladder bag was carried left whereas it should be on the right side + bag drop add +6
+- All: if player died when a bag was falling, then the bag was not removed from game field on restart
+- All: Second guard seemed to reach screen 2 (from screen 3) a little too quick, making game too hard.
+- Windows: added original music tracks (ripped from MAME). Game uses SDL mixer now.
+- Windows: full screen: better image clip when using pick+wagon screen 1
+- Windows: characters don't move anymore during fade-in
+- Windows: now ESC quits while in the menu
+- NDS: now much faster (now really matches the speed of the arcade)
+- NDS: now L+R resets the machine while in the menu
+- note: NDS & Amiga version not provided as binaries
+
+V1.1 (26.06.2010):
+
+- Windows: fixed distribution / exe link: pthread DLL was missing
+- Windows: added quit message (F10 key) in menu
+- All: guard crosses elevator at the bottom when on other screen than the player: don't move the elevator
+- All: dropping in the wagon killed the player every time
+- NDS: much better pixel aspect
+- source code: added some documentation on key classes
+
+V1.0 (25.03.2010):
+
+- Windows: full screen mode now shows all info (moved score/bonus/lives to the right of the screen)
+- Windows: .bat files to start the game
+- Windows: recompiled with TDM GCC 4 for MinGW. Seems to eat less CPU now
+- Windows/Amiga: got rid of getopt for argument parsing
+- Windows: error messages now use a windows message box
+- Amiga: added Amiga OS classic 68k version (CGFX/AHI)
+- NDS: updated to NDS latest devkitpro
+- All: some small bugfixes
+- All: added "how to play" and "how to rebuild" guides.
+- All: code cleanup (thanks to the Amiga port)
+- All: on some locations, could cross walls when on ladders
+- All: better wall break distance
+- All: wagon now kills the player if player drops with too much offset
+- All: guard in the elevator and not on the player screen: set elevator+guard on top (like original game)
+- All: end of level: fadeout sequence
+
+V0.9 (01.03.2010):
+
+- initial release
+
+Note about type prefixes:
+
+All: concerns all platforms. Pure gameplay changes
+Windows: only for Windows platform
+NDS: only for NDS platform
+Amiga: only for Amiga platform

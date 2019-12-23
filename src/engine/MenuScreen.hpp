@@ -45,7 +45,7 @@ private:
   int m_flash_timer;
   int m_current_option;
   #ifdef PARTIAL_REFRESH
-  bool m_first_render = true;
+  int m_nb_renders = 2;
   #endif
 };
 
