@@ -15,3 +15,15 @@ int Locatable::square_distance_to(const Locatable &go) const
 
 		return dx*dx + dy*dy;
 	}
+
+bool Locatable::is_in_screen(int screen) const
+{
+    bool rval = get_current_screen() == screen;
+    if (!rval)
+    {
+        // left part not on screen, but maybe right part is (this is approximative
+        // only for screen rendering)
+        rval = get_current_screen(16) == screen;
+    }
+    return rval;
+}

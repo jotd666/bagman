@@ -49,7 +49,18 @@ GfxObject *GfxObjectLayer::get_item_intersecting(const Locatable *l)
   FOREACH (it,m_object_list)
   {
     GfxObject *o = (*it);
-    if (o->get_bounds().intersects(l->get_bounds()))
+    // amiga kludge
+    // character detection looks ok but with bags, barrow
+    // and pickaxe, it seems that bounds include the 16+ width added
+    // (why not for characters???) anyway, this kludge allows to reduce width
+    // of the objects, but not of the characters
+    #ifdef __amigaos
+    auto b = o->get_bounds();
+    b.w -= 16;
+    #else
+    auto &b = o->get_bounds();
+    #endif
+    if (b.intersects(l->get_bounds()))
       {
 	rval = o;
       }
@@ -142,6 +153,12 @@ void GfxObjectLayer::render(Drawable &screen) const
     const GfxObject &go = *(*it);
 
     go.render(screen);
+    #ifdef DEBUG_BOUNDS
+    auto b=go.get_bounds();
+    //b.w -= 16;
+
+    screen.fill_rect(&b,4);
+        #endif
 
   }
 }

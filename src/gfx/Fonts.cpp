@@ -9,20 +9,17 @@ Fonts::Fonts(bool rotate_90) : m_rotate_90(rotate_90)
 }
 
 
-/*void Fonts::get_monochrome_clone(Fonts &dest, int monochrome_color) const
-  {
-  LetterMap::const_iterator it;
+void Fonts::replace_color(int start_color, int end_color)
+{
+  LetterMap::iterator it;
+
 
   FOREACH(it,letters)
   {
-    SDL_Surface *img = ImageUtil::make_bicolor(it->second.data(),0,monochrome_color,false);
-    dest.letters.insert(std::make_pair(it->first,ImageFrame(img)));
+    ImageUtil::replace_color_in_place(it->second.data(),start_color,end_color);
   }
 
-  dest.m_tile_side = m_tile_side;
-
-  }*/
-
+}
 void Fonts::load(const MyString &font_basename)
 {
   ENTRYPOINT(load);
@@ -30,14 +27,15 @@ void Fonts::load(const MyString &font_basename)
 
   letters.clear();
 
-
+  ImageFrame img;
   MyString s = DirectoryBase::get_images_path() / font_basename + DirectoryBase::get_images_extension();
 
-  m_pic.load(s,100*SCALE_SIZE);
-  m_pic.set_transparency(0);
+  img.load(s,100*SCALE_SIZE);
+  img.set_transparency(0);
   m_tile_side = 8*SCALE_SIZE;
 
-  int nb_cols = m_pic.get_w() / m_tile_side;
+  int nb_rows = img.get_h() / m_tile_side;
+  int nb_cols = img.get_w() / m_tile_side;
 
   SDL_Rect src_clip;
   src_clip.w = m_tile_side;
@@ -50,19 +48,31 @@ void Fonts::load(const MyString &font_basename)
 
   int k = 0;
 
-  src_clip.x = 0;
-
-  for (int j = 0; j < nb_cols; j++)
+  for (int i = 0; i < nb_rows; i++)
     {
-      // create the entry and get the created image
-      letters.insert(std::make_pair(c[k++],src_clip.x));
-      // get the reference and manipulate it now (thus avoiding heavy memory copies)
+      src_clip.x = 0;
 
+      for (int j = 0; j < nb_cols; j++)
+	{
+	  // create the entry and get the created image
+	  std::map<char,ImageFrame>::iterator p = letters.insert(std::make_pair(c[k++],ImageFrame())).first;
+	  // get the reference and manipulate it now (thus avoiding heavy memory copies)
+	  ImageFrame &d = p->second;
+	  d.create(m_tile_side, m_tile_side);
 
-      src_clip.x += m_tile_side;
+	  d.set_transparency(0xFF00FF);  // magenta => no transparency here
 
+	  img.render(d, &src_clip, 0);
+	  if (m_rotate_90)
+	    {
+	      d.rotate_90(true);
+	    }
+
+	  src_clip.x += m_tile_side;
+
+	}
+      src_clip.y += m_tile_side;
     }
-
   EXITPOINT;
 }
 
@@ -96,12 +106,12 @@ void Fonts::write(Drawable &screen, int x, int y,
   if (multi_line)
     {
       MyVector<MyString> lines = text.split('\n');
-
+      MyVector<MyString>::const_iterator it;
       int y_pos = y;
 
-      for (auto &line : lines)
+      for (it = lines.begin(); it != lines.end(); it++)
 	{
-	  write_line(screen, x, y_pos,line, centered);
+	  write_line(screen, x, y_pos, *it, centered);
 	  y_pos += m_tile_side;
 	}
     }
@@ -115,13 +125,12 @@ void Fonts::write_line(Drawable &screen, int x, int y,
 		       const MyString &text, bool x_centered) const
 {
 
+  const char *t = text.c_str();
 
-  SDL_Rect src_clip,img_clip;
+  SDL_Rect src_clip;
   src_clip.w = m_tile_side;
   src_clip.h = m_tile_side;
-  img_clip = src_clip;
-  img_clip.y = 0;
-  src_clip.x = x+8; // amiga needs 8 ..
+  src_clip.x = x;
   src_clip.y = y;
   if (x_centered)
     {
@@ -129,18 +138,16 @@ void Fonts::write_line(Drawable &screen, int x, int y,
       //src_clip.y += screen->h/2;
     }
 
-  for (auto c : text)
+  for (unsigned int i = 0; i < text.size(); i++)
     {
+      char c = t[i];
 
       LetterMap::const_iterator it = letters.find(c);
 
       if (it != letters.end())
 	{
-
-	  img_clip.x = it->second;
-	  m_pic.render(screen, &img_clip, &src_clip);
 	  //SDL_SetAlpha(it->second.data(),SDL_SRCALPHA,m_alpha);
-
+	  it->second.render(screen, 0, &src_clip);
 	}
 
       src_clip.x += m_tile_side/SCALE_SIZE;
@@ -151,9 +158,9 @@ void Fonts::write_line(Drawable &screen, int x, int y,
 }
 int Fonts::get_height() const
 {
-  return m_tile_side;
+  return letters.begin()->second.get_h();
 }
 int Fonts::get_width() const
 {
-  return m_tile_side;
+  return letters.begin()->second.get_w();
 }

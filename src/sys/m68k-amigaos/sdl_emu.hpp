@@ -24,4 +24,5 @@ public:
   ULONG plane_size = 0;
   ULONG buffer_size = 0;
   UBYTE *mask = nullptr;
+  //UWORD actual_width = 0; // ==w unless image type is SHIFTABLE_BOB
 };

@@ -104,7 +104,7 @@ project bagman is
    end linker;
    
    package ide is
-      -- for debugger_command use gcc_prefix & "gdb";
+      --  for debugger_command use gcc_prefix & "gdb";
    end ide;
    
    package naming is

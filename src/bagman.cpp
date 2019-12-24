@@ -268,15 +268,15 @@ public:
 
 
       // TEMP for test
-      #ifdef x__amigaos
+      #ifdef R__amigaos
       Drawable sc;
       sc.init(screen);
       debug("draw to screen");
-      domain.sound_set.load_ingame_sounds();
+      //domain.sound_set.load_ingame_sounds();
       //domain.sound_set.play_music("");
 
 
-      domain.sound_set.play(SoundSet::ethopla);
+      //domain.sound_set.play(SoundSet::ethopla);
 
 
       ImageFrame img;
@@ -302,7 +302,6 @@ public:
       palette.life.render(sc,15,16);
       auto &va_logo = palette.va_logo;
 
-      va_logo.render(sc,64,230);
       va_logo.render(sc,65,20,-1,10);
       SDL_Rect src_clip,dst_clip;
       src_clip.x = 0;src_clip.y = 8;src_clip.w = va_logo.get_w();src_clip.h=100;
@@ -322,15 +321,17 @@ public:
       title.render(sc,&src_clip,&dst_clip);
 
 
-      SDLRectangle lerase(150,10,20,20);
-      sc.fill_rect(&lerase,0);
+
+      //SDLRectangle lerase(150,10,20,20);
+
+      //sc.fill_rect(&lerase,0);
 
 
-      ImageFrame z;
-      z.create(palette.title.get_w(),palette.title.get_h());
-      palette.title.render_mirror(z);
+      /* ImageFrame z;
+	 z.create(palette.title.get_w(),palette.title.get_h());
+	 palette.title.render_mirror(z);
 
-      z.render(sc,28,170);
+	 z.render(sc,28,170);*/
 
 
       debug("PRINT TO SCREEN");
@@ -343,6 +344,11 @@ public:
       img.render(sc,&redraw,&redraw);
       SDLRectangle redraw2(48,80,16*5,140);
       img.render(sc,&redraw2,&redraw2);
+
+      va_logo.render(sc,-4,0);
+
+
+      SDL_Flip(screen);
 
       debug("DONE draw to screen test");
       for(;;)

@@ -668,96 +668,103 @@ void MPLevel::restore_background()
   int cs = m_player->get_current_screen();
   for (int i = 0; i < m_nb_draw_bounds; i++)
     {
-      auto &bounds = m_redraw_bounds[i];
+      auto &bounds = m_redraw_bounds[i].first;
 
       m_grid->render(m_screen, cs, bounds);
 
     }
-  m_nb_draw_bounds = 0;
+
 }
+
+void MPLevel::store_character_current_position(const Renderable *c, int delta_x, int delta_y)
+{
+  int cs = m_player->get_current_screen();
+  auto &bounds_pair = m_redraw_bounds[m_nb_draw_bounds++];
+  auto &bounds = bounds_pair.first;
+  bounds_pair.second = c;
+  bounds = c->get_bounds();
+
+  int maskx = bounds.x & 0xFF0;
+  if (maskx == bounds.x)
+    {
+      bounds.x -= delta_x;
+      bounds.w += delta_x*2;
+    }
+  else
+    {
+      bounds.x = maskx;
+      bounds.w += delta_x;
+    }
+  bounds.w = (bounds.w & 0xFF0) + 0x10;
+  bounds.x -= 0x10 + 224*cs;
+
+  bounds.y -= delta_y;
+  bounds.h += delta_y*2;
+}
+
 
 void MPLevel::store_current_positions()
 {
   // store current character/wagon/elevator/moving bag positions
+  // this part is not very "object oriented"... I don't want to create virtual methods
+  // for x/y margins, plus the fact that there's a special case for the player & guards
+  // in order to optimize redraws
+
   m_nb_draw_bounds = 0;
   int cs = m_player->get_current_screen();
-  // characters / wagons / elevators
 
-  for (const Character *c : m_character_list)
-
+  // player
+  if (m_player->get_state()==HumanCharacter::STATE_IN_WAGON or
+      m_player->get_state()==HumanCharacter::STATE_IN_MOVING_ELEVATOR)
     {
-      #ifdef PLAYER_ALONE
-      if ((c== &m_guards[0]) or (c==&m_guards[1])) continue;
-      #endif
+      // do nothing: zones are already drawn by elevator/wagon
+    }
 
+  else
+    {
+      store_character_current_position(m_player,0x20,0x12);
+    }
 
-      bool is_player = c==m_player;
-      if (is_player and (m_player->get_state()==HumanCharacter::STATE_IN_WAGON or
-			 m_player->get_state()==HumanCharacter::STATE_IN_MOVING_ELEVATOR))
+  for (const Guard *c : m_guards)
+    {
+      if (!c->is_stand_by() and c->is_in_screen(cs))
 	{
-	  // do nothing: zones are already drawn by elevator/wagon
+	  store_character_current_position(c,0x20,0x12);
 	}
-
-      else
+    }
+  for (const Wagon *c : m_wagons)
+    {
+      if (c->is_in_screen(cs))
 	{
-	  if (is_player or (!c->is_stand_by() and c->is_in_screen(cs)))
-	    {
-
-	      auto &bounds = m_redraw_bounds[m_nb_draw_bounds++];
-	      bounds = c->get_bounds();
-
-	      int maskx = bounds.x & 0xFF0;
-	      if (maskx == bounds.x)
-		{
-		  bounds.x -= 0x10;
-		  bounds.w += 0x20;
-		}
-	      else
-		{
-		  bounds.x = maskx;
-		  bounds.w += 0x30;
-		}
-	      bounds.w &= 0xFF0;
-	      bounds.x -= 0x10 + 224*cs;
-
-	      bounds.y -= 18;
-	      bounds.h += 12;
-	    }
-
-
+	  store_character_current_position(c,0x30,0x12);
 	}
-
 
     }
+
+
+  for (const Elevator *c : m_elevators)
+    {
+      if (c->is_in_screen(cs))
+	{
+	  store_character_current_position(c,0,0x12);
+	}
+
+    }
+
+
 
   // moving bag
   const GfxObjectLayer &ol = m_object_layer[cs];
   const GfxObjectLayer::List &items = ol.get_items();
 
-  for (auto ob : items) // GfxObject *
+  for (auto c : items) // GfxObject *
     {
-      if (ob->is_moving())
+      // still test if in screen, player cound drop the bag and change screen
+      // specially on the rightmost screen in the elevator shaft
+      // or in first screen at the rightmost ladder...
+      if (c->is_moving() and c->is_in_screen(cs))
 	{
-	  auto &bref = ob->get_bounds();
-	  auto &bounds = m_redraw_bounds[m_nb_draw_bounds++];
-	  bounds = bref;
-
-	  int maskx = bounds.x & 0xFF0;
-	  if (maskx == bounds.x)
-	    {
-	      bounds.x -= 0x10;
-	      bounds.w += 0x20;
-	    }
-	  else
-	    {
-	      bounds.x = maskx;
-	      bounds.w += 0x20;
-	    }
-	  bounds.w &= 0xFF0;
-	  bounds.x -= 0x10 + 224*cs;
-
-	  bounds.y -= 18;
-	  bounds.h += 12;
+	  store_character_current_position(c,0x10,0x12);
 	}
 
     }
@@ -851,7 +858,7 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	  if ((prev_screen!=current_screen) || m_first_update)
 	    {
 	      m_first_update = false;
-	      if ((current_screen==0 || current_screen==2)) // && RandomNumber::rand(2)==0)
+	      if ((current_screen==0 || current_screen==2) and RandomNumber::rand(2)==0)
 		{
 		  MyString track_name = DirectoryBase::get_sound_path() / "track" + MyString(current_screen+1)+".mp3";
 		  m_domain->sound_set.play_music(track_name);
@@ -1078,6 +1085,10 @@ void MPLevel::render_screen_layer(int i)
 
     if (!c.is_stand_by() and c.is_in_screen(i))
       {
+	#ifdef DEBUG_BOUNDS
+	auto b = c.get_bounds();
+	m_screen.fill_rect(&b,4);
+	#endif
 	c.render(m_screen);
       }
   }
@@ -1275,7 +1286,7 @@ void MPLevel::render_score_and_bonus_right()
       m_domain->darker_font.write(m_screen,80,112-16,"GAME OVER ");
     }
 
-  m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90,224+16);
+  m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90,224+32);
 
   if (m_first_update)
     {

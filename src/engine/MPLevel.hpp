@@ -224,13 +224,14 @@ private:
   #ifdef PARTIAL_REFRESH
   void restore_background();
   void store_current_positions();
+  void store_character_current_position(const Renderable *c, int delta_x, int delta_y);
 
   int m_player_last_x = 0;
   int m_player_last_y = 0;
   GfxObject *m_player_last_object = nullptr;
   int m_previous_bonus_value = 0;
   int m_previous_score = 0;
-  MyVector<SDLRectangle> m_redraw_bounds;
+  MyVector<std::pair<SDLRectangle,const Renderable *>> m_redraw_bounds;
   int m_nb_draw_bounds = 0;
   int m_nb_background_refreshes = 0;
   int m_nb_score_refreshes = 0;

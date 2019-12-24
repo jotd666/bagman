@@ -297,6 +297,8 @@ extern "C"
 
 	int nb_planes = GetChar(f);
 
+
+
 	SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)GetChar(f);
 
 	int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
@@ -379,9 +381,9 @@ extern "C"
     if (dst_clip.x < 0)
       {
 	// remove left part
-	src_clip.x -= dst_clip.x;
-	src_clip.w += dst_clip.x;
-	dst_clip.x = 0;
+	src_clip.x -= dst_clip.x;  // increase source x
+	src_clip.w += dst_clip.x;  // reduce source width
+	dst_clip.x = 0;  // dest at 0 instead
       }
     else if (dst_clip.x+src_clip.w > destination->w)
       {
@@ -494,7 +496,32 @@ extern "C"
 		maskptr += srcoffset;
 	      }
 	  }
-	UWORD xshift = (amiga_source->image_type == SDL_Amiga_Surface::BOB ? 0 : ((dst_clip.x & 0xF) << 12));
+
+	UBYTE *dstptr = (UBYTE*)amiga_destination->pixels + (dst_clip.x>>3) + dst_clip.y*(amiga_destination->w>>3);
+
+	UWORD shift_value = dst_clip.x;
+	UWORD srcxclip_rem = src_clip.x & 0xF;
+	if (srcxclip_rem)
+	  {
+	    shift_value += 16 - srcxclip_rem;
+	    srcptr += 2;
+	    dstptr -= 2;
+	    if (maskptr)
+	      {
+		maskptr += 2;
+	      }
+	    //src_clip.w -= 16;  // not sure!
+	    custom.bltafwm = (0xFFFF >> srcxclip_rem);
+	  }
+	else
+	  {
+	    custom.bltafwm = 0xFFFF;
+	  }
+
+	custom.bltalwm = 0xFFFF;
+
+
+	UWORD xshift = (amiga_source->image_type == SDL_Amiga_Surface::BOB ? 0 : (((shift_value) & 0xF) << 12));
 
 	/*if (src_clip.x != 0 or src_clip.y != 0)
 	  {
@@ -505,6 +532,7 @@ extern "C"
 	OwnBlitter();
 
 	custom.dmacon = 0x8040;   // dirty enable blit
+	custom.dmacon = 0x0020;   // no sprites for god's sake!
 
 	// compute shift mask too if shiftable bob (else leave at 0)
 	custom.bltcon1 = 0x0000 | xshift;
@@ -527,8 +555,6 @@ extern "C"
 
 	  }
 
-	custom.bltafwm = 0xFFFF;
-	custom.bltalwm = 0xFFFF;
 	UWORD source_modulo = (amiga_source->w-src_clip.w)>>3;
 	UWORD dest_modulo = (amiga_destination->w-src_clip.w)>>3;
 	//move.l #$ffffffff,bltafwm(a5)	;no masking of first/last word
@@ -537,7 +563,6 @@ extern "C"
 	custom.bltdmod = dest_modulo;
 
 
-	UBYTE *dstptr = (UBYTE*)amiga_destination->pixels + (dst_clip.x>>3) + dst_clip.y*(amiga_destination->w>>3);
 
 	if (cookie_cut_mode)
 	  {
@@ -592,10 +617,15 @@ extern "C"
 
     surface->w = width;
     surface->h = height;
+    surface->w = width;  // actual image width
     surface->nb_planes = NB_PLANES;
+    bool has_mask = (flags & SDL_SRCALPHA);
+
+
+
     surface->plane_size = (surface->w*surface->h)/8;
     surface->buffer_size = surface->plane_size * surface->nb_planes;
-    bool has_mask = (flags & SDL_SRCALPHA);
+
     if (has_mask)
       {
 	// one more plane for the mask
@@ -887,10 +917,17 @@ extern "C"
 	LoadView(nullptr);
 	WaitTOF();
 	WaitTOF();
+	APTR zerochip = AllocMem(64,MEMF_CHIP|MEMF_CLEAR);
+
 	// explicitly clear sprite DMA, we're not using sprites
 	// turn off dma
-	custom.dmacon = 0x3E0;
-
+	custom.dmacon = 0x7FFF;
+	for (int i=0;i<8;i++)
+	  {
+	    custom.spr[i].pos = 400; //SPRxCTL
+	    custom.spr[i].ctl = 0; //SPRxCTL
+	    custom.sprpt[i] = zerochip;
+	  }
 
       }
 
@@ -911,7 +948,7 @@ extern "C"
 
 	custom.dmacon = 0x83C0;
 
-	Permit();
+	//Permit();
       }
     first_copperlist_apply = false;
   }

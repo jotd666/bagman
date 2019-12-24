@@ -16,12 +16,13 @@ class Fonts : public Abortable
 {
 public:
   DEF_GET_STRING_TYPE(Fonts)
-  Fonts(bool rotate_90=false);
+  Fonts(bool rotate_90);
   int get_height() const;
   int get_width() const;
   void load(const MyString &font_basename);
 
-  //void get_monochrome_clone(Fonts &f, int monochrome_color) const;
+
+  void replace_color(int start_color, int end_color);
   void write(Drawable &screen, int x, int y, const MyString &text,
 	     bool multi_line = false, bool centered = false) const;
 
@@ -30,9 +31,8 @@ public:
 
 private:
   void write_line(Drawable &screen, int x, int y, const MyString &text, bool centered) const;
-  typedef  std::map<char, int> LetterMap;
+  typedef  std::map<char, ImageFrame> LetterMap;
   LetterMap letters;
-  ImageFrame m_pic;
   int m_tile_side;
   bool m_rotate_90;
   DEF_CLASS_COPY(Fonts); // no copy/affectation
