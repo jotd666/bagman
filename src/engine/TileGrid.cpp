@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 JOTD
+    Copyright (C) 2010-2020 JOTD
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "DirectoryBase.hpp"
 #include "ImageFrame.hpp"
 #include "MyFile.hpp"
+
 
 static const int X_OFFSET = 0;
 static const int Y_OFFSET = -16;

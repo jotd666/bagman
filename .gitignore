@@ -1,0 +1,7 @@
+work
+bin
+**/*.info
+obj
+*.dll
+src/unused
+

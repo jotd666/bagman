@@ -15,6 +15,9 @@
 #include <string>
 #include <cassert>
 
+#include "dernc.hpp"
+
+#include "read_joypad.hpp"
 #include "MemoryEntryMap.hpp"
 
 static SDLKey MISC_keymap[256];
@@ -286,31 +289,67 @@ extern "C"
   {
 
     SDL_Amiga_Surface *surface = NULL;
+    size_t nb_read;
     if (handle)
       {
 	// size is encoded first
 	BPTR f = (BPTR)handle->hidden.stdio.fp;
-	unsigned char w1 = GetChar(f);
-	unsigned char w2 = GetChar(f);
-	unsigned char h1 = GetChar(f);
-	unsigned char h2 = GetChar(f);
+	ULONG fourcc;
+	Read(f,&fourcc,4);
+	if (fourcc == 0x524E4301) // RNC
+	  {
+	    // read the file fully
+	    Seek(f,0,OFFSET_END);
+	    ULONG size = Seek(f,0,OFFSET_CURRENT);
+	    unsigned char *packed = new unsigned char[size];
+	    Seek(f,0,OFFSET_BEGINNING);
+	    Read(f,packed,size);
+	    ULONG unpacked_len = rnc_ulen (packed);
+	    unsigned char *unpacked = new unsigned char[unpacked_len];
+	    rnc_unpack (packed, unpacked);
 
-	int nb_planes = GetChar(f);
+	    delete [] packed;
+	    int i=0;
+	    unsigned char w1 = unpacked[i++];
+	    unsigned char w2 = unpacked[i++];
+	    unsigned char h1 = unpacked[i++];
+	    unsigned char h2 = unpacked[i++];
 
+	    int nb_planes = unpacked[i++];
 
+	    SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)unpacked[i++];
 
-	SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)GetChar(f);
+	    int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
 
-	int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
+	    surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,w1*256 + w2,h1*256 + h2,nb_planes,0,0,0,0);
 
+	    // sprite or planes (0: planes)
+	    surface->image_type = image_type;
+	    nb_read = unpacked_len - i;
+	    memcpy(surface->pixels,unpacked+i,nb_read);
 
-	surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,w1*256 + w2,h1*256 + h2,nb_planes,0,0,0,0);
+	    delete [] unpacked;
+	  }
+	else
+	  {
+	    unsigned char w1 = GetChar(f);
+	    unsigned char w2 = GetChar(f);
+	    unsigned char h1 = GetChar(f);
+	    unsigned char h2 = GetChar(f);
 
+	    int nb_planes = GetChar(f);
 
-	// sprite or planes (0: planes)
-	surface->image_type = image_type;
-	size_t nb_read = Read(f,surface->pixels,surface->buffer_size);
+	    SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)GetChar(f);
 
+	    int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
+
+	    surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,w1*256 + w2,h1*256 + h2,nb_planes,0,0,0,0);
+
+	    // sprite or planes (0: planes)
+	    surface->image_type = image_type;
+	    nb_read = Read(f,surface->pixels,surface->buffer_size);
+
+	  }
 
 	Close(f);
 
@@ -504,13 +543,9 @@ extern "C"
 	if (srcxclip_rem)
 	  {
 	    shift_value += 16 - srcxclip_rem;
-	    srcptr += 2;
 	    dstptr -= 2;
-	    if (maskptr)
-	      {
-		maskptr += 2;
-	      }
-	    //src_clip.w -= 16;  // not sure!
+	    src_clip.w += 16;
+
 	    custom.bltafwm = (0xFFFF >> srcxclip_rem);
 	  }
 	else
@@ -1071,29 +1106,43 @@ extern "C"
   }
   Uint8 * SDLCALL SDL_GetKeyState(int *numkeys)
   {
-    static  unsigned char *ciaapra = (unsigned char *)0xBFE001;
-    volatile unsigned char v = *ciaapra;
-
 
     if (numkeys != nullptr)
       {
 	*numkeys = 0;
       }
-    int firestatus = !(v & 0x80);
+    //static ULONG previous_key_pressed = 0;
+
+    ULONG joy_state = read_joystick(1);
+    /*
+       ULONG key_pressed = read_keypress();
+       if (key_pressed != previous_key_pressed)
+       {
+	key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY) or (key_pressed == 0x19);
+	key_status[SDLK_ESCAPE] = key_pressed == 0x45 or (joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
+
+       }
+       else
+       {
+	key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY);
+	key_status[SDLK_ESCAPE] = bool(joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
+
+       }*/
+
+    int firestatus = bool(joy_state & JPF_BTN_RED);
     key_status[SDLK_RCTRL] = firestatus;
     key_status[SDLK_LCTRL] = firestatus;
 
-    // ATM joystick emulate keys
-    UWORD d0 = custom.joy1dat;
 
-    UWORD d1 = d0>>1;
-    d1 ^= d0;
-    key_status[SDLK_UP] = !!(d1 & 0x100);
-    key_status[SDLK_DOWN] = !!(d1 & 0x1);
-    key_status[SDLK_RIGHT] = !!(d0 & 0x2);
-    key_status[SDLK_LEFT] = !!(d0 & 0x200);
+    key_status[SDLK_UP] = bool(joy_state & JPF_BTN_UP);
+    key_status[SDLK_DOWN] = bool(joy_state & JPF_BTN_DOWN);
+    key_status[SDLK_RIGHT] = bool(joy_state & JPF_BTN_RIGHT);
+    key_status[SDLK_LEFT] = bool(joy_state & JPF_BTN_LEFT);
 
+    // key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY) or (key_pressed == 0x19);
+    //key_status[SDLK_ESCAPE] = bool(joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
 
+    //previous_key_pressed = key_pressed;
     return key_status;
   }
   int SDLCALL SDL_NumJoysticks(void)
@@ -1293,6 +1342,8 @@ void open_screen()
     {
       fatal_error("Cannot open graphics.library");
     }
+
+  detect_controller_types();
 
   struct NewScreen Screen1 = {
     0,0,320 /*SCREEN_WIDTH*/,240,NB_PLANES,             /* Screen of 640 x 480 depth = NB_PLANES (1<<NB_PLANES colors)   */

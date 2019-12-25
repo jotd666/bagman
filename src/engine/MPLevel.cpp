@@ -128,10 +128,12 @@ MPLevel::MPLevel()
   m_palette = 0;
   m_grid = 0;
   m_first_level = true;
-  m_last_rendered_screen = -1;
+  force_score_refresh();
   m_level_end_fadeout = false;
   #ifdef PARTIAL_REFRESH
+
   m_redraw_bounds.resize(8); // 8 redraw zones are enough
+  m_late_redraw_bounds.resize(8);
   #endif
 
 
@@ -206,6 +208,7 @@ void MPLevel::level_end()
     {
       m_guards[i].stand_by();
     }
+
 }
 GameContext *MPLevel::update_level_end(int elapsed_time)
 {
@@ -215,6 +218,11 @@ GameContext *MPLevel::update_level_end(int elapsed_time)
     {
       update_characters(elapsed_time);
     }
+    #ifdef PARTIAL_REFRESH
+  store_current_positions();
+
+  #endif
+
   // exit from current screen
   if ((m_player->get_x()-0x10) % 224 > 221)
     {
@@ -565,6 +573,7 @@ void MPLevel::stop_music()
 void MPLevel::restart()
 {
   stop_music();
+  force_score_refresh();
   m_first_update = true;
 
   // remove all moving objects
@@ -685,18 +694,9 @@ void MPLevel::store_character_current_position(const Renderable *c, int delta_x,
   bounds = c->get_bounds();
 
   int maskx = bounds.x & 0xFF0;
-  if (maskx == bounds.x)
-    {
-      bounds.x -= delta_x;
-      bounds.w += delta_x*2;
-    }
-  else
-    {
-      bounds.x = maskx;
-      bounds.w += delta_x;
-    }
-  bounds.w = (bounds.w & 0xFF0) + 0x10;
-  bounds.x -= 0x10 + 224*cs;
+
+  bounds.x = maskx - delta_x - 0x10 - 224*cs;
+  bounds.w = (bounds.w & 0xFF0) + 2*delta_x;
 
   bounds.y -= delta_y;
   bounds.h += delta_y*2;
@@ -705,13 +705,43 @@ void MPLevel::store_character_current_position(const Renderable *c, int delta_x,
 
 void MPLevel::store_current_positions()
 {
+  int cs = m_player->get_current_screen();
+  int late_redraw_bounds_index=0;
+
+  for (auto &p : m_redraw_bounds)
+    {
+      if (p.second != nullptr)
+	{
+	  if (not p.second->is_in_screen(cs))
+	    {
+	      m_late_redraw_bounds[late_redraw_bounds_index++] = std::make_pair(p.first,nullptr);
+	    }
+	  else
+	    {
+	      // bags
+	      auto *o = dynamic_cast<const GfxObject *>(p.second);
+	      if (o != nullptr and not o->is_moving())
+		{
+		  // bag just ceased moving
+		  m_late_redraw_bounds[late_redraw_bounds_index++] = std::make_pair(p.first,nullptr);
+		}
+	    }
+
+	}
+    }
+
+
+  // copy the old bounds at list start if needed
+  m_nb_draw_bounds = late_redraw_bounds_index;
+  m_redraw_bounds = m_late_redraw_bounds;
+
+
   // store current character/wagon/elevator/moving bag positions
   // this part is not very "object oriented"... I don't want to create virtual methods
   // for x/y margins, plus the fact that there's a special case for the player & guards
   // in order to optimize redraws
 
-  m_nb_draw_bounds = 0;
-  int cs = m_player->get_current_screen();
+
 
   // player
   if (m_player->get_state()==HumanCharacter::STATE_IN_WAGON or
@@ -722,14 +752,14 @@ void MPLevel::store_current_positions()
 
   else
     {
-      store_character_current_position(m_player,0x20,0x12);
+      store_character_current_position(m_player,0x30,0x12);
     }
 
   for (const Guard *c : m_guards)
     {
       if (!c->is_stand_by() and c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x20,0x12);
+	  store_character_current_position(c,0x30,0x12);
 	}
     }
   for (const Wagon *c : m_wagons)
@@ -746,7 +776,7 @@ void MPLevel::store_current_positions()
     {
       if (c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0,0x12);
+	  store_character_current_position(c,0x10,0x12);
 	}
 
     }
@@ -764,7 +794,7 @@ void MPLevel::store_current_positions()
       // or in first screen at the rightmost ladder...
       if (c->is_moving() and c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x10,0x12);
+	  store_character_current_position(c,0x20,0x12);
 	}
 
     }
@@ -906,6 +936,10 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	    {
 	      if (m_player->get_nb_lives() >= 0)
 		{
+		  #ifdef PARTIAL_REFRESH
+		  m_nb_score_refreshes = 2;
+		  m_nb_bonus_refreshes = 2;
+		  #endif
 
 		  if (!m_dead_fadeout)
 		    {
@@ -1155,9 +1189,16 @@ void MPLevel::render_breakable_block()
 void MPLevel::clip_fullscreen()
 {
   m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90);
-  static const SDLRectangle r(224,0,24,256);
+  {
+    static const SDLRectangle r(224,0,24,256);
 
-  m_screen.fill_rect(&r,0);
+    m_screen.fill_rect(&r,0);
+  }
+  {
+    static const SDLRectangle r(224+16,0,16,24);
+
+    m_screen.fill_rect(&r,0);
+  }
 }
 
 void MPLevel::render_all_layers()
@@ -1260,9 +1301,7 @@ void MPLevel::render_all_layers()
   if (m_fadeout_event.is_timeout_reached() && m_dead_fadeout)
     {
       m_screen.fill_rect(0,0);
-      #ifdef PARTIAL_REFRESH
-      m_last_rendered_screen = -1;
-      #endif
+      force_score_refresh();
     }
 
 
@@ -1270,8 +1309,18 @@ void MPLevel::render_all_layers()
 
 
 }
+void MPLevel::force_score_refresh()
+{
+  m_last_rendered_screen = -1;
+  #ifdef PARTIAL_REFRESH
+  m_nb_score_refreshes = 2;
+  m_nb_bonus_refreshes = 2;
+#endif
+}
 
 #ifdef __amigaos
+
+
 void MPLevel::render_score_and_bonus_right()
 {
   if (m_domain->full_screen)

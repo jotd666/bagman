@@ -197,6 +197,8 @@ private:
   void handle_guard_bag_collisions();
   int get_nb_bags() const;
 
+  void force_score_refresh();
+
   bool is_trainer_mode() const;
   int get_max_bonus_value() const;
 
@@ -231,7 +233,7 @@ private:
   GfxObject *m_player_last_object = nullptr;
   int m_previous_bonus_value = 0;
   int m_previous_score = 0;
-  MyVector<std::pair<SDLRectangle,const Renderable *>> m_redraw_bounds;
+  MyVector<std::pair<SDLRectangle,const Renderable *>> m_redraw_bounds,m_late_redraw_bounds;
   int m_nb_draw_bounds = 0;
   int m_nb_background_refreshes = 0;
   int m_nb_score_refreshes = 0;

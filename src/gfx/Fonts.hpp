@@ -16,7 +16,7 @@ class Fonts : public Abortable
 {
 public:
   DEF_GET_STRING_TYPE(Fonts)
-  Fonts(bool rotate_90);
+  Fonts(bool rotate_90=false);
   int get_height() const;
   int get_width() const;
   void load(const MyString &font_basename);

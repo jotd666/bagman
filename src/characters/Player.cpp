@@ -597,7 +597,16 @@ void Player::render(Drawable &d) const
 	      case GfxObject::PICK:
 		if (m_position == STATE_CLIMB)
 		  {
-		    p.held_pickaxe.left.get_frame(1).render(d,get_x(),get_y());
+		    // pickaxe climb
+		    // on amiga there's an unexplained shift by 8...
+		    // too lazy to find why...
+		    #ifdef __amigaos
+		    #define PICKOFFSET 8
+		    #else
+		    #define PICKOFFSET 0
+		    #endif
+
+		    p.held_pickaxe.left.get_frame(1).render(d,get_x()-PICKOFFSET,get_y());
 		  }
 		else
 		  {

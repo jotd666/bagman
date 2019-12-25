@@ -21,6 +21,9 @@ project bagman is
    type Build_Type is ("Debug","Release");
    Build : Build_Type := External("Build","Debug");
    
+   type Debugger_Type is ("Yes","No");
+   Debugger : Debugger_Type := External("Debugger","No");
+   
    
    for languages use ("C++");
 
@@ -86,7 +89,8 @@ project bagman is
          
       case arch is
          when "m68k-amigaos" =>
-            for default_switches("C++") use ("-noixemul","-Wl,--allow-multiple-definition", "-ldebug",project'object_dir & "/../ptplayer.o");
+            for default_switches("C++") use ("-noixemul","-Wl,--allow-multiple-definition", "-ldebug",project'object_dir & "/../ptplayer.o",
+                                             project'object_dir & "/../readjoypad.o");
             case Build is
             when "Debug" =>
                for default_switches("C++") use linker'default_switches("C++") &  ("-Wl,--amiga-debug-hunk","-ldebug");
@@ -104,7 +108,12 @@ project bagman is
    end linker;
    
    package ide is
-      --  for debugger_command use gcc_prefix & "gdb";
+      case Debugger is
+         when "Yes" =>
+            for debugger_command use gcc_prefix & "gdb";
+         when "No" =>
+      end case;
+      
    end ide;
    
    package naming is

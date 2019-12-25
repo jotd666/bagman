@@ -392,7 +392,7 @@ Uint32 ImageUtil::get_pixel( const SDL_Surface* pSurface , int x , int y )
 
 #else
 
-static bool ImageUtil::is_transparent(const SDL_Surface *)
+bool ImageUtil::is_transparent(const SDL_Surface *)
 {
   return false; // doesn't matter here
 }

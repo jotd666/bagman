@@ -339,7 +339,7 @@ SoundPlay::SampleNode *SoundPlay::load(const MyString &filename, int key, bool)
       abort_run("duplicate key %d",key);
     }
 
-  // mmLoadEffect(key);
+
 
   SampleList::iterator it = rval.first;
   rc = &(it->second);
@@ -571,9 +571,7 @@ SoundPlay::SoundPlay(int master_sample_rate) : audio_open(false),m_master_sample
 SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool loop)
 {
   SoundPlay::SampleNode *rc = 0;
-  #ifdef __amigaos__
-  (void)filepath; (void)key; (void)loop;
-  #else
+
   ENTRYPOINT(load);
 
   init();
@@ -620,16 +618,14 @@ SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool l
     }
 
   EXITPOINT;
-#endif
+
 
   return rc;
 }
 
 void SoundPlay::unload(int key)
 {
-  #ifdef __amigaos__
-  (void)key;
-  #else
+
   ENTRYPOINT(unload);
 
   SampleList::iterator it = sample_node.find(key);
@@ -643,7 +639,6 @@ void SoundPlay::unload(int key)
       sample_node.erase(it);
     }
   EXITPOINT;
-  #endif
 
 }
 void SoundPlay::init()
@@ -685,9 +680,7 @@ void SoundPlay::init()
 
 void SoundPlay::close()
 {
-  #ifdef __amigaos__
 
-  #else
   ENTRYPOINT(close);
 
   if (audio_open)
@@ -712,7 +705,6 @@ void SoundPlay::close()
       sample_node.clear();
     }
   EXITPOINT;
-  #endif
 }
 
 
@@ -813,7 +805,7 @@ int SoundPlay::play(int key)
       warn("sample with key=%d not found",key);
     }
   EXITPOINT;
-  #endif
+
 
   return index;
 }
@@ -825,7 +817,7 @@ void SoundPlay::mixaudio(void *obj, Uint8 *stream, int len)
 
   t->mixaudio(stream,len);
 }
-
+#endif
 #endif // USE_SDL_MIXER
 
 #endif // _NDS

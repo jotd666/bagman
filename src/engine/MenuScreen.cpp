@@ -22,9 +22,17 @@
 #include "OptionsBase.hpp"
 #include "RandomNumber.hpp"
 
+#ifdef __amigaos
+#include "read_joypad.hpp"
+#endif
+
 MenuScreen::MenuScreen(MPDomain *domain) : m_domain(domain)
 {
   m_options = &m_domain->get_modifiable_menu_options();
+
+#ifdef __amigaos
+  detect_controller_types();
+#endif
 }
 
 GameContext *MenuScreen::private_update(int elapsed_time)
@@ -36,7 +44,7 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90);
   int opts_y = 180;
   int opts_x = 140;
-  int y_start = 24;
+  int y_start = 4;
 
    #ifdef PARTIAL_REFRESH
   if (m_nb_renders > 0) {
@@ -47,11 +55,16 @@ GameContext *MenuScreen::private_update(int elapsed_time)
 
     m_domain->get_palette().va_logo.render(m_screen,72,y_start);
     m_domain->get_palette().presents.render(m_screen,80,y_start+40);
-    m_domain->get_palette().title.render(m_screen,32,y_start+64);
+    m_domain->get_palette().title.render(m_screen,32,y_start+68);
 
-    m_domain->dark_font.write(m_screen,18,y_start+64+32,   "REMADE BY JOTD 2010-2019");
-    m_domain->dark_font.write(m_screen,12,y_start+64+32+14,"ORIGINAL BY J.BRISSE 1982");
+    y_start += 104;
 
+    m_domain->dark_font.write(m_screen,18,y_start,   "REMADE BY JOTD 2010-2019");
+    m_domain->dark_font.write(m_screen,12,y_start+14,"ORIGINAL BY J.BRISSE 1982");
+#ifdef __amigaos
+    m_domain->dark_font.write(m_screen,12,y_start+28,"SFX AND MUSIC CODE BY PHX");
+    m_domain->dark_font.write(m_screen,36,y_start+28+14,"MUSIC BY SAIMON69");
+#endif
 
     // render options
 
@@ -70,6 +83,7 @@ GameContext *MenuScreen::private_update(int elapsed_time)
 
   #endif
 
+
   m_domain->get_palette().barrow.get_first_frame().render(m_screen,12,opts_y-8+m_current_option*16);
 
   m_domain->darker_font.write(m_screen,opts_x,opts_y,MyString(m_options->get_skill_level_str()).uppercase());
@@ -77,24 +91,30 @@ GameContext *MenuScreen::private_update(int elapsed_time)
 
   m_flash_timer += elapsed_time;
 
-  if (m_flash_timer > 500)
+  opts_y += 32;
+
+  if (m_flash_timer > 400)
     {
-      m_domain->darker_font.write(m_screen,56,y_start+64+36+92,"FIRE TO START");
+      m_domain->darker_font.write(m_screen,56-24,opts_y,"PRESS FIRE TO START");
     }
   else
     {
 
-      m_domain->darker_font.write(m_screen,56,y_start+64+36+92,
+      m_domain->darker_font.write(m_screen,56-24,opts_y,
     #ifdef _NDS
-				  "L AND R TO QUIT"
+				  " L AND R TO QUIT"
     #else
-				  " ESC TO QUIT "
+				  #ifdef __amigaos
+				  "                    "
+				  #else
+				  "  ESC TO QUIT "
+				  #endif
     #endif
       );
     }
 
 
-  if (m_flash_timer > 1000)
+  if (m_flash_timer > 800)
     {
       m_flash_timer = 0;
     }

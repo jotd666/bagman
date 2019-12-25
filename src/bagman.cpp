@@ -292,35 +292,56 @@ public:
       dark_font.load("fonts_dark_blue");
       light_font.load("fonts_light_blue");
 
-      palette.player.left.get_first_frame().render(sc,120,210);
-      palette.player.left.get_first_frame().render(sc,45,210);
-      palette.player.right.get_first_frame().render(sc,30,210);
+      int nb_lives = 7;
+      int x_life = 0;
+      int y_life = 0;
 
-      palette.life.render(sc,0,0);
-      palette.life.render(sc,8,0);
-      palette.life.render(sc,8,8);
-      palette.life.render(sc,15,16);
+      for (int i = 0; i < nb_lives; i++)
+	{
+	  palette.life.render(sc,x_life,y_life);
+	  x_life+=8;
+	}
+      SDLRectangle lerase(x_life,y_life,8,8);
+      //sc.fill_rect(&lerase,0);
+
+      /*palette.life.render(sc,0,0);
+	palette.life.render(sc,8,0);
+	palette.life.render(sc,16,0);
+	palette.life.render(sc,15,16);*/
       auto &va_logo = palette.va_logo;
 
-      va_logo.render(sc,65,20,-1,10);
-      SDL_Rect src_clip,dst_clip;
-      src_clip.x = 0;src_clip.y = 8;src_clip.w = va_logo.get_w();src_clip.h=100;
-      dst_clip.x = 72;dst_clip.y = 40;
+      /*  va_logo.render(sc,65,20,-1,10);
+	  SDL_Rect src_clip,dst_clip;
+	  src_clip.x = 0;src_clip.y = 8;src_clip.w = va_logo.get_w();src_clip.h=100;
+	  dst_clip.x = 72;dst_clip.y = 40;
 
-      va_logo.render(sc,&src_clip,&dst_clip);
-      auto &title = palette.title;
-      va_logo.render(sc,50,-10);
-
-      title.render(sc,64,80);
-      dst_clip.x = 64; dst_clip.y = 120;
-      src_clip.x = 32;
-      src_clip.y = 0;
-      src_clip.w = title.get_w()-32;
-      src_clip.h = 20;
-
-      title.render(sc,&src_clip,&dst_clip);
+	  va_logo.render(sc,&src_clip,&dst_clip);
+	  auto &title = palette.title;
 
 
+	  title.render(sc,64,80);
+	  dst_clip.x = 64; dst_clip.y = 120;
+	  src_clip.x = 32;
+	  src_clip.y = 0;
+	  src_clip.w = title.get_w()-32;
+	  src_clip.h = 20;
+
+	  title.render(sc,&src_clip,&dst_clip);*/
+
+      // negative clipping (y)
+      // va_logo.render(sc,50,-10);
+
+      //palette.player.right.get_first_frame().render(sc,0,160);
+      palette.player.right.get_first_frame().render(sc,0,30);
+      palette.player.left.get_first_frame().render(sc,0,50);
+      palette.player.left.get_first_frame().render(sc,66,50);
+      palette.player.left.get_first_frame().render(sc,-14,70);
+      palette.player.left.get_first_frame().render(sc,-2,90);
+      palette.player.left.get_first_frame().render(sc,-8,110);
+      //  va_logo.render(sc,0,0);
+      va_logo.render(sc,-2,130);
+      va_logo.render(sc,-4,160);
+      va_logo.render(sc,-14,190);
 
       //SDLRectangle lerase(150,10,20,20);
 
@@ -335,17 +356,17 @@ public:
 
 
       debug("PRINT TO SCREEN");
-      light_font.write(sc,11,10,"HELLO LES POULEX");
-      darker_font.write(sc,8,50,"QUELLE ZONE");
+      /*   light_font.write(sc,11,10,"HELLO LES POULEX");
+	   darker_font.write(sc,8,50,"QUELLE ZONE");
 
 
 
-      SDLRectangle redraw(16,0,16*5,100);
-      img.render(sc,&redraw,&redraw);
-      SDLRectangle redraw2(48,80,16*5,140);
-      img.render(sc,&redraw2,&redraw2);
+	   SDLRectangle redraw(16,0,16*5,100);
+	   img.render(sc,&redraw,&redraw);
+	   SDLRectangle redraw2(48,80,16*5,140);
+	   img.render(sc,&redraw2,&redraw2);
 
-      va_logo.render(sc,-4,0);
+       */
 
 
       SDL_Flip(screen);
