@@ -15,8 +15,6 @@ public:
   static void replace_color_in_place(SDL_Surface *image, int old_color, int new_color);
   static SDL_Surface *replace_color(const SDL_Surface *src, int old_color, int new_color, bool alpha);
   static SDL_Surface *create_image_like(const SDL_Surface *src);
-  static SDL_Surface *create_image(int w, int h);
-  static SDL_Surface *create_alpha_image(int w, int h);
   static SDL_Surface *mirror(const SDL_Surface *source);
   static void mirror(const SDL_Surface *source, SDL_Surface *dest);
   static SDL_Surface *flip(const SDL_Surface *source);
@@ -54,12 +52,16 @@ public:
    */
 
   static void set_pixel( SDL_Surface* pSurface , int x , int y , Uint32 rgb);
-
-
-
   static Uint32 get_pixel( const SDL_Surface* pSurface , int x , int y );
 
-private:
+
+  // on amigaos those need post-processing fixing because w may change between logical and real value
+  // because of blitter barrel shifting image format
+  static SDL_Surface *create_image(int w, int h);
+  static SDL_Surface *create_alpha_image(int w, int h);
+
+
+
   ~ImageUtil() {}
 };
 #endif // IMAGEUTIL_H_INCLUDED

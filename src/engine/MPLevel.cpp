@@ -42,7 +42,7 @@ static const CharacterStartPosSettings CURRENT_CSP = CSP_NORMAL;
 #define X_TRANSLATION -16
 #endif
 
-#ifdef __amigaos__
+#ifdef __amigaos
 // no fade
 static const int FADE_TIME = 0;
 #else
@@ -326,10 +326,10 @@ void MPLevel::break_wall()
 {
   m_nb_pick_blows++;
 
-  if (m_nb_pick_blows > 4)
-    {
-      m_grid->break_wall();
-    }
+  //if (m_nb_pick_blows > 4)
+  {
+    m_grid->break_wall();
+  }
 }
 
 
@@ -776,7 +776,7 @@ void MPLevel::store_current_positions()
     {
       if (c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x10,0x12);
+	  store_character_current_position(c,0x20,0x12);
 	}
 
     }
@@ -952,8 +952,7 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	      else
 
 		{
-		  m_game_over_timer = 3000;
-		  m_state = GAME_OVER;
+		  game_over();
 		}
 
 	    }
@@ -967,6 +966,11 @@ GameContext *MPLevel::update_running(int elapsed_time)
   return rval;
 }
 
+void MPLevel::game_over()
+{
+  m_game_over_timer = 3000;
+  m_state = GAME_OVER;
+}
 void MPLevel::update_characters(int elapsed_time)
 {
   PointerList<Character>::iterator it;
@@ -1119,10 +1123,6 @@ void MPLevel::render_screen_layer(int i)
 
     if (!c.is_stand_by() and c.is_in_screen(i))
       {
-	#ifdef DEBUG_BOUNDS
-	auto b = c.get_bounds();
-	m_screen.fill_rect(&b,4);
-	#endif
 	c.render(m_screen);
       }
   }
@@ -1279,7 +1279,7 @@ void MPLevel::render_all_layers()
     {
       render_score_and_bonus_right();
     }
-      #ifndef __amigaos__
+      #ifndef __amigaos
   else
     {
       render_score_and_bonus_original();

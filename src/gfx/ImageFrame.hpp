@@ -49,8 +49,7 @@ public:
    * create a blank image with given descriptions
    * @param alpha true enables alpha channel
    */
-
-  void create(int w, int h, bool alpha = false);
+  void create_like(const ImageFrame &model);
 
   DEF_CLASS_COPY(ImageFrame);
 
@@ -74,6 +73,8 @@ public:
 
   void set_transparency(int rgb);
 
+  // this isn't compatible with blitted images on amiga
+  void create(int w, int h, bool alpha = false);
 
 private:
   void destroy();

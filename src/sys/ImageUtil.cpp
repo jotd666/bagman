@@ -19,7 +19,7 @@
 #include "ScaleSize.hpp"
 #include "MemoryEntryMap.hpp"
 
-#ifdef __amigaos__
+#ifdef __amigaos
 #include "sdl_emu.hpp"
 #endif
 
@@ -57,9 +57,10 @@ SDL_Surface *ImageUtil::load_image(const MyString &image_file)
 
   return temp_image;
 }
+
 SDL_Surface *ImageUtil::replace_color(const SDL_Surface *src, int old_color, int new_color, bool )
 {
-  SDL_Surface *rval = create_image(src->w, src->h);
+  SDL_Surface *rval = create_image_like(src);
   SDL_BlitSurface((SDL_Surface *)src,0,rval,0);
 
 
@@ -69,6 +70,7 @@ SDL_Surface *ImageUtil::replace_color(const SDL_Surface *src, int old_color, int
 
   return rval;
 }
+
 
 void ImageUtil::rotate_90(const SDL_Surface *input, SDL_Surface *output, bool positive)
 {
@@ -255,6 +257,7 @@ SDL_Surface *ImageUtil::resize(SDL_Surface *source, int ratio)
   return dest;
 }
 
+
 /*
    void ImageUtil::render_half_size(const SDL_Surface *source, SDL_Surface *dest)
    {
@@ -311,27 +314,25 @@ bool ImageUtil::is_transparent(const SDL_Surface *source)
 
 void ImageUtil::mirror(const SDL_Surface *source, SDL_Surface *dest)
 {
-  //  SDL_UpperBlit((SDL_Surface *)source,0,dest,0);
-  // return;
+  // SDL_UpperBlit((SDL_Surface *)source,0,dest,0);
+  //  return;
 
-  auto *src =(const SDL_Amiga_Surface *)(source);
-  int sw = source->w;
-  if ((src->image_type == SDL_Amiga_Surface::SHIFTABLE_BOB) or (src->image_type == SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB))
-    {
-      // ignore last 16 pixels. Blitter needs a blank area for shifting
-      sw -= 16;
-      for ( int y=0 ; y<source->h ; y++ )
-	{
-	  for ( int x=sw ; x<source->w ; x++ )
-	    {
+  auto *amiga_source =(const SDL_Amiga_Surface *)(source);
 
-	      set_pixel ( dest , x , y , 0 );
-	    }
-	}
-    }
+  // ignore last 16 pixels. Blitter needs a blank area for shifting
+
   for ( int y=0 ; y<source->h ; y++ )
     {
+      for ( int x=amiga_source->w ; x<amiga_source->iw ; x++ )
+	{
 
+	  set_pixel ( dest , x , y , 0 );
+	}
+    }
+
+  int sw = source->w;
+  for ( int y=0 ; y<source->h ; y++ )
+    {
       for ( int x=0 ; x<sw ; x++ )
 	{
 	  Uint32 c = get_pixel(source,x,y);
@@ -346,9 +347,16 @@ void ImageUtil::mirror(const SDL_Surface *source, SDL_Surface *dest)
 
 SDL_Surface *ImageUtil::create_image_like(const SDL_Surface *source)
 {
-  auto *src =(const SDL_Amiga_Surface *)(source);
+  auto *src = (const SDL_Amiga_Surface *)(source);
 
-  return (src->mask != nullptr) ? create_alpha_image(src->w, src->h) : create_image(src->w, src->h);
+
+  SDL_Surface *rval = (src->mask != nullptr) ? create_alpha_image(src->iw, src->h) : create_image(src->iw, src->h);
+  // adjust logical width
+  auto *rvala = (SDL_Amiga_Surface *)(rval);
+  rvala->w -= src->dw;
+  rvala->dw = src->dw;
+
+  return rval;
 }
 
 SDL_Surface *ImageUtil::create_image(int w, int h)

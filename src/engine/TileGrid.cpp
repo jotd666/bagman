@@ -36,10 +36,13 @@ static const int WALL_Y = 192;
 
 void TileGrid::break_wall()
 {
+  m_wall_width-=2;
   change_wall(true);
+
 }
 void TileGrid::build_wall()
 {
+  m_wall_width = 12;
   change_wall(false);
 }
 
@@ -47,7 +50,7 @@ inline void TileGrid::change_wall(bool clr)
 {
   for (int j = WALL_Y; j < WALL_Y+16; j++)
     {
-      for (int i = WALL_X; i < WALL_X+8; i++)
+      for (int i = WALL_X; i < WALL_X+(10-m_wall_width); i++)
 	{
 	  m_matrix[j+Y_OFFSET][i+X_OFFSET] = clr ? PT_BACKGROUND : PT_BREAKABLE_WALL;
 	}

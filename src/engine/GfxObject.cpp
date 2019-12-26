@@ -130,14 +130,11 @@ void GfxObject::set_frames(const GfxFrameSet *frame_set)
 {
   AnimatedSprite::init(frame_set);
   // kludge to fix bag render shift problem when using rotated 90 mode (unsolved yet)
-  // on amiga, sprites have 16 pixels added for the blitter shift. This trips the test
-  // so let's just disable it, we don't need rotated mode with amiga!
-  #ifndef __amigaos__
+
   if (is_bag() && get_w() > get_h())
     {
         set_xy_render_extra_offset(0,-6);
     }
-  #endif
 }
 
 

@@ -221,7 +221,7 @@ HumanCharacter::MoveType Player::handle_left_right(const PlayerControls::Status 
     }
   if (owns(GfxObject::PICK) && (m_direction == LEFT))
     {
-      if (m_grid->get_point_type(get_x()-10+m_level->get_nb_pick_blows(),get_y()+4) == TileGrid::PT_BREAKABLE_WALL)
+      if (m_grid->get_point_type(get_x()-10,get_y()+4) == TileGrid::PT_BREAKABLE_WALL)
 	{
 	  if (m_allow_pick)
 	    {
@@ -455,17 +455,24 @@ void Player::release_held_item()
 	    break;
 	  case GfxObject::BLUE_BAG:
 	  case GfxObject::YELLOW_BAG:
-	    // special behaviour if barrow
-	    if (m_barrow->get_bounds().intersects(ie->get_bounds()))
-	      {
-		m_level->bag_in_barrow(ie->get_type() == GfxObject::BLUE_BAG);
-	      }
-	    else
-	      {
-		// drop the bag
-		align_item(ie);
-		m_level->insert_object(ie);
-	      }
+	    {
+
+	      // special behaviour if barrow
+	      auto &barrow_bounds = m_barrow->get_bounds();
+	      auto &bag_bounds = ie->get_bounds();
+
+	      if (barrow_bounds.intersects(bag_bounds))
+		{
+		  m_level->bag_in_barrow(ie->get_type() == GfxObject::BLUE_BAG);
+		}
+	      else
+		{
+		  // drop the bag
+		  align_item(ie);
+		  m_level->insert_object(ie);
+		}
+	    }
+
 	    break;
 	  default:  // pickaxe
 	    align_item(ie);
@@ -597,16 +604,9 @@ void Player::render(Drawable &d) const
 	      case GfxObject::PICK:
 		if (m_position == STATE_CLIMB)
 		  {
-		    // pickaxe climb
-		    // on amiga there's an unexplained shift by 8...
-		    // too lazy to find why...
-		    #ifdef __amigaos
-		    #define PICKOFFSET 8
-		    #else
-		    #define PICKOFFSET 0
-		    #endif
 
-		    p.held_pickaxe.left.get_frame(1).render(d,get_x()-PICKOFFSET,get_y());
+
+		    p.held_pickaxe.left.get_frame(1).render(d,get_x(),get_y());
 		  }
 		else
 		  {

@@ -20,6 +20,7 @@
 #include "read_joypad.hpp"
 #include "MemoryEntryMap.hpp"
 
+
 static SDLKey MISC_keymap[256];
 
 
@@ -191,7 +192,7 @@ void SDL_SetPixel( SDL_Surface* pSurface , int x , int y , Uint32 fake_rgb)
   }
 
   //offset by y
-  ptr += ( s->w/8 * y ) + x/8;
+  ptr += ( s->iw/8 * y ) + x/8;
 
   int bit = 7 - (x % 8);
 
@@ -233,7 +234,7 @@ Uint32 SDL_GetPixel( const SDL_Surface* pSurface , int x , int y )
     nb_planes++;
   }
   //offset by y
-  ptr += ( s->w/8 * y ) + x/8;
+  ptr += ( s->iw/8 * y ) + x/8;
 
   int bit = 7 - (x % 8);
 
@@ -295,8 +296,15 @@ extern "C"
 	// size is encoded first
 	BPTR f = (BPTR)handle->hidden.stdio.fp;
 	ULONG fourcc;
+	int i=0;
 	Read(f,&fourcc,4);
-	if (fourcc == 0x524E4301) // RNC
+	int real_width,logical_width,height;
+	int nb_planes;
+	unsigned char *unpacked = nullptr;
+	ULONG unpacked_len;
+	SDL_Amiga_Surface::ImageType image_type;
+	bool compressed = (fourcc == 0x524E4301);
+	if (compressed) // RNC
 	  {
 	    // read the file fully
 	    Seek(f,0,OFFSET_END);
@@ -304,27 +312,63 @@ extern "C"
 	    unsigned char *packed = new unsigned char[size];
 	    Seek(f,0,OFFSET_BEGINNING);
 	    Read(f,packed,size);
-	    ULONG unpacked_len = rnc_ulen (packed);
-	    unsigned char *unpacked = new unsigned char[unpacked_len];
+	    unpacked_len = rnc_ulen (packed);
+	    unpacked = new unsigned char[unpacked_len];
 	    rnc_unpack (packed, unpacked);
 
 	    delete [] packed;
-	    int i=0;
+
+
 	    unsigned char w1 = unpacked[i++];
 	    unsigned char w2 = unpacked[i++];
+	    real_width = w1*256 + w2;
+	    w1 = unpacked[i++];
+	    w2 = unpacked[i++];
+	    logical_width = w1*256 + w2;(void)logical_width;
 	    unsigned char h1 = unpacked[i++];
 	    unsigned char h2 = unpacked[i++];
+	    height = h1*256 + h2;
 
-	    int nb_planes = unpacked[i++];
+	    nb_planes = unpacked[i++];
 
-	    SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)unpacked[i++];
+	    image_type = (SDL_Amiga_Surface::ImageType)unpacked[i++];
 
-	    int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
 
-	    surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,w1*256 + w2,h1*256 + h2,nb_planes,0,0,0,0);
+	  }
+	else
+	  {
+	    Seek(f,0,OFFSET_BEGINNING);
+	    unsigned char w1 = GetChar(f);
+	    unsigned char w2 = GetChar(f);
+	    real_width = w1*256 + w2;
+	    w1 = GetChar(f);
+	    w2 = GetChar(f);
+	    logical_width = w1*256 + w2;
+	    unsigned char h1 = GetChar(f);
+	    unsigned char h2 = GetChar(f);
+	    height = h1*256 + h2;
 
-	    // sprite or planes (0: planes)
-	    surface->image_type = image_type;
+	    nb_planes = GetChar(f);
+
+	    image_type = (SDL_Amiga_Surface::ImageType)GetChar(f);
+
+	  }
+
+	unsigned int flags = 0;
+
+	if (image_type == SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB)
+	  {
+	    flags = SDL_SRCALPHA;
+	  }
+
+
+	surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,real_width,height,nb_planes,0,0,0,0);
+
+
+	surface->image_type = image_type;
+
+	if (compressed)
+	  {
 	    nb_read = unpacked_len - i;
 	    memcpy(surface->pixels,unpacked+i,nb_read);
 
@@ -332,27 +376,22 @@ extern "C"
 	  }
 	else
 	  {
-	    unsigned char w1 = GetChar(f);
-	    unsigned char w2 = GetChar(f);
-	    unsigned char h1 = GetChar(f);
-	    unsigned char h2 = GetChar(f);
-
-	    int nb_planes = GetChar(f);
-
-	    SDL_Amiga_Surface::ImageType image_type = (SDL_Amiga_Surface::ImageType)GetChar(f);
-
-	    int flags = image_type==SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB ? SDL_SRCALPHA : 0;
-
-	    surface = (SDL_Amiga_Surface *)SDL_CreateRGBSurface(flags,w1*256 + w2,h1*256 + h2,nb_planes,0,0,0,0);
 
 	    // sprite or planes (0: planes)
-	    surface->image_type = image_type;
-	    nb_read = Read(f,surface->pixels,surface->buffer_size);
 
+	    nb_read = Read(f,surface->pixels,surface->buffer_size);
 	  }
+
+
 
 	Close(f);
 
+	// correct actual width for boundary checking
+
+	surface->w = logical_width;  //-= 16;
+
+
+	surface->dw = surface->iw - surface->w;
 
 	if (nb_read != surface->buffer_size)
 	  {
@@ -360,8 +399,9 @@ extern "C"
 	    printf("%d != %d\n",int(nb_read), int(surface->buffer_size));
 	    assert(false);
 	  }
-
       }
+
+
 
     LOGGED_DELETE(handle);
     return surface;
@@ -376,24 +416,27 @@ extern "C"
    */
 
   int SDLCALL SDL_UpperBlit
-    (SDL_Surface *source, SDL_Rect *src_rect,
-    SDL_Surface *destination, SDL_Rect *dst_rect)
+    (SDL_Surface *src, SDL_Rect *src_rect,
+    SDL_Surface *dest, SDL_Rect *dst_rect)
   {
 
-    SDL_Amiga_Surface *amiga_source = (SDL_Amiga_Surface *)(source);
-    SDL_Amiga_Surface *amiga_destination = (SDL_Amiga_Surface *)(destination);
+    SDL_Amiga_Surface *amiga_source = (SDL_Amiga_Surface *)(src);
+    SDL_Amiga_Surface *amiga_destination = (SDL_Amiga_Surface *)(dest);
     SDL_Rect src_clip;
     if (src_rect == nullptr)
       {
 	// no source rect: clip bounds are source bounds
 	src_clip.x = 0;
 	src_clip.y = 0;
-	src_clip.w = source->w;
-	src_clip.h = source->h;
+	src_clip.w = amiga_source->iw;
+	src_clip.h = amiga_source->h;
       }
     else
       {
+
 	src_clip = *src_rect;
+
+	src_clip.w += amiga_source->dw;
       }
 
 
@@ -424,10 +467,10 @@ extern "C"
 	src_clip.w += dst_clip.x;  // reduce source width
 	dst_clip.x = 0;  // dest at 0 instead
       }
-    else if (dst_clip.x+src_clip.w > destination->w)
+    else if (dst_clip.x+src_clip.w > amiga_destination->iw)
       {
 	// remove right part
-	src_clip.w = destination->w - dst_clip.x;
+	src_clip.w = amiga_destination->iw - dst_clip.x;
       }
 
     if (dst_clip.y < 0)
@@ -437,15 +480,15 @@ extern "C"
 	src_clip.h += dst_clip.y;
 	dst_clip.y = 0;
       }
-    else if (dst_clip.y+src_clip.h > destination->h)
+    else if (dst_clip.y+src_clip.h > amiga_destination->h)
       {
 	// remove right part
-	src_clip.h = destination->h - dst_clip.y;
+	src_clip.h = amiga_destination->h - dst_clip.y;
       }
 
 
 
-    if (source->w < 16 or src_clip.w <16)
+    if (amiga_source->iw < 16 or src_clip.w <16)
       {
 	// not using the blitter. Slow but not a problem if those objects aren't written
 	// frequently
@@ -456,9 +499,9 @@ extern "C"
 
 	if ((dst_clip.x & 0x7) == 0 and src_clip.w == 8 and (src_clip.x & 0x7) == 0 and not amiga_source->mask)
 	  {
-	    int snb_cols = amiga_source->w>>3;
+	    int snb_cols = amiga_source->iw>>3;
 	    UBYTE *srcptr = (UBYTE *)amiga_source->pixels + (src_clip.x>>3) + src_clip.y*(snb_cols);
-	    int dnb_cols = amiga_destination->w>>3;
+	    int dnb_cols = amiga_destination->iw>>3;
 	    UBYTE *dstptr = (UBYTE*)amiga_destination->pixels + (dst_clip.x>>3) + dst_clip.y*(dnb_cols);
 
 	    for (int p=0;p < NB_PLANES; p++)
@@ -483,7 +526,7 @@ extern "C"
 	      {
 		for (int x=0; x < src_clip.w; x++)
 		  {
-		    SDL_SetPixel(destination,x+dst_clip.x,y+dst_clip.y,SDL_GetPixel(source,x+src_clip.x,y+src_clip.y));
+		    SDL_SetPixel(amiga_destination,x+dst_clip.x,y+dst_clip.y,SDL_GetPixel(src,x+src_clip.x,y+src_clip.y));
 		  }
 	      }
 	  }
@@ -491,20 +534,20 @@ extern "C"
     else
       {
 
-	if ((src_clip.y >= source->h) or (src_clip.x >= source->w))
+	if ((src_clip.y >= src->h) or (src_clip.x >= amiga_source->iw))
 	  {
 	    // x/y clip start too high: don't draw
 	    return 0;
 	  }
 	// safety: limit source width if too wide / image width
-	if (src_clip.x + src_clip.w > source->w)
+	if (src_clip.x + src_clip.w > src->w)
 	  {
-	    src_clip.w = source->w - src_clip.x;
+	    src_clip.w = amiga_source->iw - src_clip.x;
 	  }
 	// safety: limit source height if too wide / image height
-	if (src_clip.y + src_clip.h > source->h)
+	if (src_clip.y + src_clip.h > src->h)
 	  {
-	    src_clip.h = source->h - src_clip.y;
+	    src_clip.h = amiga_source->h - src_clip.y;
 	  }
 	if ((src_clip.w <= 0) or (src_clip.h <= 0))
 	  {
@@ -517,6 +560,7 @@ extern "C"
 	src_clip.w &= 0xFF0;  // temp align width on 16 bits
 
 	bool cookie_cut_mode = (amiga_source->image_type == SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB);
+
 	if (cookie_cut_mode and amiga_destination->image_type == SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB)
 	  {
 	    // cancel cookie cut more, copy planes and mask as is
@@ -528,7 +572,7 @@ extern "C"
 	UBYTE *maskptr = amiga_source->mask;  // can be null
 	if (src_clip.y)
 	  {
-	    int srcoffset =  src_clip.y * ((amiga_source->w)>>3);
+	    int srcoffset =  src_clip.y * ((amiga_source->iw)>>3);
 	    srcptr += srcoffset;
 	    if (cookie_cut_mode)
 	      {
@@ -536,7 +580,7 @@ extern "C"
 	      }
 	  }
 
-	UBYTE *dstptr = (UBYTE*)amiga_destination->pixels + (dst_clip.x>>3) + dst_clip.y*(amiga_destination->w>>3);
+	UBYTE *dstptr = (UBYTE*)amiga_destination->pixels + (dst_clip.x>>3) + dst_clip.y*(amiga_destination->iw>>3);
 
 	UWORD shift_value = dst_clip.x;
 	UWORD srcxclip_rem = src_clip.x & 0xF;
@@ -590,8 +634,8 @@ extern "C"
 
 	  }
 
-	UWORD source_modulo = (amiga_source->w-src_clip.w)>>3;
-	UWORD dest_modulo = (amiga_destination->w-src_clip.w)>>3;
+	UWORD source_modulo = (amiga_source->iw-src_clip.w)>>3;
+	UWORD dest_modulo = (amiga_destination->iw-src_clip.w)>>3;
 	//move.l #$ffffffff,bltafwm(a5)	;no masking of first/last word
 	custom.bltamod = source_modulo;
 	//move.w #0,bltamod(a5)		;A modulo=bytes to skip between lines
@@ -650,15 +694,15 @@ extern "C"
   {
     SDL_Amiga_Surface *surface = new SDL_Amiga_Surface();
 
-    surface->w = width;
+    surface->iw = width;
     surface->h = height;
-    surface->w = width;  // actual image width
+    surface->w = width;  // will need correction possibly
     surface->nb_planes = NB_PLANES;
     bool has_mask = (flags & SDL_SRCALPHA);
 
 
 
-    surface->plane_size = (surface->w*surface->h)/8;
+    surface->plane_size = (surface->iw*surface->h)/8;
     surface->buffer_size = surface->plane_size * surface->nb_planes;
 
     if (has_mask)
@@ -667,6 +711,7 @@ extern "C"
 	surface->buffer_size += surface->plane_size;
 	// note the extra plane
 	surface->image_type = SDL_Amiga_Surface::SHIFTABLE_TRANSPARENT_BOB;
+
       }
 
     surface->pixels = AllocMem(surface->buffer_size,MEMF_CHIP);
@@ -861,7 +906,7 @@ extern "C"
     //int dnb_cols = amiga_destination->w >> 3;
     // now that the destination x,y,w,h have been corrected and can be trusted, start the operation
     UBYTE *dstptr = (UBYTE*)amiga_destination->pixels;// + (dst_clip.x>>3) + dst_clip.y*(dnb_cols);
-    int nb_cols = amiga_destination->w >> 3;
+    int nb_cols = amiga_destination->iw >> 3;
 
     OwnBlitter();
     custom.dmacon = 0x8040;   // dirty enable blit
@@ -920,7 +965,8 @@ extern "C"
     (void)bpp;
 
     SDL_Amiga_Surface *screen = new SDL_Amiga_Surface();
-    screen->w = width;
+    screen->iw = width;
+    screen->w = width; //
     screen->h = height;
     screen->nb_planes = NB_PLANES;
 
@@ -983,7 +1029,7 @@ extern "C"
 
 	custom.dmacon = 0x83C0;
 
-	//Permit();
+	Permit();
       }
     first_copperlist_apply = false;
   }
@@ -995,11 +1041,6 @@ extern "C"
 
     // set other copperlist
 
-    /*while (true)
-      {
-	int x = custom.vhposr;
-	if (x>0xFF00) break;
-      }*/
     WaitTOF();
 
     apply_copperlist(copperlist[copper_index]);
@@ -1329,7 +1370,7 @@ static UWORD *make_copperlist(const UWORD rgb[], int nb_colors, PLANEPTR *planes
 void open_screen()
 {
 
-  static const UWORD palette[] = {0x0,0x3de,0xf,0xfa0,0xfef,0xff0,0xb60,0xd90,0xf13,0xf0f,0x9ff,0xfff,0x0,0x0,0x0,0x0};
+  static const UWORD palette[] = {0x0,0x4bf,0xf,0x4ff,0xfb0,0xfff,0xf90,0xff0,0xb60,0xd90,0xf24,0x4bb,0xf00,0xdf,0x9ff,0x0};
 
   IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library",37);
   if (IntuitionBase == NULL)

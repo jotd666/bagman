@@ -119,6 +119,8 @@ public:
 
   const Elevator *get_elevator(int current_screen) const;
   Elevator *get_elevator(int current_screen);
+
+  void game_over();
 private:
   void render_score_and_bonus_original();
   void render_score_and_bonus_right();
@@ -150,6 +152,7 @@ private:
   void update_characters(int elapsed_time);
   void update_pickaxes();
   void level_end();
+
 
   void create_objects(const int *data, int current_screen);
   void insert_objects(const int *data, int current_screen);

@@ -57,11 +57,25 @@ void ImageFrame::set_palette_to(Drawable &target)
 void ImageFrame::rotate_90(bool positive)
 {
   ENTRYPOINT(rotate_90);
-  SDL_Surface *new_buffer = ImageUtil::create_image(get_h(),get_w());
+  SDL_Surface *new_buffer = ImageUtil::create_image_like(this->data());
   ImageUtil::rotate_90(m_buffer,new_buffer,positive);
   destroy();
   m_buffer = new_buffer;
   EXITPOINT;
+}
+
+void ImageFrame::create_like(const ImageFrame &model)
+{
+  destroy();
+
+  m_buffer = ImageUtil::create_image_like(model.data());
+  if (m_buffer == 0)
+    {
+      abort_run("Cannot create image w=%d, h=%d: %s",model.get_w(),model.get_h(),SDL_GetError());
+    }
+  m_alpha = model.m_alpha;
+
+
 }
 
 ImageFrame ImageFrame::get_rotated_90(bool positive) const
@@ -117,6 +131,9 @@ ImageFrame::~ImageFrame()
   destroy();
 }
 
+
+// this isn't compatible with amiga blitting operations
+// but can be used to create small images like fonts
 void ImageFrame::create(int w, int h, bool alpha)
 {
   ENTRYPOINT(create);
@@ -138,6 +155,9 @@ void ImageFrame::create(int w, int h, bool alpha)
   m_alpha = alpha;
   EXITPOINT;
 }
+
+
+
 void ImageFrame::set_alpha(int alpha)
 {
   my_assert(m_buffer != 0);

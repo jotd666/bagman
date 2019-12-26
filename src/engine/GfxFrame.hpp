@@ -58,15 +58,24 @@ public:
     return m_image;
   }
 
-  void render(Drawable &screen, int x, int y) const
-  {
-    return m_image.render(screen,x,y);
-  }
+  void render(Drawable &screen, int x, int y) const;
 
   inline const Properties &get_properties() const
   {
     return m_properties;
   }
+
+  // get logical bounds
+  SDLRectangle get_bounds(int x, int y) const
+  {
+    int w = m_image.get_w();
+    #ifdef __amigaos   // bob format
+    w -= 16;
+    #endif
+    return SDLRectangle(x,y,w,m_image.get_h());
+  }
+
+
 private:
   ImageFrame m_image;
   int m_transparent_color;

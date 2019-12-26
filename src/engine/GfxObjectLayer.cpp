@@ -46,6 +46,11 @@ GfxObject *GfxObjectLayer::get_item_intersecting(const Locatable *l)
   GfxObject *rval = 0;
   List::iterator it;
 
+  auto &lbounds = l->get_bounds();
+
+
+  int min_x_distance = INT_MAX;
+
   FOREACH (it,m_object_list)
   {
     GfxObject *o = (*it);
@@ -54,15 +59,20 @@ GfxObject *GfxObjectLayer::get_item_intersecting(const Locatable *l)
     // and pickaxe, it seems that bounds include the 16+ width added
     // (why not for characters???) anyway, this kludge allows to reduce width
     // of the objects, but not of the characters
-    #ifdef __amigaos
-    auto b = o->get_bounds();
-    b.w -= 16;
-    #else
+
     auto &b = o->get_bounds();
-    #endif
-    if (b.intersects(l->get_bounds()))
+
+    if (b.intersects(lbounds))
       {
-	rval = o;
+	// approx distance
+	int x_distance = std::abs(b.x+b.w/2 - lbounds.x+lbounds.w/2);
+	if (x_distance < min_x_distance)
+	  {
+	    // take smallest distance
+	    min_x_distance = x_distance;
+	    rval = o;
+	  }
+
       }
   }
   return rval;
@@ -153,12 +163,7 @@ void GfxObjectLayer::render(Drawable &screen) const
     const GfxObject &go = *(*it);
 
     go.render(screen);
-    #ifdef DEBUG_BOUNDS
-    auto b=go.get_bounds();
-    //b.w -= 16;
 
-    screen.fill_rect(&b,4);
-        #endif
 
   }
 }

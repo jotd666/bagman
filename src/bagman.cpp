@@ -408,18 +408,7 @@ public:
 
       while(true)
 	{
-	  //WaitTOF();
-
-
-	  /*  while(old_ticks == SDL_GetTicks());
-	      ULONG ticks = SDL_GetTicks();
-	      ULONG delta = ticks-old_ticks;
-	      if (delta>100)
-	      {
-		// just in case...
-		delta=100;
-	      }
-	      old_ticks = ticks;*/
+	  meta_keys();
 	  video_update(20);
 
 
@@ -512,6 +501,9 @@ public:
     SDL_Event evt;
     if (SDL_PollEvent(&evt))
       {
+	auto *level = dynamic_cast<MPLevel *>(m_context);
+
+
 	switch (evt.type)
 	  {
 	    case SDL_QUIT:
@@ -529,15 +521,27 @@ public:
 		exit = ESC in the menu
 		  shutdown();
 		}*/
+	      else if (evt.key.keysym.sym == SDLK_ESCAPE)
+		{
+		  if (level != nullptr)
+		    {
+		      level->game_over();
+		    }
+
+		}
 	      else if (evt.key.keysym.sym == SDLK_p)
 		{
-		  // pause
-		  while (true)
+		  // pause only works while during the game
+		  if (level != nullptr)
 		    {
-		      SDL_WaitEvent(&evt);
-		      if ((evt.type==SDL_KEYDOWN) && (evt.key.keysym.sym == SDLK_p))
+		      // pause
+		      while (true)
 			{
-			  break;
+			  SDL_WaitEvent(&evt);
+			  if ((evt.type==SDL_KEYDOWN) and (evt.key.keysym.sym == SDLK_p))
+			    {
+			      break;
+			    }
 			}
 		    }
 		}

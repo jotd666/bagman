@@ -19,6 +19,20 @@ GfxFrame::GfxFrame()
 	set_h(0);
 	set_xy(0,0);*/
 }
+// only works for level 1 because of absolute x coords
+//#define DEBUG_BOUNDS
+void GfxFrame::render(Drawable &screen, int x, int y) const
+{
+      #ifdef DEBUG_BOUNDS
+  SDLRectangle b = get_bounds(x,y);
+  //b.w -= 16;
+
+  screen.fill_rect(&b,5);
+        #endif
+  return m_image.render(screen,x,y);
+}
+
+
 void GfxFrame::init(const MyString &image_path, int transparent_color, bool rotate_90)
 {
   m_image.load(image_path,SCALE_SIZE*100);
@@ -44,7 +58,7 @@ void GfxFrame::init(const GfxFrame &symmetric, SymmetryType st)
   m_transparent_color = symmetric.m_transparent_color;
 
 
-  m_image.create(get_w(),get_h(),symmetric.m_image.get_alpha());
+  m_image.create_like(symmetric.m_image);
   m_image.set_transparency(m_transparent_color);
 
 
