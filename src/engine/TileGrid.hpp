@@ -1,5 +1,4 @@
-#ifndef TILEGRID_H_INCLUDED
-#define TILEGRID_H_INCLUDED
+#pragma once
 
 #include "Abortable.hpp"
 #include "GfxPalette.hpp"
@@ -59,7 +58,5 @@ private:
   ControlMatrix m_matrix;
   const char *forward_to_linefeed(const char *contents);
 
-  int m_wall_width = 0;
   DEF_CLASS_COPY(TileGrid);
 };
-#endif // TILEGRID_H_INCLUDED

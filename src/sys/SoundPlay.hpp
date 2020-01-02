@@ -36,7 +36,7 @@ public:
   SoundPlay(int master_sample_rate);
   bool is_music_playing() const;
 
-  void play_music(const MyString &filepath);
+  void play_music(const MyString &filepath, int track_position=0);
   void stop_music();
 
   class SampleNode
@@ -59,7 +59,8 @@ public:
   };
 
   void close();
-  SampleNode *load(const MyString &filename, int key, bool loop = false);
+  // priority (when needed from 1 to 64, 64 being the highest)
+  SampleNode *load(const MyString &filename, int key, bool loop = false, int priority = 1);
   int play(int key);
   void stop(int i);
   void unload(int key);
@@ -102,6 +103,11 @@ private:
   #else
   #endif
     #endif
+  #ifdef __amigaos
+  MyString m_last_module_loaded;
+  UBYTE *m_current_module = nullptr;
+  int m_current_module_size = 0;
+  #endif
   int m_master_sample_rate;
 
 };

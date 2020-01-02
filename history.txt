@@ -1,3 +1,17 @@
+V1.3 (2020):
+
+- All: higher screen 1-2 wagon initial direction changed to left so it matches
+  the original game (coordinates were okay but direction was wrong)
+- All: fall with bag going left: bag frame was wrong
+- All: takes closest object instead of first in list
+- All: prevented to leave pick where the barrow is
+- All: prevented to leave barrow where a pick or a bag is
+- All: repositionning of barrow if dying while holding the barrow over a ladder
+  or outside screen (like the original game does)
+- All: some resource files are packed (on amiga, most of them)
+- All: source simplified to remove useless packages
+- Amiga: complete rework to run on unexpanded amigas (2MB RAM required, OS2.0+)
+
 V1.2 (23.08.2015):
 
 - All: added "trainer" difficulty level: more time, less points, same bag layout when finishing the level

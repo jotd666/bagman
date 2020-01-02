@@ -174,15 +174,12 @@ public:
   silent(false), show_all_screens(false), rotate_90(false), direct_game(false),
   invincible(false)
   {
-      #ifdef __amigaos__
-    full_screen = true;
-    joystick = true;
-    #endif
+
 
     try
     {
 
-#ifndef _NDS
+#if !(defined _NDS) && (!defined __amigaos)
       int cargidx = 1;
 
       while (cargidx < argc)
@@ -228,13 +225,20 @@ public:
 
 
 #else
-      // NDS mode
-      full_screen = true;
-      joystick = true;
       silent = false;
       show_all_screens = false;
+      full_screen = true;
+#ifdef __amigaos__
+
+      //joystick = true;
+    #else
+      // NDS mode
+
+      joystick = true;
       rotate_90 = true;
       invincible = false;
+      #endif
+
 #endif
 
       int sw = SCREEN_WIDTH;
@@ -256,7 +260,7 @@ public:
 
       if (!full_screen)
 	{
-	  SDL_WM_SetCaption("Bagman Remake v1.3 by JOTD in 2015-2019","bagman");
+	  SDL_WM_SetCaption("Bagman Remake v1.3 by JOTD in 2015-2020","bagman");
 	}
 
       debug("init video complete");
@@ -288,6 +292,7 @@ public:
       Fonts darker_font,dark_font,light_font;
 
       img.render(sc,0,0);
+
       darker_font.load("fonts_darker_blue");
       dark_font.load("fonts_dark_blue");
       light_font.load("fonts_light_blue");
@@ -394,7 +399,6 @@ public:
 	  LOGGED_NEW(m_context,MenuScreen(&domain));
 	}
 
-      debug("initializing context");
 
       m_context->init(screen);
    #ifdef __amigaos__
@@ -406,13 +410,59 @@ public:
       //  timer_init();
 
 
-      while(true)
-	{
-	  meta_keys();
-	  video_update(20);
+      try
+      {
+	while(true)
+	  {
+	    meta_keys();
+	    video_update(20);
 
 
-	}
+	  }
+      }
+      catch (const std::exception &e)
+      {
+	// note: that doesn't work
+	Drawable sc;
+	Fonts darker_font;
+	sc.init(screen);
+	darker_font.load("fonts_darker_blue");
+
+	darker_font.write(sc,0,0,"FATAL ERROR");
+	int len = strlen(e.what());
+	const char *w = e.what();
+	char s[2] = {0};
+	int xpos = 0;
+	int ypos = 10;
+	for (int i=0;i<len;i++)
+	  {
+	    char c = *(w++);
+	    if (islower(c))
+	      {
+		c = toupper(c);
+	      }
+	    else if (!isalpha(c))
+	      {
+		c = ' ';
+	      }
+	    s[0] = c;
+	    darker_font.write(sc,xpos,ypos,s);
+	    xpos += 8;
+	    if (xpos > 300)
+	      {
+		xpos = 0;
+		ypos += 10;
+	      }
+
+	  }
+
+
+
+	SDL_Flip(screen);
+	strcpy((char*)0x100,w);  // last chance...
+	for(;;);
+      }
+
 
       #endif
       // on nintendo DS, as interrupt system doesn't work, we use a controlled timed loop

@@ -64,6 +64,11 @@ void Character::level_init(const Locatable &start_location)
 
 }
 
+void Character::stop_music()
+{
+  m_level->get_sound_set().stop_music();
+}
+
 int Character::play_sound(SoundSet::SoundId sid)
 {
   return m_level->get_sound_set().play(sid);

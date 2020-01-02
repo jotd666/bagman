@@ -1097,6 +1097,8 @@ extern "C"
 
     Delay(ms<20 ? 1 : ms/20);
   }
+
+  #ifdef SYSTEM_FRIENDLY_EVENTS
   static int decode_and_reply_intuition_message(SDL_Event *event,struct Message *msg)
   {
     struct IntuiMessage * imsg = (struct IntuiMessage *)msg;
@@ -1135,6 +1137,7 @@ extern "C"
     // event always processed!
     return 1;
   }
+
   int SDLCALL SDL_PollEvent(SDL_Event *event)
   {
     struct Window *window = get_window();
@@ -1144,6 +1147,86 @@ extern "C"
 	return (decode_and_reply_intuition_message(event,msg));
       }
     return 0;
+  }
+  #else
+
+  int SDLCALL SDL_WaitEvent(SDL_Event *event)
+  {
+    while(1)
+      {
+	WaitTOF();
+	int rc = SDL_PollEvent(event);
+	if (rc)
+	  {
+	    break;
+	  }
+
+
+      }
+    // event always processed!
+    return 1;
+  }
+
+  static bool p_pressed = false;
+  static bool esc_pressed = false;
+
+  int SDLCALL SDL_PollEvent(SDL_Event *event)
+  {
+    // this sucks, it's only designed for a few key presses & joypad
+    UBYTE *state = SDL_GetKeyState(nullptr);
+    if (not p_pressed and state[SDLK_p])
+      {
+	// p pressed
+	p_pressed = true;
+	event->key.keysym.sym = SDLK_p;
+	event->type = SDL_KEYDOWN;
+	return 1;
+
+      }
+    else if (p_pressed and not state[SDLK_p])
+      {
+	// p released
+	p_pressed = false;
+	event->key.keysym.sym = SDLK_p;
+	event->type = SDL_KEYUP;
+	return 1;
+      }
+
+    else if (not esc_pressed and state[SDLK_ESCAPE])
+      {
+	// p pressed
+	esc_pressed = true;
+	event->key.keysym.sym = SDLK_ESCAPE;
+	event->type = SDL_KEYDOWN;
+	return 1;
+
+      }
+    else if (esc_pressed and not state[SDLK_ESCAPE])
+      {
+	// p released
+	esc_pressed = false;
+	event->key.keysym.sym = SDLK_ESCAPE;
+	event->type = SDL_KEYUP;
+	return 1;
+      }
+    return 0;
+  }
+  #endif
+  void SDL_PumpEvents()
+  {
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+      {
+	if (event.type == SDL_KEYDOWN)
+	  {
+	    key_status[event.key.keysym.sym]=1;
+	  }
+	else if (event.type == SDL_KEYUP)
+	  {
+	    key_status[event.key.keysym.sym]=0;
+	  }
+      }
+
   }
   Uint8 * SDLCALL SDL_GetKeyState(int *numkeys)
   {
@@ -1155,20 +1238,23 @@ extern "C"
     //static ULONG previous_key_pressed = 0;
 
     ULONG joy_state = read_joystick(1);
-    /*
-       ULONG key_pressed = read_keypress();
-       if (key_pressed != previous_key_pressed)
-       {
+
+    ULONG key_pressed = read_keypress();
+
+    key_status[SDLK_e] = key_pressed == 0x12;
+    //key_status[SDLK_t] = key_pressed == 0x14;
+    key_status[SDLK_ESCAPE] = key_pressed == 0x45 or
+      ((joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY)) == (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
+    if (not key_status[SDLK_ESCAPE])
+      {
 	key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY) or (key_pressed == 0x19);
-	key_status[SDLK_ESCAPE] = key_pressed == 0x45 or (joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
+      }
+    else
+      {
+	key_status[SDLK_p] = 0;
+      }
 
-       }
-       else
-       {
-	key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY);
-	key_status[SDLK_ESCAPE] = bool(joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
 
-       }*/
 
     int firestatus = bool(joy_state & JPF_BTN_RED);
     key_status[SDLK_RCTRL] = firestatus;
@@ -1180,10 +1266,7 @@ extern "C"
     key_status[SDLK_RIGHT] = bool(joy_state & JPF_BTN_RIGHT);
     key_status[SDLK_LEFT] = bool(joy_state & JPF_BTN_LEFT);
 
-    // key_status[SDLK_p] = (joy_state & JPF_BTN_PLAY) or (key_pressed == 0x19);
-    //key_status[SDLK_ESCAPE] = bool(joy_state & (JPF_BTN_REVERSE|JPF_BTN_FORWARD|JPF_BTN_PLAY));
 
-    //previous_key_pressed = key_pressed;
     return key_status;
   }
   int SDLCALL SDL_NumJoysticks(void)
@@ -1206,22 +1289,7 @@ extern "C"
 
   static volatile Uint32 ticks=0;
 
-  void SDL_PumpEvents()
-  {
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-      {
-	if (event.type == SDL_KEYDOWN)
-	  {
-	    key_status[event.key.keysym.sym]=1;
-	  }
-	else if (event.type == SDL_KEYUP)
-	  {
-	    key_status[event.key.keysym.sym]=0;
-	  }
-      }
 
-  }
   void SDL_JoystickUpdate()
   {
   }

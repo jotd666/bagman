@@ -26,7 +26,7 @@
 #include "BufferInputStream.hpp"
 //#include "../../GsVersion.H"
 #include "PrmIo.hpp"
-#include "GsMaths.hpp"
+
 #include "GsDefine.hpp"
 #include "GsTime.hpp"
 #include "MyFile.hpp"
@@ -732,7 +732,7 @@ void PrmIo::write_comment_header(const MyString &comment)
   static const MyString current_date = GsTime::get_current_date();
   //static const MyString host_name = GsHost().get_host_name();
 
-  fichier.setf(ios::showpoint);
+ // fichier.setf(ios::showpoint);
 
   if (comment != "")
     {

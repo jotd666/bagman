@@ -3,7 +3,7 @@
 #include "MPLevel.hpp"
 #include "Fonts.hpp"
 #include "SoundSet.hpp"
-#include "GsMaths.hpp"
+
 #include "RandomNumber.hpp"
 #include "Elevator.hpp"
 #include "Guard.hpp"
@@ -221,7 +221,7 @@ HumanCharacter::MoveType Player::handle_left_right(const PlayerControls::Status 
     }
   if (owns(GfxObject::PICK) && (m_direction == LEFT))
     {
-      if (m_grid->get_point_type(get_x()-10,get_y()+4) == TileGrid::PT_BREAKABLE_WALL)
+      if (m_grid->get_point_type(get_x()-10+m_level->get_nb_pick_blows(),get_y()+4) == TileGrid::PT_BREAKABLE_WALL)
 	{
 	  if (m_allow_pick)
 	    {
@@ -475,15 +475,18 @@ void Player::release_held_item()
 
 	    break;
 	  default:  // pickaxe
+
+
 	    align_item(ie);
 	    ie->add_y(1); // makeup -1 sub for slope test, not to be done for pick
 	    m_level->insert_object(ie);
 
 	    break;
 	}
-
     }
+
 }
+
 
 void Player::add_score(int sc)
 {
@@ -597,6 +600,11 @@ void Player::render(Drawable &d) const
 		    {
 		      bx += 4;
 		    }
+		  else if (m_position == STATE_IN_AIR)
+		    {
+		      di = RIGHT;
+		    }
+
 		  const GfxFrame &bf = b.get_frame(2-di);
 		  bf.to_image().render(d,bx,by);
 		  break;
@@ -634,6 +642,30 @@ void Player::render(Drawable &d) const
       HumanCharacter::render(d);
     }
 }
+bool Player::can_barrow_be_released() const
+{
+  int x = get_x();
+  int y_test = get_y()+get_h();
+  if  (m_level->get_pickable_item()==nullptr &&
+       m_grid->is_lateral_way_blocked(x+26,y_test) &&
+       m_grid->is_lateral_way_blocked(x+20,y_test)) // not too strict...
+    {
+      // cannot release barrow near screen limits
+      // (like the original game: reason could lose the barrow)
+
+      int x_release = (x-16) % 224;
+      if (x_release < 224-32)
+	{
+
+	  // release the item (but check before to avoid releasing the barrow
+	  // that the barrow is not just above a ladder or a gap
+	  return true;
+	}
+    }
+  return false;
+}
+
+
 
 void Player::handle_pickups(const PlayerControls::Status &input)
 {
@@ -655,30 +687,21 @@ void Player::handle_pickups(const PlayerControls::Status &input)
 	}
       else
 	{
-	  int y_test = get_y()+get_h();
-	  int x = get_x();
+
 	  switch (m_item_held->get_type())
 	    {
 	      case GfxObject::BARROW:
 		// check floor: cannot release barrow over the elevator
-		if  (m_grid->is_lateral_way_blocked(x+26,y_test) &&
-		     m_grid->is_lateral_way_blocked(x+20,y_test)) // not too strict...
+		// or over a bag or pick
+		if (can_barrow_be_released())
 		  {
-		    // cannot release barrow near screen limits
-		    // (like the original game: reason could lose the barrow)
-
-		    int x_release = (x-16) % 224;
-		    if (x_release < 224-32)
-		      {
-			// release the item (but check before to avoid releasing the barrow
-			// that the barrow is not just above a ladder or a gap
-			release_held_item();
-		      }
+		    release_held_item();
 		  }
 		break;
 
 	      case  GfxObject::PICK:
 		{
+		  int y_test = get_y()+get_h();
 
 		  m_item_held->set_location(*this);
 		  // modify coords so slope test has a chance to work
@@ -686,8 +709,15 @@ void Player::handle_pickups(const PlayerControls::Status &input)
 		  if (!m_item_held->is_on_slope() && m_grid->is_lateral_way_blocked(m_item_held->get_x(),y_test) &&
 		      m_grid->is_lateral_way_blocked(m_item_held->get_x()+8,y_test))
 		    {
-		      release_held_item();
+		      // do not release if barrow either
+		      auto &barrow_bounds = m_barrow->get_bounds();
+		      auto &other_bounds = m_item_held->get_bounds();
 
+		      if (not barrow_bounds.intersects(other_bounds))
+			{
+
+			  release_held_item();
+			}
 		    }
 
 		}
@@ -745,7 +775,7 @@ void Player::handle_weapons()
 		// check if guard is below
 		if ((g->get_state() == HumanCharacter::STATE_CLIMB) && (dy < 2))
 		  {
-		    if (GsMaths::abs(g->get_x() - weapon_bounds.x) < 6)  // x align extra check
+		    if (std::abs(g->get_x() - weapon_bounds.x) < 6)  // x align extra check
 		      {
 			g->fall_from_ladder();
 		      }
@@ -866,12 +896,26 @@ void Player::on_die()
   m_level->empty_wagons();
 
   m_lives--;
+  stop_music();
   play_sound(SoundSet::player_killed);
+  GfxObject *go=nullptr;
   if (owns(GfxObject::BARROW))
     {
-      release_held_item();
+      if (not can_barrow_be_released())
+	{
+	  go = m_item_held;
+	}
     }
+  // release it anyway
+  release_held_item();
+  if (go)
+    {
+      // but reset to valid position if it wasn't
+      go->set_x(112+16 + 224 * get_current_screen());
+    }
+
 }
+
 
 /* update method */
 /***********************************************************/

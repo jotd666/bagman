@@ -2,7 +2,7 @@
 #include "MPLevel.hpp"
 #include "SoundSet.hpp"
 #include "ScaleSize.hpp"
-#include "GsMaths.hpp"
+
 #include "Player.hpp"
 
 static const int WALK_STEP = 1;
@@ -683,7 +683,7 @@ void HumanCharacter::move_character_in_elevator(const Elevator *e, Elevator::Cha
   bool follow_elevator = cc == Elevator::CC_IN;
 
   if (!follow_elevator && cc == Elevator::CC_CROSS &&
-      ((GsMaths::abs(get_x() - e->get_x()) < 6) ||
+      ((std::abs(get_x() - e->get_x()) < 6) ||
        e->get_move_state() != Elevator::STATE_GOING_DOWN))
     {
       // follow elevator if going up and roughly in the elevator

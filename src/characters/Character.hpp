@@ -80,6 +80,7 @@ protected:
 
   int play_sound(SoundSet::SoundId sid);
   int play_random_sound(SoundSet::SoundId sid, int nb_sounds);
+  void stop_music();
 
   void set_direction(Direction d);
 

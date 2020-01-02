@@ -21,6 +21,8 @@
 #include "ImageFrame.hpp"
 #include "MyFile.hpp"
 
+#include "dernc.hpp"
+
 
 static const int X_OFFSET = 0;
 static const int Y_OFFSET = -16;
@@ -36,13 +38,11 @@ static const int WALL_Y = 192;
 
 void TileGrid::break_wall()
 {
-  m_wall_width-=2;
   change_wall(true);
 
 }
 void TileGrid::build_wall()
 {
-  m_wall_width = 12;
   change_wall(false);
 }
 
@@ -50,7 +50,7 @@ inline void TileGrid::change_wall(bool clr)
 {
   for (int j = WALL_Y; j < WALL_Y+16; j++)
     {
-      for (int i = WALL_X; i < WALL_X+(10-m_wall_width); i++)
+      for (int i = WALL_X; i < WALL_X+8; i++)
 	{
 	  m_matrix[j+Y_OFFSET][i+X_OFFSET] = clr ? PT_BACKGROUND : PT_BREAKABLE_WALL;
 	}
@@ -133,7 +133,11 @@ void TileGrid::init()
     {
       // we're using a binary PPM file because with BMP there are palette problems
       // in 8-bit mode: with PPM we don't use SDL and it does not mess the logic image
-      MyString mapfile = DirectoryBase::get_root() / "maps" / "playfield_" + MyString(i+1) + ".ppm";
+      // also compressing the file using Amiga pro-pack so it's super-tiny and can be unpacked on amiga & PC cos
+      // we have the unpacking source code in C available :)
+      // (I could have used zlib but the thing with RNC is that it provides the unpacked size right away, and it's small)
+
+      MyString mapfile = DirectoryBase::get_root() / "maps" / "playfield_" + MyString(i+1) + ".rnc";
       MyFile f(mapfile);
       StreamPosition file_len;
       char *contents = (char *)f.read_all(file_len);
@@ -141,8 +145,17 @@ void TileGrid::init()
 	{
 	  abort_run("cannot load %q",mapfile);
 	}
+      unsigned char *packed = (unsigned char *)contents;
+
+      int unpacked_len = rnc_ulen (packed);
+      contents = new char[unpacked_len];
+      rnc_unpack (packed, (unsigned char *)contents);
+
+      delete [] packed;
+
       if (strncmp(contents,"P6",2) != 0)
 	{
+	  delete [] contents;
 	  abort_run("wrong format for PPM file %q",mapfile);
 	}
       int w = 0;

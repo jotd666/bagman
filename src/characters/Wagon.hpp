@@ -16,25 +16,26 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Character.hpp"
 
 
 class Wagon : public Character
 {
-    public:
-    DEF_GET_STRING_TYPE(Wagon);
-    void init(MPLevel *level,int min_screen_x,int max_screen_x,int min_screen,int max_screen);
-    void level_init(int start_x,int start_y,int start_screen);
-    void render(Drawable &d) const;
-    void update(int elapsed_time);
-    bool may_fall() const;
-    void empty();
-    private:
-    int m_min_screen,m_max_screen,m_min_x,m_max_x;
-    AnimatedSprite m_sprite;
-    int m_move_timer;
+public:
+  DEF_GET_STRING_TYPE(Wagon);
+  void init(MPLevel *level,int min_screen_x,int max_screen_x,int min_screen,int max_screen,Direction d);
+  void level_init(int start_x,int start_y,int start_screen);
+  void render(Drawable &d) const;
+  void update(int elapsed_time);
+  bool may_fall() const;
+  void empty();
+private:
+  int m_min_screen,m_max_screen,m_min_x,m_max_x;
+  AnimatedSprite m_sprite;
+  int m_move_timer;
+  Direction m_start_direction;
 };
 
 

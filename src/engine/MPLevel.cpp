@@ -11,7 +11,7 @@
 #include "Elevator.hpp"
 #include "Guard.hpp"
 #include "MenuScreen.hpp"
-#include "GsMaths.hpp"
+
 #include "RandomNumber.hpp"
 
 // uncomment this to kill all guards and only update player
@@ -326,10 +326,10 @@ void MPLevel::break_wall()
 {
   m_nb_pick_blows++;
 
-  //if (m_nb_pick_blows > 4)
-  {
-    m_grid->break_wall();
-  }
+  if (m_nb_pick_blows > 4)
+    {
+      m_grid->break_wall();
+    }
 }
 
 
@@ -390,9 +390,9 @@ void MPLevel::private_init()
     }
   /* start_screen start_x, start_y, min_x, max_x, min_screen, max_screen */
 
-  m_wagons[0].init(this,0x10+16,0xD0,0,1);
-  m_wagons[1].init(this,60+16,120+16,0,1);
-  m_wagons[2].init(this,184+16,0xC4+16,1,2);
+  m_wagons[0].init(this,0x10+16,0xD0,0,1,RIGHT);
+  m_wagons[1].init(this,60+16,120+16,0,1,LEFT);
+  m_wagons[2].init(this,184+16,0xC4+16,1,2,RIGHT);
 
   m_player->init(this);
   m_sound_set->load_ingame_sounds();
@@ -757,7 +757,7 @@ void MPLevel::store_current_positions()
 
   for (const Guard *c : m_guards)
     {
-      if (!c->is_stand_by() and c->is_in_screen(cs))
+      if (c->is_in_screen(cs))
 	{
 	  store_character_current_position(c,0x30,0x12);
 	}
@@ -776,7 +776,7 @@ void MPLevel::store_current_positions()
     {
       if (c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x20,0x12);
+	  store_character_current_position(c,0x20,0x15);
 	}
 
     }
@@ -890,8 +890,14 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	      m_first_update = false;
 	      if ((current_screen==0 || current_screen==2) and RandomNumber::rand(2)==0)
 		{
+		  #ifdef _WIN32
 		  MyString track_name = DirectoryBase::get_sound_path() / "track" + MyString(current_screen+1)+".mp3";
 		  m_domain->sound_set.play_music(track_name);
+		  #elif __amigaos
+		  MyString track_name = DirectoryBase::get_sound_path() / "bagman_00112.mod";
+		  m_domain->sound_set.play_music(track_name,current_screen == 0 ? 0 : 3);
+		  #endif
+
 		}
 	    }
 	  // dirty shortcut to check if changes from screen 1 to 2 or 2 to 1
@@ -915,24 +921,28 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	      m_fadeout_event.init(0,FADE_TIME);
 	      add_timer_event(m_fadeout_event);
 	    }
-#ifndef NDEBUG
-	  if (m_input.t_pressed)
-	    {
-	      m_bonus_value = 5;
-	    }
-	  if (m_input.e_pressed)
-	    {
-	      level_end();
-	    }
-#endif
+	 #ifdef  NDEBUG
+	  {
+	    if (m_input.t_pressed)
+	      {
+		m_bonus_value = 5;
+	      }
+	    if (m_input.e_pressed)
+	      {
+		level_end();
+	      }
+	  }
+	  #endif
+
 	}
 	break;
       case HumanCharacter::DEAD:
 	{
-	  stop_music();
+	  //stop_music();
 	  m_player->update(elapsed_time);
 	  m_player_dead_time += elapsed_time;
-	  if (m_player_dead_time > 2000)
+	  // increase to 2500 millis so death sound can end playing before music restarts
+	  if (m_player_dead_time > 2500)
 	    {
 	      if (m_player->get_nb_lives() >= 0)
 		{
@@ -1023,7 +1033,7 @@ GameContext *MPLevel::private_update(int elapsed_time)
 
 	break;
       case GAME_OVER:
-
+	stop_music();
 	m_game_over_timer -= elapsed_time;
 	render_all_layers();
 	if ((m_game_over_timer <= 0) && !m_gameover_fadeout)
@@ -1164,7 +1174,7 @@ bool MPLevel::is_wagon_below_player() const
     {
       if (m_wagons[i].collides_player())
 	{
-	  int dx = GsMaths::abs(m_wagons[i].get_x() - m_player->get_x());
+	  int dx = std::abs(m_wagons[i].get_x() - m_player->get_x());
 	  rval = dx < 10;
 	  break;
 	}

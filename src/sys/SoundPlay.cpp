@@ -123,7 +123,7 @@ void SoundPlay::unload(int key)
     }
 }
 
-SoundPlay::SampleNode *SoundPlay::load(const MyString &sound_filename, int key, bool)
+SoundPlay::SampleNode *SoundPlay::load(const MyString &sound_filename, int key, bool, int)
 {
   init();
 
@@ -151,42 +151,52 @@ SoundPlay::SampleNode *SoundPlay::load(const MyString &sound_filename, int key, 
   return 0;
 }
 #else
-#ifdef __amigaos__
+#ifdef __amigaos
 SoundPlay::SoundPlay(int master_sample_rate) : audio_open(false)
 {
 }
-void SoundPlay::play_music(MyString const& )
+void SoundPlay::play_music(const MyString& track_name, int track_position)
 {
-  // ATM no music
-  return;
 
-  MyString filename = "music/bagman_1.mod";
-  MyFile f(filename);
-  auto msize = f.size();
-  UBYTE *module = nullptr;
-
-  if (msize>0)
+  if (track_name != m_last_module_loaded)
     {
-      module = (UBYTE*)AllocMem(msize,MEMF_CHIP);
-      if (module == nullptr)
+
+      if (m_current_module!=nullptr)
 	{
-	  abort_run("Cannot allocate %d bytes for module",msize);
+	  FreeMem(m_current_module,m_current_module_size);
+	  m_current_module = nullptr;
 	}
 
-      f.read_bytes(module,msize);
+      MyFile f(track_name);
+      m_current_module_size = f.size();
+
+
+      if (m_current_module_size>0)
+	{
+	  m_current_module = (UBYTE*)AllocMem(m_current_module_size,MEMF_CHIP);
+	  if (m_current_module == nullptr)
+	    {
+	      abort_run("Cannot allocate %d bytes for module",m_current_module_size);
+	    }
+
+	  f.read_bytes(m_current_module,m_current_module_size);
+
+	  m_last_module_loaded = track_name;
+	}
+      else
+	{
+	  abort_run("Cannot read module file %s",track_name);
+	}
     }
-  else
-    {
-      abort_run("Cannot read module file %s",filename);
-    }
 
+  mt_init(custom_base,m_current_module,nullptr, track_position);
 
+  mt_musicmask(custom_base,0x3);
 
-  mt_init(custom_base,module,nullptr, 0);
-
-  //mt_musicmask(custom_base,0x3);
+  mt_mastervol(custom_base,48); //max is 64
 
   mt_Enable = -1;
+
 
 
 }
@@ -196,7 +206,8 @@ bool SoundPlay::is_music_playing() const
 }
 void SoundPlay::stop_music()
 {
-  mt_Enable = 0;
+  mt_end(custom_base);
+  //mt_Enable = 0;
 }
 
 static APTR GetVBR(void)
@@ -295,7 +306,7 @@ static UWORD hardware_period(int hertz)
   return 100000000L / (hertz*28);
 }
 
-SoundPlay::SampleNode *SoundPlay::load(const MyString &filename, int key, bool)
+SoundPlay::SampleNode *SoundPlay::load(const MyString &filename, int key, bool, int priority)
 {
   init();
 
@@ -321,7 +332,7 @@ SoundPlay::SampleNode *SoundPlay::load(const MyString &filename, int key, bool)
 
   sn.cvt.sfx_vol = 64;
   sn.cvt.sfx_cha = -1;
-  sn.cvt.sfx_pri = 1;
+  sn.cvt.sfx_pri = priority;
   sf.read_bytes(sn.cvt.sfx_ptr,sz);
 
   // first UWORD is the sampling rate with my special JOTD raw format
@@ -366,7 +377,7 @@ bool SoundPlay::is_music_playing() const
 {
   return Mix_PlayingMusic()!=0;
 }
-void SoundPlay::play_music(const MyString &filepath)
+void SoundPlay::play_music(const MyString &filepath, int)
 {
 
 
@@ -401,7 +412,7 @@ void  SoundPlay::stop_music()
     }
 
 }
-SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool loop)
+SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool loop, int)
 {
   SoundPlay::SampleNode *rc = 0;
   ENTRYPOINT(load);

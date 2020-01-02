@@ -16,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Character.hpp"
 #include "MyVector.hpp"
@@ -24,41 +24,42 @@
 class Elevator : public Character
 {
 public:
-    DEF_GET_STRING_TYPE(Elevator);
-    void init(MPLevel *level,const GfxFrameSet *gfs,int min_y,int max_y,
-              const MyVector<int> &stops,bool up_stops,bool down_stops);
-    void level_init(
-        int arcade_x,int start_y,int screen);
+  DEF_GET_STRING_TYPE(Elevator);
+  void init(MPLevel *level,const GfxFrameSet *gfs,int min_y,int max_y,
+	    const MyVector<int> &stops,bool up_stops,bool down_stops);
+  void level_init(
+		  int arcade_x,int start_y,int screen);
 
-    virtual void render(Drawable &d) const;
-    virtual void update(int elapsed_time);
-    virtual bool may_fall() const;
+  virtual void render(Drawable &d) const;
+  virtual void update(int elapsed_time);
+  virtual bool may_fall() const;
 
-    bool is_at_bottom() const;
+  bool is_at_bottom() const;
 
-    enum CharacterContained { CC_OUT, CC_IN, CC_CROSS, CC_KILL };
-    enum MoveState { STATE_GOING_UP=-1, STATE_FLOOR=0, STATE_GOING_DOWN=1 };
+  enum CharacterContained { CC_OUT, CC_IN, CC_CROSS, CC_KILL };
+  enum MoveState { STATE_GOING_UP=-1, STATE_FLOOR=0, STATE_GOING_DOWN=1 };
 
-    CharacterContained get_contained_state(const Character &c) const;
-    MoveState get_move_state() const
-    {
-        return m_move_state;
-    }
-    void copy_move_state_to(Elevator &other) const;
+  CharacterContained get_contained_state(const Character &c) const;
+  MoveState get_move_state() const
+  {
+    return m_move_state;
+  }
+  void copy_move_state_to(Elevator &other) const;
 private:
-    int m_min_y,m_max_y;
-    AnimatedSprite m_sprite;
-    int m_move_timer;
-    int m_floor_timer;
-    MyVector<int> m_stops;
-    bool m_up_stops;
-    bool m_down_stops;
-    MoveState m_previous_move_state,m_move_state;
-    void check_stop(bool middle_stops);
-    void stop();
+  int m_min_y,m_max_y;
+  AnimatedSprite m_sprite;
+  int m_move_timer;
+  int m_floor_timer;
+  MyVector<int> m_stops;
+  bool m_up_stops;
+  bool m_down_stops;
+  MoveState m_previous_move_state,m_move_state;
+  void check_stop(bool middle_stops);
+  void stop();
 
-    const ImageFrame *m_wire;
-    bool m_vertical_wire;
+  const ImageFrame *m_wire;
+  const Player *m_player;
+  bool m_vertical_wire;
 
 };
 

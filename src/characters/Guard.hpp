@@ -75,7 +75,7 @@ private:
 
     void set_speed(bool pos1, bool pos2, bool pos3, bool pos4);
 
-    static void addr2xy(int addr, int &x, int &y);
+    //static void addr2xy(int addr, int &x, int &y);
     static int xy2addr(int x,int y);
 
     int m_update_timer;

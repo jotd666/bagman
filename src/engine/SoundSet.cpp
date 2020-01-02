@@ -21,6 +21,18 @@ static void register_sound_string(SoundSet::SoundId id,const char *s)
 {
   sound_string_table.insert(std::make_pair(id,s));
 }
+static std::map<SoundSet::SoundId, int> sound_priority =
+{
+ {SoundSet::player_killed,20},
+ {SoundSet::timewarn, 10},
+ {SoundSet::reward, 10},
+ {SoundSet::ethopla, 10},
+ {SoundSet::guard_killed, 10},
+ {SoundSet::hohisse,10},
+ {SoundSet::take_bag,10},
+ {SoundSet::pickaxe,5}
+};
+
 
 static void register_sound_strings()
 {
@@ -62,10 +74,10 @@ void SoundSet::stop_music()
 
   m_player.stop_music();
 }
-void SoundSet::play_music(const MyString &track_name)
+void SoundSet::play_music(const MyString &track_name, int track_position)
 {
 
-  m_player.play_music(track_name);
+  m_player.play_music(track_name,track_position);
 }
 
 
@@ -116,6 +128,8 @@ bool SoundSet::is_music_playing() const
 int SoundSet::play(SoundId k)
 {
   int rval = -1;
+
+
   ENTRYPOINT(SoundSet);
   if (!m_silent)
     {
@@ -148,8 +162,13 @@ void SoundSet::load_sound(SoundId k,bool loop)
 
   const  char *sound_name = it->second;
   MyFile sound_filename = DirectoryBase::get_sound_path() / sound_name;
-
-  m_player.load(sound_filename.get_name() + DirectoryBase::get_sound_extension(),k,loop);
+  int priority = 1; // default: low pri
+  auto itp = sound_priority.find(k);
+  if (itp != sound_priority.end())
+    {
+      priority = itp->second;
+    }
+  m_player.load(sound_filename.get_name() + DirectoryBase::get_sound_extension(),k,loop,priority);
 }
 
 #endif

@@ -20,7 +20,7 @@
 #include "GfxPalette.hpp"
 #include "Player.hpp"
 #include "GuardTables.hpp"
-#include "GsMaths.hpp"
+
 #include "RandomNumber.hpp"
 
 
@@ -281,7 +281,7 @@ void Guard::handle_elevator_moves()
 	  {
 	    if (m_waiting_elevator)
 	      {
-		if (GsMaths::abs(e->get_y()-get_y()) <= 2)
+		if (std::abs(e->get_y()-get_y()) <= 2)
 		  {
 		    // enter in the elevator
 		    if (get_direction() == LEFT)
@@ -319,7 +319,7 @@ void Guard::handle_elevator_moves()
 	      get_elevator_exit_yd(ey,d);
 	      set_lateral_direction(d);
 	      // in the elevator: check if must exit
-	      if (GsMaths::abs(get_y()-ey) < 2)
+	      if (std::abs(get_y()-ey) < 2)
 		{
 		  //debug("GUARD EXITS ELEVATOR/QUITS WAITING ey=%d, py=%d",ey,m_player->get_y());
 		  m_waiting_elevator = false;
@@ -365,7 +365,7 @@ void Guard::handle_moves(int elapsed_time)
 	  int dy = y_player-get_y(); // dy positive if guard above player
 
 	  // added dy limit for case guard vs player in wagon
-	  if (GsMaths::abs(dx) < 16 && GsMaths::abs(dy) > 4 && m_grid->is_vertical_clear(x_watch,y_watch,dy))
+	  if (std::abs(dx) < 16 && std::abs(dy) > 4 && m_grid->is_vertical_clear(x_watch,y_watch,dy))
 	    {
 	      m_waiting_elevator = false; // not really useful since not possible
 
@@ -381,7 +381,7 @@ void Guard::handle_moves(int elapsed_time)
 		}
 
 	    }
-	  else if (GsMaths::abs(dy) < 16 && m_grid->is_horizontal_clear(x_watch,y_watch,dx))
+	  else if (std::abs(dy) < 16 && m_grid->is_horizontal_clear(x_watch,y_watch,dx))
 	    {
 	      bool player_has_pick = m_player->owns(GfxObject::PICK);
 	      bool follow_player = true;
@@ -709,16 +709,16 @@ void Guard::update_speed()
 	      after 40000 :	 9 (t t t t)
 	      after 50000 :	 10 (same as 9)
 
-      for medium, hard, hardest, just shift score by 10000 each
-      which gives for the hardest setting:
+       for medium, hard, hardest, just shift score by 10000 each
+       which gives for the hardest setting:
 
-      - hardest:  0->10000: 5 (t t t f)
-      -           10000->20000: 9 (t t t t)
+       - hardest:  0->10000: 5 (t t t f)
+       -           10000->20000: 9 (t t t t)
 		  above: 10 (t t t t)
 
-      speed 9 and 10 are the same (may not have been the same for some
-      early version of the code, but has been quickly hacked and there's
-      no distinction between 9 and 10: same speed as player
+       speed 9 and 10 are the same (may not have been the same for some
+       early version of the code, but has been quickly hacked and there's
+       no distinction between 9 and 10: same speed as player
    */
 
   switch (ps)
@@ -846,6 +846,25 @@ void Guard::render(Drawable &d) const
         f.write(d,x,y,"9");
     }
 }
+
+
+inline void Guard::addr2xy(int addr, int &x, int &y)
+{
+  int screen_offset = 0;
+  // only works for 1st screen
+  int b = addr - 0x4000;
+  while (b>0x400)
+    {
+      screen_offset+=224;
+      b-=0x400;
+    }
+  b -= 0x62;
+
+  y = (b % 0x20) * 8;
+  x = (0xE0 - b / 4) + screen_offset;
+
+}
+
 #endif
 
 void Guard::create_table(const unsigned char *raw_table,AddressDirection &ad)
@@ -968,22 +987,6 @@ inline int Guard::xy2addr(int x,int y)
   return rval;
 }
 
-inline void Guard::addr2xy(int addr, int &x, int &y)
-{
-  int screen_offset = 0;
-  // only works for 1st screen
-  int b = addr - 0x4000;
-  while (b>0x400)
-    {
-      screen_offset+=224;
-      b-=0x400;
-    }
-  b -= 0x62;
-
-  y = (b % 0x20) * 8;
-  x = (0xE0 - b / 4) + screen_offset;
-
-}
 
 
 

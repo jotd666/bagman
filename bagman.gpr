@@ -58,7 +58,7 @@ project bagman is
       end case;
    end builder;
    
-   Base_Switches := ("-Wall","-W","-Werror","-Wno-unused-label","-fmax-errors=50");
+   Base_Switches := ("-Wall","-Wextra","-Werror","-Wno-unused-label","-fmax-errors=50");
    
    for Archive_Indexer use (gcc_prefix & "ranlib");
    
@@ -95,11 +95,13 @@ project bagman is
             when "Debug" =>
                for default_switches("C++") use linker'default_switches("C++") &  ("-Wl,--amiga-debug-hunk","-ldebug");
             when "Release" =>
-              
+               for default_switches("C++") use linker'default_switches("C++") &  ("-s"); -- strip symbols
+             
             end case;
          when "x86" => 
             -- SDL windows
-            for default_switches("C++") use sdl_link_base & ("-static-libstdc++","-static-libgcc","-L"&sdl_home&"lib/x86","-lSDL_mixer","-lSDL","-Wl,-s","-mwindows");
+            -- "-Wl,-s",
+            for default_switches("C++") use sdl_link_base & ("-static-libstdc++","-static-libgcc","-L"&sdl_home&"lib/x86","-lSDL_mixer","-lSDL","-mwindows");
             
          when others =>
       end case;
