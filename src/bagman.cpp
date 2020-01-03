@@ -175,8 +175,9 @@ public:
   invincible(false)
   {
 
-
+ #ifdef USE_EXCEPTIONS
     try
+    #endif
     {
 
 #if !(defined _NDS) && (!defined __amigaos)
@@ -409,8 +410,9 @@ public:
       //  ULONG old_ticks = SDL_GetTicks();
       //  timer_init();
 
-
+ #ifdef USE_EXCEPTIONS
       try
+      #endif
       {
 	while(true)
 	  {
@@ -420,6 +422,7 @@ public:
 
 	  }
       }
+      #ifdef USE_EXCEPTIONS
       catch (const std::exception &e)
       {
 	// note: that doesn't work
@@ -463,6 +466,8 @@ public:
 	for(;;);
       }
 
+
+      #endif
 
       #endif
       // on nintendo DS, as interrupt system doesn't work, we use a controlled timed loop
@@ -536,10 +541,12 @@ public:
       LOGGED_DELETE(domain.player);
       //MemoryEntryMap::instance().dump_allocated();
     }
+     #ifdef USE_EXCEPTIONS
     catch (const Cause &c)
     {
       error(c,false);
     }
+    #endif
     Cross::close();
 
   }

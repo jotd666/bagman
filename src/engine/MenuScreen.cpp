@@ -134,7 +134,7 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   if (m_fadeout_event.is_timeout_reached())
     {
       m_screen.fill_rect(0,0);
-      m_options->save();
+      //m_options->save();
       rval = MPLevel::create(m_domain);
 
     }
