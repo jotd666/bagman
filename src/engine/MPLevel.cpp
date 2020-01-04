@@ -751,14 +751,14 @@ void MPLevel::store_current_positions()
 
   else
     {
-      store_character_current_position(m_player,0x30,0x12);
+      store_character_current_position(m_player,0x30,0x14);
     }
 
   for (const Guard *c : m_guards)
     {
       if (c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x30,0x12);
+	  store_character_current_position(c,0x30,0x14);
 	}
     }
   for (const Wagon *c : m_wagons)
@@ -793,7 +793,7 @@ void MPLevel::store_current_positions()
       // or in first screen at the rightmost ladder...
       if (c->is_moving() and c->is_in_screen(cs))
 	{
-	  store_character_current_position(c,0x20,0x12);
+	  store_character_current_position(c,0x20,0x14);
 	}
 
     }

@@ -1002,7 +1002,7 @@ extern "C"
 
 	// explicitly clear sprite DMA, we're not using sprites
 	// turn off dma
-	custom.dmacon = 0x7FFF;
+	custom.dmacon = 0x8020;
 	for (int i=0;i<8;i++)
 	  {
 	    custom.spr[i].pos = 400; //SPRxCTL
@@ -1304,27 +1304,37 @@ extern "C"
 
   static void vbl_int()
   {
-    custom.color[0] = 0xF00;
+
+    // custom.color[0] = 0xF00;
 
     ticks ++;
 
-    (*vbl_callback)(20, vbl_param);
+    if (vbl_callback != NULL)
+      {
+	(*vbl_callback)(20, vbl_param);
+      }
+
     __asm("clr  d0");   // successfully clears Z so interrupt chain isn't broken
   }
-
-
-  SDL_TimerID SDLCALL SDL_AddTimer(Uint32 interval, SDL_NewTimerCallback callback, void *param)
+  static void init_vbl_int()
   {
-    (void)interval;
+
     interrupt.is_Code = &vbl_int;
     interrupt.is_Data = NULL;
     interrupt.is_Node.ln_Type = NT_INTERRUPT;
     interrupt.is_Node.ln_Pri = 100;
     interrupt.is_Node.ln_Name = (char *)"vbl";
-    vbl_callback = callback;
-    vbl_param = param;
-
     AddIntServer(INTB_VERTB, &interrupt);
+  }
+
+
+  SDL_TimerID SDLCALL SDL_AddTimer(Uint32 interval, SDL_NewTimerCallback callback, void *param)
+  {
+    Disable();
+    vbl_param = param;
+    vbl_callback = callback;
+    Enable();
+
     return (SDL_TimerID)1;
   }
 
@@ -1345,14 +1355,23 @@ extern "C"
   }
 
   void open_screen();
+  static void init_vbl_int();
 
   extern int SDLCALL SDL_Init(Uint32 flags)
   {
-    (void)flags;
+
     amiga_InitKeymap();
 
-    open_screen();
 
+    if (flags & SDL_INIT_VIDEO)
+      {
+	open_screen();
+      }
+
+    if (flags & SDL_INIT_TIMER)
+      {
+	init_vbl_int();
+      }
 
     return 0;
   }

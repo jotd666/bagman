@@ -41,42 +41,45 @@ GameContext *MenuScreen::private_update(int elapsed_time)
 
   RandomNumber::rand(10); // be sure to get a different random at each first game
 
-  m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90);
-  int opts_y = 180;
-  int opts_x = 140;
-  int y_start = 4;
 
+  int opts_y = 192;
+  int y_start = 4;
+  m_screen.set_affine_transformation(SCALE_SIZE,m_domain->rotate_90);
+  int x_start = m_domain->full_screen ? 32 : 0;
+  int opts_x = 140+x_start;
    #ifdef PARTIAL_REFRESH
   if (m_nb_renders > 0) {
     m_nb_renders--;
   #endif
+
     m_screen.fill_rect(0,0);
 
 
-    m_domain->get_palette().va_logo.render(m_screen,72,y_start);
-    m_domain->get_palette().presents.render(m_screen,80,y_start+40);
-    m_domain->get_palette().title.render(m_screen,32,y_start+68);
+    m_domain->get_palette().va_logo.render(m_screen,x_start+72,y_start);
+    m_domain->get_palette().presents.render(m_screen,x_start+80,y_start+40);
+    m_domain->get_palette().title.render(m_screen,x_start+32,y_start+68);
 
     y_start += 104;
 
-    m_domain->dark_font.write(m_screen,18,y_start,   "REMADE BY JOTD 2010-2019");
-    m_domain->dark_font.write(m_screen,12,y_start+14,"ORIGINAL BY J.BRISSE 1982");
+    m_domain->dark_font.write(m_screen,x_start+18,y_start,   "REMADE BY JOTD 2010-2019");
+    m_domain->dark_font.write(m_screen,x_start+12,y_start+14,"ORIGINAL BY J.BRISSE 1982");
 #ifdef __amigaos
-    m_domain->dark_font.write(m_screen,12,y_start+28,"SFX AND MUSIC CODE BY PHX");
-    m_domain->dark_font.write(m_screen,36,y_start+28+14,"MUSIC BY SAIMON69");
+    m_domain->dark_font.write(m_screen,x_start+12,y_start+28,"SFX AND MUSIC CODE BY PHX");
+    m_domain->dark_font.write(m_screen,x_start+36,y_start+28+14,"MUSIC BY SAIMON69");
+    m_domain->darker_font.write(m_screen,x_start,y_start+28+28,"THANKS TO ROSS AND ALL AT EAB");
 #endif
 
     // render options
 
 
-    m_domain->light_font.write(m_screen,32,opts_y,"SKILL");
-    m_domain->light_font.write(m_screen,32,opts_y+16,"EXTRA LIFE");
+    m_domain->light_font.write(m_screen,x_start+32,opts_y,"SKILL");
+    m_domain->light_font.write(m_screen,x_start+32,opts_y+16,"EXTRA LIFE");
 
       #ifdef PARTIAL_REFRESH
 
   }
   // clear barrow / modifiable text
-  SDLRectangle r(12,opts_y-8,16,50);
+  SDLRectangle r(x_start+12,opts_y-8,16,50);
   m_screen.fill_rect(&r,0);
   SDLRectangle r2(opts_x,opts_y,80,32);
   m_screen.fill_rect(&r2,0);
@@ -84,7 +87,7 @@ GameContext *MenuScreen::private_update(int elapsed_time)
   #endif
 
 
-  m_domain->get_palette().barrow.get_first_frame().render(m_screen,12,opts_y-8+m_current_option*16);
+  m_domain->get_palette().barrow.get_first_frame().render(m_screen,x_start+12,opts_y-8+m_current_option*16);
 
   m_domain->darker_font.write(m_screen,opts_x,opts_y,MyString(m_options->get_skill_level_str()).uppercase());
   m_domain->darker_font.write(m_screen,opts_x,opts_y+16,MyString((int)m_options->get_extra_life_score())+" PTS");
@@ -95,12 +98,12 @@ GameContext *MenuScreen::private_update(int elapsed_time)
 
   if (m_flash_timer > 400)
     {
-      m_domain->darker_font.write(m_screen,56-24,opts_y,"PRESS FIRE TO START");
+      m_domain->darker_font.write(m_screen,x_start+56-24,opts_y,"PRESS FIRE TO START");
     }
   else
     {
 
-      m_domain->darker_font.write(m_screen,56-24,opts_y,
+      m_domain->darker_font.write(m_screen,x_start+56-24,opts_y,
     #ifdef _NDS
 				  " L AND R TO QUIT"
     #else
@@ -133,9 +136,16 @@ GameContext *MenuScreen::private_update(int elapsed_time)
     }
   if (m_fadeout_event.is_timeout_reached())
     {
+      #ifdef PARTIAL_REFRESH
+      m_nb_clears--;
+      #endif
+
       m_screen.fill_rect(0,0);
       //m_options->save();
-      rval = MPLevel::create(m_domain);
+      #ifdef PARTIAL_REFRESH
+      if (m_nb_clears==0)
+      #endif
+	rval = MPLevel::create(m_domain);
 
     }
   // start of level

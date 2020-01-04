@@ -46,6 +46,7 @@ private:
   int m_current_option;
   #ifdef PARTIAL_REFRESH
   int m_nb_renders = 2;
+  int m_nb_clears = 2;
   #endif
 };
 

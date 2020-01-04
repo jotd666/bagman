@@ -380,7 +380,8 @@ public:
       debug("DONE draw to screen test");
       for(;;)
 	{
-
+	  light_font.write(sc,10,10,MyString(SDL_GetTicks()));
+	  SDL_Flip(screen);
 	}
       #endif
 
@@ -407,8 +408,10 @@ public:
       // maybe we should keep the timer just to count the ticks
       // and check for VBL interrupt here, so we can adjust update rate automatically
 
-      //  ULONG old_ticks = SDL_GetTicks();
-      //  timer_init();
+
+      m_old_ticks = SDL_GetTicks();
+      ULONG new_ticks;
+      ULONG delta_tick = 20;
 
  #ifdef USE_EXCEPTIONS
       try
@@ -417,8 +420,12 @@ public:
 	while(true)
 	  {
 	    meta_keys();
-	    video_update(20);
-
+	    video_update(delta_tick);
+	    new_ticks = SDL_GetTicks();
+	    // issue: if game runs during several months, SDL_GetTicks() will wrap
+	    // and the result will be a HUGE delta_tick. not sure what will happen then :)
+	    delta_tick = new_ticks - m_old_ticks;
+	    m_old_ticks = new_ticks;
 
 	  }
       }
@@ -597,6 +604,8 @@ public:
 			  SDL_WaitEvent(&evt);
 			  if ((evt.type==SDL_KEYDOWN) and (evt.key.keysym.sym == SDLK_p))
 			    {
+			      // update old ticks so game doesn't go berzerk after resuming pause
+			      m_old_ticks = SDL_GetTicks();
 			      break;
 			    }
 			}
@@ -606,6 +615,7 @@ public:
       }
  	#endif
   }
+  ULONG m_old_ticks;
 
 };
 
