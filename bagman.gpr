@@ -18,7 +18,7 @@ project bagman is
    for main use ("bagman.cpp");
 
    
-   type Build_Type is ("Debug","Release");
+   type Build_Type is ("Debug","Release","Profiling");
    Build : Build_Type := External("Build","Debug");
    
    
@@ -69,6 +69,8 @@ project bagman is
             Base_Switches := Base_Switches & ("-DHAS_SDL_IMAGE");
       end case;
       case Build is
+      when "Profiling" =>
+         for default_switches("C++") use Base_Switches & ("-DUSE_EXCEPTIONS","-O0","-pg","-g");
       when "Debug" =>
          for default_switches("C++") use Base_Switches & ("-DUSE_EXCEPTIONS","-O0","-g");
       when "Release" =>
@@ -93,13 +95,22 @@ project bagman is
                for default_switches("C++") use linker'default_switches("C++") &  ("-Wl,--amiga-debug-hunk","-ldebug");
             when "Release" =>
                for default_switches("C++") use linker'default_switches("C++") &  ("-s"); -- strip symbols
-             
+               when others =>
+                  -- profiling isn't supported
             end case;
          when "x86" => 
             -- SDL windows
             -- "-Wl,-s",
             for default_switches("C++") use sdl_link_base & ("-static-libstdc++","-static-libgcc","-L"&sdl_home&"lib/x86","-lSDL_mixer","-lSDL","-mwindows");
-            
+            case Build is
+            when "Debug" =>
+               for default_switches("C++") use linker'default_switches("C++") &  ("-g"); 
+           
+            when "Release" =>
+               for default_switches("C++") use linker'default_switches("C++") &  ("-s"); -- strip symbols
+               when "Profiling" =>
+                  for default_switches("C++") use linker'default_switches("C++") &  ("-pg");
+            end case;
          when others =>
       end case;
              

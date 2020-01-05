@@ -565,7 +565,7 @@ public:
     SDL_Event evt;
     if (SDL_PollEvent(&evt))
       {
-	auto *level = dynamic_cast<MPLevel *>(m_context);
+
 
 
 	switch (evt.type)
@@ -587,6 +587,7 @@ public:
 		}*/
 	      else if (evt.key.keysym.sym == SDLK_ESCAPE)
 		{
+		  auto *level = dynamic_cast<MPLevel *>(m_context);
 		  if (level != nullptr)
 		    {
 		      level->game_over();
@@ -595,6 +596,7 @@ public:
 		}
 	      else if (evt.key.keysym.sym == SDLK_p)
 		{
+		  auto *level = dynamic_cast<MPLevel *>(m_context);
 		  // pause only works while during the game
 		  if (level != nullptr)
 		    {
@@ -615,7 +617,7 @@ public:
       }
  	#endif
   }
-  ULONG m_old_ticks;
+  unsigned long m_old_ticks;
 
 };
 

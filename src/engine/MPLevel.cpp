@@ -1044,9 +1044,29 @@ GameContext *MPLevel::private_update(int elapsed_time)
 	break;
       default:
 	render_all_layers();
+	// avoid "tunnel effect" if framerate is too low
 	if (!m_fadein_event.is_running())
 	  {
-	    rval = update_running(elapsed_time);
+	    int slice;
+	    while (elapsed_time > 0)
+	      {
+		if (elapsed_time > 20)
+		  {
+		    slice = 20;
+		  }
+		else
+		  {
+		    slice = elapsed_time;
+		  }
+
+		rval = update_running(slice);
+		if (rval != nullptr)
+		  {
+		    break;
+		  }
+		elapsed_time -= slice;
+	      }
+
 	  }
 
 
