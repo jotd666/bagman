@@ -11,7 +11,7 @@
 #define XOPEN_SOURCE_FORCED
 #endif
 
-#if defined Linux
+#if defined __linux__
 #include <features.h>
 #endif
 

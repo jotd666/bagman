@@ -95,6 +95,6 @@ void MemoryEntryMap::dump_allocated() const
 
 
     }
-  fprintf(stderr,"total allocated: %d blocks\n",m_items.size());
+  fprintf(stderr,"total allocated: %zu blocks\n",m_items.size());
 }
 #endif

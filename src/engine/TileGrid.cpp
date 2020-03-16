@@ -141,7 +141,7 @@ void TileGrid::init()
       MyFile f(mapfile);
       StreamPosition file_len;
       char *contents = (char *)f.read_all(file_len);
-      if (file_len == 0)
+      if (file_len <= 0)
 	{
 	  abort_run("cannot load %q",mapfile);
 	}

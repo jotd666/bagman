@@ -351,7 +351,11 @@ void Abortable::abort_run(MSG_ARG_PROTO) const
   throw(Cause
 	(format_message(message,MSG_ARG_LIST),
 	 get_current_entrypoint()));
-  #endif
+    #else
+  // avoid unused warning/error
+  const MyString arr[]{message,MSG_ARG_LIST};
+  (void)arr;
+#endif
 }
 
 // JFF: kind of printf emulation, not complete, but with extra features

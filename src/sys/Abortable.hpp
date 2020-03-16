@@ -3,7 +3,7 @@
 #include "GsDefine.hpp"
 #include "MyMacros.hpp"
 #include "MyString.hpp"
-#ifdef _WIN32
+#if !defined(_NDS) && !defined(__amigaos__)
 #include "FunctionTimer.hpp"
 #endif
 #include "FunctionId.hpp"

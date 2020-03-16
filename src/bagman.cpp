@@ -118,16 +118,21 @@ class MainClass : public Abortable
 
     MainClass *c = (MainClass *)param;
 
+    // shouldn't we be using exceptions for this?
+ #ifdef USE_EXCEPTIONS
     try
+    #endif
     {
       c->video_update(interval);
     }
+ #ifdef USE_EXCEPTIONS
     catch (const Abortable::Cause &cs)
     {
       c->error(cs,false);
       exit(1);
 
     }
+    #endif
     #endif
 
     return interval;

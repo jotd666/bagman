@@ -889,12 +889,12 @@ GameContext *MPLevel::update_running(int elapsed_time)
 	      m_first_update = false;
 	      if ((current_screen==0 || current_screen==2) and RandomNumber::rand(2)==0)
 		{
-		  #ifdef _WIN32
-		  MyString track_name = DirectoryBase::get_sound_path() / "track" + MyString(current_screen+1)+".mp3";
-		  m_domain->sound_set.play_music(track_name);
-		  #elif __amigaos
+		  #ifdef __amigaos
 		  MyString track_name = DirectoryBase::get_sound_path() / "bagman_00112.mod";
 		  m_domain->sound_set.play_music(track_name,current_screen == 0 ? 0 : 3);
+                  #else
+                  MyString track_name = DirectoryBase::get_sound_path() / "track" + MyString(current_screen+1)+".mp3";
+                  m_domain->sound_set.play_music(track_name);
 		  #endif
 
 		}

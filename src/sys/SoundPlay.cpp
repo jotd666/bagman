@@ -579,7 +579,7 @@ SoundPlay::SoundPlay(int master_sample_rate) : audio_open(false),m_master_sample
   sounds.resize(NUM_SOUNDS);
 
 }
-SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool loop)
+SoundPlay::SampleNode *SoundPlay::load(const MyString &filepath, int key, bool loop, int)
 {
   SoundPlay::SampleNode *rc = 0;
 
