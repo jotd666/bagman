@@ -10,9 +10,9 @@
  * Used units *
  *------------*/
 
+#include "SDL/SDL.h"
 #include "MyAssert.hpp"
 
-#include <pthread.h>
 #include <strings.h>
 
 /*-----------------*
@@ -31,7 +31,7 @@
 class ThreadSafe
 {
  public:
-    typedef pthread_t ThreadId;
+    typedef Uint32 ThreadId;
 
     /**
      * critical section start
@@ -39,7 +39,7 @@ class ThreadSafe
 
     void cs_start() const
     {
-	pthread_mutex_lock(&m_creation_mutex);
+	SDL_LockMutex(m_creation_mutex);
     }
 
     /**
@@ -48,14 +48,14 @@ class ThreadSafe
 
     void cs_end() const
     {
-	pthread_mutex_unlock(&m_creation_mutex);
+	SDL_UnlockMutex(m_creation_mutex);
     }
 
     /**
      * me
      */
 
-    inline ThreadId me() const { return pthread_self(); }
+    inline ThreadId me() const { return SDL_ThreadID(); }
 
     /**
      * check if my id
@@ -74,13 +74,14 @@ class ThreadSafe
 
     ~ThreadSafe()
     {
-	pthread_mutex_destroy(&m_creation_mutex);
+	SDL_DestroyMutex(m_creation_mutex);
     }
 
  protected:
     ThreadSafe() : m_size(0)
     {
-	bool mutex_init_failure = pthread_mutex_init(&m_creation_mutex,NULL) != 0;
+        m_creation_mutex = SDL_CreateMutex();
+	bool mutex_init_failure = m_creation_mutex == 0;
 
 	if (mutex_init_failure)
 	{
@@ -99,7 +100,7 @@ class ThreadSafe
     int m_size;
 
  private:
-    mutable pthread_mutex_t m_creation_mutex;
+    mutable SDL_mutex *m_creation_mutex;
 };
 
 
