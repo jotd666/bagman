@@ -3,7 +3,7 @@
 
 #include "Long64.hpp"
 
-#if !defined __GLIBC_HAVE_LONG_LONG || defined _WIN32
+#if defined _WIN32
 // no 64-bit API available or directly supported
 #define open64 open
 #define fopen64 fopen
