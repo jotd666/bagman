@@ -115,7 +115,7 @@ void print_stack_trace(int s)
     "\n***********************************\n",reason);
 
         #ifndef NDEBUG
-  #ifdef _WIN32
+  #if !defined(_NDS) && !defined(__amigaos__)
 
  // fprintf(stderr,"%s\n",Abortable::stack_trace().c_str());
   #endif
@@ -134,8 +134,8 @@ void install_exception_handler()
     #else
     #ifndef __amigaos__
     // civilized
-    signal(SIGSEGV,print_stack_trace);
-  signal(SIGINT,print_stack_trace);
+    //signal(SIGSEGV,print_stack_trace);
+  //signal(SIGINT,print_stack_trace);
   #endif
     #endif
 }

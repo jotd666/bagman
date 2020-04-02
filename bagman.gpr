@@ -25,14 +25,18 @@ project bagman is
    for languages use ("C++");
 
    gcc_prefix := "";
+   sdl_home := external("SDL_HOME","K:/progs/SDL/1.2/");
    
    for source_dirs use ("src","src/characters","src/engine","src/gfx","src/sys","src/sys/" & arch);
    case arch is
       when "m68k-amigaos" =>
          gcc_prefix := "m68k-amigaos-";
+      when "x86" =>
+         --gcc_prefix := "i686-pc-mingw32-";
+         gcc_prefix := "C:\GNATPRO\21.0w-x86\bin\";
+         for source_dirs use project'source_dirs & (sdl_home & "include");
       when others => 
          
-         sdl_home := external("SDL_HOME","K:/progs/SDL/1.2/");
          for source_dirs use project'source_dirs & (sdl_home & "include");
    end case;
    

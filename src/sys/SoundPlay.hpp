@@ -4,7 +4,7 @@
 #include "Abortable.hpp"
 #include "MyVector.hpp"
 
-#ifdef _WIN32
+#if !defined(_NDS) && !defined(__amigaos__)
 #define USE_SDL_MIXER 1
 #endif
 
@@ -59,7 +59,7 @@ public:
   };
 
   void close();
-  // priority (when needed from 1 to 64, 64 being the highest)
+  // priority only used on AmigaOS (when needed, from 1 to 64, 64 being the highest)
   SampleNode *load(const MyString &filename, int key, bool loop = false, int priority = 1);
   int play(int key);
   void stop(int i);
@@ -98,7 +98,7 @@ private:
     #ifdef _NDS
   MyString soundbank_file;
     #else
-  #ifdef _WIN32
+  #ifdef USE_SDL_MIXER
   Mix_Music *m_music;
   #else
   #endif

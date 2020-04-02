@@ -8,13 +8,12 @@
 #include "MemoryEntryMap.hpp"
 
 #include <cstdio>
-#ifdef _WIN32
-#include <dirent.h>
-#endif
 #ifdef __amigaos__
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <dos/dos.h>
+#else
+#include <dirent.h>
 #endif
 
 
@@ -156,12 +155,11 @@ StreamPosition MyFile::size() const
 
 }
 
-#endif
+#else
 
-#ifdef _WIN32
 bool MyFile::create_as_dir()
 {
-    #ifdef _NDS
+    #ifndef _WIN32
   return ::mkdir(m_name.c_str(),0666) == 0;
    #else
   return ::mkdir(m_name.c_str()) == 0;
