@@ -51,6 +51,7 @@ class MainClass : public Abortable
   bool direct_game;
   bool invincible;
 
+
   void screen_lock()
   {
     if ( SDL_MUSTLOCK(screen) )
@@ -170,6 +171,8 @@ class MainClass : public Abortable
 
   }
 public:
+  ~MainClass() {}
+
   MainClass(int argc, char * const *argv) : joystick(false), full_screen(false), active(true),
   silent(false), show_all_screens(false), rotate_90(false), direct_game(false),
   invincible(false)
