@@ -1,7 +1,10 @@
-work
-bin
-**/*.info
-obj
-*.dll
-src/unused
-
+*.o
+*.zip
+*.png
+*.pyc
+c
+s
+snapshot
+src/datetime
+*.slave
+*.bak

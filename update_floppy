@@ -1,0 +1,14 @@
+.key nope
+set game karate_champ
+;propack p a $game
+copy $game.RNC DF0:$game
+protect DF0:$game RWED
+copy readme.md instructions.txt df0:
+
+;delete $game.rnc
+delete df0:$game.high
+set arc KarateChamp_VS_HD.lha
+delete $arc
+; also archive with lha
+lha a -r $arc ${game}_HD
+

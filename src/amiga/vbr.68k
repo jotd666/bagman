@@ -1,0 +1,22 @@
+	.global		restore_vbr
+	.global		zero_vbr
+	.global		get_vbr
+	
+get_vbr:
+	movec	vbr,d0
+	rte
+	
+zero_vbr:
+	movec	vbr,d0
+	move.l	d0,old_vbr
+	moveq	#0,d0
+	movec	D0,vbr
+	rte
+	
+restore_vbr:
+	move.l	old_vbr,d0
+	movec	D0,vbr
+	rts
+	
+old_vbr:
+	.long	0

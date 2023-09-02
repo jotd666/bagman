@@ -1,0 +1,76 @@
+PROGNAME = karate_champ
+MAIN = ..\$(PROGNAME)
+
+
+ifdef RELEASE_BUILD
+OPT_RELEASE = --defsym RELEASE=1
+OPT_RELEASE_LINK = -s
+else
+OPT_RELEASE = -g
+OPT_RELEASE_LINK = -g
+endif
+
+# Bebbo's package usually installs itself there
+GCC_BIN = C:\amiga-gcc\bin
+ASM_BASE = $(GCC_BIN)/m68k-amigaos-as -c --defsym __amiga__=1 
+ASM = $(ASM_BASE) -m68000 $(OPT_RELEASE) 
+ASM_020 = $(ASM_BASE) -m68020 
+MAIN_OBJ = amiga.o
+WHDLOADER = ..\$(PROGNAME).slave
+WHDLOADER_CHIP = ..\$(PROGNAME)_chip.slave
+ASSETS = ..\assets\amiga
+AMIGASRC = amiga
+SOURCE = $(AMIGASRC)/$(PROGNAME)HD.s
+
+
+
+# those 2 are defined for my PC, should include whdload.i
+# and system includes.
+HDBASE = K:\jff\AmigaHD
+WHDBASE = $(HDBASE)\PROJETS\HDInstall\DONE\WHDLoad
+WHDASM = vasmm68k_mot -DDATETIME -I$(HDBASE)/amiga39_JFF_OS/include -I$(WHDBASE)\Include -I$(WHDBASE) -devpac -nosym -Fhunkexe
+
+
+# leave MAIN_OBJ first
+OBJS = $(MAIN_OBJ) sounds.o $(PROGNAME).o game_mem.o vbr.o graphics.o ReadJoyPad.o ptplayer.o 
+all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDLOADER_CHIP)
+
+clean:
+	del $(OBJS) "$(MAIN)"
+	
+$(AMIGASRC)/graphics.68k: $(ASSETS)/used_tiles_and_sprites.json $(ASSETS)/convert_graphics.py $(ASSETS)/../kchampvs2_gfx.c $(ASSETS)/no_mirror.json
+	cmd /c $(ASSETS)\convert_graphics.py
+
+
+$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME)_conv.mod
+	cmd /c $(ASSETS)\convert_sounds.py
+	
+$(MAIN): $(OBJS)
+	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN) $(OBJS)
+
+$(PROGNAME).o: $(PROGNAME).68k $(PROGNAME).inc $(PROGNAME)_ram.68k $(PROGNAME)_game_ram.68k
+	$(ASM) $(PROGNAME).68k -o $(PROGNAME).o
+amiga.o: $(AMIGASRC)/amiga.68k $(AMIGASRC)/sound_entries.68k $(PROGNAME).inc $(AMIGASRC)/ReadJoyPad.i $(AMIGASRC)/palette.68k
+	$(ASM) -Iamiga $(AMIGASRC)/amiga.68k -o amiga.o
+vbr.o: $(AMIGASRC)/vbr.68k
+	$(ASM_020) -Iamiga $(AMIGASRC)/vbr.68k -o vbr.o
+ptplayer.o: $(AMIGASRC)/ptplayer.68k
+	$(ASM) -I$(AMIGASRC) $(AMIGASRC)/ptplayer.68k -o ptplayer.o
+sounds.o: $(AMIGASRC)/sounds.68k
+	$(ASM) -I$(AMIGASRC) $(AMIGASRC)/sounds.68k -o sounds.o
+ReadJoyPad.o: $(AMIGASRC)/ReadJoyPad.68k amiga/ReadJoyPad.i
+	$(ASM) -I$(AMIGASRC) $(AMIGASRC)/ReadJoyPad.68k -o ReadJoyPad.o
+game_mem.o: game_mem.68k
+	$(ASM) game_mem.68k -o game_mem.o
+graphics.o: $(AMIGASRC)/graphics.68k $(PROGNAME).inc
+	$(ASM) $(AMIGASRC)/graphics.68k -o graphics.o
+
+
+
+$(WHDLOADER) : $(SOURCE)
+	wdate.py> datetime
+	$(WHDASM) -o $(WHDLOADER) $(SOURCE)
+	
+$(WHDLOADER_CHIP) : $(SOURCE)
+	wdate.py> datetime
+	$(WHDASM) -DCHIP_ONLY -o $(WHDLOADER_CHIP) $(SOURCE)

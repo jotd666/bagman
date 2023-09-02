@@ -1,0 +1,64 @@
+Amiga controls:
+
+joystick or joypad in port 1 or keyboard
+
+* CD32 joypad (1 or 2 players):
+
+- directions: joystick 1
+- buttons: joystick 2
+- reverse: insert coin current player
+- forward: start 1P or 2P game (depending on the joypad)
+- With "winuae joypad" setting, buttons are naturally configured properly
+  (no configuration change, joypad has same behaviour as in MAME). Most USB SNES-like
+  joypad button colors don't match the actual winuae button.
+  Personally I unscrewed my controllers and switched the colors so
+  they match, it's very easy to do.
+- With "CD32 joypad" setting, the button layout has been made as close as possible
+  as original controls so for "attack" joystick:
+   * yellow for up
+   * red for down
+   * green for left
+   * blue for right
+   
+* misc:
+
+- 5 key or joy1 up/down (during non-playing parts) to insert a coin
+  or continue 2P game (continue screen)
+- 1 key or joy1 fire (during non-playing parts) to start a 1P game
+  or give up current 2P game (continue screen)
+- 2 key or joy2 fire (during non-playing parts) to start a 2P game
+- P key or play button to pause the game
+- ESC key to quit & save high-scores (when run from amigaDOS)
+
+
+Command line arguments (no whdload, but 1.3 compatible)
+
+Usage:
+
+karate_champ BONUSCHEAT/S,CHEATKEYS/S,ONEROUNDWINS/S,STARTLEVEL/K/N,
+NOINTERMISSIONS/S,LIMIT25/S,SKILL/K/N,CONTROLS/K/N
+
+Cheats:
+
+BONUSCHEAT: invincible during bull & evade phases, perfect plank break
+ONEROUNDWINS: only one round is needed to win match for human players too
+CHEATKEYS: function keys cheat: F1: player 1 instant win, F2: player 2 instant win
+STARTLEVEL: from 1 to 24
+CONTROLS: 0 for winuae joypad, 1 for CD32 joypad, 2 for 2 joysticks (one player only)
+
+Options/dipswitches:
+
+NOINTERMISSIONS: no girls acts at start & end of winning level
+LIMIT25: forces 25 fps instead of 50 fps. If not specified, a speed computation
+is done at startup to decide what to set (command line only).
+SKILL: 0-3 (original game difficulty settings, 0: easy, 3: hardest)
+
+Hiscores save:
+
+* If any cheat key is pressed (when cheatkeys are on), highscores won't be saved
+* Same thing if bonus cheat is selected
+* startlevel can be used, highscores will be saved (doesn't make the game easier...)
+* whdload: quit whdload with quitkey to allow highscore save
+* floppy: quit game with "ESC" and unprotect the floppy to allow highscore save
+
+  
