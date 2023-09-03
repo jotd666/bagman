@@ -1,4 +1,4 @@
-PROGNAME = karate_champ
+PROGNAME = bagman
 MAIN = ..\$(PROGNAME)
 
 
@@ -33,7 +33,9 @@ WHDASM = vasmm68k_mot -DDATETIME -I$(HDBASE)/amiga39_JFF_OS/include -I$(WHDBASE)
 
 # leave MAIN_OBJ first
 OBJS = $(MAIN_OBJ) sounds.o $(PROGNAME).o game_mem.o vbr.o graphics.o ReadJoyPad.o ptplayer.o 
-all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDLOADER_CHIP)
+OBJS = $(PROGNAME).o vbr.o ReadJoyPad.o ptplayer.o 
+#all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDLOADER_CHIP)
+all: $(MAIN)
 
 clean:
 	del $(OBJS) "$(MAIN)"

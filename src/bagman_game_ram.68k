@@ -1,566 +1,649 @@
-	.global	address_of_current_player_move_byte_CF04
-	.global	background_and_state_bits_C911
-	.global	computer_skill_C910
-	.global	nb_tasks_to_start_C029
-	.global	nb_suspended_tasks_C02A
-	.global	current_move_C24B
-	.global	level_number_C0DC
-	.global	player_rank_C900
-	.global	match_timer_C167
-	.global	nb_credits_minus_one_C024
-	.global	periodic_counter_16bit_C02E
-	.global	periodic_counter_8bit_C02B
-	.global	player_1_points_C91A
-	.global	player_2_points_C91C
-	.global	players_type_human_or_cpu_flags_C02D
-	.global	referee_walk_direction_C1E9
-	.global	task_struct_C100
-	.global	task_struct_C120
-	.global	task_struct_C140
-	.global	task_struct_C160
-	.global	task_struct_C180
-	.global	task_struct_C1A0
-	.global	task_struct_C1C0
-	.global	task_struct_C1E0
-	.global	task_struct_C200
-	.global	task_struct_C220
-	.global unknown_C220
-	.global	task_struct_C240
-	.global	task_struct_C260
-	.global	player_1_struct_C240
-	.global	player_2_struct_C260
-	.global	task_struct_C280
-	.global	task_struct_C2A0
-	.global	task_struct_C2C0
-	.global	task_struct_C2E0
-	.global	task_struct_C300
-	.global	task_struct_C320
-	.global	task_struct_C340
-	.global	task_struct_C360
-	.global	task_struct_C380
-	.global	task_struct_C3A0
-	.global	task_struct_C3C0
-	.global	task_struct_C3E0
-	.global	task_struct_C400
-	.global	stack_buffer_C420
-	.global	stack_buffer_C440
-	.global	stack_buffer_C460
-	.global	stack_buffer_C480
-	.global	stack_buffer_C4A0
-	.global	stack_buffer_C4C0
-	.global	stack_buffer_C4E0
-	.global	stack_buffer_C500
-	.global	stack_buffer_C520
-	.global	stack_buffer_C540
-	.global	stack_buffer_C560
-	.global	stack_buffer_C580
-	.global	stack_buffer_C5A0
-	.global	stack_buffer_C5C0
-	.global	stack_buffer_C5E0
-	.global	stack_buffer_C600
-	.global	stack_buffer_C620
-	.global	stack_buffer_C640
-	.global	stack_buffer_C660
-	.global	stack_buffer_C680
-	.global	stack_buffer_C6A0
-	.global	stack_buffer_C6C0
-	.global	stack_buffer_C6E0
-	.global	stack_buffer_C700
-	.global referee_flags_and_bubbles_sprites_C7C0
-	.global unknown_C760
-	.global unknown_C780
-	.global	sprite_shadow_ram_C700
+	.global	current_player_617C
+	.global	elevator_dir_current_screen_6010
+	.global	elevator_not_moving_6012
+	.global	elevator_timer_current_screen_6011
+	.global	elevator_y_current_screen_6587
+	.global	gameplay_allowed_6054
+	.global	guard_1_direction_6067
+	.global	guard_1_in_elevator_603B
+	.global	guard_1_ladder_frame_6035
+	.global	guard_1_screen_6099
+	.global	guard_1_screen_address_6038
+	.global	guard_1_sees_player_down_607F
+	.global	guard_1_sees_player_left_607D
+	.global	guard_1_sees_player_right_607C
+	.global	guard_1_sees_player_up_607E
+	.global	guard_1_struct_6594
+	.global	guard_1_x_6596
+	.global	guard_1_y_6597
+	.global	guard_2_direction_6027
+	.global	guard_2_in_elevator_607B
+	.global	guard_2_ladder_frame_6075
+	.global	guard_2_screen_609A
+	.global	guard_2_screen_address_6078
+	.global	guard_2_sees_player_down_603F
+	.global	guard_2_sees_player_left_603D
+	.global	guard_2_sees_player_right_603C
+	.global	guard_2_sees_player_up_603E
+	.global	guard_2_struct_6598
+	.global	guard_2_x_659A
+	.global	guard_2_y_659B
+	.global	guard_speed_6164
+	.global	has_bag_6158
+	.global	has_pick_61CF
+	.global	lives_6056
+	.global	number_of_credits_6000
+	.global	pickup_flag_6160
+	.global	player_animation_frame_6006
+	.global	player_controls_frozen_6028
+	.global	player_death_flag_6025
+	.global	player_gripping_handle_602A
+	.global	player_has_blue_bag_flag_627C
+	.global	player_in_wagon_flag_6029
+	.global	player_input_6026
+	.global	player_move_direction_6050
+	.global	player_screen_600D
+	.global	player_screen_address_6009
+	.global	player_struct_6580
+	.global	player_x_6582
+	.global	player_y_6583
+	.global	previous_guard_1_struct_65B8
+	.global	previous_guard_2_struct_65BC
+	.global	score_ten_thousands_6178
+	.global	screen_index_param_6098
+	.global	time_61E8
+	.global	unknown_6004
+	.global	unknown_6005
+	.global	unknown_6007
+	.global	unknown_6008
+	.global	unknown_600B
+	.global	unknown_600C
+	.global	unknown_6013
+	.global	unknown_6014
+	.global	unknown_6015
+	.global	unknown_6016
+	.global	unknown_6019
+	.global	unknown_601A
+	.global	unknown_601B
+	.global	unknown_601C
+	.global	unknown_601D
+	.global	unknown_601E
+	.global	unknown_6022
+	.global	unknown_602B
+	.global	unknown_602C
+	.global	unknown_602D
+	.global	unknown_602E
+	.global	unknown_602F
+	.global	unknown_6030
+	.global	unknown_6034
+	.global	unknown_6037
+	.global	unknown_603A
+	.global	unknown_6044
+	.global	unknown_6047
+	.global	unknown_604B
+	.global	unknown_604D
+	.global	unknown_604E
+	.global	unknown_604F
+	.global	unknown_6051
+	.global	unknown_6052
+	.global	unknown_6053
+	.global	unknown_6055
+	.global	unknown_6057
+	.global	unknown_6074
+	.global	unknown_6077
+	.global	unknown_607A
+	.global	unknown_608F
+	.global	unknown_6091
+	.global	unknown_6093
+	.global	unknown_6095
+	.global	unknown_6097
+	.global	unknown_609B
+	.global	unknown_609C
+	.global	unknown_6140
+	.global	unknown_6142
+	.global	unknown_6143
+	.global	unknown_6144
+	.global	unknown_6145
+	.global	unknown_6146
+	.global	unknown_6148
+	.global	unknown_6149
+	.global	unknown_6151
+	.global	unknown_6152
+	.global	unknown_6153
+	.global	unknown_6154
+	.global	unknown_6156
+	.global	unknown_6157
+	.global	unknown_6159
+	.global	unknown_615A
+	.global	unknown_615C
+	.global	unknown_615E
+	.global	unknown_615F
+	.global	unknown_6161
+	.global	unknown_6163
+	.global	unknown_6165
+	.global	unknown_6166
+	.global	unknown_6176
+	.global	unknown_6179
+	.global	unknown_617B
+	.global	unknown_617D
+	.global	unknown_617E
+	.global	unknown_617F
+	.global	unknown_61BD
+	.global	unknown_61C0
+	.global	unknown_61C4
+	.global	unknown_61C6
+	.global	unknown_61C7
+	.global	unknown_61CA
+	.global	unknown_61CC
+	.global	unknown_61D0
+	.global	unknown_61D2
+	.global	unknown_61D3
+	.global	unknown_61E0
+	.global	unknown_61E1
+	.global	unknown_61E4
+	.global	unknown_61E5
+	.global	unknown_61E7
+	.global	unknown_61E9
+	.global	unknown_61EB
+	.global	unknown_61EC
+	.global	unknown_61ED
+	.global	unknown_61F1
+	.global	unknown_61F2
+	.global	unknown_61F3
+	.global	unknown_61F4
+	.global	unknown_61F5
+	.global	unknown_61F6
+	.global	unknown_61F9
+	.global	unknown_61FA
+	.global	unknown_61FC
+	.global	unknown_61FD
+	.global	unknown_61FF
+	.global	unknown_6201
+	.global	unknown_6203
+	.global	unknown_6205
+	.global	unknown_6208
+	.global	unknown_6209
+	.global	unknown_6210
+	.global	unknown_6211
+	.global	unknown_6212
+	.global	unknown_6215
+	.global	unknown_6217
+	.global	unknown_6267
+	.global	unknown_626C
+	.global	unknown_626D
+	.global	unknown_626E
+	.global	unknown_626F
+	.global	unknown_6270
+	.global	unknown_6271
+	.global	unknown_6272
+	.global	unknown_6273
+	.global	unknown_6274
+	.global	unknown_6275
+	.global	unknown_6278
+	.global	unknown_6279
+	.global	unknown_627A
+	.global	unknown_627B
+	.global	unknown_627D
+	.global	unknown_627E
+	.global	unknown_627F
+	.global	unknown_6280
+	.global	unknown_6281
+	.global	unknown_6285
+	.global	unknown_6286
+	.global	unknown_6288
+	.global	unknown_628A
+	.global	unknown_628C
+	.global	unknown_6290
+	.global	unknown_6584
+	.global	unknown_6588
+	.global	unknown_658B
+	.global	unknown_658C
+	.global	unknown_6590
+	.global	unknown_659C
+	.global	unknown_659D
+	.global	unknown_659E
+	.global	unknown_659F
+	.global	unknown_65A0
+	.global	unknown_65A3
+	.global	unknown_65A4
+	.global	unknown_65A6
+	.global	unknown_65A8
+	.global	unknown_65AC
+	.global	unknown_65AF
+	.global	unknown_65B0
+	.global	unknown_65B4
+	.global	unknown_67F0
+	.global	wagon_data_658A
 
-	.global	ram_start_C000
-	.global	unknown_C001
-	.global	unknown_C002
-	.global	tasks_running_C006
-	.global	unknown_C008
-	.global	tasks_to_resume_bitfield_C00C
-	.global	unknown_C010
-	.global	tasks_suspended_C012
-	.global	unknown_C018
-	.global	unknown_C020
-	.global	unknown_C025
-	.global	unknown_C026
-	.global	current_task_index_C028
-	.global	unknown_C02C
-	.global	dip_switches_copy_C030
-	.global	unknown_C031
-	.global	unknown_C032
-	.global	unknown_C038
-	.global	high_scores_buffer_C040
-	.global	unknown_C099
-	.global	unknown_C0AB
-	.global	high_score_C0C0
-	.global	player_1_score_C0C8
-	.global	player_2_score_C0D0
-	.global	unknown_C0D8
-	.global	unknown_C0DA
-	.global	unknown_C0DD
-	.global	unknown_C0DE
-	.global	unknown_C0DF
-	.global	victory_flags_p1_C0E0
-	.global	unknown_C0E1
-	.global	unknown_C0E2
-	.global	victory_flags_p2_C0E3
-	.global	unknown_C0E4
-	.global	unknown_C0E5
-	.global	unknown_C107
-	.global	nb_rounds_won_player_2_C147
-	.global	nb_rounds_won_player_1_C148
-	.global	unknown_C149
-	.global	unknown_C14A
-	.global	skip_practice_requested_C14F
-	.global	unknown_C168
-	.global	unknown_C1E7
-	.global	unknown_C1E8
-	.global	unknown_C1EA
-	.global	unknown_C1EB
-	.global	unknown_C1EC
-	.global	unknown_C1ED
-	.global	unknown_C247
-	.global	unknown_C249
-	.global	unknown_C24C
-	.global	unknown_C267
-	.global	unknown_C269
-	.global	current_move_p2_C26B
-	.global	unknown_C26C
-	.global	unknown_C387
-	.global	unknown_C701
-	.global	unknown_C702
-	.global	unknown_C703
-	.global	unknown_C704
-	.global	unknown_C708
-	.global	unknown_C709
-	.global	unknown_C70A
-	.global	unknown_C71C
-	.global	unknown_C728
-	.global	unknown_C730
-	.global	unknown_C734
-	.global	unknown_C740
-	.global	unknown_C74C
-	.global	unknown_C768
-	.global	girl_sprite_shadow_C77C
-	.global	unknown_C77D
-	.global	unknown_C790
-	.global	unknown_C7BC
-	.global	unknown_C7BE
-	.global	unknown_C7C8
-	.global	big_head_sprite_shadow_C7D4
-	.global	unknown_C7E4
-	.global	unknown_C7F8
-	.global	unknown_C7FB
-	.global	unknown_C901
-	.global level_pointer_C902
-	.global	unknown_C908
-	.global	unknown_C909
-	.global	unknown_C914
-	.global	evade_object_index_C918
-	.global	evade_objects_remaining_C919
-	.global	unknown_C91B
-	.global	unknown_C91D
-	.global	unknown_CC3D
-	.global	unknown_CD21
-	.global	temp_buffer_CF00
-	.global	address_of_current_player_move_byte_CF04
-	.global	highscore_insertion_pointer_CF06
-
-	.global stack_bottom_C400
-	.global stack_top_CF00
-* we play it safe, 68000 processors use more stack
-* than Z80s, plus there are osd calls, so
-* increase if unexplained crashes
-STACK_INFLATION = 10
-
-ram_start_C000:
-	ds.b	6
-tasks_running_C006:
-	ds.b	6
-	* CAUTION: C00C and C012 "connect" because at some
-	* point we point on C012+offset and sub to get C00C+offset
-tasks_to_resume_bitfield_C00C:
-	ds.b	6
-tasks_suspended_C012:
-	ds.b	6
-unknown_C018:
-	ds.b	8
-unknown_C020:
+number_of_credits_6000:
 	ds.b	4
-nb_credits_minus_one_C024:
+unknown_6004:
 	ds.b	1
-unknown_C025:
+unknown_6005:
 	ds.b	1
-unknown_C026:
+player_animation_frame_6006:
+	ds.b	1
+unknown_6007:
+	ds.b	1
+unknown_6008:
+	ds.b	1
+player_screen_address_6009:
 	ds.b	2
-current_task_index_C028:
+unknown_600B:
 	ds.b	1
-nb_tasks_to_start_C029:
+unknown_600C:
 	ds.b	1
-nb_suspended_tasks_C02A:
+player_screen_600D:
+	ds.b	3
+elevator_dir_current_screen_6010:
 	ds.b	1
-periodic_counter_8bit_C02B:
+elevator_timer_current_screen_6011:
 	ds.b	1
-unknown_C02C:
+elevator_not_moving_6012:
 	ds.b	1
-players_type_human_or_cpu_flags_C02D:
+unknown_6013:
 	ds.b	1
-periodic_counter_16bit_C02E:
+unknown_6014:
+	ds.b	1
+unknown_6015:
+	ds.b	1
+unknown_6016:
+	ds.b	3
+unknown_6019:
+	ds.b	1
+unknown_601A:
+	ds.b	1
+unknown_601B:
+	ds.b	1
+unknown_601C:
+	ds.b	1
+unknown_601D:
+	ds.b	1
+unknown_601E:
+	ds.b	4
+unknown_6022:
+	ds.b	3
+player_death_flag_6025:
+	ds.b	1
+player_input_6026:
+	ds.b	1
+guard_2_direction_6027:
+	ds.b	1
+player_controls_frozen_6028:
+	ds.b	1
+player_in_wagon_flag_6029:
+	ds.b	1
+player_gripping_handle_602A:
+	ds.b	1
+unknown_602B:
+	ds.b	1
+unknown_602C:
+	ds.b	1
+unknown_602D:
+	ds.b	1
+unknown_602E:
+	ds.b	1
+unknown_602F:
+	ds.b	1
+unknown_6030:
+	ds.b	4
+unknown_6034:
+	ds.b	1
+guard_1_ladder_frame_6035:
 	ds.b	2
-dip_switches_copy_C030:
+unknown_6037:
 	ds.b	1
-unknown_C031:
-	ds.b	1
-unknown_C032:
-	ds.b	6
-unknown_C038:
-	ds.b	8
-high_scores_buffer_C040:
-	ds.b	89
-unknown_C099:
-	ds.b	18
-unknown_C0AB:
-	ds.b	21
-high_score_C0C0:
-	ds.b	8
-player_1_score_C0C8:
-	ds.b	8
-player_2_score_C0D0:
-	ds.b	8
-unknown_C0D8:
+guard_1_screen_address_6038:
 	ds.b	2
-unknown_C0DA:
-	ds.b	2
-level_number_C0DC:
+unknown_603A:
 	ds.b	1
-unknown_C0DD:
+guard_1_in_elevator_603B:
 	ds.b	1
-unknown_C0DE:
+guard_2_sees_player_right_603C:
 	ds.b	1
-unknown_C0DF:
+guard_2_sees_player_left_603D:
 	ds.b	1
-victory_flags_p1_C0E0:
+guard_2_sees_player_up_603E:
 	ds.b	1
-unknown_C0E1:
-	ds.b	1
-unknown_C0E2:
-	ds.b	1
-victory_flags_p2_C0E3:
-	ds.b	1
-unknown_C0E4:
-	ds.b	1
-unknown_C0E5:
-	ds.b	27
-	.align	2
-task_struct_C100:
-	ds.b	7
-unknown_C107:
-	ds.b	25
-	.align	2
-task_struct_C120:
-	ds.b	32
-	.align	2
-task_struct_C140:
-	ds.b	7
-nb_rounds_won_player_2_C147:
-	ds.b	1
-nb_rounds_won_player_1_C148:
-	ds.b	1
-unknown_C149:
-	ds.b	1
-unknown_C14A:
+guard_2_sees_player_down_603F:
 	ds.b	5
-skip_practice_requested_C14F:
-	ds.b	17
-	.align	2
-task_struct_C160:
-	ds.b	7
-match_timer_C167:
-	ds.b	1
-unknown_C168:
-	ds.b	24
-	.align	2
-task_struct_C180:
-	ds.b	32
-	.align	2
-task_struct_C1A0:
-	ds.b	32
-	.align	2
-task_struct_C1C0:
-	ds.b	32
-	.align	2
-task_struct_C1E0:
-	ds.b	7
-unknown_C1E7:
-	ds.b	1
-unknown_C1E8:
-	ds.b	1
-referee_walk_direction_C1E9:
-	ds.b	1
-unknown_C1EA:
-	ds.b	1
-unknown_C1EB:
-	ds.b	1
-unknown_C1EC:
-	ds.b	1
-unknown_C1ED:
-	ds.b	19
-	.align	2
-task_struct_C200:
-	ds.b	32
-	.align	2
-unknown_C220:
-task_struct_C220:
-	ds.b	32
-	.align	2
-player_1_struct_C240:
-task_struct_C240:
-	ds.b	7
-unknown_C247:
-	ds.b	2
-unknown_C249:
-	ds.b	2
-current_move_C24B:
-	ds.b	1
-unknown_C24C:
-	ds.b	20
-	.align	2
-player_2_struct_C260:
-task_struct_C260:
-	ds.b	7
-unknown_C267:
-	ds.b	2
-unknown_C269:
-	ds.b	2
-current_move_p2_C26B:
-	ds.b	1
-unknown_C26C:
-	ds.b	20
-	.align	2
-task_struct_C280:
-	ds.b	32
-	.align	2
-task_struct_C2A0:
-	ds.b	32
-	.align	2
-task_struct_C2C0:
-	ds.b	32
-	.align	2
-task_struct_C2E0:
-	ds.b	32
-	.align	2
-task_struct_C300:
-	ds.b	32
-	.align	2
-task_struct_C320:
-	ds.b	32
-	.align	2
-task_struct_C340:
-	ds.b	32
-	.align	2
-task_struct_C360:
-	ds.b	32
-	.align	2
-task_struct_C380:
-	ds.b	32
-	.align	2
-task_struct_C3A0:
-	ds.b	32
-	.align	2
-task_struct_C3C0:
-	ds.b	32
-	.align	2
-task_struct_C3E0:
-	ds.b	32
-	.align	2
-stack_bottom_C400:
-task_struct_C400:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C420:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C440:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C460:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C480:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C4A0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C4C0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C4E0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C500:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C520:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C540:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C560:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C580:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C5A0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C5C0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C5E0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C600:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C620:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C640:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C660:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C680:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C6A0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C6C0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C6E0:
-	ds.b	32*STACK_INFLATION
-	.align	2
-stack_buffer_C700:
-sprite_shadow_ram_C700:
-	ds.b	1
-unknown_C701:
-	ds.b	1
-unknown_C702:
-	ds.b	1
-unknown_C703:
-	ds.b	1
-unknown_C704:
-	ds.b	4
-unknown_C708:
-	ds.b	1
-unknown_C709:
-	ds.b	1
-unknown_C70A:
-	ds.b	18
-unknown_C71C:
-	ds.b	4
-	.align	2
-*task_struct_C720:
-	ds.b	8
-unknown_C728:
-	ds.b	8
-unknown_C730:
-	ds.b	4
-unknown_C734:
-	ds.b	12
-	.align	2
-unknown_C740:
-	ds.b	12
-unknown_C74C:
-	ds.b	20
-	.align	2
-unknown_C760:
-	ds.b	8
-unknown_C768:
-	ds.b	20
-girl_sprite_shadow_C77C:
-	ds.b	1
-unknown_C77D:
+unknown_6044:
 	ds.b	3
-	.align	2
-unknown_C780:
-	ds.b	16
-unknown_C790:
-	ds.b	16
-	.align	2
-*task_struct_C7A0:
-	ds.b	28
-unknown_C7BC:
-	ds.b	2
-unknown_C7BE:
-	ds.b	2
-	.align	2
-referee_flags_and_bubbles_sprites_C7C0:
-	ds.b	8
-unknown_C7C8:
-	ds.b	12
-big_head_sprite_shadow_C7D4:
-	ds.b	12
-	.align	2
-*task_struct_C7E0:
+unknown_6047:
 	ds.b	4
-unknown_C7E4:
-	ds.b	20
-unknown_C7F8:
+unknown_604B:
+	ds.b	2
+unknown_604D:
+	ds.b	1
+unknown_604E:
+	ds.b	1
+unknown_604F:
+	ds.b	1
+player_move_direction_6050:
+	ds.b	1
+unknown_6051:
+	ds.b	1
+unknown_6052:
+	ds.b	1
+unknown_6053:
+	ds.b	1
+gameplay_allowed_6054:
+	ds.b	1
+unknown_6055:
+	ds.b	1
+lives_6056:
+	ds.b	1
+unknown_6057:
+	ds.b	16
+guard_1_direction_6067:
+	ds.b	13
+unknown_6074:
+	ds.b	1
+guard_2_ladder_frame_6075:
+	ds.b	2
+unknown_6077:
+	ds.b	1
+guard_2_screen_address_6078:
+	ds.b	2
+unknown_607A:
+	ds.b	1
+guard_2_in_elevator_607B:
+	ds.b	1
+guard_1_sees_player_right_607C:
+	ds.b	1
+guard_1_sees_player_left_607D:
+	ds.b	1
+guard_1_sees_player_up_607E:
+	ds.b	1
+guard_1_sees_player_down_607F:
+	ds.b	16
+unknown_608F:
+	ds.b	2
+unknown_6091:
+	ds.b	2
+unknown_6093:
+	ds.b	2
+unknown_6095:
+	ds.b	2
+unknown_6097:
+	ds.b	1
+screen_index_param_6098:
+	ds.b	1
+guard_1_screen_6099:
+	ds.b	1
+guard_2_screen_609A:
+	ds.b	1
+unknown_609B:
+	ds.b	1
+unknown_609C:
+	ds.b	164
+unknown_6140:
+	ds.b	2
+unknown_6142:
+	ds.b	1
+unknown_6143:
+	ds.b	1
+unknown_6144:
+	ds.b	1
+unknown_6145:
+	ds.b	1
+unknown_6146:
+	ds.b	2
+unknown_6148:
+	ds.b	1
+unknown_6149:
+	ds.b	8
+unknown_6151:
+	ds.b	1
+unknown_6152:
+	ds.b	1
+unknown_6153:
+	ds.b	1
+unknown_6154:
+	ds.b	2
+unknown_6156:
+	ds.b	1
+unknown_6157:
+	ds.b	1
+has_bag_6158:
+	ds.b	1
+unknown_6159:
+	ds.b	1
+unknown_615A:
+	ds.b	2
+unknown_615C:
+	ds.b	2
+unknown_615E:
+	ds.b	1
+unknown_615F:
+	ds.b	1
+pickup_flag_6160:
+	ds.b	1
+unknown_6161:
+	ds.b	2
+unknown_6163:
+	ds.b	1
+guard_speed_6164:
+	ds.b	1
+unknown_6165:
+	ds.b	1
+unknown_6166:
+	ds.b	16
+unknown_6176:
+	ds.b	2
+score_ten_thousands_6178:
+	ds.b	1
+unknown_6179:
+	ds.b	2
+unknown_617B:
+	ds.b	1
+current_player_617C:
+	ds.b	1
+unknown_617D:
+	ds.b	1
+unknown_617E:
+	ds.b	1
+unknown_617F:
+	ds.b	62
+unknown_61BD:
 	ds.b	3
-unknown_C7FB:
+unknown_61C0:
+	ds.b	4
+unknown_61C4:
+	ds.b	2
+unknown_61C6:
+	ds.b	1
+unknown_61C7:
+	ds.b	3
+unknown_61CA:
+	ds.b	2
+unknown_61CC:
+	ds.b	3
+has_pick_61CF:
+	ds.b	1
+unknown_61D0:
+	ds.b	2
+unknown_61D2:
+	ds.b	1
+unknown_61D3:
+	ds.b	13
+unknown_61E0:
+	ds.b	1
+unknown_61E1:
+	ds.b	3
+unknown_61E4:
+	ds.b	1
+unknown_61E5:
+	ds.b	2
+unknown_61E7:
+	ds.b	1
+time_61E8:
+	ds.b	1
+unknown_61E9:
+	ds.b	2
+unknown_61EB:
+	ds.b	1
+unknown_61EC:
+	ds.b	1
+unknown_61ED:
+	ds.b	4
+unknown_61F1:
+	ds.b	1
+unknown_61F2:
+	ds.b	1
+unknown_61F3:
+	ds.b	1
+unknown_61F4:
+	ds.b	1
+unknown_61F5:
+	ds.b	1
+unknown_61F6:
+	ds.b	3
+unknown_61F9:
+	ds.b	1
+unknown_61FA:
+	ds.b	2
+unknown_61FC:
+	ds.b	1
+unknown_61FD:
+	ds.b	2
+unknown_61FF:
+	ds.b	2
+unknown_6201:
+	ds.b	2
+unknown_6203:
+	ds.b	2
+unknown_6205:
+	ds.b	3
+unknown_6208:
+	ds.b	1
+unknown_6209:
+	ds.b	7
+unknown_6210:
+	ds.b	1
+unknown_6211:
+	ds.b	1
+unknown_6212:
+	ds.b	3
+unknown_6215:
+	ds.b	2
+unknown_6217:
+	ds.b	80
+unknown_6267:
 	ds.b	5
-	.align	2
-*task_struct_C800:
-	ds.b	256
-player_rank_C900:
+unknown_626C:
 	ds.b	1
-unknown_C901:
+unknown_626D:
 	ds.b	1
-level_pointer_C902:
-	ds.b	6
-unknown_C908:
+unknown_626E:
 	ds.b	1
-unknown_C909:
-	ds.b	7
-computer_skill_C910:
+unknown_626F:
 	ds.b	1
-background_and_state_bits_C911:
+unknown_6270:
+	ds.b	1
+unknown_6271:
+	ds.b	1
+unknown_6272:
+	ds.b	1
+unknown_6273:
+	ds.b	1
+unknown_6274:
+	ds.b	1
+unknown_6275:
 	ds.b	3
-unknown_C914:
+unknown_6278:
+	ds.b	1
+unknown_6279:
+	ds.b	1
+unknown_627A:
+	ds.b	1
+unknown_627B:
+	ds.b	1
+player_has_blue_bag_flag_627C:
+	ds.b	1
+unknown_627D:
+	ds.b	1
+unknown_627E:
+	ds.b	1
+unknown_627F:
+	ds.b	1
+unknown_6280:
+	ds.b	1
+unknown_6281:
 	ds.b	4
-evade_object_index_C918:
+unknown_6285:
 	ds.b	1
-evade_objects_remaining_C919:
-	ds.b	1
-	.align	2
-player_1_points_C91A:
-	ds.b	1
-unknown_C91B:
-	ds.b	1
-player_2_points_C91C:
-	ds.b	1
-unknown_C91D:
-	ds.b	800
-unknown_CC3D:
-	ds.b	228
-unknown_CD21:
-	ds.b	479
-	.align 4
-	* roughly
-	ds.b	0X200*STACK_INFLATION
-stack_top_CF00:
-temp_buffer_CF00:
+unknown_6286:
+	ds.b	2
+unknown_6288:
+	ds.b	2
+unknown_628A:
+	ds.b	2
+unknown_628C:
 	ds.b	4
-address_of_current_player_move_byte_CF04:
-	ds.b	0x2	| rest of the memory is used by temp_buffer_CF00
-* CF06.W is used sometimes to store a pointer
-highscore_insertion_pointer_CF06:
-	ds.b	0xFA
-
+unknown_6290:
+	ds.b	752
+player_struct_6580:
+	ds.b	2
+player_x_6582:
+	ds.b	1
+player_y_6583:
+	ds.b	1
+unknown_6584:
+	ds.b	3
+elevator_y_current_screen_6587:
+	ds.b	1
+unknown_6588:
+	ds.b	2
+wagon_data_658A:
+	ds.b	1
+unknown_658B:
+	ds.b	1
+unknown_658C:
+	ds.b	4
+unknown_6590:
+	ds.b	4
+guard_1_struct_6594:
+	ds.b	2
+guard_1_x_6596:
+	ds.b	1
+guard_1_y_6597:
+	ds.b	1
+guard_2_struct_6598:
+	ds.b	2
+guard_2_x_659A:
+	ds.b	1
+guard_2_y_659B:
+	ds.b	1
+unknown_659C:
+	ds.b	1
+unknown_659D:
+	ds.b	1
+unknown_659E:
+	ds.b	1
+unknown_659F:
+	ds.b	1
+unknown_65A0:
+	ds.b	3
+unknown_65A3:
+	ds.b	1
+unknown_65A4:
+	ds.b	2
+unknown_65A6:
+	ds.b	2
+unknown_65A8:
+	ds.b	4
+unknown_65AC:
+	ds.b	3
+unknown_65AF:
+	ds.b	1
+unknown_65B0:
+	ds.b	4
+unknown_65B4:
+	ds.b	4
+previous_guard_1_struct_65B8:
+	ds.b	4
+previous_guard_2_struct_65BC:
+	ds.b	564
+unknown_67F0:
+	ds.b	15
