@@ -32,20 +32,19 @@ WHDASM = vasmm68k_mot -DDATETIME -I$(HDBASE)/amiga39_JFF_OS/include -I$(WHDBASE)
 
 
 # leave MAIN_OBJ first
-OBJS = $(MAIN_OBJ) sounds.o $(PROGNAME).o game_mem.o vbr.o graphics.o ReadJoyPad.o ptplayer.o 
-OBJS = $(PROGNAME).o vbr.o ReadJoyPad.o ptplayer.o 
-#all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDLOADER_CHIP)
-all: $(MAIN)
+OBJS = $(MAIN_OBJ) game_mem.o sounds.o $(PROGNAME).o vbr.o graphics.o ReadJoyPad.o ptplayer.o 
+all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDLOADER_CHIP)
+
 
 clean:
 	del $(OBJS) "$(MAIN)"
 	
-$(AMIGASRC)/graphics.68k: $(ASSETS)/used_tiles_and_sprites.json $(ASSETS)/convert_graphics.py $(ASSETS)/../kchampvs2_gfx.c $(ASSETS)/no_mirror.json
-	cmd /c $(ASSETS)\convert_graphics.py
+#$(AMIGASRC)/graphics.68k: $(ASSETS)/used_tiles_and_sprites.json $(ASSETS)/convert_graphics.py $(ASSETS)/../kchampvs2_gfx.c $(ASSETS)/no_mirror.json
+#	cmd /c $(ASSETS)\convert_graphics.py
 
 
-$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME)_conv.mod
-	cmd /c $(ASSETS)\convert_sounds.py
+#$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME)_conv.mod
+#	cmd /c $(ASSETS)\convert_sounds.py
 	
 $(MAIN): $(OBJS)
 	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN) $(OBJS)

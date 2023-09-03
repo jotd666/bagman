@@ -1,4 +1,4 @@
-; Karate Champ slave
+; Bagman slave
 	INCDIR	Include:
 	INCLUDE	whdload.i
 	INCLUDE	whdmacros.i
@@ -9,9 +9,9 @@ _base	SLAVE_HEADER					; ws_security + ws_id
 	dc.w	17					; ws_version (was 10)
 	dc.w	WHDLF_NoError
     IFD CHIP_ONLY
-	dc.l	$200000					; ws_basememsize
+	dc.l	$180000					; ws_basememsize
     ELSE
-	dc.l	$100000					; ws_expmem
+	dc.l	$80000					; ws_expmem
     ENDC
 	dc.l	0					; ws_execinstall
 	dc.w	start-_base		; ws_gameloader
@@ -25,7 +25,7 @@ _expmem
     IFD CHIP_ONLY
     dc.l    $0
     ELSE
-	dc.l	$100000					; ws_expmem
+	dc.l	$40000					; ws_expmem
     ENDC
 	dc.w	_name-_base				; ws_name
 	dc.w	_copy-_base				; ws_copy
@@ -36,19 +36,10 @@ _expmem
     dc.w    _config-_base
 ;---
 _config
-	dc.b    "C1:X:cheat keys F1-F2 instant win:0;"
-	dc.b    "C1:X:human player wins in 1 round:1;"
-	dc.b    "C1:X:invincible in bull and evade:2;"
+*	dc.b    "C1:X:cheat keys F1-F2 instant win:0;"
+*	dc.b    "C1:X:human player wins in 1 round:1;"
+*	dc.b    "C1:X:invincible in bull and evade:2;"
 	dc.b    "C2:L:difficulty:easy,medium,hard,hardest;"
-	dc.b    "C3:L:start level:pier,fuji,bamboo,bridge,"
-	dc.b	"boat,field,mill,city,indian,temple,dojo,moonlight,"
-	dc.b	"pier_hard,fuji_hard,bamboo_hard,bridge_hard,"
-	dc.b	"boat_hard,field_hard,mill_hard,city_hard,indian_hard,temple_hard,"
-	dc.b	"dojo_hard,moonlight_hard;"
-	dc.b    "C4:L:controls:WinUAE joypad,CD32 joypad,2 joysticks;"
-	dc.b    "C5:X:skip girl intermissions:0;"
-	dc.b    "C5:X:free play:1;"
-	dc.b    "C5:X:limit to 25 FPS:2;"
 	dc.b	0
 
 	IFD BARFLY
@@ -67,10 +58,10 @@ DECL_VERSION:MACRO
 	ENDC
 	ENDM
 _data   dc.b    0
-_name	dc.b	'Karate Champ VS',0
+_name	dc.b	'Bagman',0
 _copy	dc.b	'2023 JOTD',0
 _info
-    dc.b    "Music by no9",0
+    dc.b    "Music by J.M.D",0
 	dc.b	0
 _kickname   dc.b    0
 ;--- version id
@@ -85,7 +76,7 @@ start:
     
     IFD CHIP_ONLY
     lea  _expmem(pc),a0
-    move.l  #$C0000,(a0)
+    move.l  #$80000,(a0)
     ENDC
     lea progstart(pc),a0
     move.l  _expmem(pc),(a0)
@@ -132,5 +123,5 @@ _resload:
 progstart
     dc.l    0
 exe
-	dc.b	"karate_champ",0
+	dc.b	"bagman",0
 	
