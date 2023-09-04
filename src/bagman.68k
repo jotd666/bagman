@@ -167,21 +167,28 @@ l_1200:
 
 l_121c:
 	jbsr	play_intro_3700                   	| [$121c: call play_intro_3700]
+	illegal
 	jbsr	osd_break
 	
 l_1dec:
+	* display PLAYER 1
 	lea	game_mem+0x5680,a1                      	| [$1dec: ld   de,$5680]
 	move.w	#0x93A0,d6                      	| [$1def: ld   hl,$93A0]
 	jbsr	display_text_30F9                 	| [$1df2: call display_text_30F9]
+	jbsr	osd_break
+	* display PLAYER 1 again
 	lea	game_mem+0x5680,a1                      	| [$1df5: ld   de,$5680]
 	move.w	#0x9120,d6                      	| [$1df8: ld   hl,$9120]
 	jbsr	display_text_30F9                 	| [$1dfb: call display_text_30F9]
+	* display BONUS
 	lea	game_mem+0x5705,a1                      	| [$1dfe: ld   de,$5705]
 	move.w	#0x9240,d6                      	| [$1e01: ld   hl,$9240]
 	jbsr	display_text_30F9                 	| [$1e04: call display_text_30F9]
+	* "2" for PLAYER 2
 	move.b	#0x02,d0                        	| [$1e07: ld   a,$02]
 	move.w	#0x9040,d6                      	| [$1e09: ld   hl,$9040]
 	jbsr	osd_w_videoram                         	| [$1e0c: ld   (hl),a]
+	* display CREDIT followed by number of credits
 	lea	game_mem+0x5689,a1                      	| [$1e0d: ld   de,$5689]
 	move.w	#0x919F,d6                      	| [$1e10: ld   hl,$919F]
 	jbsr	display_text_30F9                 	| [$1e13: call display_text_30F9]
@@ -196,13 +203,13 @@ l_1dec:
 l_1e26:
 	move.b	#0x02,d0                        	| [$1e26: ld   a,$02]
 	move.w	#0x9840,d7                      	| [$1e28: ld   hl,$9840]
-	jbsr	write_attribute_5605                            	| [$1e2b: call $5605]
+	jbsr	write_attribute_on_line_5605                            	| [$1e2b: call $5605]
 	move.b	#0x08,d0                        	| [$1e2e: ld   a,$08]
 	move.w	#0x985F,d6                      	| [$1e30: ld   hl,$985F]
-	jbsr	write_attribute_5605                            	| [$1e33: call $5605]
+	jbsr	write_attribute_on_line_5605                            	| [$1e33: call $5605]
 	move.b	#0x05,d0                        	| [$1e36: ld   a,$05]
 	move.w	#0x9841,d6                      	| [$1e38: ld   hl,$9841]
-	jbsr	write_attribute_5605                            	| [$1e3b: call $5605]
+	jbsr	write_attribute_on_line_5605                            	| [$1e3b: call $5605]
 	rts                                    	| [$1e3e: ret]
 
 l_2018:
@@ -282,6 +289,7 @@ l_24bd:
 	jeq	l_24d7                             	| [$24c2: jr   z,$24D7]
 	jbsr	get_XUP_screen_address_2501                            	| [$24c4: call $2501]
 	jeq	l_24d9                             	| [$24c7: jr   z,$24D9]
+	* display PLAYER 1
 	lea	game_mem+0x575A,a1                      	| [$24c9: ld   de,$575A]
 	jbsr	display_text_30F9                            	| [$24cc: call $30F9]
 	jbsr	l_24e9                            	| [$24cf: call $24E9]
@@ -291,6 +299,7 @@ l_24d7:
 	move.w	(sp)+,d0                        	| [$24d7: pop  af]
 	rts                                    	| [$24d8: ret]
 l_24d9:
+	* display PLAYER2
 	lea	game_mem+0x5763,a1                      	| [$24d9: ld   de,$5763]
 	jbsr	display_text_30F9                            	| [$24dc: call $30F9]
 	jbsr	l_24e9                            	| [$24df: call $24E9]
@@ -301,7 +310,7 @@ l_24d9:
 l_24e9:
 	move.b	#0x02,d0                        	| [$24e9: ld   a,$02]
 	move.w	#0x9840,d6                      	| [$24eb: ld   hl,$9840]
-	jbsr	write_attribute_5605                            	| [$24ee: call $5605]
+	jbsr	write_attribute_on_line_5605                            	| [$24ee: call $5605]
 	rts                                    	| [$24f1: ret]
 l_24f2:
 	jbsr	get_XUP_screen_address_2501                            	| [$24f2: call $2501]
@@ -765,7 +774,7 @@ play_intro_3700:
 	jbsr	l_1dec                            	| [$370d: call $1DEC]
 	move.b	#0x01,d0                        	| [$3710: ld   a,$01]
 	move.b	d0,player_screen_600D           	| [$3712: ld   (player_screen_600D),a]
-	move.b	d0,0xA003                       	| [$3715: ld   ($A003),a]
+	**move.b	d0,0xA003                       	| [$3715: ld   ($A003),a]
 	move.b	d0,screen_index_param_6098      	| [$3718: ld   (screen_index_param_6098),a]
 	move.b	d0,guard_1_screen_6099          	| [$371b: ld   (guard_1_screen_6099),a]
 	move.b	d0,guard_2_screen_609A          	| [$371e: ld   (guard_2_screen_609A),a]
@@ -1105,7 +1114,7 @@ write_text_55f0:
 	addq.w	#1,a1                           	| [$5601: inc  de]
 	add.w	d1,d6                            	| [$5602: add  hl,bc]
 	jra	write_text_55f0                             	| [$5603: jr   $55F0]
-write_attribute_5605:
+write_attribute_on_line_5605:
 	move.w	#0x0020,d3                      	| [$5605: ld   de,$0020] 32
 	move.b	#0x1C,d1                        	| [$5608: ld   b,$1C]
 l_560a:

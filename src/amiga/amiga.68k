@@ -844,23 +844,6 @@ osd_update_sprites:
 	swap	d3
 	move.w	d3,(a5)
 	move.w	d7,(8,a5)
-	tst.b	dynamic_color_mode
-	beq.b	25f
-	cmp.w	#DYNAMIC_COPPER_ROWS,d1
-	bcc.b	25f		| too low: not doing it
-	* dynamic color mode: we need to update copperlist row 3 colors
-	lea		color_line_copper+4,a0
-	lsl.w	#4,d1		| times 16
-	add.w	d1,a0		| get relevant row
-
-	add.w	#color+34,d5	| color register
-	
-	lea		(-6,a6),a6
-	.rept	3
-	move.w	d5,(a0)+
-	addq.w	#2,d5
-	move.w	(a6)+,(a0)+
-	.endr
 25:
 	* set sprite in copperlist
 	move.w	d4,(6,a3)
@@ -1277,6 +1260,8 @@ platform_init:
 	
 	bsr		set_bg_bitplanes
 	
+	bsr		load_palette_in_copperlist
+	
 	* set copperlist
 	move.l	#copperlist,cop1lc(a5)
 
@@ -1328,7 +1313,6 @@ load_palette_in_copperlist:
 	movem.l	d0-d1/a0-a1,-(a7)
 	lea		palette,a0
 
-	move.w	(DYN_COLOR_INDEX*2,a0),orig_color_4
 	move.w	#TOTAL_NB_COLORS-1,d0
 	lea		copperlist_colors+2,a1
 1:
@@ -1361,23 +1345,7 @@ osd_disable_vblank_interrupt:
 
 
 	
-reset_dynamic_colors:
-	movem.l	a0/d2-d3,-(a7)
-	lea	color_line_copper+4,a0
-	move.w	#DYNAMIC_COPPER_ROWS-1,d3
-	move.w	#0x1FE,d2
-0:
-	move.w	d2,(a0)
-	addq.w	#4,a0
-	move.w	d2,(a0)
-	addq.w	#4,a0
-	move.w	d2,(a0)
-	addq.w	#8,a0
-	dbf		d3,0b
-	movem.l	(a7)+,a0/d2-d3
-	rts
 
-	
 
 * < D4: sprite properties
 *     Y code+attrs clut X
@@ -1488,7 +1456,6 @@ osd_w_colorram:
     .endif | OPT_DISABLE_BG_LAYER
 	rts
 
-	move.w	orig_color_4(pc),copperlist_colors+DYN_COLOR_INDEX*4+2	| change 4th color with color clut
 
 * d6: screen offset
 * d0: tile code
@@ -1501,6 +1468,10 @@ osd_w_colorram:
 *
 update_bg_tile:
 	* compute Y
+	* TEMP TEMP
+	move.w	#71,d0
+	move.w	#16,d1
+
 	and.w	#0xFF,d0	| mask up to 255
 	and.w	#0xFF,d1	| mask up to 255
 
@@ -2217,14 +2188,6 @@ sprites:
     .word    sprpt+30,0
 
 	.set    beampos,0x1C01
-color_line_copper:
-	.rept	DYNAMIC_COPPER_ROWS
-	.word	beampos,0xFFFE
-	.word	0x1FE,0
-	.word	0x1FE,0
-	.word	0x1FE,0
-	.set    beampos,beampos+0x100
-	.endr
 
 
 	* pal limit

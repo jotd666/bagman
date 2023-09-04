@@ -3779,11 +3779,15 @@ one_wagon_player_collision_1DB4:
 ;; no collision
 1DEA: AF            xor  a
 1DEB: C9            ret
+
+; display PLAYER 1
 1DEC: 11 80 56      ld   de,$5680
 1DEF: 21 A0 93      ld   hl,$93A0
 1DF2: CD F9 30      call display_text_30F9
+; display PLAYER 1 again
 1DF5: 11 80 56      ld   de,$5680
 1DF8: 21 20 91      ld   hl,$9120
+; display BONUS
 1DFB: CD F9 30      call display_text_30F9
 1DFE: 11 05 57      ld   de,$5705
 1E01: 21 40 92      ld   hl,$9240
@@ -3791,6 +3795,7 @@ one_wagon_player_collision_1DB4:
 1E07: 3E 02         ld   a,$02
 1E09: 21 40 90      ld   hl,$9040
 1E0C: 77            ld   (hl),a
+; display CREDIT followed by number of credits
 1E0D: 11 89 56      ld   de,$5689
 1E10: 21 9F 91      ld   hl,$919F
 1E13: CD F9 30      call display_text_30F9
@@ -3798,18 +3803,21 @@ one_wagon_player_collision_1DB4:
 1E19: 32 9F 90      ld   ($909F),a
 1E1C: 3A 05 60      ld   a,(unknown_6005)
 1E1F: 32 BF 90      ld   ($90BF),a
+* color all
 1E22: CD 26 1E      call $1E26
 1E25: C9            ret
+
 1E26: 3E 02         ld   a,$02
 1E28: 21 40 98      ld   hl,$9840
-1E2B: CD 05 56      call write_attribute_5605
+1E2B: CD 05 56      call write_attribute_on_line_5605
 1E2E: 3E 08         ld   a,$08
 1E30: 21 5F 98      ld   hl,$985F
-1E33: CD 05 56      call write_attribute_5605
+1E33: CD 05 56      call write_attribute_on_line_5605
 1E36: 3E 05         ld   a,$05
 1E38: 21 41 98      ld   hl,$9841
-1E3B: CD 05 56      call write_attribute_5605
+1E3B: CD 05 56      call write_attribute_on_line_5605
 1E3E: C9            ret
+
 1E3F: 3A 4D 60      ld   a,(unknown_604D)
 1E42: FE 12         cp   $12
 1E44: 38 1E         jr   c,$1E64
@@ -4089,10 +4097,10 @@ memset_2054
 209F: CD D9 55      call $55D9
 20A2: 3E 0E         ld   a,$0E
 20A4: 21 9A 98      ld   hl,$989A
-20A7: CD 05 56      call write_attribute_5605
+20A7: CD 05 56      call write_attribute_on_line_5605
 20AA: 3E 03         ld   a,$03
 20AC: 21 55 98      ld   hl,$9855
-20AF: CD 05 56      call write_attribute_5605
+20AF: CD 05 56      call write_attribute_on_line_5605
 20B2: 3E 11         ld   a,$11
 20B4: 32 B5 9B      ld   ($9BB5),a
 20B7: CD 8D 2F      call $2F8D
@@ -4648,7 +4656,7 @@ memset_2054
 24A1: C3 1C 12      jp   $121C
 24A4: 3A 10 62      ld   a,(unknown_6210)
 24A7: FE 01         cp   $01
-24A9: 20 3E         jr   nz,$24E9
+24A9: 20 3E         jr   nz,write_attribute_2_on_line_24E9
 24AB: 3A 6D 62      ld   a,(unknown_626D)
 24AE: FE 20         cp   $20
 24B0: DC BD 24      call c,$24BD
@@ -4662,23 +4670,26 @@ memset_2054
 24C2: 28 13         jr   z,$24D7
 24C4: CD 01 25      call get_XUP_screen_address_2501
 24C7: 28 10         jr   z,$24D9
+; display PLAYER1
 24C9: 11 5A 57      ld   de,$575A
 24CC: CD F9 30      call display_text_30F9
-24CF: CD E9 24      call $24E9
+24CF: CD E9 24      call write_attribute_2_on_line_24E9
 24D2: 3E 01         ld   a,$01
 24D4: 32 6E 62      ld   (unknown_626E),a
 24D7: F1            pop  af
 24D8: C9            ret
+; display PLAYER2
 24D9: 11 63 57      ld   de,$5763
 24DC: CD F9 30      call display_text_30F9
-24DF: CD E9 24      call $24E9
+24DF: CD E9 24      call write_attribute_2_on_line_24E9
 24E2: 3E 01         ld   a,$01
 24E4: 32 6E 62      ld   (unknown_626E),a
 24E7: F1            pop  af
 24E8: C9            ret
+
 24E9: 3E 02         ld   a,$02
 24EB: 21 40 98      ld   hl,$9840
-24EE: CD 05 56      call write_attribute_5605
+24EE: CD 05 56      call write_attribute_on_line_5605
 24F1: C9            ret
 24F2: CD 01 25      call get_XUP_screen_address_2501
 24F5: 11 6C 57      ld   de,$576C
@@ -5998,7 +6009,7 @@ compute_guard_speed_2C7C:
 2F45: CD F9 30      call display_text_30F9
 2F48: 21 83 98      ld   hl,$9883
 2F4B: 3E 0E         ld   a,$0E
-2F4D: CD 05 56      call write_attribute_5605
+2F4D: CD 05 56      call write_attribute_on_line_5605
 2F50: 11 00 4D      ld   de,$4D00
 2F53: 21 82 93      ld   hl,$9382
 2F56: 3E 12         ld   a,$12
@@ -6799,15 +6810,15 @@ display_text_30F9:
 35B8: 32 94 91      ld   ($9194),a
 35BB: 3E 08         ld   a,$08
 35BD: 21 7F 98      ld   hl,$987F
-35C0: CD 05 56      call write_attribute_5605
+35C0: CD 05 56      call write_attribute_on_line_5605
 35C3: 3E 00         ld   a,$00
 35C5: 32 5F 98      ld   ($985F),a
 35C8: 3E 05         ld   a,$05
 35CA: 21 41 98      ld   hl,$9841
-35CD: CD 05 56      call write_attribute_5605
+35CD: CD 05 56      call write_attribute_on_line_5605
 35D0: 3E 02         ld   a,$02
 35D2: 21 40 98      ld   hl,$9840
-35D5: CD 05 56      call write_attribute_5605
+35D5: CD 05 56      call write_attribute_on_line_5605
 35D8: 21 93 92      ld   hl,$9293
 35DB: 11 38 36      ld   de,$3638
 35DE: 3E 1F         ld   a,$1F
@@ -7917,7 +7928,7 @@ write_text_55f0:
 5602: 09            add  hl,bc
 5603: 18 EB         jr   write_text_55f0
 
-write_attribute_5605:
+write_attribute_on_line_5605:
 5605: 11 20 00      ld   de,$0020
 5608: 06 1C         ld   b,$1C
 560A: 77            ld   (hl),a
