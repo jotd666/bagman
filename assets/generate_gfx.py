@@ -1,9 +1,10 @@
 # generate equivalent of Mark C format _gfx.* from MAME tilesaving edition gfxrips
 
-from PIL import Image
+from PIL import Image,ImageOps
 import os,glob,collections,itertools
 
-indir = "bagman"
+this_dir = os.path.abspath(os.path.dirname(__file__))
+indir = os.path.join(this_dir,"bagman")
 palette_name = "palette0 *_0000.txt"
 game_name = "bagman"
 groups = {0:{"name":"tile"},1:{"name":"sprite"},2:{"name":"tiles"}}
@@ -24,7 +25,7 @@ def count_color(image):
 
 def write_tiles(blocks,size,f):
     for i,data in enumerate(blocks):
-        f.write(f"  // ${i:X}\n  {{\n")
+        f.write(f"  // ${i:X}\n  {{\n   ")
         offset = 0
         for k in range(size[1]):
             for j in range(size[0]):
@@ -96,8 +97,9 @@ for k,v in max_col_image.items():
         for sx in range(0,img.size[0],w):
             # for each tile
             data = []
-            for y in range(sy,sy+h):
-                for x in range(sx,sx+w):
+            # all tiles & sprites are flipped & mirrored in MAME dump
+            for y in reversed(range(sy,sy+h)):
+                for x in reversed(range(sx,sx+w)):
                     rgb = img.getpixel((x,y))
                     try:
                         idx = clut.index(rgb)
@@ -121,7 +123,7 @@ if True:
 #endif //  {inc_protect}
 """
 )
-    with open(os.path.join(indir,f"{game_name}_gfx.c"),"w") as f:
+    with open(os.path.join(this_dir,f"{game_name}_gfx.c"),"w") as f:
         f.write(f"""#include "{game_name}_gfx.h"
 
     // tile data
@@ -130,7 +132,7 @@ if True:
         size = tiles["dims"]
         nb = size[0]*size[1]
         f.write(f"uint8_t tile[NUM_TILES][{nb}] =\n{{")
-        blocks = [tiles["data"][0]+tiles["data"][2]]
+        blocks = groups[0]["data"]+groups[2]["data"]
         write_tiles(blocks,size,f)
 
         f.write("""};\n
@@ -140,7 +142,7 @@ if True:
         size = tiles["dims"]
         nb = size[0]*size[1]
         f.write(f"uint8_t sprite[NUM_SPRITES][{nb}] =\n{{")
-        blocks = [tiles["data"][1]]
+        blocks = tiles["data"]
         write_tiles(blocks,size,f)
 
         f.write("""};\n   // cluts
