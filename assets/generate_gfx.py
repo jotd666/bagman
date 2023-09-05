@@ -147,7 +147,7 @@ if True:
 
         f.write("""};\n   // cluts
 
-    uint8_t cluts[NUM_CLUTS][4] =
+    uint8_t clut[NUM_CLUTS][4] =
     {
       """)
 
@@ -161,7 +161,6 @@ if True:
                 if j != 3:
                     f.write(",")
             f.write("},\n")
-        f.write("};\n")
 
         f.write("""};\n   // palette
 
