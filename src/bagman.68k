@@ -175,7 +175,7 @@ l_1dec:
 	lea	game_mem+0x5680,a1                      	| [$1dec: ld   de,$5680]
 	move.w	#0x93A0,d6                      	| [$1def: ld   hl,$93A0]
 	jbsr	display_text_30F9                 	| [$1df2: call display_text_30F9]
-	jbsr	osd_break
+
 	* display PLAYER 1 again
 	lea	game_mem+0x5680,a1                      	| [$1df5: ld   de,$5680]
 	move.w	#0x9120,d6                      	| [$1df8: ld   hl,$9120]
@@ -737,7 +737,6 @@ l_2cd2:
 
 * < A1: text
 display_text_30F9:
-	jbsr	osd_break
 *	move.w	d0,-(sp)                        	| [$30f9: push af]
 *	move.b	dip_switch_B000,d0              	| [$30fa: ld   a,(dip_switch_B000)]
 *	and.b	#0x20,d0                         	| [$30fd: and  $20]
@@ -752,7 +751,7 @@ display_text_30F9:
 *	move.l	(sp)+,a0                        	| [$310a: pop  hl]
 *l_310b:
 *	move.w	(sp)+,d0                        	| [$310b: pop  af]
-	jbsr	l_55d9                            	| [$310c: call $55D9]
+	jra		display_text_55d9                            	| [$310c: call $55D9]
 	rts                                    	| [$310f: ret]	
 l_3110:
 	lea	game_mem+0x575A,a1                      	| [$3110: ld   de,$575A]
@@ -1067,8 +1066,11 @@ l_5531:
 	lea	unknown_6179,a2                	| [$5531: ld   ix,unknown_6179]
 	jra	l_5512                             	| [$5535: jr   $5512]
 
+* display ASCII text on line until code 0x3F is reached
+* < a1: pointer on text
+* < d6: start address of screen
 
-l_55d9:
+display_text_55d9:
 	move.w	#-0x20,d1                        	| [$55d9: ld   bc,$FFE0] 65504
 												| [$55d9: ld   bc,$FFE0] 65504
 	move.b	(a1),d0                         	| [$55dc: ld   a,(de)]
@@ -1076,19 +1078,22 @@ l_55d9:
 	bne.b	0f
 	rts                                    	| [$55df: ret  z]
 0:
+	* subtract 0x30, now numbers are in tiles 0-9, letters follow with
+	* a gap in between
 	sub.b	#0x30,d0                         	| [$55e0: sub  $30]
-		jbsr	osd_w_videoram                         	| [$55e2: ld   (hl),a]
+	jbsr	osd_w_videoram                         	| [$55e2: ld   (hl),a]
 
 	move.w	d6,-(sp)                        	| [$55e3: push hl]
 												| [$55e4: ld   a,h]
 	add.w	#0x0800,d6                         	| [$55e5: add  a,$08]
 										| [$55e7: ld   h,a]
+	* bank 0, lower end of tiles and color table 0
 	clr.b	d0                               	| [$55e8: ld   a,$00]
 	jbsr	osd_w_colorram                         	| [$55ea: ld   (hl),a]
 	move.w	(sp)+,d6                        	| [$55eb: pop  hl]
 	addq.w	#1,a1                           	| [$55ec: inc  de]
-	add.w	d1,a0                            	| [$55ed: add  hl,bc]
-	jra	l_55d9                             	| [$55ee: jr   $55D9]
+	add.w	d1,d6                            	| [$55ed: add  hl,bc]
+	jra	display_text_55d9                             	| [$55ee: jr   $55D9]
 
 * write text
 * < A1: text

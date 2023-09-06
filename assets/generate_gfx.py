@@ -110,15 +110,15 @@ for k,v in max_col_image.items():
     groups[k]["data"] = block
 
 if True:
-    with open(os.path.join(indir,f"{game_name}_gfx.h"),"w") as f:
+    with open(os.path.join(this_dir,f"{game_name}_gfx.h"),"w") as f:
         inc_protect = f"__{game_name.upper()}_GFX_H__"
         f.write(f"""#ifndef {inc_protect}
 #define {inc_protect}
 
 #define NUM_COLOURS {len(global_palette)}
 
-#define NUM_TILES {len(groups[0]["data"])}
-#define NUM_TILES {len(groups[1]["data"])*3}
+#define NUM_TILES {len(groups[0]["data"])*2}
+#define NUM_SPRITES {len(groups[1]["data"])}
 
 #endif //  {inc_protect}
 """

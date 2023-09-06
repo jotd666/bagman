@@ -3,7 +3,7 @@
 
 #define NUM_COLOURS 26
 
-#define NUM_TILES 512
-#define NUM_TILES 384
+#define NUM_TILES 1024
+#define NUM_SPRITES 128
 
 #endif //  __BAGMAN_GFX_H__

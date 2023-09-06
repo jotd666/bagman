@@ -4094,7 +4094,7 @@ memset_2054
 2096: CD F9 30      call display_text_30F9
 2099: 11 E6 20      ld   de,$20E6
 209C: 21 B5 93      ld   hl,$93B5
-209F: CD D9 55      call $55D9
+209F: CD D9 55      call display_text_55d9
 20A2: 3E 0E         ld   a,$0E
 20A4: 21 9A 98      ld   hl,$989A
 20A7: CD 05 56      call write_attribute_on_line_5605
@@ -6225,7 +6225,7 @@ display_text_30F9:
 3109: EB            ex   de,hl
 310A: E1            pop  hl
 310B: F1            pop  af
-310C: CD D9 55      call $55D9
+310C: CD D9 55      call display_text_55d9
 310F: C9            ret
 3110: 11 5A 57      ld   de,$575A
 3113: 21 A0 93      ld   hl,$93A0
@@ -7894,10 +7894,16 @@ update_guard_2_screen_address_from_xy_5575:
 55D5: C6 08         add  a,$08
 55D7: 67            ld   h,a
 55D8: C9            ret
+
+; display ASCII text on line until code 0x3F is reached
+; < de: pointer on text
+; < hl: start address of screen
+
+display_text_55d9:
 55D9: 01 E0 FF      ld   bc,$FFE0
 55DC: 1A            ld   a,(de)
 55DD: FE 3F         cp   $3F
-55DF: C8            ret  z
+55DF: C8            ret  z		; end of string
 55E0: D6 30         sub  $30
 55E2: 77            ld   (hl),a
 55E3: E5            push hl
@@ -7909,7 +7915,7 @@ update_guard_2_screen_address_from_xy_5575:
 55EB: E1            pop  hl
 55EC: 13            inc  de
 55ED: 09            add  hl,bc
-55EE: 18 E9         jr   $55D9
+55EE: 18 E9         jr   display_text_55d9
 write_text_55f0:
 55F0: 01 E0 FF      ld   bc,$FFE0
 55F3: 1A            ld   a,(de)

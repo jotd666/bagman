@@ -735,6 +735,7 @@ osd_small_wait:
 * the first byte contains the sprite image number (bits 2-7), Y flip (bit 0),
 *                        X flip (bit 1); the second byte the color
 * < A1: pointer on 9022 zone (X,Y coords)
+	.ifdef	xxxxx
 osd_update_sprites:
 	*lea		test_sprites_xy,a1
 	*lea		test_sprites_code,a0
@@ -815,7 +816,7 @@ osd_update_sprites:
 	* set colors
 	moveq	#0,d3
 	move.b	(SPRITE_CLUT,a2),d3
-	lea		normal_cluts+2,a6
+	lea		cluts+2,a6
 	lsl.w	#3,d3		| times 8
 
 	add.w	d3,a6
@@ -857,18 +858,7 @@ osd_update_sprites:
 	cmp.w	#NB_HOST_SPRITES,d6
 	jne	10b	
 	rts
-
-test_sprites_xy:
-	**dc.b	0xEA,0xD8,0xEB,0xB0,0xEB,0x90,0xFF,0xF8,0xFF,0xE8,0xFF,0xC8,0x00,0x00
-	*       snobee                      bagman   ice block 
-	**.word	0xC792,0xFF00,0xFF00,0xFF00,0x2730,0x2768,0x0000
-	.word	0xFF00,0xFF00,0xFF00,0xFF00,0x4410,0xFF00,0x0000,0x0000
-test_sprites_code:
-	**dc.b	0x5E,0x0A,0x16,0x0B,0x5E,0x01,0x08,0x0B,0x08,0x0D,0x08,0x0C,0x00,0x00
-	**.word	0x5401,0x0000,0x0000,0x0000,0x000B,0x7009,0x0000
-	* bagman alone in the end
-	.word	0x8401,0x8001,0x8001,0x0000,0x160B,0x7009,0x0000
-
+	.endif
 
 * < D0: sprite X
 * < D1: sprite Y
@@ -1407,13 +1397,6 @@ osd_w_videoram:
 	lea		bg_videoram,a1
 	add.w	d6,a1
 	
-	* force write of digits (force score refresh because of 2 lines hack)
-	cmp.b	#48,d0
-	bcs.b	2f
-	cmp.b	#58,d0
-	bcs.b	3f
-2:
-
 	cmp.b	(a1),d0
 	beq.b	0f		| already the proper value
 3:
@@ -1468,13 +1451,11 @@ osd_w_colorram:
 *
 update_bg_tile:
 	* compute Y
-	* TEMP TEMP
-	move.w	#71,d0
-	move.w	#16,d1
 
 	and.w	#0xFF,d0	| mask up to 255
 	and.w	#0xFF,d1	| mask up to 255
 
+	
 	.ifne	OPT_ENABLE_LOGGING
 	* when logging is enabled, play a while
 	* and break. Get the address in 0x100 then do
@@ -1490,8 +1471,20 @@ update_bg_tile:
 	st.b	(a0,d0.l)
 	movem.w	(a7)+,d0-d1
 	.endif
-
-
+	
+	* is it bank 2 ?
+	btst	#4,D1
+	beq.b	0f
+	add.w	#0x200,d0
+0:
+	* is it upper part of bank ?
+	btst	#5,D1
+	beq.b	0f
+	add.w	#0x100,d0
+0:
+	* color tile
+	and.w	#0xF,d1
+	
 	cmp.w	#0x3C0,d6
 	bcc.b	0f
 	cmp.w	#0x40,d6
@@ -1503,7 +1496,7 @@ update_bg_tile:
 	and.w	#0x1F,d3	| this is Y
 	addq.w	#2,d3
 	bra.b	1f
-	* two first rows are special
+	* two first rows are special???
 0:
 	move.w	d6,d3
 	lsr.w	#5,d3		| this is Y
@@ -1538,14 +1531,14 @@ update_bg_tile:
 
 	* optimization when a well-known
 	* empty character is passed (standard charset)
-	cmp.w	#0x20,d0	| empty character
-	jeq	1f
+	*cmp.w	#0x20,d0	| empty character
+	*jeq	1f
 
 	lea		character_table,a0
 	add.w	d0,d0
 	add.w	d0,d0
 	move.l	(a0,d0.w),d0
-	jeq	1f
+	jeq	2f
 	move.l	d0,a0		| pointer on clut table
 	* now we use d1 (attribute)
 	add.w	d1,d1
