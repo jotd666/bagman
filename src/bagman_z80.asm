@@ -2432,7 +2432,7 @@ mainloop_1242: 3E 01         ld   a,$01
 12C9: 28 1F         jr   z,$12EA
 12CB: 3A 00 B8      ld   a,(io_read_shit_B800)
 12CE: CD 2C 2A      call $2A2C	;  ???
-12D1: CD EC 1D      call $1DEC	;  ???
+12D1: CD EC 1D      call display_player_ids_and_credit_1dec
 12D4: CD BE 39      call $39BE	;  ???
 12D7: 21 3C 51      ld   hl,$513C
 12DA: 22 40 61      ld   (unknown_6140),hl
@@ -3781,6 +3781,7 @@ one_wagon_player_collision_1DB4:
 1DEB: C9            ret
 
 ; display PLAYER 1
+display_player_ids_and_credit_1dec:
 1DEC: 11 80 56      ld   de,$5680
 1DEF: 21 A0 93      ld   hl,$93A0
 1DF2: CD F9 30      call display_text_30F9
@@ -3875,7 +3876,7 @@ display_maze_1E94:
 1EAE: CD 4C 28      call $284C
 1EB1: 3E 01         ld   a,$01
 1EB3: 32 16 60      ld   (unknown_6016),a
-1EB6: CD EC 1D      call $1DEC
+1EB6: CD EC 1D      call display_player_ids_and_credit_1dec
 
 	;; init player coordinates
 1EB9: 3E 01         ld   a,$01
@@ -4151,12 +4152,12 @@ memset_2054
 2105: 32 03 A0      ld   ($A003),a
 2108: CD 00 2A      call $2A00
 210B: 3E 30         ld   a,$30
-210D: CD EC 29      call $29EC
+210D: CD EC 29      call change_attribute_everywhere_29ec
 2110: 06 01         ld   b,$01
 2112: 21 80 65      ld   hl,player_struct_6580
 2115: 3E 00         ld   a,$00
 2117: CD F1 29      call $29F1
-211A: CD EC 1D      call $1DEC
+211A: CD EC 1D      call display_player_ids_and_credit_1dec
 211D: 3E 01         ld   a,$01
 211F: 32 03 A0      ld   ($A003),a
 2122: C9            ret
@@ -4645,7 +4646,7 @@ memset_2054
 2483: C3 DC 29      jp   $29DC
 2486: 31 F0 67      ld   sp,unknown_67F0
 2489: 3E 3F         ld   a,$3F
-248B: CD EC 29      call $29EC
+248B: CD EC 29      call change_attribute_everywhere_29ec
 248E: CD 00 2A      call $2A00
 2491: 3E 01         ld   a,$01
 2493: 32 03 A0      ld   ($A003),a
@@ -4900,7 +4901,7 @@ get_XUP_screen_address_2501:
 265E: C9            ret
 265F: CD 16 2A      call $2A16
 2662: 3E 3F         ld   a,$3F
-2664: CD EC 29      call $29EC
+2664: CD EC 29      call change_attribute_everywhere_29ec
 2667: 3A 00 B8      ld   a,(io_read_shit_B800)
 266A: 21 00 48      ld   hl,$4800
 266D: 11 00 90      ld   de,$9000
@@ -4998,7 +4999,7 @@ get_XUP_screen_address_2501:
 275C: C9            ret
 275D: CD 16 2A      call $2A16
 2760: 3E 3F         ld   a,$3F
-2762: CD EC 29      call $29EC
+2762: CD EC 29      call change_attribute_everywhere_29ec
 2765: 3A 00 B8      ld   a,(io_read_shit_B800)
 2768: 21 00 44      ld   hl,$4400
 276B: 11 00 90      ld   de,$9000
@@ -5092,7 +5093,7 @@ get_XUP_screen_address_2501:
 284B: C9            ret
 284C: CD 16 2A      call $2A16
 284F: 3E 3F         ld   a,$3F
-2851: CD EC 29      call $29EC
+2851: CD EC 29      call change_attribute_everywhere_29ec
 2854: 3A 00 B8      ld   a,(io_read_shit_B800)
 2857: 21 00 40      ld   hl,$4000
 285A: 11 00 90      ld   de,$9000
@@ -5297,6 +5298,8 @@ write_text_29bc:
 29E5: 20 FB         jr   nz,$29E2
 29E7: 10 F8         djnz $29E1
 29E9: C3 86 24      jp   $2486
+
+change_attribute_everywhere_29ec:
 29EC: 06 08         ld   b,$08
 29EE: 21 00 98      ld   hl,$9800
 29F1: 0E 00         ld   c,$00
@@ -5309,6 +5312,8 @@ write_text_29bc:
 29FB: 20 F6         jr   nz,$29F3
 29FD: 10 F2         djnz $29F1
 29FF: C9            ret
+
+
 2A00: 06 04         ld   b,$04
 2A02: 3E E0         ld   a,$E0
 2A04: 21 00 90      ld   hl,$9000
@@ -5342,7 +5347,7 @@ write_text_29bc:
 2A35: 21 00 90      ld   hl,$9000
 2A38: CD 07 2A      call $2A07
 2A3B: 3E 3F         ld   a,$3F
-2A3D: CD EC 29      call $29EC
+2A3D: CD EC 29      call change_attribute_everywhere_29ec
 2A40: 3A 8C 62      ld   a,(unknown_628C)
 2A43: FE 01         cp   $01
 2A45: 28 09         jr   z,$2A50
@@ -6904,8 +6909,8 @@ play_intro_3700:
 3702: 32 03 A0      ld   ($A003),a
 3705: CD 00 2A      call $2A00
 3708: 3E 3F         ld   a,$3F
-370A: CD EC 29      call $29EC
-370D: CD EC 1D      call $1DEC
+370A: CD EC 29      call change_attribute_everywhere_29ec
+370D: CD EC 1D      call display_player_ids_and_credit_1dec
 3710: 3E 01         ld   a,$01
 3712: 32 0D 60      ld   (player_screen_600D),a
 3715: 32 03 A0      ld   ($A003),a
@@ -6957,6 +6962,7 @@ play_intro_3700:
 3782: 3A 74 62      ld   a,(unknown_6274)
 3785: FE 01         cp   $01
 3787: CA 00 38      jp   z,$3800
+; draw V=A logo + PRESENTE
 378A: 11 00 4C      ld   de,$4C00
 378D: 21 86 92      ld   hl,$9286
 3790: 3E 16         ld   a,$16
@@ -6981,6 +6987,7 @@ play_intro_3700:
 37BD: E6 20         and  $20
 37BF: FE 20         cp   $20
 37C1: 20 0A         jr   nz,$37CD
+; english: change last "E" of "PRESENTE" by "S"
 37C3: 3E E1         ld   a,$E1
 37C5: 32 8B 91      ld   ($918B),a
 37C8: 3E 13         ld   a,$13
@@ -7018,6 +7025,7 @@ play_intro_3700:
 3814: FE 01         cp   $01
 3816: 28 08         jr   z,$3820
 3818: 3E 01         ld   a,$01
+* flip & mirror screen: now upright
 381A: 32 01 A0      ld   ($A001),a
 381D: 32 02 A0      ld   ($A002),a
 3820: 3A 82 65      ld   a,(player_x_6582)
@@ -7960,11 +7968,13 @@ write_attribute_on_line_5605:
 563C: 06 03         ld   b,$03
 563E: 11 20 00      ld   de,$0020
 5641: DD 7E 00      ld   a,(ix+$00)
-5644: CD 4D 56      call $564D
+5644: CD 4D 56      call write_numeric_value_564d
 5647: DD 23         inc  ix
 5649: 19            add  hl,de
 564A: 10 F5         djnz $5641
 564C: C9            ret
+
+write_numeric_value_564d:
 564D: F5            push af
 564E: E6 0F         and  $0F
 5650: 77            ld   (hl),a

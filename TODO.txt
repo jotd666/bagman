@@ -1,2 +1,4 @@
 
+enable tile log, don't force cluts for all cluts in ASCII
+amiga: optimize palette for tiles: should not have colors higher than 16 so reorder palette to match this
 

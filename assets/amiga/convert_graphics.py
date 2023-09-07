@@ -1,9 +1,15 @@
-import os,re,bitplanelib,ast,json
+import os,re,bitplanelib,ast,json,glob
 from PIL import Image,ImageOps
 
 
 import collections
 
+def ensure_empty(d):
+    if os.path.exists(d):
+        for f in glob.glob(os.path.join(d,"*")):
+            os.remove(f)
+    else:
+        os.mkdir(d)
 
 
 this_dir = os.path.dirname(__file__)
@@ -25,14 +31,13 @@ else:
     used_cluts = None
 
 
-used_cluts = {k:range(0,16) for k in range(0,64)}
+used_cluts.update({k:range(0,16) for k in range(0,64)})
 
 dump_tiles = True
 if dump_tiles:
     if not os.path.exists(dump_dir):
         os.mkdir(dump_dir)
-    if not os.path.exists(tiles_dump_dir):
-        os.mkdir(tiles_dump_dir)
+    ensure_empty(tiles_dump_dir)
 
 def dump_asm_bytes(*args,**kwargs):
     bitplanelib.dump_asm_bytes(*args,**kwargs,mit_format=True)

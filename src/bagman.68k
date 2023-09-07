@@ -170,7 +170,7 @@ l_121c:
 	illegal
 	jbsr	osd_break
 	
-l_1dec:
+display_player_ids_and_credit_1dec:
 	* display PLAYER 1
 	lea	game_mem+0x5680,a1                      	| [$1dec: ld   de,$5680]
 	move.w	#0x93A0,d6                      	| [$1def: ld   hl,$93A0]
@@ -257,7 +257,7 @@ l_2483:
 l_2486:
 	*ld   sp,unknown_67F0
 	move.b	#0x3F,d0                        	| [$2489: ld   a,$3F]
-	jbsr	l_29ec                            	| [$248b: call $29EC]
+	jbsr	change_attribute_everywhere_29ec                            	| [$248b: call $29EC]
 	jbsr	l_2a00                            	| [$248e: call $2A00]
 *	move.b	#0x01,d0                        	| [$2491: ld   a,$01]
 *	move.b	d0,0xA003                       	| [$2493: ld   ($A003),a]
@@ -477,14 +477,16 @@ l_29e2:
 	subq.b	#1,d1                           	| [...]
 	jne	l_29e1                             	| [$29e7: djnz $29E1]
 	jra	l_2486                             	| [$29e9: jp   $2486]
-l_29ec:
+	
+change_attribute_everywhere_29ec:
+	* set all attributes to passed d0
 	move.b	#0x08,d1                        	| [$29ec: ld   b,$08]
 	move.w	#0x9800,d6                      	| [$29ee: ld   hl,$9800]
 l_29f1:
 	clr.b	d2                               	| [$29f1: ld   c,$00]
 l_29f3:
 	jbsr	osd_w_colorram                         	| [$29f3: ld   (hl),a]
-	addq.w	#1,a0                           	| [$29f4: inc  hl]
+	addq.w	#1,d6                           	| [$29f4: inc  hl]
 	* kick watchdog
 												| [$29f5: push af]
 												| [$29f6: ld   a,(io_read_shit_B800)]
@@ -494,6 +496,8 @@ l_29f3:
 	subq.b	#1,d1                           	| [...]
 	jne	l_29f1                             	| [$29fd: djnz $29F1]
 	rts                                    	| [$29ff: ret]
+	
+	
 l_2a00:
 	move.b	#0x04,d1                        	| [$2a00: ld   b,$04]
 	move.b	#0xE0,d0                        	| [$2a02: ld   a,$E0]
@@ -529,6 +533,8 @@ l_2a1f:
 	subq.b	#1,d1                           	| [...]
 	jne	l_2a1f                             	| [$2a29: djnz $2A1F]
 	rts                                    	| [$2a2b: ret]
+
+
 l_2a2c:
 *	clr.b	d0                               	| [$2a2c: ld   a,$00]
 *	move.b	d0,0xA003                       	| [$2a2e: ld   ($A003),a]
@@ -537,7 +543,7 @@ l_2a2c:
 	move.w	#0x9000,d6                      	| [$2a35: ld   hl,$9000]
 	jbsr	l_2a07                            	| [$2a38: call $2A07]
 	move.b	#0x3F,d0                        	| [$2a3b: ld   a,$3F]
-	jbsr	l_29ec                            	| [$2a3d: call $29EC]
+	jbsr	change_attribute_everywhere_29ec                            	| [$2a3d: call $29EC]
 	move.b	unknown_628C,d0                       	| [$2a40: ld   a,($628C)]
 	cmp.b	#0x01,d0                         	| [$2a43: cp   $01]
 	jeq	l_2a50                             	| [$2a45: jr   z,$2A50]
@@ -769,8 +775,8 @@ play_intro_3700:
 	move.b	d0,0xA003                       	| [$3702: ld   ($A003),a]
 	jbsr	l_2a00                            	| [$3705: call $2A00]
 	move.b	#0x3F,d0                        	| [$3708: ld   a,$3F]
-	jbsr	l_29ec                            	| [$370a: call $29EC]
-	jbsr	l_1dec                            	| [$370d: call $1DEC]
+	jbsr	change_attribute_everywhere_29ec                            	| [$370a: call $29EC]
+	jbsr	display_player_ids_and_credit_1dec                            	| [$370d: call $1DEC]
 	move.b	#0x01,d0                        	| [$3710: ld   a,$01]
 	move.b	d0,player_screen_600D           	| [$3712: ld   (player_screen_600D),a]
 	**move.b	d0,0xA003                       	| [$3715: ld   ($A003),a]
@@ -792,6 +798,8 @@ play_intro_3700:
 	move.b	#0x01,d0                        	| [$3743: ld   a,$01]
 	move.b	d0,unknown_61ED                 	| [$3745: ld   (unknown_61ED),a]
 	jbsr	compute_guard_speed_from_dipsw_2C4D	| [$3748: call compute_guard_speed_from_dipsw_2C4D]
+
+	* draw the line the characters are going to walk on
 	move.w	#0x901A,d6                      	| [$374b: ld   hl,$901A]
 	move.w	#0x0020,d3                      	| [$374e: ld   de,$0020] 32
 	move.b	#0xF0,d0                        	| [$3751: ld   a,$F0]
@@ -825,37 +833,43 @@ l_3755:
 	move.b	unknown_6274,d0                 	| [$3782: ld   a,(unknown_6274)]
 	cmp.b	#0x01,d0                         	| [$3785: cp   $01]
 	jeq	l_3800                             	| [$3787: jp   z,$3800]
+	* draw top of V=A logo
 	lea	game_mem+0x4C00,a1                      	| [$378a: ld   de,$4C00]
 	move.w	#0x9286,d6                      	| [$378d: ld   hl,$9286]
+	* color 6, 2nd tile bank
 	move.b	#0x16,d0                        	| [$3790: ld   a,$16]
 	exg	d0,d7                              	| [$3792: ex   af,af']
 	jbsr	write_text_55f0                            	| [$3793: call $55F0]
+	* draw middle part of V=A logo
 	lea	game_mem+0x4C0B,a1                      	| [$3796: ld   de,$4C0B]
 	move.w	#0x9287,d6                      	| [$3799: ld   hl,$9287]
 	move.b	#0x16,d0                        	| [$379c: ld   a,$16]
 	exg	d0,d7                              	| [$379e: ex   af,af']
 	jbsr	write_text_55f0                            	| [$379f: call $55F0]
+	* draw bottom part of V=A logo
 	lea	game_mem+0x4C16,a1                      	| [$37a2: ld   de,$4C16]
 	move.w	#0x9288,d6                      	| [$37a5: ld   hl,$9288]
 	move.b	#0x16,d0                        	| [$37a8: ld   a,$16]
 	exg	d0,d7                              	| [$37aa: ex   af,af']
 	jbsr	write_text_55f0                            	| [$37ab: call $55F0]
+	* presents
 	lea	game_mem+0x4C21,a1                      	| [$37ae: ld   de,$4C21]
 	move.w	#0x926B,d6                      	| [$37b1: ld   hl,$926B]
 	move.b	#0x13,d0                        	| [$37b4: ld   a,$13]
 	exg	d0,d7                              	| [$37b6: ex   af,af']
 	jbsr	write_text_55f0                            	| [$37b7: call $55F0]
-	*jbsr	osd_read_dipswitches
-	moveq	#0,d0		| TEMP
-	*move.b	dip_switch_B000,d0              	| [$37ba: ld   a,(dip_switch_B000)]
+	jbsr	osd_read_dipswitches            	| [$37ba: ld   a,(dip_switch_B000)]
+	* language french or english
 	and.b	#0x20,d0                         	| [$37bd: and  $20]
 	cmp.b	#0x20,d0                         	| [$37bf: cp   $20]
 	jne	l_37cd                             	| [$37c1: jr   nz,$37CD]
+	* english: change last "E" of "PRESENTE" by "S"
 	move.b	#0xE1,d0                        	| [$37c3: ld   a,$E1]
 	move.b	d0,0x918B                       	| [$37c5: ld   ($918B),a]
 	move.b	#0x13,d0                        	| [$37c8: ld   a,$13]
 	move.b	d0,0x998B                       	| [$37ca: ld   ($998B),a]
 l_37cd:
+	* "BAGMAN title" (c) 1982
 	lea	game_mem+0x4C2A,a1                      	| [$37cd: ld   de,$4C2A]
 	move.w	#0x938E,d6                      	| [$37d0: ld   hl,$938E]
 	move.b	#0x17,d0                        	| [$37d3: ld   a,$17]
@@ -1110,7 +1124,6 @@ write_text_55f0:
 
 	move.w	d6,-(sp)                        	| [$55f8: push hl]
 	add.w	#0x0800,d6                           	| [$55f9: ld   a,h]
-	add.b	#0x08,d0                         	| [$55fa: add  a,$08]
 	                           	| [$55fc: ld   h,a]
 	exg	d0,d7                              	| [$55fd: ex   af,af']
 	jbsr	osd_w_colorram                         	| [$55fe: ld   (hl),a]
@@ -1119,6 +1132,7 @@ write_text_55f0:
 	addq.w	#1,a1                           	| [$5601: inc  de]
 	add.w	d1,d6                            	| [$5602: add  hl,bc]
 	jra	write_text_55f0                             	| [$5603: jr   $55F0]
+	
 write_attribute_on_line_5605:
 	move.w	#0x0020,d3                      	| [$5605: ld   de,$0020] 32
 	move.b	#0x1C,d1                        	| [$5608: ld   b,$1C]
@@ -1148,22 +1162,22 @@ l_563c:
 	move.b	#0x03,d1                        	| [$563c: ld   b,$03]
 	move.w	#0x0020,d3                      	| [$563e: ld   de,$0020] 32
 l_5641:
-	move.b	(0x00,a2),d0                    	| [$5641: ld   a,(ix+$00)]
-	jbsr	l_564d                            	| [$5644: call $564D]
+	move.b	(a2),d0                    	| [$5641: ld   a,(ix+$00)]
+	jbsr	write_numeric_value_564d                            	| [$5644: call $564D]
 	addq.w	#1,a2                           	| [$5647: inc  ix]
-	add.w	d3,a0                            	| [$5649: add  hl,de]
+	add.w	d3,d6                            	| [$5649: add  hl,de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_5641                             	| [$564a: djnz $5641]
 	rts                                    	| [$564c: ret]
-l_564d:
+write_numeric_value_564d:
 	move.w	d0,-(sp)                        	| [$564d: push af]
 	and.b	#0x0F,d0                         	| [$564e: and  $0F]
-	move.b	d0,(a0)                         	| [$5650: ld   (hl),a]
+	jbsr	osd_w_videoram                         	| [$5650: ld   (hl),a]
 	add.w	d3,a0                            	| [$5651: add  hl,de]
 	move.w	(sp)+,d0                        	| [$5652: pop  af]
 	ror.b	#4,d0                            	| [$5653: rrc  a] * 4
 	and.b	#0x0F,d0                         	| [$565b: and  $0F]
-	move.b	d0,(a0)                         	| [$565d: ld   (hl),a]
+	jbsr	osd_w_videoram                         	| [$565d: ld   (hl),a]
 	rts                                    	| [$565e: ret]
 
  * in:	 d6 contains 16 bit hex value of the points to add
