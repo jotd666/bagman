@@ -52,6 +52,9 @@
 	.global	score_ten_thousands_6178
 	.global	screen_index_param_6098
 	.global	time_61E8
+	.global	is_intermission_6274
+	.global	extra_life_awarded_6286
+	.global	bags_coordinates_609C
 	.global	unknown_6004
 	.global	unknown_6005
 	.global	unknown_6007
@@ -81,8 +84,8 @@
 	.global	unknown_6044
 	.global	unknown_6047
 	.global	unknown_604B
-	.global	unknown_604D
-	.global	unknown_604E
+	.global	fall_height_604D
+	.global	fatal_fall_height_reached_604E
 	.global	unknown_604F
 	.global	unknown_6051
 	.global	unknown_6052
@@ -98,7 +101,6 @@
 	.global	unknown_6095
 	.global	unknown_6097
 	.global	unknown_609B
-	.global	unknown_609C
 	.global	unknown_6140
 	.global	unknown_6142
 	.global	unknown_6143
@@ -177,7 +179,6 @@
 	.global	unknown_6271
 	.global	unknown_6272
 	.global	unknown_6273
-	.global	unknown_6274
 	.global	unknown_6275
 	.global	unknown_6278
 	.global	unknown_6279
@@ -189,7 +190,6 @@
 	.global	unknown_6280
 	.global	unknown_6281
 	.global	unknown_6285
-	.global	unknown_6286
 	.global	unknown_6288
 	.global	unknown_628A
 	.global	unknown_628C
@@ -313,9 +313,9 @@ unknown_6047:
 	ds.b	4
 unknown_604B:
 	ds.b	2
-unknown_604D:
+fall_height_604D:
 	ds.b	1
-unknown_604E:
+fatal_fall_height_reached_604E:
 	ds.b	1
 unknown_604F:
 	ds.b	1
@@ -375,7 +375,7 @@ guard_2_screen_609A:
 	ds.b	1
 unknown_609B:
 	ds.b	1
-unknown_609C:
+bags_coordinates_609C:
 	ds.b	164
 unknown_6140:
 	ds.b	2
@@ -547,7 +547,7 @@ unknown_6272:
 	ds.b	1
 unknown_6273:
 	ds.b	1
-unknown_6274:
+is_intermission_6274:
 	ds.b	1
 unknown_6275:
 	ds.b	3
@@ -573,7 +573,7 @@ unknown_6281:
 	ds.b	4
 unknown_6285:
 	ds.b	1
-unknown_6286:
+extra_life_awarded_6286:
 	ds.b	2
 unknown_6288:
 	ds.b	2

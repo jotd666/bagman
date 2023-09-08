@@ -1217,7 +1217,7 @@ platform_init:
 	
 	* restrict borders: we don't see bobs on the borders!
     move.w #0x1C99,diwstrt(a5)
-    move.w #0x3881-8,diwstop(a5)
+    move.w #0x2C81-8,diwstop(a5)
     move.w #0x0038,ddfstrt(a5)
     move.w #0x00D0,ddfstop(a5)
     move.w #0x5200,bplcon0(a5) | 5 bitplanes
@@ -1859,6 +1859,13 @@ handle_keyboard:
 	eor.b	#1,invincible_flag
 0:
 10:
+	.ifndef	RELEASE
+	cmp.b	#0x58,d0	| F9 key crashes game (restarts whdload)
+	bne.b	0f
+	illegal
+	.endif
+0:
+
 	tst.l	_resload
 	bne.b	2f
 	cmp.b	#0x45,d0	| "ESC" key

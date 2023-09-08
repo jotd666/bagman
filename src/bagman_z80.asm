@@ -158,7 +158,7 @@
 0054: 3A 42 61      ld   a,(unknown_6142)
 0057: 3C            inc  a
 0058: 32 42 61      ld   (unknown_6142),a
-005B: 3A 74 62      ld   a,(unknown_6274)
+005B: 3A 74 62      ld   a,(is_intermission_6274)
 005E: FE 01         cp   $01
 0060: 28 05         jr   z,$0067
 0062: 3A ED 61      ld   a,(unknown_61ED)
@@ -317,7 +317,7 @@
 01ED: 3A C7 61      ld   a,(unknown_61C7)
 01F0: FE 00         cp   $00
 01F2: CC C7 0D      call z,$0DC7
-01F5: 3A 4E 60      ld   a,(unknown_604E)
+01F5: 3A 4E 60      ld   a,(fatal_fall_height_reached_604E)
 01F8: FE 00         cp   $00
 01FA: 20 22         jr   nz,$021E
 01FC: CD 5E 55      call update_player_screen_address_from_xy_555E
@@ -348,7 +348,7 @@
 0243: 3A 0D 60      ld   a,(player_screen_600D)
 0246: 32 98 60      ld   (screen_index_param_6098),a
 0249: 21 08 60      ld   hl,unknown_6008
-024C: FD 21 4D 60   ld   iy,unknown_604D
+024C: FD 21 4D 60   ld   iy,fall_height_604D
 0250: DD 21 80 65   ld   ix,player_struct_6580
 0254: 3A 14 60      ld   a,(unknown_6014)
 0257: 4F            ld   c,a
@@ -1329,7 +1329,7 @@ player_grip_handle_test_0784:
 0A09: 3A 98 60      ld   a,(screen_index_param_6098)
 0A0C: FE 01         cp   $01
 0A0E: 28 CA         jr   z,$09DA
-0A10: 3A 4E 60      ld   a,(unknown_604E)
+0A10: 3A 4E 60      ld   a,(fatal_fall_height_reached_604E)
 0A13: FE 00         cp   $00
 0A15: 28 0A         jr   z,$0A21
 0A17: 7D            ld   a,l
@@ -2359,7 +2359,8 @@ guard_2_movement_119B
 
 ;; game main loop
 
-mainloop_1242: 3E 01         ld   a,$01
+mainloop_1242:
+1242: 3E 01         ld   a,$01
 1244: ED 56         im   1
 1246: 32 00 A0      ld   (timer_random_shit_A000),a
 1249: FB            ei
@@ -2456,7 +2457,7 @@ mainloop_1242: 3E 01         ld   a,$01
 130A: CD F9 30      call display_text_30F9	;  ???
 130D: C3 42 12      jp   mainloop_1242
 
-1310: CD 3F 1E      call $1E3F	;  player 1 -> 2 switch????
+1310: CD 3F 1E      call $1E3F
 1313: FE 01         cp   $01
 1315: CA 2B 12      jp   z,$122B
 1318: 3A E8 61      ld   a,(time_61E8)
@@ -2592,7 +2593,7 @@ mainloop_1242: 3E 01         ld   a,$01
 14A0: 7E            ld   a,(hl)
 14A1: FE E0         cp   $E0
 14A3: 28 0E         jr   z,$14B3
-14A5: 3A 4E 60      ld   a,(unknown_604E)
+14A5: 3A 4E 60      ld   a,(fatal_fall_height_reached_604E)
 14A8: FE 01         cp   $01
 14AA: 28 0C         jr   z,$14B8
 14AC: 3E 00         ld   a,$00
@@ -2979,7 +2980,7 @@ guard_1_sees_player_1560
 17F8: 3A 5E 61      ld   a,(unknown_615E)
 17FB: FE 01         cp   $01
 17FD: C8            ret  z
-17FE: FD 21 9C 60   ld   iy,unknown_609C
+17FE: FD 21 9C 60   ld   iy,bags_coordinates_609C
 1802: 06 12         ld   b,$12
 1804: 2A 09 60      ld   hl,(player_screen_address_6009)
 1807: 3E 24         ld   a,$24
@@ -3819,11 +3820,11 @@ display_player_ids_and_credit_1dec:
 1E3B: CD 05 56      call write_attribute_on_line_5605
 1E3E: C9            ret
 
-1E3F: 3A 4D 60      ld   a,(unknown_604D)
+1E3F: 3A 4D 60      ld   a,(fall_height_604D)
 1E42: FE 12         cp   $12
 1E44: 38 1E         jr   c,$1E64
 1E46: 3E 01         ld   a,$01
-1E48: 32 4E 60      ld   (unknown_604E),a
+1E48: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
 1E4B: 2A 09 60      ld   hl,(player_screen_address_6009)
 1E4E: 7E            ld   a,(hl)
 1E4F: FE F8         cp   $F8
@@ -3838,8 +3839,7 @@ display_player_ids_and_credit_1dec:
 1E62: 28 0C         jr   z,$1E70
 1E64: AF            xor  a
 1E65: C9            ret
-1E66: FB            ei
-1E67: E0            ret  po
+
 1E68: 3A 83 65      ld   a,(player_y_6583)
 1E6B: D6 02         sub  $02
 1E6D: 32 83 65      ld   (player_y_6583),a
@@ -3848,6 +3848,7 @@ display_player_ids_and_credit_1dec:
 1E74: CD 50 1F      call $1F50
 1E77: 3E 01         ld   a,$01
 1E79: C9            ret
+
 1E7A: 3A 54 60      ld   a,(gameplay_allowed_6054)
 1E7D: FE 01         cp   $01
 1E7F: 28 0C         jr   z,$1E8D
@@ -3907,7 +3908,7 @@ display_maze_1E94:
 1EEB: 3E 40         ld   a,$40
 1EED: 32 E8 61      ld   (time_61E8),a
 1EF0: 3E 01         ld   a,$01
-1EF2: 32 86 62      ld   (unknown_6286),a
+1EF2: 32 86 62      ld   (extra_life_awarded_6286),a
 1EF5: 32 19 60      ld   (unknown_6019),a
 1EF8: 3E B0         ld   a,$B0
 1EFA: 32 9A 65      ld   (guard_2_x_659A),a
@@ -3918,7 +3919,7 @@ display_maze_1E94:
 1F07: 32 13 60      ld   (unknown_6013),a
 1F0A: 32 29 60      ld   (player_in_wagon_flag_6029),a
 1F0D: 32 2A 60      ld   (player_gripping_handle_602A),a
-1F10: 32 4E 60      ld   (unknown_604E),a
+1F10: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
 1F13: 32 77 60      ld   (unknown_6077),a
 1F16: 32 28 60      ld   (player_controls_frozen_6028),a
 1F19: 32 E0 61      ld   (unknown_61E0),a
@@ -3955,7 +3956,7 @@ display_maze_1E94:
 1F4F: 02            ld   (bc),a
 1F50: 3E 01         ld   a,$01
 1F52: 32 F1 61      ld   (unknown_61F1),a
-1F55: CD 8C 3B      call $3B8C
+1F55: CD 8C 3B      call check_remaining_bags_3BBC
 1F58: 79            ld   a,c
 1F59: FE 01         cp   $01
 1F5B: CC 4F 35      call z,$354F
@@ -4024,8 +4025,8 @@ display_maze_1E94:
 1FF9: CD 91 35      call $3591
 1FFC: AF            xor  a
 1FFD: 32 08 60      ld   (unknown_6008),a
-2000: 32 4E 60      ld   (unknown_604E),a
-2003: 32 4D 60      ld   (unknown_604D),a
+2000: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
+2003: 32 4D 60      ld   (fall_height_604D),a
 2006: 32 8F 60      ld   (unknown_608F),a
 2009: 32 77 60      ld   (unknown_6077),a
 200C: 32 37 60      ld   (unknown_6037),a
@@ -4051,10 +4052,10 @@ start_new_life_2026:
 2035: 32 51 61      ld   (unknown_6151),a
 2038: 32 25 60      ld   (player_death_flag_6025),a
 203B: 32 28 60      ld   (player_controls_frozen_6028),a
-203E: 32 4E 60      ld   (unknown_604E),a
+203E: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
 2041: 32 29 60      ld   (player_in_wagon_flag_6029),a
 2044: 32 13 60      ld   (unknown_6013),a
-2047: 32 4D 60      ld   (unknown_604D),a
+2047: 32 4D 60      ld   (fall_height_604D),a
 204A: 32 59 61      ld   (unknown_6159),a
 204D: 32 5E 61      ld   (unknown_615E),a
 2050: 32 C7 61      ld   (unknown_61C7),a
@@ -4150,7 +4151,7 @@ memset_2054
 2102: 3F            ccf
 2103: 3E 00         ld   a,$00
 2105: 32 03 A0      ld   ($A003),a
-2108: CD 00 2A      call $2A00
+2108: CD 00 2A      call clear_screen_2a00
 210B: 3E 30         ld   a,$30
 210D: CD EC 29      call change_attribute_everywhere_29ec
 2110: 06 01         ld   b,$01
@@ -4378,7 +4379,7 @@ memset_2054
 22D8: FD E1         pop  iy
 22DA: C1            pop  bc
 22DB: C9            ret
-22DC: DD 21 9C 60   ld   ix,unknown_609C
+22DC: DD 21 9C 60   ld   ix,bags_coordinates_609C
 22E0: 3E 04         ld   a,$04
 22E2: 32 7A 62      ld   (unknown_627A),a
 22E5: 06 13         ld   b,$13
@@ -4647,7 +4648,7 @@ memset_2054
 2486: 31 F0 67      ld   sp,unknown_67F0
 2489: 3E 3F         ld   a,$3F
 248B: CD EC 29      call change_attribute_everywhere_29ec
-248E: CD 00 2A      call $2A00
+248E: CD 00 2A      call clear_screen_2a00
 2491: 3E 01         ld   a,$01
 2493: 32 03 A0      ld   ($A003),a
 2496: 21 96 36      ld   hl,$3696
@@ -5314,6 +5315,7 @@ change_attribute_everywhere_29ec:
 29FF: C9            ret
 
 
+clear_screen_2a00:
 2A00: 06 04         ld   b,$04
 2A02: 3E E0         ld   a,$E0
 2A04: 21 00 90      ld   hl,$9000
@@ -5378,7 +5380,7 @@ change_attribute_everywhere_29ec:
 2A7D: E6 01         and  $01
 2A7F: 32 01 A0      ld   ($A001),a
 2A82: 32 02 A0      ld   ($A002),a
-2A85: DD 21 9C 60   ld   ix,unknown_609C
+2A85: DD 21 9C 60   ld   ix,bags_coordinates_609C
 2A89: FD 21 7F 61   ld   iy,unknown_617F
 2A8D: 06 36         ld   b,$36
 2A8F: CD BC 2A      call $2ABC
@@ -6687,6 +6689,7 @@ display_text_30F9:
 34CE: C9            ret
 ; random infinite loop / wait ????
 ; this is the protection A000/A001 read???
+; skipping this completely doesnt matter
 34CF: 3A 00 A0      ld   a,(timer_random_shit_A000)
 34D2: E6 3F         and  $3F
 34D4: 47            ld   b,a
@@ -6708,16 +6711,16 @@ display_text_30F9:
 34F3: B8            cp   b
 34F4: 30 05         jr   nc,$34FB
 34F6: AF            xor  a
-34F7: 32 86 62      ld   (unknown_6286),a
+34F7: 32 86 62      ld   (extra_life_awarded_6286),a
 34FA: C9            ret
-34FB: 3A 86 62      ld   a,(unknown_6286)
+34FB: 3A 86 62      ld   a,(extra_life_awarded_6286)
 34FE: FE 00         cp   $00
 3500: C0            ret  nz
 3501: 3A 56 60      ld   a,(lives_6056)
 3504: 3C            inc  a
 3505: 32 56 60      ld   (lives_6056),a
 3508: 3E 01         ld   a,$01
-350A: 32 86 62      ld   (unknown_6286),a
+350A: 32 86 62      ld   (extra_life_awarded_6286),a
 350D: C9            ret
 350E: 7E            ld   a,(hl)
 350F: FE E0         cp   $E0
@@ -6761,16 +6764,18 @@ display_text_30F9:
 354C: 27            daa
 354D: 77            ld   (hl),a
 354E: C9            ret
-354F: 11 9C 60      ld   de,unknown_609C
+354F: 11 9C 60      ld   de,bags_coordinates_609C
 3552: 21 54 5C      ld   hl,$5C54
 3555: 01 3A 00      ld   bc,$003A
 3558: ED B0         ldir
 355A: C9            ret
-355B: 11 9C 60      ld   de,unknown_609C
+
+355B: 11 9C 60      ld   de,bags_coordinates_609C
 355E: 21 E8 5A      ld   hl,$5AE8
 3561: 01 3A 00      ld   bc,$003A
 3564: ED B0         ldir
 3566: C9            ret
+
 3567: 11 7F 61      ld   de,unknown_617F
 356A: 21 E8 5A      ld   hl,$5AE8
 356D: 01 3A 00      ld   bc,$003A
@@ -6907,7 +6912,7 @@ display_text_30F9:
 play_intro_3700:
 3700: 3E 00         ld   a,$00
 3702: 32 03 A0      ld   ($A003),a
-3705: CD 00 2A      call $2A00
+3705: CD 00 2A      call clear_screen_2a00
 3708: 3E 3F         ld   a,$3F
 370A: CD EC 29      call change_attribute_everywhere_29ec
 370D: CD EC 1D      call display_player_ids_and_credit_1dec
@@ -6920,7 +6925,7 @@ play_intro_3700:
 3721: AF            xor  a
 3722: 32 08 60      ld   (unknown_6008),a
 3725: 32 37 60      ld   (unknown_6037),a
-3728: 32 4E 60      ld   (unknown_604E),a
+3728: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
 372B: 32 77 60      ld   (unknown_6077),a
 372E: 32 87 65      ld   (elevator_y_current_screen_6587),a
 3731: 32 9A 65      ld   (guard_2_x_659A),a
@@ -6959,7 +6964,7 @@ play_intro_3700:
 377A: 21 F2 38      ld   hl,$38F2
 377D: 01 04 00      ld   bc,$0004
 3780: ED B0         ldir
-3782: 3A 74 62      ld   a,(unknown_6274)
+3782: 3A 74 62      ld   a,(is_intermission_6274)
 3785: FE 01         cp   $01
 3787: CA 00 38      jp   z,$3800
 ; draw V=A logo + PRESENTE
@@ -7021,7 +7026,7 @@ play_intro_3700:
 3809: 3E 01         ld   a,$01
 380B: 32 C7 61      ld   (unknown_61C7),a
 380E: CD D7 38      call $38D7
-3811: 3A 74 62      ld   a,(unknown_6274)
+3811: 3A 74 62      ld   a,(is_intermission_6274)
 3814: FE 01         cp   $01
 3816: 28 08         jr   z,$3820
 3818: 3E 01         ld   a,$01
@@ -7070,7 +7075,7 @@ play_intro_3700:
 3884: 3A 82 65      ld   a,(player_x_6582)
 3887: FE 10         cp   $10
 3889: 38 39         jr   c,$38C4
-388B: 3A 74 62      ld   a,(unknown_6274)
+388B: 3A 74 62      ld   a,(is_intermission_6274)
 388E: FE 01         cp   $01
 3890: 28 07         jr   z,$3899
 3892: 3A 48 92      ld   a,($9248)
@@ -7106,7 +7111,7 @@ play_intro_3700:
 38D7: 3A 00 60      ld   a,(number_of_credits_6000)
 38DA: FE 00         cp   $00
 38DC: C8            ret  z
-38DD: 3A 74 62      ld   a,(unknown_6274)
+38DD: 3A 74 62      ld   a,(is_intermission_6274)
 38E0: FE 01         cp   $01
 38E2: C8            ret  z
 38E3: 3E 00         ld   a,$00
@@ -7313,10 +7318,11 @@ play_intro_3700:
 3A74: B1            or   c
 3A75: C9            ret
 
-3B00: CD 8C 3B      call $3B8C
+3B00: CD 8C 3B      call check_remaining_bags_3BBC
 3B03: 79            ld   a,c
 3B04: FE 00         cp   $00
 3B06: C8            ret  z
+; level completed
 3B07: 01 C7 61      ld   bc,unknown_61C7
 3B0A: D9            exx
 3B0B: FD 21 C4 61   ld   iy,unknown_61C4
@@ -7331,6 +7337,7 @@ play_intro_3700:
 3B24: CD 76 21      call $2176
 3B27: 21 1B 3F      ld   hl,$3F1B
 3B2A: CD 18 20      call $2018
+; add one life for level completed
 3B2D: 3A 56 60      ld   a,(lives_6056)
 3B30: 3C            inc  a
 3B31: 32 56 60      ld   (lives_6056),a
@@ -7363,17 +7370,20 @@ play_intro_3700:
 3B6F: AF            xor  a
 3B70: 32 42 61      ld   (unknown_6142),a
 3B73: 3E 01         ld   a,$01
-3B75: 32 74 62      ld   (unknown_6274),a
+3B75: 32 74 62      ld   (is_intermission_6274),a
 3B78: CD 00 37      call play_intro_3700
 3B7B: AF            xor  a
-3B7C: 32 74 62      ld   (unknown_6274),a
+3B7C: 32 74 62      ld   (is_intermission_6274),a
 3B7F: 3C            inc  a
 3B80: 32 54 60      ld   (gameplay_allowed_6054),a
 3B83: CD 4F 35      call $354F
 3B86: 31 F0 67      ld   sp,unknown_67F0
 3B89: C3 2B 12      jp   $122B
+
+; < return c=0 if still bags, c=1 otherwise (level completed)
+check_remaining_bags_3BBC:
 3B8C: 0E 00         ld   c,$00
-3B8E: FD 21 9C 60   ld   iy,unknown_609C
+3B8E: FD 21 9C 60   ld   iy,bags_coordinates_609C
 3B92: 06 36         ld   b,$36
 3B94: FD 7E 00      ld   a,(iy+$00)
 3B97: FE 00         cp   $00
@@ -7381,6 +7391,7 @@ play_intro_3700:
 3B9A: FD 23         inc  iy
 3B9C: 10 F6         djnz $3B94
 3B9E: C3 60 5E      jp   $5E60
+
 3BA1: 21 F4 61      ld   hl,unknown_61F4
 3BA4: 7E            ld   a,(hl)
 3BA5: 47            ld   b,a
@@ -7949,6 +7960,7 @@ write_attribute_on_line_5605:
 560B: 19            add  hl,de
 560C: 10 FC         djnz $560A
 560E: C9            ret
+
 560F: DD 21 76 61   ld   ix,unknown_6176
 5613: 21 E1 92      ld   hl,$92E1
 5616: CD 3C 56      call $563C
@@ -7995,99 +8007,6 @@ write_numeric_value_564d:
 5669: C9            ret
 
 
-5C04: 0F            rrca
-5C05: 00            nop
-5C06: 00            nop
-5C07: 00            nop
-5C08: 08            ex   af,af'
-5C09: 00            nop
-5C0A: 00            nop
-5C0B: 00            nop
-5C0C: FF            rst  $38
-5C0D: FF            rst  $38
-5C0E: 08            ex   af,af'
-5C0F: 00            nop
-5C10: 3A F5 61      ld   a,(unknown_61F5)
-5C13: FE 00         cp   $00
-5C15: C2 68 05      jp   nz,$0568
-5C18: 3A CF 61      ld   a,(has_pick_61CF)
-5C1B: FE 00         cp   $00
-5C1D: C2 68 05      jp   nz,$0568
-5C20: C3 5B 05      jp   $055B
-5C23: 26 3A         ld   h,$3A
-5C25: F5            push af
-5C26: 61            ld   h,c
-5C27: FE 00         cp   $00
-5C29: C2 52 06      jp   nz,$0652
-5C2C: 3A CF 61      ld   a,(has_pick_61CF)
-5C2F: FE 00         cp   $00
-5C31: C2 52 06      jp   nz,$0652
-5C34: C3 45 06      jp   $0645
-5C37: 05            dec  b
-5C38: 50            ld   d,b
-5C39: 50            ld   d,b
-5C3A: 49            ld   c,c
-5C3B: 60            ld   h,b
-5C3C: 46            ld   b,(hl)
-5C3D: 44            ld   b,h
-5C3E: 0C            inc  c
-5C3F: 04            inc  b
-5C40: 3A 59 61      ld   a,(unknown_6159)
-5C43: FE 01         cp   $01
-5C45: C8            ret  z
-5C46: 3A 5E 61      ld   a,(unknown_615E)
-5C49: FE 01         cp   $01
-5C4B: C8            ret  z
-5C4C: 0A            ld   a,(bc)
-5C4D: D9            exx
-5C4E: FE 00         cp   $00
-5C50: C3 AE 23      jp   $23AE
-5C53: FF            rst  $38
-5C54: 58            ld   e,b
-5C55: 93            sub  e
-5C56: 02            ld   (bc),a
-5C57: A8            xor  b
-5C58: 91            sub  c
-5C59: 01 12 91      ld   bc,$9112
-5C5C: 01 98 90      ld   bc,$9098
-5C5F: 01 DC 91      ld   bc,$91DC
-5C62: 01 36 93      ld   bc,$9336
-5C65: 01 71 90      ld   bc,$9071
-5C68: 01 4C 92      ld   bc,$924C
-5C6B: 02            ld   (bc),a
-5C6C: CA 90 02      jp   z,$0290
-5C6F: C5            push bc
-5C70: 90            sub  b
-5C71: 02            ld   (bc),a
-5C72: 91            sub  c
-5C73: 90            sub  b
-5C74: 02            ld   (bc),a
-5C75: 9C            sbc  a,h
-5C76: 90            sub  b
-5C77: 02            ld   (bc),a
-5C78: 71            ld   (hl),c
-5C79: 93            sub  e
-5C7A: 03            inc  bc
-5C7B: 85            add  a,l
-5C7C: 92            sub  d
-5C7D: 03            inc  bc
-5C7E: C9            ret
-5C7F: 91            sub  c
-5C80: 03            inc  bc
-5C81: 15            dec  d
-5C82: 92            sub  d
-5C83: 03            inc  bc
-5C84: 99            sbc  a,c
-5C85: 92            sub  d
-5C86: 03            inc  bc
-5C87: F9            ld   sp,hl
-5C88: 90            sub  b
-5C89: 03            inc  bc
-5C8A: FF            rst  $38
-5C8B: 10 FF         djnz $5C8C
-5C8D: FF            rst  $38
-5C8E: FF            rst  $38
-5C8F: FF            rst  $38
 	;; in:	 hl contains 16 bit hex value of the points to add
 	;; $100 for 100 points, $500 for 500 etc...
 add_to_score_5C90:
@@ -8192,6 +8111,7 @@ add_to_score_5C90:
 5E62: 32 7D 62      ld   (unknown_627D),a
 5E65: 0E 01         ld   c,$01
 5E67: C9            ret
+
 5E68: FF            rst  $38
 5E69: 32 ED 61      ld   (unknown_61ED),a
 5E6C: 3E 0A         ld   a,$0A
