@@ -55,10 +55,10 @@ OPT_ENABLE_DOUBLE_BUFFERING_BG = 0
 _custom = 0xDFF000
 
 
-NB_PLAYFIELD_PLANES = 4
-TOTAL_NB_COLORS = 16   | 8+8+16
+NB_PLAYFIELD_PLANES = 5
+TOTAL_NB_COLORS = 32
 NB_BYTES_PER_ROW = 40
-NB_LINES = 288
+NB_LINES = 280
 Y_MAX = NB_LINES
 NB_PLAYFIELD_LINES = NB_LINES
 
@@ -1220,7 +1220,7 @@ platform_init:
     move.w #0x3881-8,diwstop(a5)
     move.w #0x0038,ddfstrt(a5)
     move.w #0x00D0,ddfstop(a5)
-    move.w #0x4200,bplcon0(a5) | 4 bitplanes
+    move.w #0x5200,bplcon0(a5) | 5 bitplanes
     move.w #0x0024,bplcon2(a5)
 	* AGA-compatible ECS default values
     move.w #0x0C00,bplcon3(a5)     | no AGA specificities, default ECS
@@ -1228,8 +1228,6 @@ platform_init:
     move.w #0,fmode(a5)			
 	
 
-	* screen with bagman bg/fg tiles
-    **move.w #2<<4,bplcon1(a5)    | foreground tiles shifted by 2 pixels
     move.w #0,bplcon1(a5)    | foreground tiles
 	move.w	#0,d0
     move.w d0,bpl1mod(a5)
@@ -1603,10 +1601,9 @@ HW_SpriteYTable_\height:
   .endr
 	.endm
 
-	DEF_HW_SPRITE_Y_TABLE	0
-	DEF_HW_SPRITE_Y_TABLE	8
+
 	DEF_HW_SPRITE_Y_TABLE	16
-	DEF_HW_SPRITE_Y_TABLE	32
+
 
 
 
@@ -2088,7 +2085,7 @@ tile_log_table:
 
 	.section	.datachip
 	
-.macro	DECL_4_BITPLANES	bpoff_start
+.macro	DECL_BITPLANES	bpoff_start
 	.set	bpoff,\bpoff_start
 	.rept	NB_PLAYFIELD_PLANES
 	dc.w  0xe0+bpoff,0
@@ -2125,7 +2122,7 @@ copperlist:
     *.word   0x1801,0xFFFE	
 
 bg_bitplanes:
-	DECL_4_BITPLANES	0
+	DECL_BITPLANES	0
 copperlist_colors:
 	DECL_16_COLORS	0
 sprite_cols:

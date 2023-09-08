@@ -20,16 +20,39 @@ sprites_dump_dir = os.path.join(dump_dir,"sprites")
 
 NB_POSSIBLE_SPRITES = 128  #64+64 alternate
 
-rw_json = os.path.join(this_dir,"used_cluts.json")
+rw_json = os.path.join(this_dir,"used_sprites.json")
 if os.path.exists(rw_json):
     with open(rw_json) as f:
-        used_cluts = json.load(f)
+        used_sprites = json.load(f)
     # key as integer, list as set for faster lookup (not that it matters...)
-    used_cluts = {int(k):set(v) for k,v in used_cluts.items()}
+    used_sprites = {int(k):set(v) for k,v in used_sprites.items()}
 else:
-    print("Warning: no {} file, no tile/clut filter, expect BIG graphics.68k file")
-    used_cluts = None
+    print("Warning: no {} file, no sprite/clut filter, expect BIG graphics.68k file")
+    used_sprites = None
 
+
+# load all tiles/cluts from screens
+# (logging the tiles is tedious and logs transitions which isn't good)
+
+used_cluts = collections.defaultdict(set)
+
+
+screens_dir = os.path.join(this_dir,os.pardir,"screens")
+for sf in glob.glob(os.path.join(screens_dir,"*.bin")):
+    with open(sf,"rb") as f:
+        contents = f.read()
+        tiles = contents[0:0x400]
+        attribs = contents[0x800:0xC00]
+
+        for raw_tile_index,raw_clut_index in zip(tiles,attribs):
+            tile_index = raw_tile_index
+            if raw_clut_index & 0x10:
+                tile_index += 0x200
+            if raw_clut_index & 0x20:
+                tile_index += 0x100
+
+            clut_index = raw_clut_index & 0xF
+            used_cluts[tile_index].add(clut_index)
 
 used_cluts.update({k:range(0,16) for k in range(0,64)})
 
@@ -75,36 +98,11 @@ with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
         block_dict[block_name] = {"size":size,"data":ast.literal_eval(txt)}
 
 
-def dump_rgb_cluts(rgb_cluts,name):
-    out = os.path.join(dump_dir,f"{name}_cluts.png")
-    w = 16
-    nb_clut_per_row = 4
-    img = Image.new("RGB",(w*(nb_clut_per_row+1)*4,w*len(rgb_cluts)//nb_clut_per_row))
-    x = 0
-    y = 0
-    row_count = 0
-    for clut in rgb_cluts:
-        # undo the clut correction so it's the same as MAME
-        for color in [clut[0],clut[2],clut[1],clut[3]]:
-            for dx in range(w):
-                for dy in range(w):
-                    img.putpixel((x+dx,y+dy),color)
-            x += dx
-        row_count += 1
-        if row_count == 4:
-            x = 0
-            y += dy
-            row_count = 0
 
-    img.save(out)
-
-
-# 32 colors 16+16 (alternate)
+# 26 colors total, we're going 32 colors total
 palette = block_dict["palette"]["data"]
 
-
-##print(len({tuple(x) for x in palette}))
-# looks that there are only 32 cluts for 16 colors totol
+# TODO: reorder so sprites can use upper palette 16-31
 
 palette = [tuple(x) for x in palette]
 
@@ -122,9 +120,7 @@ character_codes_list = list()
 
 rgb_cluts = [[tuple(palette[pidx]) for pidx in clut] for clut in bg_cluts]
 
-# dump cluts and the pics look very much like in MAME F4 menu
-#dump_rgb_cluts(rgb_cluts_normal,"normal")
-#dump_rgb_cluts(rgb_cluts_alt,"alternate")
+
 
 # dump cluts as RGB4 for sprites
 with open(os.path.join(src_dir,"palette_cluts.68k"),"w") as f:
@@ -133,6 +129,8 @@ with open(os.path.join(src_dir,"palette_cluts.68k"),"w") as f:
             rgb4 = [bitplanelib.to_rgb4_color(x) for x in clut]
             bitplanelib.dump_asm_bytes(rgb4,f,mit_format=True,size=2)
 
+
+tiles_used_colors = set()
 
 for k,chardat in enumerate(block_dict["tile"]["data"]):
     # k < 0x100: normal tileset
@@ -148,7 +146,9 @@ for k,chardat in enumerate(block_dict["tile"]["data"]):
             for i in range(8):
                 for j in range(8):
                     v = next(d)
-                    img.putpixel((j,i),colors[v])
+                    c = colors[v]
+                    tiles_used_colors.add(c)
+                    img.putpixel((j,i),c)
             character_codes.append(bitplanelib.palette_image2raw(img,None,local_palette))
             if dump_tiles:
                 scaled = ImageOps.scale(img,5,0)
