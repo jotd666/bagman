@@ -159,7 +159,7 @@ game_tick_0038:
 
 	jbsr	l_3c47                            	| [$0046: call $3C47]
 										| [$0049: xor  a]
-    jbsr	disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
+    jbsr	osd_disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
 
 	jbsr	l_3123                            	| [$004e: call $3123]
 	jbsr	l_38fa                            	| [$0051: call $38FA]
@@ -526,10 +526,130 @@ l_0394:
 												| [$039a: ld   a,$01]
 												| [$039c: ld   (timer_random_shit_A000),a]
 
-	jbsr		enable_vblank_interrupt		| [im 1]
+	jbsr		osd_enable_vblank_interrupt		| [im 1]
 	movem.l	(a7)+,d0-a6
 	rts                                    	| [$03b0: ret]
 
+
+
+copy_4_bytes_ix_iy_1001:
+	move.b	#0x04,d1                        	| [$1001: ld   b,$04]
+l_1003:
+	move.b	(0x00,a2),d0                    	| [$1003: ld   a,(ix+$00)]
+	move.b	d0,(0x00,a3)                    	| [$1006: ld   (iy+$00),a]
+	addq.w	#1,a2                           	| [$1009: inc  ix]
+	addq.w	#1,a3                           	| [$100b: inc  iy]
+	subq.b	#1,d1                           	| [...]
+	jne	l_1003                             	| [$100d: djnz $1003]
+	rts                                    	| [$100f: ret]
+
+
+l_1010:
+	move.b	has_bag_6158,d0                 	| [$1010: ld   a,(has_bag_6158)]
+	cmp.b	#0x00,d0                         	| [$1013: cp   $00]
+	bne.b	0f
+	rts                                    	| [$1015: ret  z]
+0:
+	move.b	player_y_6583,d0                	| [$1016: ld   a,(player_y_6583)]
+	subq.b	#0x02,d0                        	| [$1019: sub  $02]
+	move.b	d0,unknown_659F                 	| [$101b: ld   (unknown_659F),a]
+	move.b	player_struct_6580,d0           	| [$101e: ld   a,(player_struct_6580)]
+	and.b	#0x7F,d0                         	| [$1021: and  $7F]
+	cmp.b	#0x12,d0                         	| [$1023: cp   $12]
+	bne.b	0f
+	rts                                    	| [$1025: ret  z]
+0:
+	move.b	player_struct_6580,d0           	| [$1026: ld   a,(player_struct_6580)]
+	and.b	#0x80,d0                         	| [$1029: and  $80]
+	cmp.b	#0x80,d0                         	| [$102b: cp   $80]
+	jne	l_103d                             	| [$102d: jr   nz,$103D]
+	move.b	player_x_6582,d0                	| [$102f: ld   a,(player_x_6582)]
+	add.b	#0x08,d0                         	| [$1032: add  a,$08]
+	move.b	d0,unknown_659E                 	| [$1034: ld   (unknown_659E),a]
+	move.b	#0xBF,d0                        	| [$1037: ld   a,$BF]
+	move.b	d0,unknown_659C                 	| [$1039: ld   (unknown_659C),a]
+	rts                                    	| [$103c: ret]
+l_103d:
+	move.b	player_x_6582,d0                	| [$103d: ld   a,(player_x_6582)]
+	sub.b	#0x08,d0                         	| [$1040: sub  $08]
+	move.b	d0,unknown_659E                 	| [$1042: ld   (unknown_659E),a]
+	move.b	#0x3F,d0                        	| [$1045: ld   a,$3F]
+	move.b	d0,unknown_659C                 	| [$1047: ld   (unknown_659C),a]
+	rts                                    	| [$104a: ret]
+l_104b:
+	move.b	has_pick_61CF,d0                	| [$104b: ld   a,(has_pick_61CF)]
+	cmp.b	#0x00,d0                         	| [$104e: cp   $00]
+	bne.b	0f
+	rts                                    	| [$1050: ret  z]
+0:
+	move.b	player_struct_6580,d0           	| [$1051: ld   a,(player_struct_6580)]
+	and.b	#0x7F,d0                         	| [$1054: and  $7F]
+	move.b	#0x37,d1                        	| [$1058: ld   b,$37]
+	cmp.b	#0x1F,d0                         	| [$1056: cp   $1F]
+	jeq	l_1069                             	| [$105a: jr   z,$1069]
+	move.b	player_struct_6580,d0           	| [$105c: ld   a,(player_struct_6580)]
+	and.b	#0x7F,d0                         	| [$105f: and  $7F]
+	move.b	#0x37,d1                        	| [$1063: ld   b,$37]
+	cmp.b	#0x12,d0                         	| [$1061: cp   $12]
+	jeq	l_1069                             	| [$1065: jr   z,$1069]
+	move.b	#0x38,d1                        	| [$1067: ld   b,$38]
+l_1069:
+	move.b	player_y_6583,d0                	| [$1069: ld   a,(player_y_6583)]
+	move.b	d0,unknown_659F                 	| [$106c: ld   (unknown_659F),a]
+	move.b	player_struct_6580,d0           	| [$106f: ld   a,(player_struct_6580)]
+	and.b	#0x7F,d0                         	| [$1072: and  $7F]
+	cmp.b	#0x12,d0                         	| [$1074: cp   $12]
+	jeq	l_108e                             	| [$1076: jr   z,$108E]
+	move.b	player_struct_6580,d0           	| [$1078: ld   a,(player_struct_6580)]
+	and.b	#0x80,d0                         	| [$107b: and  $80]
+	cmp.b	#0x80,d0                         	| [$107d: cp   $80]
+	jeq	l_108e                             	| [$107f: jr   z,$108E]
+	move.b	player_x_6582,d0                	| [$1081: ld   a,(player_x_6582)]
+	add.b	#0x0C,d0                         	| [$1084: add  a,$0C]
+	move.b	d0,unknown_659E                 	| [$1086: ld   (unknown_659E),a]
+	move.b	d1,d0                           	| [$1089: ld   a,b]
+	move.b	d0,unknown_659C                 	| [$108a: ld   (unknown_659C),a]
+	rts                                    	| [$108d: ret]
+l_108e:
+	move.b	player_x_6582,d0                	| [$108e: ld   a,(player_x_6582)]
+	sub.b	#0x0C,d0                         	| [$1091: sub  $0C]
+	move.b	d0,unknown_659E                 	| [$1093: ld   (unknown_659E),a]
+	move.b	d1,d0                           	| [$1096: ld   a,b]
+	or.b	#0x80,d0                          	| [$1097: or   $80]
+	move.b	d0,unknown_659C                 	| [$1099: ld   (unknown_659C),a]
+	rts                                    	| [$109c: ret]
+
+l_109d:
+	move.b	gameplay_allowed_6054,d0        	| [$109d: ld   a,(gameplay_allowed_6054)]
+	cmp.b	#0x01,d0                         	| [$10a0: cp   $01]
+	jeq	object_pickup_test_10AE            	| [$10a2: jr   z,object_pickup_test_10AE]
+	move.b	player_move_direction_6050,d0   	| [$10a4: ld   a,(player_move_direction_6050)]
+	and.b	#0x80,d0                         	| [$10a7: and  $80]
+	cmp.b	#0x80,d0                         	| [$10a9: cp   $80]
+	jeq	l_10bf                             	| [$10ab: jr   z,$10BF]
+	rts                                    	| [$10ad: ret]
+
+object_pickup_test_10AE:
+	move.b	player_input_6026,d0            	| [$10ae: ld   a,(player_input_6026)]
+	and.b	#0x80,d0                         	| [$10b1: and  $80]
+	cmp.b	#0x80,d0                         	| [$10b3: cp   $80]
+	jne	l_10c5                             	| [$10b5: jr   nz,$10C5]
+* fire pressed
+	move.b	player_move_direction_6050,d0   	| [$10b7: ld   a,(player_move_direction_6050)]
+	and.b	#0x80,d0                         	| [$10ba: and  $80]
+	cmp.b	#0x80,d0                         	| [$10bc: cp   $80] just leaving the wagon handle
+	bne.b	0f
+	rts                                    	| [$10be: ret  z]  don't pick up anything!
+0:
+ *  actual pickup of an object
+l_10bf:
+	move.b	#0x01,d0                        	| [$10bf: ld   a,$01]
+	move.b	d0,pickup_flag_6160             	| [$10c1: ld   (pickup_flag_6160),a]
+	rts                                    	| [$10c4: ret]
+l_10c5:
+	clr.b	d0                               	| [$10c5: ld   a,$00]
+	move.b	d0,pickup_flag_6160             	| [$10c7: ld   (pickup_flag_6160),a]
+	rts                                    	| [$10ca: ret]
 
 
 set_previous_guard_y_255_10CB:
@@ -537,8 +657,6 @@ set_previous_guard_y_255_10CB:
 	st.b	(0x03,a3)                    	| [$10cd: ld   (iy+$03),a]
 	rts                                    	| [$10d0: ret]
 
-
-	
 l_10ff:
 	move.b	holds_barrow_61C7,d0                 	| [$10ff: ld   a,(holds_barrow_61C7)]
 	                         	| [$1102: cp   $00]
@@ -712,7 +830,9 @@ l_21ba:
 	move.b	d0,screen_index_param_6098      	| [$21c1: ld   (screen_index_param_6098),a]
 	jbsr	l_558c                            	| [$21c4: call $558C]
 
-	move.l	a0,-(sp)                        	| [$21c7: push hl]
+	jbsr	osd_break
+	* TODO: value of D5/D6
+	movem.w	d5/d6,-(sp)                        	| [$21c7: push hl]
 	move.b	player_screen_600D,d0           	| [$21c8: ld   a,(player_screen_600D)]
 	move.b	d0,(0x02,a3)                    	| [$21cb: ld   (iy+$02),a]
 	jbsr	l_222d                            	| [$21ce: call $222D]
@@ -722,8 +842,8 @@ l_21ba:
 	sub.b	#0x22,d0                         	| [$21d4: sub  $22]
 	move.b	d0,d6                           	| [$21d6: ld   l,a]
 	move.b	d5,d0                           	| [$21d7: ld   a,h]
-	subx.b	#0x00,d0                        	| [$21d8: sbc  a,$00]
-      ^^^^^^ TODO: review cpu X flag
+	clr.b	d7
+	subx.b	d7,d0                        	| [$21d8: sbc  a,$00]
 	move.b	d0,d5                           	| [$21da: ld   h,a]
 	move.b	d6,(0x00,a3)                    	| [$21db: ld   (iy+$00),l]
 	move.b	d5,(0x01,a3)                    	| [$21de: ld   (iy+$01),h]
@@ -736,13 +856,13 @@ l_21ba:
 	movem.w	(sp)+,d1/d2                    	| [$21ec: pop  bc]
 	cmp.b	#0x00,d0                         	| [$21ed: cp   $00]
 	jeq	l_3cb7                             	| [$21ef: jp   z,$3CB7]
-	move.l	(sp)+,a0                        	| [$21f2: pop  hl]
+	movem.w	(sp)+,d5/d6                        	| [$21f2: pop  hl]
+	* probably reads the screen contents! debug this TODO
 	move.b	(a0),d0                         	| [$21f3: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$21f4: cp   $E0]
 
-	move.l	a0,-(sp)                        	| [$21f6: push hl]
+	movem.l	a0,-(sp)                        	| [$21f6: push hl]
 	jeq	l_3cb7                             	| [$21f7: jp   z,$3CB7]
-      ^^^^^^ TODO: review cpu flags (move.l)
 	move.l	(sp)+,a0                        	| [$21fa: pop  hl]
 
 	move.l	a0,-(sp)                        	| [$21fb: push hl]
@@ -750,8 +870,8 @@ l_21ba:
 	move.b	d6,d0                           	| [$21fd: ld   a,l]
 	sub.b	#0x20,d0                         	| [$21fe: sub  $20]
 	move.b	d5,d0                           	| [$2200: ld   a,h]
-	subx.b	#0x00,d0                        	| [$2201: sbc  a,$00]
-      ^^^^^^ TODO: review cpu X flag
+	clr.b	d7
+	subx.b	d7,d0                        	| [$2201: sbc  a,$00]
 	move.b	d0,d5                           	| [$2203: ld   h,a]
 	move.l	(sp)+,a0                        	| [$2204: pop  hl]
 	move.b	(a0),d0                         	| [$2205: ld   a,(hl)]
@@ -759,18 +879,16 @@ l_21ba:
 	bne.b	0f
 	rts                                    	| [$2208: ret  z]
 0:
-exx
-	move.b	unknown_61C7,d0                 	| [$220a: ld   a,(unknown_61C7)]
+*exx
+	move.b	holds_barrow_61C7,d0                 	| [$220a: ld   a,(holds_barrow_61C7)]
 	cmp.b	#0x01,d0                         	| [$220d: cp   $01]
 	jne	l_2216                             	| [$220f: jr   nz,$2216]
 	move.b	#0x28,d0                        	| [$2211: ld   a,$28]
 	exg	d0,d7                              	| [$2213: ex   af,af']
-         ^^^ TODO review: wrong if carry is needed or D7 used in between!
 	jra	l_2219                             	| [$2214: jr   $2219]
 l_2216:
 	move.b	#0x20,d0                        	| [$2216: ld   a,$20]
 	exg	d0,d7                              	| [$2218: ex   af,af']
-         ^^^ TODO review: wrong if carry is needed or D7 used in between!
 l_2219:
 	clr.b	d0                               	| [$2219: xor  a]
 	move.b	d0,(a4)                         	| [$221a: ld   (bc),a]
@@ -782,6 +900,22 @@ l_2219:
 	move.b	d0,unknown_659F                 	| [$2229: ld   (unknown_659F),a]
 	rts                                    	| [$222c: ret]
 
+l_222d:
+	cmp.b	#0x01,d0                         	| [$222d: cp   $01]
+	jne	l_2235                             	| [$222f: jr   nz,$2235]
+	move.b	d5,d0                           	| [$2231: ld   a,h]
+	add.b	#0x50,d0                         	| [$2232: add  a,$50]
+	rts                                    	| [$2234: ret]
+l_2235:
+	cmp.b	#0x02,d0                         	| [$2235: cp   $02]
+	jne	l_223d                             	| [$2237: jr   nz,$223D]
+	move.b	d5,d0                           	| [$2239: ld   a,h]
+	add.b	#0x4C,d0                         	| [$223a: add  a,$4C]
+	rts                                    	| [$223c: ret]
+l_223d:
+	move.b	d5,d0                           	| [$223d: ld   a,h]
+	add.b	#0x48,d0                         	| [$223e: add  a,$48]
+	rts                                    	| [$2240: ret]
 
 l_2241:
 	lea	unknown_6156,a3                	| [$2241: ld   iy,unknown_6156]
@@ -1145,7 +1279,7 @@ l_2a70:
 *	move.b	d0,0xA001                       	| [$2a7f: ld   ($A001),a]
 *	move.b	d0,0xA002                       	| [$2a82: ld   ($A002),a]
 *l_2a85:
-	lea	unknown_609C,a2                      	| [$2a85: ld   ix,$609C]
+	lea	bags_coordinates_609C,a2                      	| [$2a85: ld   ix,$609C]
 	lea	unknown_617F,a3                      	| [$2a89: ld   iy,$617F]
 	move.b	#0x36,d1                        	| [$2a8d: ld   b,$36]
 	jbsr	l_2abc                            	| [$2a8f: call $2ABC]

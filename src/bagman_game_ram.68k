@@ -226,8 +226,9 @@ player_climb_frame_counter_6007:
 	ds.b	1
 unknown_6008:
 	ds.b	1
+	.align	2
 player_screen_address_6009:
-	ds.b	2
+	ds.l	1
 unknown_600B:
 	ds.b	1
 unknown_600C:
@@ -292,8 +293,9 @@ guard_1_ladder_frame_6035:
 	ds.b	2
 unknown_6037:
 	ds.b	1
+	.align	2
 guard_1_screen_address_6038:
-	ds.b	2
+	ds.l	1
 unknown_603A:
 	ds.b	1
 guard_1_in_elevator_603B:
@@ -343,8 +345,9 @@ guard_2_ladder_frame_6075:
 	ds.b	2
 unknown_6077:
 	ds.b	1
+	.align	2
 guard_2_screen_address_6078:
-	ds.b	2
+	ds.l	1
 unknown_607A:
 	ds.b	1
 guard_2_in_elevator_607B:

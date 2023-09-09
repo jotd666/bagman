@@ -2113,7 +2113,7 @@ player_movement_0B6D
 0FFD: 3A 43 61      ld   a,(unknown_6143)
 1000: C9            ret
 
-copy_4_bytes_ix_iy_1001
+copy_4_bytes_ix_iy_1001:
 1001: 06 04         ld   b,$04
 1003: DD 7E 00      ld   a,(ix+$00)
 1006: FD 77 00      ld   (iy+$00),a
@@ -2195,7 +2195,7 @@ copy_4_bytes_ix_iy_1001
 10AB: 28 12         jr   z,$10BF
 10AD: C9            ret
 
-object_pickup_test_10AE
+object_pickup_test_10AE:
 10AE: 3A 26 60      ld   a,(player_input_6026)
 10B1: E6 80         and  $80
 10B3: FE 80         cp   $80
