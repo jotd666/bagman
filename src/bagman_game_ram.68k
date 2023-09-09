@@ -55,9 +55,9 @@
 	.global	is_intermission_6274
 	.global	extra_life_awarded_6286
 	.global	bags_coordinates_609C
-	.global	unknown_6004
-	.global	unknown_6005
-	.global	unknown_6007
+	.global	fake_credit_digit_6004
+	.global	fake_credit_digit_6005
+	.global	player_climb_frame_counter_6007
 	.global	unknown_6008
 	.global	unknown_600B
 	.global	unknown_600C
@@ -76,12 +76,12 @@
 	.global	unknown_602C
 	.global	unknown_602D
 	.global	unknown_602E
-	.global	unknown_602F
+	.global	player_in_wagon_flag_13_602F
 	.global	unknown_6030
 	.global	unknown_6034
 	.global	unknown_6037
 	.global	unknown_603A
-	.global	unknown_6044
+	.global	unknown_pointer_6044
 	.global	unknown_6047
 	.global	unknown_604B
 	.global	fall_height_604D
@@ -97,7 +97,7 @@
 	.global	unknown_607A
 	.global	unknown_608F
 	.global	unknown_6091
-	.global	unknown_6093
+	.global	unknown_pointer_6093
 	.global	unknown_6095
 	.global	unknown_6097
 	.global	unknown_609B
@@ -134,14 +134,13 @@
 	.global	unknown_61C0
 	.global	unknown_61C4
 	.global	unknown_61C6
-	.global	unknown_61C7
+	.global	holds_barrow_61C7
 	.global	unknown_61CA
 	.global	unknown_61CC
 	.global	unknown_61D0
 	.global	unknown_61D2
 	.global	unknown_61D3
-	.global	unknown_61E0
-	.global	unknown_61E1
+	.global	pickaxe_timer_duration_61E0
 	.global	unknown_61E4
 	.global	unknown_61E5
 	.global	unknown_61E7
@@ -217,13 +216,13 @@
 
 number_of_credits_6000:
 	ds.b	4
-unknown_6004:
+fake_credit_digit_6004:
 	ds.b	1
-unknown_6005:
+fake_credit_digit_6005:
 	ds.b	1
 player_animation_frame_6006:
 	ds.b	1
-unknown_6007:
+player_climb_frame_counter_6007:
 	ds.b	1
 unknown_6008:
 	ds.b	1
@@ -283,7 +282,7 @@ unknown_602D:
 	ds.b	1
 unknown_602E:
 	ds.b	1
-unknown_602F:
+player_in_wagon_flag_13_602F:
 	ds.b	1
 unknown_6030:
 	ds.b	4
@@ -307,8 +306,9 @@ guard_2_sees_player_up_603E:
 	ds.b	1
 guard_2_sees_player_down_603F:
 	ds.b	5
-unknown_6044:
-	ds.b	3
+	.align	2
+unknown_pointer_6044:
+	ds.l	1
 unknown_6047:
 	ds.b	4
 unknown_604B:
@@ -361,8 +361,9 @@ unknown_608F:
 	ds.b	2
 unknown_6091:
 	ds.b	2
-unknown_6093:
-	ds.b	2
+	.align	2
+unknown_pointer_6093:
+	ds.l	1
 unknown_6095:
 	ds.b	2
 unknown_6097:
@@ -453,7 +454,7 @@ unknown_61C4:
 	ds.b	2
 unknown_61C6:
 	ds.b	1
-unknown_61C7:
+holds_barrow_61C7:
 	ds.b	3
 unknown_61CA:
 	ds.b	2
@@ -467,10 +468,10 @@ unknown_61D2:
 	ds.b	1
 unknown_61D3:
 	ds.b	13
-unknown_61E0:
-	ds.b	1
-unknown_61E1:
-	ds.b	3
+	.align	2
+pickaxe_timer_duration_61E0:
+	ds.w	1
+
 unknown_61E4:
 	ds.b	1
 unknown_61E5:

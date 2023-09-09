@@ -151,7 +151,7 @@
 0045: F5            push af
 0046: CD 47 3C      call $3C47
 0049: AF            xor  a
-004A: 32 00 A0      ld   (timer_random_shit_A000),a
+004A: 32 00 A0      ld   (interrupt_control_A000),a
 004D: F3            di
 004E: CD 23 31      call $3123
 0051: CD FA 38      call $38FA
@@ -194,7 +194,7 @@
 00AF: 3A 43 61      ld   a,(unknown_6143)
 00B2: 3C            inc  a
 00B3: 32 43 61      ld   (unknown_6143),a
-00B6: CD D1 10      call $10D1
+00B6: CD D1 10      call speech_management_10D1
 00B9: 3A 6D 62      ld   a,(unknown_626D)
 00BC: 3C            inc  a
 00BD: 32 6D 62      ld   (unknown_626D),a
@@ -306,7 +306,7 @@
 01D3: FE 00         cp   $00
 01D5: CC F4 08      call z,$08F4
 01D8: 3A 00 B8      ld   a,(io_read_shit_B800)
-01DB: CD 3C 11      call $113C
+01DB: CD 3C 11      call handle_pick_hold_timer_113c
 01DE: 3A 83 65      ld   a,(player_y_6583)
 01E1: F5            push af
 01E2: 3D            dec  a
@@ -314,7 +314,7 @@
 01E6: CD 5E 55      call update_player_screen_address_from_xy_555E
 01E9: F1            pop  af
 01EA: 32 83 65      ld   (player_y_6583),a
-01ED: 3A C7 61      ld   a,(unknown_61C7)
+01ED: 3A C7 61      ld   a,(holds_barrow_61C7)
 01F0: FE 00         cp   $00
 01F2: CC C7 0D      call z,$0DC7
 01F5: 3A 4E 60      ld   a,(fatal_fall_height_reached_604E)
@@ -383,7 +383,7 @@
 
 029A: CD 6F 11      call guard_1_movement_116F
 029D: FD 21 57 60   ld   iy,unknown_6057
-02A1: FD 22 93 60   ld   (unknown_6093),iy
+02A1: FD 22 93 60   ld   (unknown_pointer_6093),iy
 02A5: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
 02A8: 22 44 60      ld   (unknown_6044),hl
 02AB: 21 35 60      ld   hl,guard_1_ladder_frame_6035
@@ -407,7 +407,7 @@
 02D9: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 02DC: 22 44 60      ld   (unknown_6044),hl
 02DF: FD 21 97 60   ld   iy,unknown_6097
-02E3: FD 22 93 60   ld   (unknown_6093),iy
+02E3: FD 22 93 60   ld   (unknown_pointer_6093),iy
 02E7: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 02EA: 22 44 60      ld   (unknown_6044),hl
 02ED: 21 75 60      ld   hl,guard_2_ladder_frame_6075
@@ -472,7 +472,7 @@
 0394: CD 66 3C      call $3C66
 0397: 3A 00 B8      ld   a,(io_read_shit_B800)
 039A: 3E 01         ld   a,$01
-039C: 32 00 A0      ld   (timer_random_shit_A000),a
+039C: 32 00 A0      ld   (interrupt_control_A000),a
 039F: ED 56         im   1
 03A1: F1            pop  af
 03A2: 08            ex   af,af'
@@ -680,7 +680,7 @@ guard_ladder_movement_04AD:
 054B: 3D            dec  a
 054C: DD 77 03      ld   (ix+$03),a
 054F: AF            xor  a
-0550: FD 2A 93 60   ld   iy,(unknown_6093)
+0550: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
 0554: FD 77 00      ld   (iy+$00),a
 0557: CD 72 0F      call $0F72
 055A: F1            pop  af
@@ -689,7 +689,7 @@ guard_ladder_movement_04AD:
 055F: 3C            inc  a
 0560: DD 77 03      ld   (ix+$03),a
 0563: AF            xor  a
-0564: FD 2A 93 60   ld   iy,(unknown_6093)
+0564: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
 0568: FD 77 00      ld   (iy+$00),a
 056B: CD 72 0F      call $0F72
 056E: F1            pop  af
@@ -699,8 +699,7 @@ guard_ladder_movement_04AD:
 	;; guard left/right movement routine
 	;; no A.I. here:	 if direction = left, animates left, etc..
 	;;
-	guard_walk_movement_0570
-
+guard_walk_movement_0570:
 	;; handle the right side
 0570: FD 7E 00      ld   a,(iy+$00) ;  guard direction
 0573: E6 80         and  $80
@@ -824,7 +823,7 @@ guard_ladder_movement_04AD:
 062E: CD 18 20      call $2018
 0631: C1            pop  bc
 0632: AF            xor  a
-0633: FD 2A 93 60   ld   iy,(unknown_6093)
+0633: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
 0637: FD 77 00      ld   (iy+$00),a
 063A: 78            ld   a,b
 063B: FE 80         cp   $80
@@ -856,7 +855,7 @@ guard_ladder_movement_04AD:
 066B: 3D            dec  a
 066C: 32 98 60      ld   (screen_index_param_6098),a
 066F: AF            xor  a
-0670: FD 2A 93 60   ld   iy,(unknown_6093)
+0670: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
 0674: FD 77 00      ld   (iy+$00),a
 0677: F1            pop  af
 0678: C9            ret
@@ -897,7 +896,7 @@ guard_ladder_movement_04AD:
 06BF: 3E 01         ld   a,$01
 06C1: 32 29 60      ld   (player_in_wagon_flag_6029),a
 06C4: 3D            dec  a
-06C5: 32 2F 60      ld   (unknown_602F),a
+06C5: 32 2F 60      ld   (player_in_wagon_flag_13_602F),a
 06C8: C9            ret
 06C9: 3E 01         ld   a,$01
 06CB: 32 2D 60      ld   (unknown_602D),a
@@ -914,11 +913,11 @@ guard_ladder_movement_04AD:
 06E3: 3A 2E 60      ld   a,(unknown_602E)
 06E6: FE 01         cp   $01
 06E8: CC 20 07      call z,$0720
-06EB: 3A 2F 60      ld   a,(unknown_602F)
+06EB: 3A 2F 60      ld   a,(player_in_wagon_flag_13_602F)
 06EE: 3C            inc  a
 06EF: FE 04         cp   $04
 06F1: 28 04         jr   z,$06F7
-06F3: 32 2F 60      ld   (unknown_602F),a
+06F3: 32 2F 60      ld   (player_in_wagon_flag_13_602F),a
 06F6: C9            ret
 	;;  kind of reset but called when???
 06F7: AF            xor  a
@@ -948,7 +947,7 @@ guard_ladder_movement_04AD:
 072C: FD 77 00      ld   (iy+$00),a
 072F: C9            ret
 0730: 11 4F 07      ld   de,$074F
-0733: 3A 2F 60      ld   a,(unknown_602F)
+0733: 3A 2F 60      ld   a,(player_in_wagon_flag_13_602F)
 0736: FE 04         cp   $04
 0738: C8            ret  z
 0739: 83            add  a,e
@@ -1655,7 +1654,7 @@ player_movement_0B6D
 0C82: 21 2D 3F      ld   hl,$3F2D
 0C85: CD 18 20      call $2018
 0C88: C9            ret
-0C89: 3A C7 61      ld   a,(unknown_61C7)
+0C89: 3A C7 61      ld   a,(holds_barrow_61C7)
 0C8C: FE 00         cp   $00
 0C8E: C9            ret
 0C8F: 21 3F 3F      ld   hl,$3F3F
@@ -1857,11 +1856,11 @@ player_movement_0B6D
 0DEE: FE FF         cp   $FF
 0DF0: C0            ret  nz
 0DF1: 06 80         ld   b,$80
-0DF3: 3A 07 60      ld   a,(unknown_6007)
+0DF3: 3A 07 60      ld   a,(player_climb_frame_counter_6007)
 0DF6: FE 0B         cp   $0B
 0DF8: 20 07         jr   nz,$0E01
 0DFA: 3E 01         ld   a,$01
-0DFC: 32 07 60      ld   (unknown_6007),a
+0DFC: 32 07 60      ld   (player_climb_frame_counter_6007),a
 0DFF: 18 15         jr   $0E16
 0E01: 3C            inc  a
 0E02: F5            push af
@@ -1872,8 +1871,8 @@ player_movement_0B6D
 0E0D: FE 00         cp   $00
 0E0F: CA 19 0C      jp   z,$0C19
 0E12: F1            pop  af
-0E13: 32 07 60      ld   (unknown_6007),a
-0E16: 3A 07 60      ld   a,(unknown_6007)
+0E13: 32 07 60      ld   (player_climb_frame_counter_6007),a
+0E16: 3A 07 60      ld   a,(player_climb_frame_counter_6007)
 	;; vertical player movement
 0E19: FE 01         cp   $01
 0E1B: C8            ret  z
@@ -2024,7 +2023,7 @@ player_movement_0B6D
 0F55: 32 C6 61      ld   (unknown_61C6),a
 0F58: 32 FC 61      ld   (unknown_61FC),a
 0F5B: AF            xor  a
-0F5C: 32 C7 61      ld   (unknown_61C7),a
+0F5C: 32 C7 61      ld   (holds_barrow_61C7),a
 0F5F: 32 CF 61      ld   (has_pick_61CF),a
 0F62: 32 14 60      ld   (unknown_6014),a
 0F65: 32 1C 60      ld   (unknown_601C),a
@@ -2214,10 +2213,11 @@ object_pickup_test_10AE
 10C7: 32 60 61      ld   (pickup_flag_6160),a
 10CA: C9            ret
 
-set_255_guard_y_10CB:
+set_previous_guard_y_255_10CB:
 10CB: 3E FF         ld   a,$FF
 10CD: FD 77 03      ld   (iy+$03),a
 10D0: C9            ret
+speech_management_10D1:
 10D1: 3A 10 62      ld   a,(unknown_6210)
 10D4: FE 01         cp   $01
 10D6: C0            ret  nz
@@ -2239,7 +2239,7 @@ set_255_guard_y_10CB:
 10F9: 3E 01         ld   a,$01
 10FB: 32 03 A8      ld   ($A803),a
 10FE: C9            ret
-10FF: 3A C7 61      ld   a,(unknown_61C7)
+10FF: 3A C7 61      ld   a,(holds_barrow_61C7)
 1102: FE 00         cp   $00
 1104: C8            ret  z
 1105: 3A 82 65      ld   a,(player_x_6582)
@@ -2258,7 +2258,7 @@ set_255_guard_y_10CB:
 1122: C6 01         add  a,$01
 1124: B8            cp   b
 1125: C8            ret  z
-1126: 01 C7 61      ld   bc,unknown_61C7
+1126: 01 C7 61      ld   bc,holds_barrow_61C7
 1129: D9            exx
 112A: FD 21 C4 61   ld   iy,unknown_61C4
 112E: 3E 28         ld   a,$28
@@ -2267,10 +2267,11 @@ set_255_guard_y_10CB:
 1135: FD 77 06      ld   (iy+$06),a
 1138: C4 BA 21      call nz,$21BA
 113B: C9            ret
+handle_pick_hold_timer_113c:
 113C: 3A CF 61      ld   a,(has_pick_61CF)
 113F: FE 00         cp   $00
 1141: C8            ret  z
-1142: 2A E0 61      ld   hl,(unknown_61E0)
+1142: 2A E0 61      ld   hl,(pickaxe_timer_duration_61E0)
 1145: 7D            ld   a,l
 1146: FE 00         cp   $00
 1148: 20 06         jr   nz,$1150
@@ -2278,13 +2279,15 @@ set_255_guard_y_10CB:
 114B: FE 00         cp   $00
 114D: 20 01         jr   nz,$1150
 114F: C9            ret
+* increase pickaxe time until timeout
 1150: 23            inc  hl
-1151: 22 E0 61      ld   (unknown_61E0),hl
+1151: 22 E0 61      ld   (pickaxe_timer_duration_61E0),hl
 1154: 11 FF 01      ld   de,$01FF
 1157: ED 52         sbc  hl,de
 1159: C0            ret  nz
+* lose pickaxe
 115A: 21 00 00      ld   hl,$0000
-115D: 22 E0 61      ld   (unknown_61E0),hl
+115D: 22 E0 61      ld   (pickaxe_timer_duration_61E0),hl
 1160: 3E 00         ld   a,$00
 1162: DD 21 CC 61   ld   ix,unknown_61CC
 1166: DD 77 03      ld   (ix+$03),a
@@ -2292,13 +2295,13 @@ set_255_guard_y_10CB:
 116B: 32 9F 65      ld   (unknown_659F),a
 116E: C9            ret
 
-guard_1_movement_116F
+guard_1_movement_116F:
 116F: 3A 99 60      ld   a,(guard_1_screen_6099)
 1172: 32 98 60      ld   (screen_index_param_6098),a
 1175: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
 1178: 22 44 60      ld   (unknown_6044),hl
 117B: FD 21 57 60   ld   iy,unknown_6057
-117F: FD 22 93 60   ld   (unknown_6093),iy
+117F: FD 22 93 60   ld   (unknown_pointer_6093),iy
 1183: DD 2A A9 04   ld   ix,($04A9)
 1187: 21 34 60      ld   hl,unknown_6034
 118A: FD 21 27 60   ld   iy,guard_2_direction_6027
@@ -2307,13 +2310,13 @@ guard_1_movement_116F
 1194: 3A 98 60      ld   a,(screen_index_param_6098)
 1197: 32 99 60      ld   (guard_1_screen_6099),a
 119A: C9            ret
-guard_2_movement_119B
+guard_2_movement_119B:
 119B: 3A 9A 60      ld   a,(guard_2_screen_609A)
 119E: 32 98 60      ld   (screen_index_param_6098),a
 11A1: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 11A4: 22 44 60      ld   (unknown_6044),hl
 11A7: FD 21 97 60   ld   iy,unknown_6097
-11AB: FD 22 93 60   ld   (unknown_6093),iy
+11AB: FD 22 93 60   ld   (unknown_pointer_6093),iy
 11AF: DD 2A AB 04   ld   ix,($04AB)
 11B3: 21 74 60      ld   hl,unknown_6074
 11B6: FD 21 67 60   ld   iy,guard_1_direction_6067
@@ -2325,7 +2328,7 @@ guard_2_movement_119B
 
 ;; global init
 1200: AF            xor  a
-1201: 32 00 A0      ld   (timer_random_shit_A000),a
+1201: 32 00 A0      ld   (interrupt_control_A000),a
 1204: F3            di
 1205: 3C            inc  a
 1206: C3 80 24      jp   $2480
@@ -2362,7 +2365,7 @@ guard_2_movement_119B
 mainloop_1242:
 1242: 3E 01         ld   a,$01
 1244: ED 56         im   1
-1246: 32 00 A0      ld   (timer_random_shit_A000),a
+1246: 32 00 A0      ld   (interrupt_control_A000),a
 1249: FB            ei
 124A: 3A 00 A8      ld   a,($A800)
 124D: CD CF 34      call $34CF	;  ???? something to do with credits handling
@@ -2494,7 +2497,7 @@ mainloop_1242:
 1366: 3A 99 60      ld   a,(guard_1_screen_6099)
 1369: 32 98 60      ld   (screen_index_param_6098),a
 136C: FD 21 94 65   ld   iy,guard_1_struct_6594
-1370: FD 22 93 60   ld   (unknown_6093),iy
+1370: FD 22 93 60   ld   (unknown_pointer_6093),iy
 1374: DD 21 27 60   ld   ix,guard_2_direction_6027
 1378: DD 22 95 60   ld   (unknown_6095),ix
 137C: DD 21 35 60   ld   ix,guard_1_ladder_frame_6035
@@ -2515,7 +2518,7 @@ mainloop_1242:
 13AB: D4 A3 31      call nc,$31A3
 13AE: FE 10         cp   $10
 13B0: FD 21 94 65   ld   iy,guard_1_struct_6594
-13B4: FD 22 93 60   ld   (unknown_6093),iy
+13B4: FD 22 93 60   ld   (unknown_pointer_6093),iy
 13B8: DD 21 27 60   ld   ix,guard_2_direction_6027
 13BC: DD 22 95 60   ld   (unknown_6095),ix
 13C0: FD 21 94 65   ld   iy,guard_1_struct_6594
@@ -2526,7 +2529,7 @@ mainloop_1242:
 13D3: 3A 9A 60      ld   a,(guard_2_screen_609A)
 13D6: 32 98 60      ld   (screen_index_param_6098),a
 13D9: FD 21 98 65   ld   iy,guard_2_struct_6598
-13DD: FD 22 93 60   ld   (unknown_6093),iy
+13DD: FD 22 93 60   ld   (unknown_pointer_6093),iy
 13E1: DD 21 67 60   ld   ix,guard_1_direction_6067
 13E5: DD 22 95 60   ld   (unknown_6095),ix
 13E9: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
@@ -2550,7 +2553,7 @@ mainloop_1242:
 1421: D4 C1 31      call nc,$31C1
 1424: FE 10         cp   $10
 1426: FD 21 98 65   ld   iy,guard_2_struct_6598
-142A: FD 22 93 60   ld   (unknown_6093),iy
+142A: FD 22 93 60   ld   (unknown_pointer_6093),iy
 142E: DD 21 67 60   ld   ix,guard_1_direction_6067
 1432: DD 22 95 60   ld   (unknown_6095),ix
 1436: FD 21 98 65   ld   iy,guard_2_struct_6598
@@ -2677,7 +2680,7 @@ guard_1_sees_player_1560
 1572: 3A 58 61      ld   a,(has_bag_6158)
 1575: FE 01         cp   $01
 1577: 28 1A         jr   z,$1593
-1579: 01 C7 61      ld   bc,unknown_61C7
+1579: 01 C7 61      ld   bc,holds_barrow_61C7
 157C: FD 21 C4 61   ld   iy,unknown_61C4
 1580: 3E 3A         ld   a,$3A
 1582: FD 77 04      ld   (iy+$04),a
@@ -2690,7 +2693,7 @@ guard_1_sees_player_1560
 1593: F3            di
 1594: 06 04         ld   b,$04
 1596: FD 21 D0 61   ld   iy,unknown_61D0
-159A: 3A C7 61      ld   a,(unknown_61C7)
+159A: 3A C7 61      ld   a,(holds_barrow_61C7)
 159D: FE 01         cp   $01
 159F: CA CF 15      jp   z,$15CF
 15A2: C5            push bc
@@ -2971,7 +2974,7 @@ guard_1_sees_player_1560
 17E6: 3A CF 61      ld   a,(has_pick_61CF)
 17E9: FE 01         cp   $01
 17EB: C8            ret  z
-17EC: 3A C7 61      ld   a,(unknown_61C7)
+17EC: 3A C7 61      ld   a,(holds_barrow_61C7)
 17EF: FE 01         cp   $01
 17F1: C8            ret  z
 17F2: 3A 59 61      ld   a,(unknown_6159)
@@ -3303,7 +3306,7 @@ analyse_guard_direction_change_19D1:
 1A56: F1            pop  af
 1A57: D4 22 1B      call nc,$1B22
 1A5A: 18 58         jr   $1AB4
-1A5C: 3A 00 A0      ld   a,(timer_random_shit_A000)
+1A5C: 3A 00 A0      ld   a,(vertical_beam_pos_A000)
 1A5F: E5            push hl
 1A60: 21 34 1B      ld   hl,direction_index_table_1B34
 1A63: E6 03         and  $03	; random 0 1 2 3
@@ -3367,7 +3370,7 @@ analyse_guard_direction_change_19D1:
 1ACB: 2A 91 60      ld   hl,(unknown_6091)
 1ACE: 32 44 60      ld   (unknown_6044),a
 1AD1: FD 21 94 65   ld   iy,guard_1_struct_6594
-1AD5: FD 22 93 60   ld   (unknown_6093),iy
+1AD5: FD 22 93 60   ld   (unknown_pointer_6093),iy
 1AD9: 2A 95 60      ld   hl,(unknown_6095) ; contains guard direction pointer unknown_6027 or unknown_6067
 1ADC: 30 05         jr   nc,$1AE3
 1ADE: CD B3 1B      call set_guard_direction_up_1BB3
@@ -3417,7 +3420,7 @@ analyse_guard_direction_change_19D1:
 1B3A: 60            ld   h,b
 1B3B: 22 91 60      ld   (unknown_6091),hl
 1B3E: FD 21 94 65   ld   iy,guard_1_struct_6594
-1B42: FD 22 93 60   ld   (unknown_6093),iy
+1B42: FD 22 93 60   ld   (unknown_pointer_6093),iy
 1B46: 21 27 60      ld   hl,guard_2_direction_6027
 1B49: 22 95 60      ld   (unknown_6095),hl
 1B4C: 3A 3C 60      ld   a,(guard_2_sees_player_right_603C)
@@ -3438,7 +3441,7 @@ analyse_guard_direction_change_19D1:
 
 1B6D: 2A 91 60      ld   hl,(unknown_6091)
 1B70: DD E5         push ix
-1B72: DD 2A 93 60   ld   ix,(unknown_6093)
+1B72: DD 2A 93 60   ld   ix,(unknown_pointer_6093)
 1B76: CD FA 0C      call character_can_walk_right_0CFA
 1B79: DD E1         pop  ix
 1B7B: 3A 0B 60      ld   a,(unknown_600B)
@@ -3453,7 +3456,7 @@ analyse_guard_direction_change_19D1:
 1B8A: C9            ret
 1B8B: 2A 91 60      ld   hl,(unknown_6091)
 1B8E: DD E5         push ix
-1B90: DD 2A 93 60   ld   ix,(unknown_6093)
+1B90: DD 2A 93 60   ld   ix,(unknown_pointer_6093)
 1B94: CD 69 0D      call character_can_walk_left_0D69
 1B97: DD E1         pop  ix
 1B99: 3A 0B 60      ld   a,(unknown_600B)
@@ -3590,7 +3593,7 @@ analyse_guard_direction_change_19D1:
 1C94: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 1C97: 22 91 60      ld   (unknown_6091),hl
 1C9A: FD 21 98 65   ld   iy,guard_2_struct_6598
-1C9E: FD 22 93 60   ld   (unknown_6093),iy
+1C9E: FD 22 93 60   ld   (unknown_pointer_6093),iy
 1CA2: 21 67 60      ld   hl,guard_1_direction_6067
 1CA5: 22 95 60      ld   (unknown_6095),hl
 1CA8: 3A 7C 60      ld   a,(guard_1_sees_player_right_607C)
@@ -3801,9 +3804,11 @@ display_player_ids_and_credit_1dec:
 1E0D: 11 89 56      ld   de,$5689
 1E10: 21 9F 91      ld   hl,$919F
 1E13: CD F9 30      call display_text_30F9
-1E16: 3A 04 60      ld   a,(unknown_6004)
+* credit digits seems useless: wrong and overwritten
+* by the real value read from number_of_credits_6000
+1E16: 3A 04 60      ld   a,(fake_credit_digit_6004)
 1E19: 32 9F 90      ld   ($909F),a
-1E1C: 3A 05 60      ld   a,(unknown_6005)
+1E1C: 3A 05 60      ld   a,(fake_credit_digit_6005)
 1E1F: 32 BF 90      ld   ($90BF),a
 * color all
 1E22: CD 26 1E      call $1E26
@@ -3901,7 +3906,7 @@ display_maze_1E94:
 1EDB: 3E C8         ld   a,$C8
 1EDD: 32 66 61      ld   (unknown_6166),a
 
-1EE0: 11 C7 61      ld   de,unknown_61C7
+1EE0: 11 C7 61      ld   de,holds_barrow_61C7
 1EE3: 21 38 1F      ld   hl,$1F38
 1EE6: 01 18 00      ld   bc,$0018
 1EE9: ED B0         ldir
@@ -3922,7 +3927,7 @@ display_maze_1E94:
 1F10: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
 1F13: 32 77 60      ld   (unknown_6077),a
 1F16: 32 28 60      ld   (player_controls_frozen_6028),a
-1F19: 32 E0 61      ld   (unknown_61E0),a
+1F19: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
 1F1C: 32 E1 61      ld   (unknown_61E1),a
 1F1F: 32 14 60      ld   (unknown_6014),a
 1F22: 32 13 60      ld   (unknown_6013),a
@@ -3968,7 +3973,7 @@ display_maze_1E94:
 1F6F: CD 05 26      call $2605
 1F72: 3E 01         ld   a,$01
 1F74: 32 51 61      ld   (unknown_6151),a
-1F77: 32 00 A0      ld   (timer_random_shit_A000),a
+1F77: 32 00 A0      ld   (interrupt_control_A000),a
 1F7A: 21 5E 04      ld   hl,$045E
 1F7D: 22 54 61      ld   (unknown_6154),hl
 1F80: 21 F7 3E      ld   hl,$3EF7
@@ -3992,7 +3997,7 @@ display_maze_1E94:
 1FAE: DD 77 03      ld   (ix+$03),a
 1FB1: AF            xor  a
 1FB2: 32 58 61      ld   (has_bag_6158),a
-1FB5: 32 C7 61      ld   (unknown_61C7),a
+1FB5: 32 C7 61      ld   (holds_barrow_61C7),a
 1FB8: 3A 7D 61      ld   a,(unknown_617D)
 1FBB: FE 01         cp   $01
 1FBD: 28 14         jr   z,$1FD3
@@ -4047,7 +4052,7 @@ start_new_life_2026:
 202C: 06 06         ld   b,$06
 202E: CD 54 20      call memset_2054 ;  clear region 6144-6144+6
 2031: AF            xor  a
-; set everything to 0
+; set everything player-related to 0
 2032: 32 52 61      ld   (unknown_6152),a
 2035: 32 51 61      ld   (unknown_6151),a
 2038: 32 25 60      ld   (player_death_flag_6025),a
@@ -4058,7 +4063,7 @@ start_new_life_2026:
 2047: 32 4D 60      ld   (fall_height_604D),a
 204A: 32 59 61      ld   (unknown_6159),a
 204D: 32 5E 61      ld   (unknown_615E),a
-2050: 32 C7 61      ld   (unknown_61C7),a
+2050: 32 C7 61      ld   (holds_barrow_61C7),a
 2053: C9            ret
 
 	;; < b number of bytes to set to a
@@ -4110,7 +4115,7 @@ memset_2054
 20BD: FE 1F         cp   $1F
 20BF: 20 F9         jr   nz,$20BA
 20C1: 3E 01         ld   a,$01
-20C3: 32 00 A0      ld   (timer_random_shit_A000),a
+20C3: 32 00 A0      ld   (interrupt_control_A000),a
 20C6: CD 34 2C      call $2C34
 20C9: F3            di
 20CA: CD 5B 35      call $355B
@@ -4163,7 +4168,7 @@ memset_2054
 211F: 32 03 A0      ld   ($A003),a
 2122: C9            ret
 ;; put random direction (amongst $80,$40,$20,$10) in ($6095,ind)
-2123: 3A 00 A0      ld   a,(timer_random_shit_A000)   ; random 0-3 direction
+2123: 3A 00 A0      ld   a,(vertical_beam_pos_A000)   ; random 0-3 direction
 2126: 21 70 59      ld   hl,direction_table_5970
 2129: E6 03         and  $03
 212B: 85            add  a,l
@@ -4287,7 +4292,7 @@ memset_2054
 2206: FE E0         cp   $E0
 2208: C8            ret  z
 2209: D9            exx
-220A: 3A C7 61      ld   a,(unknown_61C7)
+220A: 3A C7 61      ld   a,(holds_barrow_61C7)
 220D: FE 01         cp   $01
 220F: 20 05         jr   nz,$2216
 2211: 3E 28         ld   a,$28
@@ -4394,7 +4399,7 @@ memset_2054
 22F6: 3E 01         ld   a,$01
 22F8: 32 7A 62      ld   (unknown_627A),a
 22FB: 10 EA         djnz $22E7
-22FD: 3A C7 61      ld   a,(unknown_61C7)
+22FD: 3A C7 61      ld   a,(holds_barrow_61C7)
 2300: FE 01         cp   $01
 2302: 28 1C         jr   z,$2320
 2304: 3A 0D 60      ld   a,(player_screen_600D)
@@ -6254,7 +6259,7 @@ display_text_30F9:
 313D: DD 21 CC 61   ld   ix,unknown_61CC
 3141: AF            xor  a
 3142: DD 77 03      ld   (ix+$03),a
-3145: 32 E0 61      ld   (unknown_61E0),a
+3145: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
 3148: 32 E1 61      ld   (unknown_61E1),a
 314B: 3E FF         ld   a,$FF
 314D: 32 9F 65      ld   (unknown_659F),a
@@ -6380,10 +6385,10 @@ display_text_30F9:
 3233: CD FF 10      call $10FF
 3236: F3            di
 3237: AF            xor  a
-3238: 32 00 A0      ld   (timer_random_shit_A000),a
+3238: 32 00 A0      ld   (interrupt_control_A000),a
 323B: FB            ei
 323C: 3E 01         ld   a,$01
-323E: 32 00 A0      ld   (timer_random_shit_A000),a
+323E: 32 00 A0      ld   (interrupt_control_A000),a
 3241: 00            nop
 3242: C9            ret
 3243: CD 74 33      call $3374
@@ -6510,7 +6515,7 @@ display_text_30F9:
 3373: C9            ret
 3374: AF            xor  a
 3375: 32 03 A0      ld   ($A003),a
-3378: 3A C7 61      ld   a,(unknown_61C7)
+3378: 3A C7 61      ld   a,(holds_barrow_61C7)
 337B: FE 00         cp   $00
 337D: CC 25 1F      call z,$1F25
 3380: 3A 59 61      ld   a,(unknown_6159)
@@ -6687,10 +6692,8 @@ display_text_30F9:
 34CB: 3E 01         ld   a,$01
 34CD: 77            ld   (hl),a
 34CE: C9            ret
-; random infinite loop / wait ????
-; this is the protection A000/A001 read???
-; skipping this completely doesnt matter
-34CF: 3A 00 A0      ld   a,(timer_random_shit_A000)
+; sync on vertical blank
+34CF: 3A 00 A0      ld   a,(vertical_beam_pos_A000)
 34D2: E6 3F         and  $3F
 34D4: 47            ld   b,a
 34D5: 00            nop
@@ -6932,7 +6935,7 @@ play_intro_3700:
 3734: 32 9B 65      ld   (guard_2_y_659B),a
 3737: 32 59 61      ld   (unknown_6159),a
 373A: 32 CF 61      ld   (has_pick_61CF),a
-373D: 32 E0 61      ld   (unknown_61E0),a
+373D: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
 3740: 32 E1 61      ld   (unknown_61E1),a
 3743: 3E 01         ld   a,$01
 3745: 32 ED 61      ld   (unknown_61ED),a
@@ -7024,7 +7027,7 @@ play_intro_3700:
 3805: FB            ei
 3806: 32 26 60      ld   (player_input_6026),a
 3809: 3E 01         ld   a,$01
-380B: 32 C7 61      ld   (unknown_61C7),a
+380B: 32 C7 61      ld   (holds_barrow_61C7),a
 380E: CD D7 38      call $38D7
 3811: 3A 74 62      ld   a,(is_intermission_6274)
 3814: FE 01         cp   $01
@@ -7061,7 +7064,7 @@ play_intro_3700:
 3861: FE D0         cp   $D0
 3863: 20 F6         jr   nz,$385B
 3865: 3E 00         ld   a,$00
-3867: 32 C7 61      ld   (unknown_61C7),a
+3867: 32 C7 61      ld   (holds_barrow_61C7),a
 386A: 3E 01         ld   a,$01
 386C: 32 CF 61      ld   (has_pick_61CF),a
 386F: 3E 37         ld   a,$37
@@ -7323,7 +7326,7 @@ play_intro_3700:
 3B04: FE 00         cp   $00
 3B06: C8            ret  z
 ; level completed
-3B07: 01 C7 61      ld   bc,unknown_61C7
+3B07: 01 C7 61      ld   bc,holds_barrow_61C7
 3B0A: D9            exx
 3B0B: FD 21 C4 61   ld   iy,unknown_61C4
 3B0F: 3E 3A         ld   a,$3A
@@ -7348,7 +7351,7 @@ play_intro_3700:
 3B3D: 32 96 65      ld   (guard_1_x_6596),a
 3B40: 32 9A 65      ld   (guard_2_x_659A),a
 3B43: 3E 01         ld   a,$01
-3B45: 32 00 A0      ld   (timer_random_shit_A000),a
+3B45: 32 00 A0      ld   (interrupt_control_A000),a
 3B48: 32 F2 61      ld   (unknown_61F2),a
 3B4B: FB            ei
 3B4C: CD 53 16      call $1653
@@ -7357,7 +7360,7 @@ play_intro_3700:
 3B54: 20 DE         jr   nz,$3B34
 3B56: AF            xor  a
 3B57: 32 F2 61      ld   (unknown_61F2),a
-3B5A: 32 C7 61      ld   (unknown_61C7),a
+3B5A: 32 C7 61      ld   (holds_barrow_61C7),a
 3B5D: F3            di
 3B5E: 06 40         ld   b,$40
 3B60: 21 80 65      ld   hl,player_struct_6580
@@ -7483,7 +7486,7 @@ check_remaining_bags_3BBC:
 
 3C47: 2A 91 60		ld   hl,(unknown_6091)
 3C4A: 22 FF 61      ld   (unknown_61FF),hl
-3C4D: 2A 93 60      ld   hl,(unknown_6093)
+3C4D: 2A 93 60      ld   hl,(unknown_pointer_6093)
 3C50: 22 01 62      ld   (unknown_6201),hl
 3C53: 2A 95 60      ld   hl,(unknown_6095)
 3C56: 22 03 62      ld   (unknown_6203),hl
@@ -7496,7 +7499,7 @@ check_remaining_bags_3BBC:
 3C66: 2A FF 61      ld   hl,(unknown_61FF)
 3C69: 22 91 60      ld   (unknown_6091),hl
 3C6C: 2A 01 62      ld   hl,(unknown_6201)
-3C6F: 22 93 60      ld   (unknown_6093),hl
+3C6F: 22 93 60      ld   (unknown_pointer_6093),hl
 3C72: 2A 03 62      ld   hl,(unknown_6203)
 3C75: 22 95 60      ld   (unknown_6095),hl
 3C78: 3A 05 62      ld   a,(unknown_6205)
@@ -7621,8 +7624,7 @@ check_remaining_bags_3BBC:
 3D73: AF            xor  a
 3D74: 32 08 60      ld   (unknown_6008),a
 3D77: C9            ret
-3D78: E0            ret  po
-3D79: FB            ei
+
 3D7A: 7E            ld   a,(hl)
 3D7B: E5            push hl
 3D7C: C5            push bc
