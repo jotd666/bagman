@@ -1,2 +1,3 @@
-- 2032: check unknown_6xxx: set 1 and see what happens
+- handle exx
+- handle move.w xxxx,ax
 - display sprites

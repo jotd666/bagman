@@ -81,7 +81,7 @@
 	.global	unknown_6034
 	.global	unknown_6037
 	.global	unknown_603A
-	.global	unknown_pointer_6044
+	.global	stored_screen_address_6044
 	.global	unknown_6047
 	.global	unknown_604B
 	.global	fall_height_604D
@@ -101,7 +101,7 @@
 	.global	unknown_6095
 	.global	unknown_6097
 	.global	unknown_609B
-	.global	unknown_6140
+	.global	unknown_pointer_6140
 	.global	unknown_6142
 	.global	unknown_6143
 	.global	unknown_6144
@@ -117,7 +117,7 @@
 	.global	unknown_6157
 	.global	unknown_6159
 	.global	unknown_615A
-	.global	unknown_615C
+	.global	unknown_pointer_615C
 	.global	unknown_615E
 	.global	unknown_615F
 	.global	unknown_6161
@@ -153,7 +153,7 @@
 	.global	unknown_61F3
 	.global	unknown_61F4
 	.global	unknown_61F5
-	.global	unknown_61F6
+	.global	dropped_bag_screen_address_61F6
 	.global	unknown_61F9
 	.global	unknown_61FA
 	.global	unknown_61FC
@@ -211,7 +211,7 @@
 	.global	unknown_65AF
 	.global	unknown_65B0
 	.global	unknown_65B4
-	.global	unknown_67F0
+	.global	stack_top_67F0
 	.global	wagon_data_658A
 
 number_of_credits_6000:
@@ -309,8 +309,8 @@ guard_2_sees_player_up_603E:
 guard_2_sees_player_down_603F:
 	ds.b	5
 	.align	2
-unknown_pointer_6044:
-	ds.l	1
+stored_screen_address_6044:
+	ds.w	1
 unknown_6047:
 	ds.b	4
 unknown_604B:
@@ -381,8 +381,9 @@ unknown_609B:
 	ds.b	1
 bags_coordinates_609C:
 	ds.b	164
-unknown_6140:
-	ds.b	2
+	.align	2
+unknown_pointer_6140:
+	ds.l	1
 unknown_6142:
 	ds.b	1
 unknown_6143:
@@ -415,8 +416,9 @@ unknown_6159:
 	ds.b	1
 unknown_615A:
 	ds.b	2
-unknown_615C:
-	ds.b	2
+	.align	2
+unknown_pointer_615C:
+	ds.l	1
 unknown_615E:
 	ds.b	1
 unknown_615F:
@@ -501,8 +503,9 @@ unknown_61F4:
 	ds.b	1
 unknown_61F5:
 	ds.b	1
-unknown_61F6:
-	ds.b	3
+	.align	2
+dropped_bag_screen_address_61F6:
+	ds.w	2
 unknown_61F9:
 	ds.b	1
 unknown_61FA:
@@ -529,8 +532,9 @@ unknown_6211:
 	ds.b	1
 unknown_6212:
 	ds.b	3
-unknown_6215:
-	ds.b	2
+	.align	2
+guard_struct_pointer_6215:
+	ds.l	1
 unknown_6217:
 	ds.b	80
 unknown_6267:
@@ -649,5 +653,7 @@ previous_guard_1_struct_65B8:
 	ds.b	4
 previous_guard_2_struct_65BC:
 	ds.b	564
-unknown_67F0:
+	* more stack!
+	ds.l	0x1000
+stack_top_67F0:
 	ds.b	15

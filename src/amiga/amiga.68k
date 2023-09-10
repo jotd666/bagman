@@ -162,7 +162,6 @@ w\@:
 		.global osd_w_videoram
 		.global osd_w_colorram
 		.global osd_r_videoram
-		.global osd_r_colorram
 		.global osd_update_sprites
 		.global osd_read_dipswitches
 		.global osd_read_inputs
@@ -1632,6 +1631,19 @@ osd_debug_hook:
 	rts
 	
 
+* d6=screen address
+osd_r_videoram:
+	movem.l	a0/d6,-(a7)
+	sub.w	#SCREEN_ADDRESS,d6
+	cmp.w	#0x400,d6
+	bcs.b	1f
+	* should not happen
+	move.w	#0,d6
+1:
+	lea		bg_videoram,a0
+	move.b	(a0,d6.w),d0
+	movem.l	(a7)+,a0/d6
+	rts
 
 osd_read_dipswitches:
 	move.b	dip_switches(pc),d0
