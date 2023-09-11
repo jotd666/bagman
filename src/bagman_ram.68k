@@ -67,5 +67,6 @@ vb_ticks_count:
 current_ticks_count:
 	.byte	0
 
-
+regscopy:
+	ds.b	110
 	.ascii	"RAM_END!"

@@ -1496,7 +1496,7 @@ compute_wagon_start_values_08b0:
 0B69: FD 77 00      ld   (iy+$00),a
 0B6C: C9            ret
 
-player_movement_0B6D
+player_movement_0B6D:
 0B6D: 3A 25 60      ld   a,(player_death_flag_6025)
 0B70: FE 01         cp   $01
 0B72: C8            ret  z	;  dead:	 out of there
@@ -1737,15 +1737,8 @@ player_movement_0B6D
 0D40: E1            pop  hl
 0D41: CA 52 0D      jp   z,$0D52
 0D44: C9            ret
-0D45: FB            ei
-0D46: FA BA A4      jp   m,$A4BA
-0D49: 6C            ld   l,h
-0D4A: 66            ld   h,(hl)
-0D4B: 62            ld   h,d
-0D4C: 25            dec  h
-0D4D: 22 26 6D      ld   (unknown_6D26),hl
-0D50: 78            ld   a,b
-0D51: B1            or   c
+
+
 0D52: DD E5         push ix
 0D54: CD 40 26      call $2640
 0D57: DD E1         pop  ix
@@ -1759,7 +1752,7 @@ player_movement_0B6D
 0D65: 32 0B 60      ld   (unknown_600B),a
 0D68: C9            ret
 
-	;; character_can_walk_left_0D69
+character_can_walk_left_0D69:
 0D69: 3A ED 61      ld   a,(unknown_61ED)
 0D6C: FE 01         cp   $01
 0D6E: 20 06         jr   nz,$0D76
@@ -1800,21 +1793,7 @@ player_movement_0B6D
 0DAC: 13            inc  de
 0DAD: 10 F9         djnz $0DA8
 0DAF: 18 B2         jr   $0D63
-0DB1: E0            ret  po
-0DB2: FF            rst  $38
-0DB3: F1            pop  af
-0DB4: F2 F3 F4      jp   p,$F4F3
-0DB7: F5            push af
-0DB8: F6 F0         or   $F0
-0DBA: EF            rst  $28
-0DBB: EE ED         xor  $ED
-0DBD: EC EB EA      call pe,$EAEB
-0DC0: F7            rst  $30
-0DC1: DF            rst  $18
-0DC2: DE DE         sbc  a,$DE
-0DC4: 4B            ld   c,e
-0DC5: 4A            ld   c,d
-0DC6: 49            ld   c,c
+
 0DC7: 3A 9B 60      ld   a,(unknown_609B)
 0DCA: FE 01         cp   $01
 0DCC: C8            ret  z
