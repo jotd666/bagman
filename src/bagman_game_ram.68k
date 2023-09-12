@@ -159,7 +159,7 @@
 	.global	unknown_61FC
 	.global	unknown_61FD
 	.global	unknown_61FF
-	.global	unknown_6201
+	.global	unknown_pointer_6201
 	.global	unknown_6203
 	.global	unknown_6205
 	.global	unknown_6208
@@ -516,8 +516,9 @@ unknown_61FD:
 	ds.b	2
 unknown_61FF:
 	ds.b	2
-unknown_6201:
-	ds.b	2
+	.align	2
+unknown_pointer_6201:
+	ds.l	1
 unknown_6203:
 	ds.b	2
 unknown_6205:
