@@ -171,7 +171,7 @@ w\@:
 		.global osd_sound_stop
 		.global osd_sound_enable
 		.global osd_sound_disable
-
+		.global	osd_get_random
 
 	
 	.include	"ReadJoypad.i"
@@ -1361,10 +1361,15 @@ osd_w_videoram:
 	movem.l	d0-d3/d6/a0-a2,-(a7)
 	
 	sub.w	#SCREEN_ADDRESS,d6
+	bmi.b	0f
 	cmp.w	#0x400,d6
 	bcs.b	1f
+0:
 	* should not happen
-	move.w	#0,d6
+	blitz
+	nop	
+	nop	
+	
 1:
 	lea		bg_videoram,a1
 	add.w	d6,a1
@@ -1389,10 +1394,15 @@ osd_w_colorram:
     .ifeq OPT_DISABLE_BG_LAYER
 	movem.l	d0-d3/d6/a0-a2,-(a7)
 	sub.w	#SCREEN_ADDRESS+0x800,d6
+	bmi.b	0f
 	cmp.w	#0x400,d6
 	bcs.b	1f
+0:
 	* should not happen
-	move.w	#0,d6
+	blitz
+	nop
+	nop
+	nop
 1:
 	lea		bg_colorram,a1
 	add.w	d6,a1
@@ -1630,15 +1640,21 @@ set_bg_bitplanes:
 osd_debug_hook:
 	rts
 	
-
+osd_get_random:
+	move.b	_custom+vposr,d0
+	rts
+	
 * d6=screen address
 osd_r_videoram:
 	movem.l	a0/d6,-(a7)
 	sub.w	#SCREEN_ADDRESS,d6
+	bmi.b	0f
 	cmp.w	#0x400,d6
 	bcs.b	1f
+0:
 	* should not happen
-	move.w	#0,d6
+	blitz
+	nop
 1:
 	lea		bg_videoram,a0
 	move.b	(a0,d6.w),d0

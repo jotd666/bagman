@@ -43,7 +43,7 @@
 	.global	player_input_6026
 	.global	player_move_direction_6050
 	.global	player_screen_600D
-	.global	player_screen_address_6009
+	.global	player_logical_address_6009
 	.global	player_struct_6580
 	.global	player_x_6582
 	.global	player_y_6583
@@ -53,7 +53,7 @@
 	.global	screen_index_param_6098
 	.global	time_61E8
 	.global	is_intermission_6274
-	.global	extra_life_awarded_6286
+	.global	extra_life_not_awarded_yet_6286
 	.global	bags_coordinates_609C
 	.global	fake_credit_digit_6004
 	.global	fake_credit_digit_6005
@@ -81,9 +81,9 @@
 	.global	unknown_6034
 	.global	unknown_6037
 	.global	unknown_603A
-	.global	stored_screen_address_6044
+	.global	stored_logical_address_6044
 	.global	unknown_6047
-	.global	unknown_604B
+	.global	unknown_pointer_604B
 	.global	fall_height_604D
 	.global	fatal_fall_height_reached_604E
 	.global	unknown_604F
@@ -96,9 +96,9 @@
 	.global	unknown_6077
 	.global	unknown_607A
 	.global	unknown_608F
-	.global	unknown_6091
-	.global	unknown_pointer_6093
-	.global	unknown_6095
+	.global	guard_logical_address_6091
+	.global	guard_struct_pointer_6093
+	.global	guard_direction_pointer_6095
 	.global	unknown_6097
 	.global	unknown_609B
 	.global	unknown_pointer_6140
@@ -106,7 +106,7 @@
 	.global	unknown_6143
 	.global	unknown_6144
 	.global	unknown_6145
-	.global	unknown_6146
+	.global	unknown_pointer_6146
 	.global	unknown_6148
 	.global	unknown_6149
 	.global	unknown_6151
@@ -132,7 +132,7 @@
 	.global	unknown_617F
 	.global	unknown_61BD
 	.global	unknown_61C0
-	.global	unknown_61C4
+	.global	barrow_start_screen_address_61C4
 	.global	unknown_61C6
 	.global	holds_barrow_61C7
 	.global	unknown_61CA
@@ -155,7 +155,7 @@
 	.global	unknown_61F5
 	.global	dropped_bag_screen_address_61F6
 	.global	unknown_61F9
-	.global	unknown_61FA
+	.global	unknown_screen_address_61FA
 	.global	unknown_61FC
 	.global	unknown_61FD
 	.global	unknown_61FF
@@ -227,7 +227,7 @@ player_climb_frame_counter_6007:
 unknown_6008:
 	ds.b	1
 	.align	2
-player_screen_address_6009:
+player_logical_address_6009:
 	ds.l	1
 unknown_600B:
 	ds.b	1
@@ -309,12 +309,13 @@ guard_2_sees_player_up_603E:
 guard_2_sees_player_down_603F:
 	ds.b	5
 	.align	2
-stored_screen_address_6044:
+stored_logical_address_6044:
 	ds.w	1
 unknown_6047:
 	ds.b	4
-unknown_604B:
-	ds.b	2
+	.align	2
+unknown_pointer_604B:
+	ds.l	1
 fall_height_604D:
 	ds.b	1
 fatal_fall_height_reached_604E:
@@ -362,13 +363,13 @@ guard_1_sees_player_down_607F:
 	ds.b	16
 unknown_608F:
 	ds.b	2
-unknown_6091:
+guard_logical_address_6091:
 	ds.b	2
 	.align	2
-unknown_pointer_6093:
+guard_struct_pointer_6093:
 	ds.l	1
-unknown_6095:
-	ds.b	2
+guard_direction_pointer_6095:
+	ds.l	1
 unknown_6097:
 	ds.b	1
 screen_index_param_6098:
@@ -392,8 +393,9 @@ unknown_6144:
 	ds.b	1
 unknown_6145:
 	ds.b	1
-unknown_6146:
-	ds.b	2
+	.align	2
+unknown_pointer_6146:
+	ds.l	1
 unknown_6148:
 	ds.b	1
 unknown_6149:
@@ -455,7 +457,7 @@ unknown_61BD:
 	ds.b	3
 unknown_61C0:
 	ds.b	4
-unknown_61C4:
+barrow_start_screen_address_61C4:
 	ds.b	2
 unknown_61C6:
 	ds.b	1
@@ -508,7 +510,7 @@ dropped_bag_screen_address_61F6:
 	ds.w	2
 unknown_61F9:
 	ds.b	1
-unknown_61FA:
+unknown_screen_address_61FA:
 	ds.b	2
 unknown_61FC:
 	ds.b	1
@@ -582,7 +584,7 @@ unknown_6281:
 	ds.b	4
 unknown_6285:
 	ds.b	1
-extra_life_awarded_6286:
+extra_life_not_awarded_yet_6286:
 	ds.b	2
 unknown_6288:
 	ds.b	2

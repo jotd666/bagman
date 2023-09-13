@@ -383,7 +383,7 @@
 
 029A: CD 6F 11      call guard_1_movement_116F
 029D: FD 21 57 60   ld   iy,unknown_6057
-02A1: FD 22 93 60   ld   (unknown_pointer_6093),iy
+02A1: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 02A5: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
 02A8: 22 44 60      ld   (unknown_6044),hl
 02AB: 21 35 60      ld   hl,guard_1_ladder_frame_6035
@@ -407,7 +407,7 @@
 02D9: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 02DC: 22 44 60      ld   (unknown_6044),hl
 02DF: FD 21 97 60   ld   iy,unknown_6097
-02E3: FD 22 93 60   ld   (unknown_pointer_6093),iy
+02E3: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 02E7: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 02EA: 22 44 60      ld   (unknown_6044),hl
 02ED: 21 75 60      ld   hl,guard_2_ladder_frame_6075
@@ -680,7 +680,7 @@ guard_ladder_movement_04AD:
 054B: 3D            dec  a
 054C: DD 77 03      ld   (ix+$03),a
 054F: AF            xor  a
-0550: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
+0550: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0554: FD 77 00      ld   (iy+$00),a
 0557: CD 72 0F      call $0F72
 055A: F1            pop  af
@@ -689,7 +689,7 @@ guard_ladder_movement_04AD:
 055F: 3C            inc  a
 0560: DD 77 03      ld   (ix+$03),a
 0563: AF            xor  a
-0564: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
+0564: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0568: FD 77 00      ld   (iy+$00),a
 056B: CD 72 0F      call $0F72
 056E: F1            pop  af
@@ -825,7 +825,7 @@ guard_unconditional_move_0614:
 062E: CD 18 20      call $2018
 0631: C1            pop  bc
 0632: AF            xor  a
-0633: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
+0633: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0637: FD 77 00      ld   (iy+$00),a
 063A: 78            ld   a,b
 063B: FE 80         cp   $80
@@ -857,7 +857,7 @@ guard_unconditional_move_0614:
 066B: 3D            dec  a
 066C: 32 98 60      ld   (screen_index_param_6098),a
 066F: AF            xor  a
-0670: FD 2A 93 60   ld   iy,(unknown_pointer_6093)
+0670: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0674: FD 77 00      ld   (iy+$00),a
 0677: F1            pop  af
 0678: C9            ret
@@ -972,7 +972,7 @@ handle_player_walk_0684:
 0752: 1D            dec  e
 0753: 06 20         ld   b,$20
 0755: C5            push bc
-0756: 2A 09 60      ld   hl,(player_screen_address_6009)
+0756: 2A 09 60      ld   hl,(player_logical_address_6009)
 0759: CD FA 0C      call character_can_walk_right_0CFA
 075C: 3A 0B 60      ld   a,(unknown_600B)
 075F: FE 02         cp   $02
@@ -987,7 +987,7 @@ handle_player_walk_0684:
 076F: C9            ret
 0770: 06 20         ld   b,$20
 0772: C5            push bc
-0773: 2A 09 60      ld   hl,(player_screen_address_6009)
+0773: 2A 09 60      ld   hl,(player_logical_address_6009)
 0776: CD 69 0D      call character_can_walk_left_0D69
 0779: 3A 0B 60      ld   a,(unknown_600B)
 077C: FE 02         cp   $02
@@ -998,7 +998,7 @@ handle_player_walk_0684:
 
 player_grip_handle_test_0784:
 0784: CD 5E 55      call update_player_screen_address_from_xy_555E
-0787: 2A 09 60      ld   hl,(player_screen_address_6009)
+0787: 2A 09 60      ld   hl,(player_logical_address_6009)
 078A: 2B            dec  hl
 078B: 2B            dec  hl
 078C: 2B            dec  hl
@@ -1483,7 +1483,7 @@ player_movement_0B6D:
 0B80: FE 10         cp   $10
 0B82: 20 0D         jr   nz,$0B91
 	;; try to move right
-0B84: 2A 09 60      ld   hl,(player_screen_address_6009)
+0B84: 2A 09 60      ld   hl,(player_logical_address_6009)
 0B87: CD FA 0C      call character_can_walk_right_0CFA
 0B8A: 3A 0B 60      ld   a,(unknown_600B)
 0B8D: FE 02         cp   $02
@@ -1493,7 +1493,7 @@ player_movement_0B6D:
 0B96: FE 08         cp   $08	; left
 0B98: C2 65 0B      jp   nz,$0B65
 	;; try to move left
-0B9B: 2A 09 60      ld   hl,(player_screen_address_6009)
+0B9B: 2A 09 60      ld   hl,(player_logical_address_6009)
 0B9E: CD 69 0D      call character_can_walk_left_0D69
 0BA1: 3A 0B 60      ld   a,(unknown_600B)
 0BA4: FE 02         cp   $02
@@ -1581,7 +1581,7 @@ player_movement_0B6D:
 0C37: 78            ld   a,b
 0C38: FE 80         cp   $80
 0C3A: 28 5A         jr   z,$0C96
-0C3C: 2A 09 60      ld   hl,(player_screen_address_6009)
+0C3C: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C3F: CD FA 0C      call character_can_walk_right_0CFA
 0C42: 3A 0B 60      ld   a,(unknown_600B)
 0C45: FE 02         cp   $02
@@ -1619,7 +1619,7 @@ player_movement_0B6D:
 0C8F: 21 3F 3F      ld   hl,$3F3F
 0C92: CD 18 20      call $2018
 0C95: C9            ret
-0C96: 2A 09 60      ld   hl,(player_screen_address_6009)
+0C96: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C99: CD 69 0D      call character_can_walk_left_0D69
 0C9C: 3A 0B 60      ld   a,(unknown_600B)
 0C9F: FE 02         cp   $02
@@ -1781,14 +1781,14 @@ character_can_walk_left_0D69:
 0DDB: FE 40         cp   $40	; down
 0DDD: C0            ret  nz
 	;; climb down
-0DDE: 2A 09 60      ld   hl,(player_screen_address_6009)
+0DDE: 2A 09 60      ld   hl,(player_logical_address_6009)
 0DE1: 7E            ld   a,(hl)
 0DE2: FE FF         cp   $FF
 0DE4: C0            ret  nz
 0DE5: 06 00         ld   b,$00
 0DE7: 18 0A         jr   $0DF3
 	;; climb up
-0DE9: 2A 09 60      ld   hl,(player_screen_address_6009)
+0DE9: 2A 09 60      ld   hl,(player_logical_address_6009)
 0DEC: 2B            dec  hl
 0DED: 7E            ld   a,(hl)
 0DEE: FE FF         cp   $FF
@@ -1955,8 +1955,8 @@ character_can_walk_left_0D69:
 0F46: 3C            inc  a
 0F47: 32 7E 61      ld   (unknown_617E),a
 0F4A: 21 C2 91      ld   hl,$91C2
-0F4D: 22 C4 61      ld   (unknown_61C4),hl
-0F50: 22 FA 61      ld   (unknown_61FA),hl
+0F4D: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
+0F50: 22 FA 61      ld   (unknown_screen_address_61FA),hl
 0F53: 3E 01         ld   a,$01
 0F55: 32 C6 61      ld   (unknown_61C6),a
 0F58: 32 FC 61      ld   (unknown_61FC),a
@@ -1978,7 +1978,7 @@ character_can_walk_left_0D69:
 0F7E: C9            ret
 
 handle_ay_sound_0f7f:
-0F7F: 2A 40 61      ld   hl,(unknown_6140)
+0F7F: 2A 40 61      ld   hl,(unknown_pointer_6140)
 0F82: 11 03 00      ld   de,$0003
 0F85: 19            add  hl,de
 0F86: 7E            ld   a,(hl)
@@ -1991,17 +1991,17 @@ handle_ay_sound_0f7f:
 0F90: C0            ret  nz
 0F91: AF            xor  a
 0F92: 32 42 61      ld   (unknown_6142),a
-0F95: 2A 40 61      ld   hl,(unknown_6140)
+0F95: 2A 40 61      ld   hl,(unknown_pointer_6140)
 0F98: 11 25 5B      ld   de,$5B25
 0F9B: CD B2 0F      call $0FB2
 0F9E: 3E 0F         ld   a,$0F
 0FA0: D3 08         out  ($08),a
 0FA2: 3E 01         ld   a,$01
 0FA4: 32 07 A0      ld   ($A007),a
-0FA7: 2A 40 61      ld   hl,(unknown_6140)
+0FA7: 2A 40 61      ld   hl,(unknown_pointer_6140)
 0FAA: 11 04 00      ld   de,$0004
 0FAD: 19            add  hl,de
-0FAE: 22 40 61      ld   (unknown_6140),hl
+0FAE: 22 40 61      ld   (unknown_pointer_6140),hl
 0FB1: C9            ret
 0FB2: AF            xor  a
 0FB3: 32 07 A0      ld   ($A007),a
@@ -2201,7 +2201,7 @@ speech_management_10D1:
 1125: C8            ret  z
 1126: 01 C7 61      ld   bc,holds_barrow_61C7
 1129: D9            exx
-112A: FD 21 C4 61   ld   iy,unknown_61C4
+112A: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
 112E: 3E 28         ld   a,$28
 1130: FD 77 05      ld   (iy+$05),a
 1133: 3E EC         ld   a,$EC
@@ -2242,7 +2242,7 @@ guard_1_movement_116F:
 1175: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
 1178: 22 44 60      ld   (unknown_6044),hl
 117B: FD 21 57 60   ld   iy,unknown_6057
-117F: FD 22 93 60   ld   (unknown_pointer_6093),iy
+117F: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1183: DD 2A A9 04   ld   ix,($04A9)
 1187: 21 34 60      ld   hl,unknown_6034
 118A: FD 21 27 60   ld   iy,guard_2_direction_6027
@@ -2257,7 +2257,7 @@ guard_2_movement_119B:
 11A1: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 11A4: 22 44 60      ld   (unknown_6044),hl
 11A7: FD 21 97 60   ld   iy,unknown_6097
-11AB: FD 22 93 60   ld   (unknown_pointer_6093),iy
+11AB: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 11AF: DD 2A AB 04   ld   ix,($04AB)
 11B3: 21 74 60      ld   hl,unknown_6074
 11B6: FD 21 67 60   ld   iy,guard_1_direction_6067
@@ -2288,7 +2288,7 @@ guard_2_movement_119B:
 121F: CD 5B 35      call set_bags_coordinates_355b
 1222: CD 67 35      call $3567
 1225: 21 3C 51      ld   hl,$513C
-1228: 22 40 61      ld   (unknown_6140),hl
+1228: 22 40 61      ld   (unknown_pointer_6140),hl
 	;; reset guards and player
 122B: F3            di
 122C: 3A 00 B8      ld   a,(io_read_shit_B800)
@@ -2380,7 +2380,7 @@ mainloop_1242:
 12D1: CD EC 1D      call display_player_ids_and_credit_1dec
 12D4: CD BE 39      call $39BE	;  ???
 12D7: 21 3C 51      ld   hl,$513C
-12DA: 22 40 61      ld   (unknown_6140),hl
+12DA: 22 40 61      ld   (unknown_pointer_6140),hl
 12DD: 3E 01         ld   a,$01
 12DF: 32 55 60      ld   (unknown_6055),a
 12E2: 3A 54 60      ld   a,(gameplay_allowed_6054)
@@ -2438,13 +2438,13 @@ mainloop_1242:
 1366: 3A 99 60      ld   a,(guard_1_screen_6099)
 1369: 32 98 60      ld   (screen_index_param_6098),a
 136C: FD 21 94 65   ld   iy,guard_1_struct_6594
-1370: FD 22 93 60   ld   (unknown_pointer_6093),iy
+1370: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1374: DD 21 27 60   ld   ix,guard_2_direction_6027
-1378: DD 22 95 60   ld   (unknown_6095),ix
+1378: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 137C: DD 21 35 60   ld   ix,guard_1_ladder_frame_6035
 1380: FD 21 94 65   ld   iy,guard_1_struct_6594
 1384: ED 5B 38 60   ld   de,(guard_1_screen_address_6038)
-1388: ED 53 91 60   ld   (unknown_6091),de
+1388: ED 53 91 60   ld   (guard_logical_address_6091),de
 138C: 3A 00 B8      ld   a,(io_read_shit_B800)
 138F: CD D1 19      call analyse_guard_direction_change_19D1
 1392: DD 21 3B 60   ld   ix,guard_1_in_elevator_603B
@@ -2459,24 +2459,24 @@ mainloop_1242:
 13AB: D4 A3 31      call nc,$31A3
 13AE: FE 10         cp   $10
 13B0: FD 21 94 65   ld   iy,guard_1_struct_6594
-13B4: FD 22 93 60   ld   (unknown_pointer_6093),iy
+13B4: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 13B8: DD 21 27 60   ld   ix,guard_2_direction_6027
-13BC: DD 22 95 60   ld   (unknown_6095),ix
+13BC: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 13C0: FD 21 94 65   ld   iy,guard_1_struct_6594
 13C4: ED 5B 38 60   ld   de,(guard_1_screen_address_6038)
-13C8: ED 53 91 60   ld   (unknown_6091),de
+13C8: ED 53 91 60   ld   (guard_logical_address_6091),de
 13CC: DD 21 35 60   ld   ix,guard_1_ladder_frame_6035
 13D0: D4 23 21      call nc,$2123	; change guard 2 direction
 13D3: 3A 9A 60      ld   a,(guard_2_screen_609A)
 13D6: 32 98 60      ld   (screen_index_param_6098),a
 13D9: FD 21 98 65   ld   iy,guard_2_struct_6598
-13DD: FD 22 93 60   ld   (unknown_pointer_6093),iy
+13DD: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 13E1: DD 21 67 60   ld   ix,guard_1_direction_6067
-13E5: DD 22 95 60   ld   (unknown_6095),ix
+13E5: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 13E9: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
 13ED: FD 21 98 65   ld   iy,guard_2_struct_6598
 13F1: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
-13F5: ED 53 91 60   ld   (unknown_6091),de
+13F5: ED 53 91 60   ld   (guard_logical_address_6091),de
 13F9: 3A 00 B8      ld   a,(io_read_shit_B800)
 13FC: 3A 0C 57      ld   a,($570C)
 13FF: 32 71 62      ld   (unknown_6271),a
@@ -2494,12 +2494,12 @@ mainloop_1242:
 1421: D4 C1 31      call nc,$31C1
 1424: FE 10         cp   $10
 1426: FD 21 98 65   ld   iy,guard_2_struct_6598
-142A: FD 22 93 60   ld   (unknown_pointer_6093),iy
+142A: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 142E: DD 21 67 60   ld   ix,guard_1_direction_6067
-1432: DD 22 95 60   ld   (unknown_6095),ix
+1432: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 1436: FD 21 98 65   ld   iy,guard_2_struct_6598
 143A: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
-143E: ED 53 91 60   ld   (unknown_6091),de
+143E: ED 53 91 60   ld   (guard_logical_address_6091),de
 1442: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
 1446: D4 23 21      call nc,$2123	; change guard 1 direction
 1449: FB            ei
@@ -2545,17 +2545,17 @@ mainloop_1242:
 14B1: 18 05         jr   $14B8
 14B3: 3E 01         ld   a,$01
 14B5: 32 08 60      ld   (unknown_6008),a
-14B8: 2A 09 60      ld   hl,(player_screen_address_6009)
+14B8: 2A 09 60      ld   hl,(player_logical_address_6009)
 14BB: FD 21 08 60   ld   iy,unknown_6008
 14BF: DD 21 80 65   ld   ix,player_struct_6580
 14C3: CD 05 26      call $2605
-14C6: 2A 09 60      ld   hl,(player_screen_address_6009)
+14C6: 2A 09 60      ld   hl,(player_logical_address_6009)
 14C9: DD 21 80 65   ld   ix,player_struct_6580
 14CD: CD 0E 25      call $250E
 14D0: 3E 01         ld   a,$01
 14D2: 32 6F 62      ld   (unknown_626F),a
 14D5: 3A 00 B8      ld   a,(io_read_shit_B800)
-14D8: CD 28 2C      call $2C28
+14D8: CD 28 2C      call nasty_protection_2c28
 14DB: CD 19 32      call $3219
 14DE: 3E 00         ld   a,$00
 14E0: 32 6F 62      ld   (unknown_626F),a
@@ -2574,9 +2574,9 @@ mainloop_1242:
 	;; guard 2 does not see player anywhere: do something special
 
 14FF: 21 27 60      ld   hl,guard_2_direction_6027
-1502: 22 95 60      ld   (unknown_6095),hl
+1502: 22 95 60      ld   (guard_direction_pointer_6095),hl
 1505: 21 44 61      ld   hl,unknown_6144
-1508: 22 46 61      ld   (unknown_6146),hl
+1508: 22 46 61      ld   (unknown_pointer_6146),hl
 150B: 3A 99 60      ld   a,(guard_1_screen_6099)
 150E: 32 98 60      ld   (screen_index_param_6098),a
 1511: DD 21 80 65   ld   ix,player_struct_6580
@@ -2597,9 +2597,9 @@ mainloop_1242:
 1538: 10 F5         djnz $152F
 	;; guard 1 does not see player anywhere
 153A: 21 67 60      ld   hl,guard_1_direction_6067
-153D: 22 95 60      ld   (unknown_6095),hl
+153D: 22 95 60      ld   (guard_direction_pointer_6095),hl
 1540: 21 45 61      ld   hl,unknown_6145
-1543: 22 46 61      ld   (unknown_6146),hl
+1543: 22 46 61      ld   (unknown_pointer_6146),hl
 1546: 3A 9A 60      ld   a,(guard_2_screen_609A)
 1549: 32 98 60      ld   (screen_index_param_6098),a
 154C: DD 21 80 65   ld   ix,player_struct_6580
@@ -2622,7 +2622,7 @@ guard_1_sees_player_1560:
 1575: FE 01         cp   $01
 1577: 28 1A         jr   z,$1593
 1579: 01 C7 61      ld   bc,holds_barrow_61C7
-157C: FD 21 C4 61   ld   iy,unknown_61C4
+157C: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
 1580: 3E 3A         ld   a,$3A
 1582: FD 77 04      ld   (iy+$04),a
 1585: 3E 28         ld   a,$28
@@ -2823,7 +2823,7 @@ guard_1_sees_player_1560:
 1734: 7D            ld   a,l
 1735: FE C0         cp   $C0
 1737: 20 02         jr   nz,$173B
-1739: 3E 68         ld   a,$68
+1739: 3E 68         ld   a,$68		| will be overwritten just after
 173B: FD 74 01      ld   (iy+$01),h
 173E: 3A 0D 60      ld   a,(player_screen_600D)
 1741: FD 77 02      ld   (iy+$02),a
@@ -2858,7 +2858,7 @@ guard_1_sees_player_1560:
 177B: CD EB 3D      call can_pick_bag_3DEB
 177E: 20 0A         jr   nz,$178A
 1780: 21 78 5B      ld   hl,$5B78
-1783: 22 40 61      ld   (unknown_6140),hl
+1783: 22 40 61      ld   (unknown_pointer_6140),hl
 1786: AF            xor  a
 1787: 32 42 61      ld   (unknown_6142),a
 178A: DD E1         pop  ix
@@ -2899,7 +2899,7 @@ guard_1_sees_player_1560:
 17FD: C8            ret  z
 17FE: FD 21 9C 60   ld   iy,bags_coordinates_609C
 1802: 06 12         ld   b,$12
-1804: 2A 09 60      ld   hl,(player_screen_address_6009)
+1804: 2A 09 60      ld   hl,(player_logical_address_6009)
 1807: 3E 24         ld   a,$24
 1809: 32 7B 62      ld   (unknown_627B),a
 180C: FD 7E 02      ld   a,(iy+$02)
@@ -2961,7 +2961,7 @@ guard_1_sees_player_1560:
 1888: CD EB 3D      call can_pick_bag_3DEB
 188B: 20 0A         jr   nz,$1897
 188D: 21 A8 5B      ld   hl,$5BA8
-1890: 22 40 61      ld   (unknown_6140),hl
+1890: 22 40 61      ld   (unknown_pointer_6140),hl
 1893: AF            xor  a
 1894: 32 42 61      ld   (unknown_6142),a
 	;; pickup money bag
@@ -3119,7 +3119,7 @@ compute_backbuffer_tile_address_1945:
 19A0: 32 59 61      ld   (unknown_6159),a
 19A3: C9            ret
 
-test_pickup_flag_19A4
+test_pickup_flag_19A4:
 19A4: 06 00         ld   b,$00
 19A6: 3A 60 61      ld   a,(pickup_flag_6160)
 19A9: FE 00         cp   $00
@@ -3178,7 +3178,7 @@ analyse_guard_direction_change_19D1:
 
 	;; branch found:	what do we decide??
 19FB: DD E5         push ix
-19FD: FD 22 4B 60   ld   (unknown_604B),iy
+19FD: FD 22 4B 60   ld   (unknown_pointer_604B),iy
 1A01: 3A 98 60      ld   a,(screen_index_param_6098) ; guard screen
 1A04: 47            ld   b,a
 1A05: 3A 0D 60      ld   a,(player_screen_600D)
@@ -3237,7 +3237,7 @@ analyse_guard_direction_change_19D1:
 1A6E: 7E            ld   a,(hl)	; turns to random 8 4 2 1 thanks to table @1B34
 1A6F: C5            push bc
 1A70: DD E5         push ix
-1A72: DD 2A 95 60   ld   ix,(unknown_6095)
+1A72: DD 2A 95 60   ld   ix,(guard_direction_pointer_6095)
 1A76: 47            ld   b,a	;  set 8 4 2 1 value to b
 1A77: DD 7E 00      ld   a,(ix+$00) ; guard direction
 	;; divide by 16
@@ -3275,7 +3275,7 @@ analyse_guard_direction_change_19D1:
 1AB0: E1            pop  hl
 1AB1: DD 77 15      ld   (ix+$15),a ;  save a
 1AB4: AF            xor  a
-1AB5: FD 2A 4B 60   ld   iy,(unknown_604B)
+1AB5: FD 2A 4B 60   ld   iy,(unknown_pointer_604B)
 1AB9: FD 7E 02      ld   a,(iy+$02)
 1ABC: CB 0F         rrc  a
 1ABE: CB 0F         rrc  a
@@ -3285,11 +3285,11 @@ analyse_guard_direction_change_19D1:
 1AC5: DD 7E 15      ld   a,(ix+$15) ;  restore a
 1AC8: A0            and  b
 1AC9: CB 0F         rrc  a
-1ACB: 2A 91 60      ld   hl,(unknown_6091)
+1ACB: 2A 91 60      ld   hl,(guard_logical_address_6091)
 1ACE: 32 44 60      ld   (unknown_6044),a
 1AD1: FD 21 94 65   ld   iy,guard_1_struct_6594
-1AD5: FD 22 93 60   ld   (unknown_pointer_6093),iy
-1AD9: 2A 95 60      ld   hl,(unknown_6095) ; contains guard direction pointer unknown_6027 or unknown_6067
+1AD5: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
+1AD9: 2A 95 60      ld   hl,(guard_direction_pointer_6095) ; contains guard direction pointer unknown_6027 or unknown_6067
 1ADC: 30 05         jr   nc,$1AE3
 1ADE: CD B3 1B      call set_guard_direction_up_1BB3
 1AE1: 18 20         jr   $1B03
@@ -3331,16 +3331,13 @@ analyse_guard_direction_change_19D1:
 1B2E: F6 02         or   $02
 1B30: DD 77 15      ld   (ix+$15),a
 1B33: C9            ret
-1B34: 08            ex   af,af'
-1B35: 04            inc  b
-1B36: 02            ld   (bc),a
-1B37: 01 2A 38      ld   bc,$382A
-1B3A: 60            ld   h,b
-1B3B: 22 91 60      ld   (unknown_6091),hl
+
+1B38: 2A 38 60      ld   hl,(guard_1_screen_address_6038)                                     
+1B3B: 22 91 60      ld   (guard_logical_address_6091),hl
 1B3E: FD 21 94 65   ld   iy,guard_1_struct_6594
-1B42: FD 22 93 60   ld   (unknown_pointer_6093),iy
+1B42: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1B46: 21 27 60      ld   hl,guard_2_direction_6027
-1B49: 22 95 60      ld   (unknown_6095),hl
+1B49: 22 95 60      ld   (guard_direction_pointer_6095),hl
 1B4C: 3A 3C 60      ld   a,(guard_2_sees_player_right_603C)
 1B4F: FE 00         cp   $00
 1B51: C4 6D 1B      call nz,set_guard_direction_right_1B6D
@@ -3356,32 +3353,34 @@ analyse_guard_direction_change_19D1:
 1B6C: C9            ret
 
 
-
-1B6D: 2A 91 60      ld   hl,(unknown_6091)
+set_guard_direction_right_1B6D:
+1B6D: 2A 91 60      ld   hl,(guard_logical_address_6091)
 1B70: DD E5         push ix
-1B72: DD 2A 93 60   ld   ix,(unknown_pointer_6093)
+1B72: DD 2A 93 60   ld   ix,(guard_struct_pointer_6093)
 1B76: CD FA 0C      call character_can_walk_right_0CFA
 1B79: DD E1         pop  ix
 1B7B: 3A 0B 60      ld   a,(unknown_600B)
 1B7E: FE 02         cp   $02
 1B80: C0            ret  nz
 1B81: E5            push hl
-1B82: 2A 95 60      ld   hl,(unknown_6095)
+1B82: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 1B85: AF            xor  a
 1B86: CB FF         set  7,a	;  set direction to right
 1B88: 77            ld   (hl),a
 1B89: E1            pop  hl
 1B8A: C9            ret
-1B8B: 2A 91 60      ld   hl,(unknown_6091)
+
+set_guard_direction_left_1B8B:
+1B8B: 2A 91 60      ld   hl,(guard_logical_address_6091)
 1B8E: DD E5         push ix
-1B90: DD 2A 93 60   ld   ix,(unknown_pointer_6093)
+1B90: DD 2A 93 60   ld   ix,(guard_struct_pointer_6093)
 1B94: CD 69 0D      call character_can_walk_left_0D69
 1B97: DD E1         pop  ix
 1B99: 3A 0B 60      ld   a,(unknown_600B)
 1B9C: FE 02         cp   $02
 1B9E: C0            ret  nz
 1B9F: E5            push hl
-1BA0: 2A 95 60      ld   hl,(unknown_6095)
+1BA0: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 1BA3: AF            xor  a
 1BA4: CB F7         set  6,a	;  set direction to left
 1BA6: 77            ld   (hl),a
@@ -3390,15 +3389,16 @@ analyse_guard_direction_change_19D1:
 
 1BA9: AF            xor  a
 1BAA: E5            push hl
-1BAB: 2A 95 60      ld   hl,(unknown_6095)
+1BAB: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 1BAE: CB EF         set  5,a	; set direction to down
 1BB0: 77            ld   (hl),a
 1BB1: E1            pop  hl
 1BB2: C9            ret
 
+set_guard_direction_up_1BB3:
 1BB3: AF            xor  a
 1BB4: E5            push hl
-1BB5: 2A 95 60      ld   hl,(unknown_6095)
+1BB5: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 1BB8: CB E7         set  4,a	;  set direction to up
 1BBA: 77            ld   (hl),a
 1BBB: E1            pop  hl
@@ -3459,7 +3459,7 @@ analyse_guard_direction_change_19D1:
 1C17: 20 06         jr   nz,$1C1F
 1C19: CD 8B 1B      call set_guard_direction_left_1B8B
 1C1C: C3 26 1C      jp   $1C26
-1C1F: DD 2A 95 60   ld   ix,(unknown_6095)
+1C1F: DD 2A 95 60   ld   ix,(guard_direction_pointer_6095)
 1C23: DD 77 00      ld   (ix+$00),a ; don't change direction?
 1C26: C1            pop  bc
 1C27: E1            pop  hl
@@ -3509,11 +3509,11 @@ analyse_guard_direction_change_19D1:
 1C93: C9            ret
 
 1C94: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
-1C97: 22 91 60      ld   (unknown_6091),hl
+1C97: 22 91 60      ld   (guard_logical_address_6091),hl
 1C9A: FD 21 98 65   ld   iy,guard_2_struct_6598
-1C9E: FD 22 93 60   ld   (unknown_pointer_6093),iy
+1C9E: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1CA2: 21 67 60      ld   hl,guard_1_direction_6067
-1CA5: 22 95 60      ld   (unknown_6095),hl
+1CA5: 22 95 60      ld   (guard_direction_pointer_6095),hl
 1CA8: 3A 7C 60      ld   a,(guard_1_sees_player_right_607C)
 1CAB: FE 00         cp   $00
 1CAD: C4 6D 1B      call nz,set_guard_direction_right_1B6D
@@ -3589,7 +3589,7 @@ analyse_guard_direction_change_19D1:
 ;;; params:
 ;;; a:	direction value to set if test works ($40:to left, $80:to right, $10:up, $20:down)
 ;;; ix: store a or 0 in (ix)
-;;; hl: ???
+;;; hl: screen address
 ;;; bc: direction increment (1:	down, -1: up, 32: right, -32: left)
 
 is_way_clear_to_player_1D33:
@@ -3612,7 +3612,7 @@ is_way_clear_to_player_1D33:
 1D4D: C9            ret
 1D4E: C1            pop  bc
 1D4F: E5            push hl
-1D50: ED 5B 09 60   ld   de,(player_screen_address_6009)
+1D50: ED 5B 09 60   ld   de,(player_logical_address_6009)
 1D54: 1B            dec  de
 1D55: 1B            dec  de
 1D56: AF            xor  a
@@ -3748,7 +3748,7 @@ display_player_ids_and_credit_1dec:
 1E44: 38 1E         jr   c,$1E64
 1E46: 3E 01         ld   a,$01
 1E48: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
-1E4B: 2A 09 60      ld   hl,(player_screen_address_6009)
+1E4B: 2A 09 60      ld   hl,(player_logical_address_6009)
 1E4E: 7E            ld   a,(hl)
 1E4F: FE F8         cp   $F8
 1E51: E5            push hl
@@ -3792,7 +3792,7 @@ display_maze_1E94:
 1E9B: CD EB 3D      call can_pick_bag_3DEB
 1E9E: 20 0A         jr   nz,$1EAA
 1EA0: 21 00 50      ld   hl,$5000
-1EA3: 22 40 61      ld   (unknown_6140),hl
+1EA3: 22 40 61      ld   (unknown_pointer_6140),hl
 1EA6: AF            xor  a
 1EA7: 32 42 61      ld   (unknown_6142),a
 1EAA: AF            xor  a
@@ -3849,34 +3849,17 @@ display_maze_1E94:
 1F1C: 32 E1 61      ld   (unknown_61E1),a
 1F1F: 32 14 60      ld   (unknown_6014),a
 1F22: 32 13 60      ld   (unknown_6013),a
-1F25: 3A C4 61      ld   a,(unknown_61C4)
+1F25: 3A C4 61      ld   a,(barrow_start_screen_address_61C4)
 1F28: FE 00         cp   $00
 1F2A: 28 05         jr   z,$1F31
 1F2C: E6 02         and  $02
 1F2E: FE 02         cp   $02
 1F30: C8            ret  z
 1F31: 21 C2 91      ld   hl,$91C2
-1F34: 22 C4 61      ld   (unknown_61C4),hl
+1F34: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
 1F37: C9            ret
-1F38: 00            nop
-1F39: 00            nop
-1F3A: 00            nop
-1F3B: 00            nop
-1F3C: 00            nop
-1F3D: 55            ld   d,l
-1F3E: 92            sub  d
-1F3F: 03            inc  bc
-1F40: 00            nop
-1F41: 00            nop
-1F42: 00            nop
-1F43: 00            nop
-1F44: 58            ld   e,b
-1F45: 91            sub  c
-1F46: 01 D1 92      ld   bc,$92D1
-1F49: 02            ld   (bc),a
-1F4A: 28 91         jr   z,$1EDD
-1F4C: 01 A2 90      ld   bc,$90A2
-1F4F: 02            ld   (bc),a
+
+
 1F50: 3E 01         ld   a,$01
 1F52: 32 F1 61      ld   (unknown_61F1),a
 1F55: CD 8C 3B      call check_remaining_bags_3BBC
@@ -3885,7 +3868,7 @@ display_maze_1E94:
 1F5B: CC 4F 35      call z,set_bags_coordinates_354f
 1F5E: 3A 7C 61      ld   a,(current_player_617C)
 1F61: 32 6C 62      ld   (unknown_626C),a
-1F64: 2A 09 60      ld   hl,(player_screen_address_6009)
+1F64: 2A 09 60      ld   hl,(player_logical_address_6009)
 1F67: FD 21 08 60   ld   iy,unknown_6008
 1F6B: DD 21 80 65   ld   ix,player_struct_6580
 1F6F: CD 05 26      call $2605
@@ -3900,7 +3883,7 @@ display_maze_1E94:
 1F87: FB            ei
 1F88: CD 18 20      call $2018
 1F8B: 21 38 5B      ld   hl,$5B38
-1F8E: 22 40 61      ld   (unknown_6140),hl
+1F8E: 22 40 61      ld   (unknown_pointer_6140),hl
 1F91: AF            xor  a
 1F92: 32 42 61      ld   (unknown_6142),a
 1F95: 3A 52 61      ld   a,(unknown_6152)
@@ -4095,7 +4078,7 @@ memset_2054
 212E: CE 00         adc  a,$00
 2130: 67            ld   h,a
 2131: 7E            ld   a,(hl)
-2132: 2A 95 60      ld   hl,(unknown_6095)
+2132: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2135: 77            ld   (hl),a
 2136: C9            ret
 
@@ -4109,7 +4092,7 @@ memset_2054
 2144: D9            exx
 2145: FE 00         cp   $00
 2147: C2 A7 21      jp   nz,$21A7
-214A: 2A 09 60      ld   hl,(player_screen_address_6009)
+214A: 2A 09 60      ld   hl,(player_logical_address_6009)
 214D: 3A 0D 60      ld   a,(player_screen_600D)
 2150: FD BE 02      cp   (iy+$02)
 2153: C0            ret  nz
@@ -4323,7 +4306,7 @@ convert_logical_to_screen_address_222d:
 2302: 28 1C         jr   z,$2320
 2304: 3A 0D 60      ld   a,(player_screen_600D)
 2307: 47            ld   b,a
-2308: FD 21 C4 61   ld   iy,unknown_61C4
+2308: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
 230C: FD 7E 02      ld   a,(iy+$02)
 230F: B8            cp   b
 2310: 20 0E         jr   nz,$2320
@@ -4738,7 +4721,7 @@ get_XUP_screen_address_2501:
 274E: CD EB 3D      call can_pick_bag_3DEB
 2751: C0            ret  nz
 2752: 21 00 52      ld   hl,$5200
-2755: 22 40 61      ld   (unknown_6140),hl
+2755: 22 40 61      ld   (unknown_pointer_6140),hl
 2758: AF            xor  a
 2759: 32 42 61      ld   (unknown_6142),a
 275C: C9            ret
@@ -4919,7 +4902,7 @@ get_XUP_screen_address_2501:
 2914: CD EB 3D      call can_pick_bag_3DEB
 2917: C0            ret  nz
 2918: 21 00 50      ld   hl,$5000
-291B: 22 40 61      ld   (unknown_6140),hl
+291B: 22 40 61      ld   (unknown_pointer_6140),hl
 291E: AF            xor  a
 291F: 32 42 61      ld   (unknown_6142),a
 2922: C9            ret
@@ -5128,8 +5111,8 @@ clear_screen_2a00:
 2A89: FD 21 7F 61   ld   iy,unknown_617F
 2A8D: 06 36         ld   b,$36
 2A8F: CD BC 2A      call $2ABC
-2A92: DD 21 C4 61   ld   ix,unknown_61C4
-2A96: FD 21 FA 61   ld   iy,unknown_61FA
+2A92: DD 21 C4 61   ld   ix,barrow_start_screen_address_61C4
+2A96: FD 21 FA 61   ld   iy,unknown_screen_address_61FA
 2A9A: 06 03         ld   b,$03
 2A9C: CD BC 2A      call $2ABC
 2A9F: 3A 56 60      ld   a,(lives_6056)
@@ -5189,7 +5172,7 @@ guard_collision_with_pick_2AD1:
 ;;;  de:	current guard screen address
 ;;;  hl:	address to store bool flag "guard is in the elevator" (603B/607B)
 
-guard_wait_for_elevator_test_2AFA
+guard_wait_for_elevator_test_2AFA:
 2AFA: 3A 98 60      ld   a,(screen_index_param_6098)
 2AFD: 47            ld   b,a
 2AFE: 3A 0D 60      ld   a,(player_screen_600D)
@@ -5215,7 +5198,7 @@ guard_wait_for_elevator_test_2AFA
 2B22: FE FF         cp   $FF
 2B24: 20 E6         jr   nz,$2B0C
 ;;; not over an elevator waiting point
-2B26: 2A 46 61      ld   hl,(unknown_6146)
+2B26: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2B29: AF            xor  a
 2B2A: 77            ld   (hl),a	; not in elevator either
 2B2B: FD E1         pop  iy
@@ -5225,7 +5208,7 @@ guard_wait_for_elevator_test_2AFA
 	;; guard facing the elevator waiting point
 
 2B31: 3E 01         ld   a,$01
-2B33: 2A 46 61      ld   hl,(unknown_6146)
+2B33: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2B36: 7E            ld   a,(hl)
 2B37: FE 00         cp   $00
 2B39: C2 2B 2B      jp   nz,$2B2B
@@ -5235,7 +5218,7 @@ guard_wait_for_elevator_test_2AFA
 2B42: FD 7E 03      ld   a,(iy+$03)
 2B45: B8            cp   b
 2B46: CA C6 2B      jp   z,$2BC6
-2B49: 2A 46 61      ld   hl,(unknown_6146)
+2B49: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2B4C: 23            inc  hl
 2B4D: 23            inc  hl
 2B4E: 23            inc  hl
@@ -5256,12 +5239,12 @@ guard_wait_for_elevator_test_2AFA
 2B65: 3D            dec  a
 2B66: FD BE 03      cp   (iy+$03)
 2B69: 28 06         jr   z,$2B71
-2B6B: 2A 95 60      ld   hl,(unknown_6095)
+2B6B: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2B6E: AF            xor  a
 2B6F: 77            ld   (hl),a
 2B70: C9            ret
 2B71: DD 7E 06      ld   a,(ix+$06)
-2B74: 2A 95 60      ld   hl,(unknown_6095)
+2B74: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2B77: FD BE 02      cp   (iy+$02)
 2B7A: 30 04         jr   nc,$2B80
 2B7C: 3E 40         ld   a,$40
@@ -5273,14 +5256,14 @@ guard_wait_for_elevator_test_2AFA
 2B84: 7E            ld   a,(hl)
 2B85: FE 01         cp   $01
 2B87: 28 09         jr   z,$2B92
-2B89: 2A 46 61      ld   hl,(unknown_6146)
+2B89: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2B8C: 23            inc  hl
 2B8D: 23            inc  hl
 2B8E: 23            inc  hl
 2B8F: 23            inc  hl
 2B90: 77            ld   (hl),a
 2B91: C9            ret
-2B92: 2A 46 61      ld   hl,(unknown_6146)
+2B92: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2B95: 3E 01         ld   a,$01
 2B97: 77            ld   (hl),a
 2B98: CD D1 2B      call get_elevator_exit_y_2BD1
@@ -5304,12 +5287,12 @@ guard_wait_for_elevator_test_2AFA
 2BB9: 20 05         jr   nz,$2BC0
 2BBB: 3E 30         ld   a,$30
 2BBD: FD 77 02      ld   (iy+$02),a
-2BC0: 2A 95 60      ld   hl,(unknown_6095)
+2BC0: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2BC3: AF            xor  a
 2BC4: 77            ld   (hl),a
 2BC5: C9            ret
 2BC6: E1            pop  hl
-2BC7: 2A 46 61      ld   hl,(unknown_6146)
+2BC7: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2BCA: 23            inc  hl
 2BCB: 23            inc  hl
 2BCC: 23            inc  hl
@@ -5358,7 +5341,7 @@ get_elevator_exit_y_2BD1:
 2C14: 3E C8         ld   a,$C8	; exits at the bottom else
 2C16: C9            ret
 2C17: E5            push hl
-2C18: 2A 95 60      ld   hl,(unknown_6095)
+2C18: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2C1B: 70            ld   (hl),b
 2C1C: E1            pop  hl
 2C1D: C9            ret
@@ -5366,7 +5349,7 @@ get_elevator_exit_y_2BD1:
 ;;; not the same screen as the player:	different behaviour
 ;;; don't wait for the elevator, just jump in the hole and die
 
-2C1E: 2A 46 61      ld   hl,(unknown_6146)
+2C1E: 2A 46 61      ld   hl,(unknown_pointer_6146)
 2C21: 23            inc  hl
 2C22: 23            inc  hl
 2C23: 23            inc  hl
@@ -5379,6 +5362,7 @@ get_elevator_exit_y_2BD1:
 	;; if score > 60000, 0 credits and hacked copyright then seriously
 	;; lockup the game (not visible immediately)
 
+nasty_protection_2c28:
 2C28: 3A 78 61      ld   a,(score_ten_thousands_6178)
 2C2B: FE 06         cp   $06
 2C2D: C0            ret  nz
@@ -6959,7 +6943,7 @@ play_intro_3700:
 39AD: 35            dec  (hl)
 39AE: 35            dec  (hl)
 39AF: 21 68 5B      ld   hl,$5B68
-39B2: 22 40 61      ld   (unknown_6140),hl
+39B2: 22 40 61      ld   (unknown_pointer_6140),hl
 39B5: AF            xor  a
 39B6: 32 42 61      ld   (unknown_6142),a
 39B9: CD BE 39      call $39BE
@@ -7063,7 +7047,7 @@ play_intro_3700:
 ; level completed
 3B07: 01 C7 61      ld   bc,holds_barrow_61C7
 3B0A: D9            exx
-3B0B: FD 21 C4 61   ld   iy,unknown_61C4
+3B0B: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
 3B0F: 3E 3A         ld   a,$3A
 3B11: FD 77 04      ld   (iy+$04),a
 3B14: 3E 28         ld   a,$28
@@ -7104,7 +7088,7 @@ play_intro_3700:
 3B66: 23            inc  hl
 3B67: 10 FC         djnz $3B65
 3B69: 21 00 52      ld   hl,$5200
-3B6C: 22 40 61      ld   (unknown_6140),hl
+3B6C: 22 40 61      ld   (unknown_pointer_6140),hl
 3B6F: AF            xor  a
 3B70: 32 42 61      ld   (unknown_6142),a
 3B73: 3E 01         ld   a,$01
@@ -7139,7 +7123,7 @@ check_remaining_bags_3BBC:
 3BAB: FE 05         cp   $05
 3BAD: D0            ret  nc
 3BAE: 21 94 5B      ld   hl,$5B94
-3BB1: 22 40 61      ld   (unknown_6140),hl
+3BB1: 22 40 61      ld   (unknown_pointer_6140),hl
 3BB4: 32 F4 61      ld   (unknown_61F4),a
 3BB7: AF            xor  a
 3BB8: 32 42 61      ld   (unknown_6142),a
@@ -7219,11 +7203,11 @@ check_remaining_bags_3BBC:
 3C43: F7            rst  $30
 3C44: F6 F5         or   $F5
 
-3C47: 2A 91 60		ld   hl,(unknown_6091)
+3C47: 2A 91 60		ld   hl,(guard_logical_address_6091)
 3C4A: 22 FF 61      ld   (unknown_61FF),hl
-3C4D: 2A 93 60      ld   hl,(unknown_pointer_6093)
+3C4D: 2A 93 60      ld   hl,(guard_struct_pointer_6093)
 3C50: 22 01 62      ld   (unknown_pointer_6201),hl
-3C53: 2A 95 60      ld   hl,(unknown_6095)
+3C53: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 3C56: 22 03 62      ld   (unknown_6203),hl
 3C59: 3A 0B 60      ld   a,(unknown_600B)
 3C5C: 32 05 62      ld   (unknown_6205),a
@@ -7232,11 +7216,11 @@ check_remaining_bags_3BBC:
 3C65: C9            ret
 
 3C66: 2A FF 61      ld   hl,(unknown_61FF)
-3C69: 22 91 60      ld   (unknown_6091),hl
+3C69: 22 91 60      ld   (guard_logical_address_6091),hl
 3C6C: 2A 01 62      ld   hl,(unknown_pointer_6201)
-3C6F: 22 93 60      ld   (unknown_pointer_6093),hl
+3C6F: 22 93 60      ld   (guard_struct_pointer_6093),hl
 3C72: 2A 03 62      ld   hl,(unknown_6203)
-3C75: 22 95 60      ld   (unknown_6095),hl
+3C75: 22 95 60      ld   (guard_direction_pointer_6095),hl
 3C78: 3A 05 62      ld   a,(unknown_6205)
 3C7B: 32 0B 60      ld   (unknown_600B),a
 3C7E: 3A F9 61      ld   a,(unknown_61F9)
@@ -7401,7 +7385,7 @@ check_remaining_bags_3BBC:
 	;; test if can pick bag
 can_pick_bag_3DEB:
 3DEB: DD E5         push ix
-3DED: DD 2A 40 61   ld   ix,(unknown_6140)
+3DED: DD 2A 40 61   ld   ix,(unknown_pointer_6140)
 3DF1: DD 7E 03      ld   a,(ix+$03)
 3DF4: DD E1         pop  ix
 3DF6: FE FF         cp   $FF
@@ -7523,7 +7507,7 @@ guard_collision_5537:
 ;; check if a+11 > b and a-8 < b (kind of square collision if applied to both x and y)
 ;; in:	 a,b: values to compare
 ;; out:	 if both conditions are OK, returns, else pops the stack and exits from 5537
-
+within_bounds_554E:
 554E: 4F            ld   c,a
 554F: C6 0B         add  a,$0B
 5551: B8            cp   b
@@ -7545,7 +7529,7 @@ guard_collision_5537:
 
 update_player_screen_address_from_xy_555E:
 555E: DD 21 80 65   ld   ix,player_struct_6580
-5562: FD 21 09 60   ld   iy,player_screen_address_6009
+5562: FD 21 09 60   ld   iy,player_logical_address_6009
 5566: 18 1A         jr   $5582
 
 update_guard_1_screen_address_from_xy_5568:
@@ -7790,8 +7774,8 @@ add_to_score_5C90:
 5D27: C0            ret  nz
 5D28: 18 C0         jr   $5CEA
 5D2A: 21 C2 91      ld   hl,$91C2
-5D2D: 22 C4 61      ld   (unknown_61C4),hl
-5D30: 22 FA 61      ld   (unknown_61FA),hl
+5D2D: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
+5D30: 22 FA 61      ld   (unknown_screen_address_61FA),hl
 5D33: 3E 01         ld   a,$01
 5D35: 32 C6 61      ld   (unknown_61C6),a
 5D38: 32 FC 61      ld   (unknown_61FC),a

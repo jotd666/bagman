@@ -1,3 +1,2 @@
-- handle exx
 - handle move.w xxxx,ax
 - display sprites
