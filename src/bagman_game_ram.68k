@@ -8,7 +8,7 @@
 	.global	guard_1_in_elevator_603B
 	.global	guard_1_ladder_frame_6035
 	.global	guard_1_screen_6099
-	.global	guard_1_screen_address_6038
+	.global	guard_1_logical_address_6038
 	.global	guard_1_sees_player_down_607F
 	.global	guard_1_sees_player_left_607D
 	.global	guard_1_sees_player_right_607C
@@ -49,11 +49,11 @@
 	.global	player_y_6583
 	.global	previous_guard_1_struct_65B8
 	.global	previous_guard_2_struct_65BC
-	.global	score_ten_thousands_6178
+	.global	score_ten_thousands_player_1_6178
 	.global	screen_index_param_6098
 	.global	time_61E8
 	.global	is_intermission_6274
-	.global	extra_life_not_awarded_yet_6286
+	.global	extra_life_awarded_6286
 	.global	bags_coordinates_609C
 	.global	fake_credit_digit_6004
 	.global	fake_credit_digit_6005
@@ -126,7 +126,7 @@
 	.global	unknown_6166
 	.global	unknown_6176
 	.global	unknown_6179
-	.global	unknown_617B
+	.global	score_ten_thousands_player_2_617B
 	.global	unknown_617D
 	.global	unknown_617E
 	.global	unknown_617F
@@ -294,7 +294,7 @@ guard_1_ladder_frame_6035:
 unknown_6037:
 	ds.b	1
 	.align	2
-guard_1_screen_address_6038:
+guard_1_logical_address_6038:
 	ds.l	1
 unknown_603A:
 	ds.b	1
@@ -439,11 +439,11 @@ unknown_6166:
 	ds.b	16
 unknown_6176:
 	ds.b	2
-score_ten_thousands_6178:
+score_ten_thousands_player_1_6178:
 	ds.b	1
 unknown_6179:
 	ds.b	2
-unknown_617B:
+score_ten_thousands_player_2_617B:
 	ds.b	1
 current_player_617C:
 	ds.b	1
@@ -584,7 +584,7 @@ unknown_6281:
 	ds.b	4
 unknown_6285:
 	ds.b	1
-extra_life_not_awarded_yet_6286:
+extra_life_awarded_6286:
 	ds.b	2
 unknown_6288:
 	ds.b	2

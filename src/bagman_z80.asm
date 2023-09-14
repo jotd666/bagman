@@ -189,7 +189,7 @@
 00A1: 21 A0 65      ld   hl,unknown_65A0
 00A4: 01 20 00      ld   bc,$0020
 00A7: ED B0         ldir
-00A9: CD A4 34      call $34A4
+00A9: CD A4 34      call log_inserted_coins_34A4
 00AC: CD 3E 35      call $353E
 00AF: 3A 43 61      ld   a,(unknown_6143)
 00B2: 3C            inc  a
@@ -263,7 +263,7 @@
 0159: DD 21 98 65   ld   ix,guard_2_struct_6598
 015D: 11 49 61      ld   de,unknown_6149
 0160: CD 03 04      call $0403
-0163: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+0163: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 0166: DD 21 EB 61   ld   ix,unknown_61EB
 016A: FD 21 3A 60   ld   iy,unknown_603A
 016E: DD 7E 00      ld   a,(ix+$00)
@@ -384,7 +384,7 @@
 029A: CD 6F 11      call guard_1_movement_116F
 029D: FD 21 57 60   ld   iy,unknown_6057
 02A1: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
-02A5: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+02A5: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 02A8: 22 44 60      ld   (unknown_6044),hl
 02AB: 21 35 60      ld   hl,guard_1_ladder_frame_6035
 02AE: FD 21 27 60   ld   iy,guard_2_direction_6027
@@ -466,9 +466,9 @@
 0383: 3A F1 61      ld   a,(unknown_61F1)
 0386: FE 00         cp   $00
 0388: CC BC 0E      call z,$0EBC
-038B: CD BE 39      call $39BE
+038B: CD BE 39      call write_credits_and_lives_39be
 038E: CD 0F 56      call $560F
-0391: CD FD 39      call $39FD
+0391: CD FD 39      call read_player_controls_39fd
 0394: CD 66 3C      call $3C66
 0397: 3A 00 B8      ld   a,(io_read_shit_B800)
 039A: 3E 01         ld   a,$01
@@ -1967,7 +1967,7 @@ character_can_walk_left_0D69:
 0F65: 32 1C 60      ld   (unknown_601C),a
 0F68: 32 58 61      ld   (has_bag_6158),a
 0F6B: CD 5B 35      call set_bags_coordinates_355b
-0F6E: CD 67 35      call $3567
+0F6E: CD 67 35      call set_bags_coordinates_3567
 0F71: C9            ret
 
 0F72: DD 7E 02      ld   a,(ix+$02)
@@ -2239,7 +2239,7 @@ handle_pick_hold_timer_113c:
 guard_1_movement_116F:
 116F: 3A 99 60      ld   a,(guard_1_screen_6099)
 1172: 32 98 60      ld   (screen_index_param_6098),a
-1175: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1175: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1178: 22 44 60      ld   (unknown_6044),hl
 117B: FD 21 57 60   ld   iy,unknown_6057
 117F: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
@@ -2286,7 +2286,7 @@ guard_2_movement_119B:
 
 121C: CD 00 37      call play_intro_3700
 121F: CD 5B 35      call set_bags_coordinates_355b
-1222: CD 67 35      call $3567
+1222: CD 67 35      call set_bags_coordinates_3567
 1225: 21 3C 51      ld   hl,$513C
 1228: 22 40 61      ld   (unknown_pointer_6140),hl
 	;; reset guards and player
@@ -2378,7 +2378,7 @@ mainloop_1242:
 12CB: 3A 00 B8      ld   a,(io_read_shit_B800)
 12CE: CD 2C 2A      call $2A2C	;  ???
 12D1: CD EC 1D      call display_player_ids_and_credit_1dec
-12D4: CD BE 39      call $39BE	;  ???
+12D4: CD BE 39      call write_credits_and_lives_39be	;  ???
 12D7: 21 3C 51      ld   hl,$513C
 12DA: 22 40 61      ld   (unknown_pointer_6140),hl
 12DD: 3E 01         ld   a,$01
@@ -2443,7 +2443,7 @@ mainloop_1242:
 1378: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 137C: DD 21 35 60   ld   ix,guard_1_ladder_frame_6035
 1380: FD 21 94 65   ld   iy,guard_1_struct_6594
-1384: ED 5B 38 60   ld   de,(guard_1_screen_address_6038)
+1384: ED 5B 38 60   ld   de,(guard_1_logical_address_6038)
 1388: ED 53 91 60   ld   (guard_logical_address_6091),de
 138C: 3A 00 B8      ld   a,(io_read_shit_B800)
 138F: CD D1 19      call analyse_guard_direction_change_19D1
@@ -2463,10 +2463,10 @@ mainloop_1242:
 13B8: DD 21 27 60   ld   ix,guard_2_direction_6027
 13BC: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 13C0: FD 21 94 65   ld   iy,guard_1_struct_6594
-13C4: ED 5B 38 60   ld   de,(guard_1_screen_address_6038)
+13C4: ED 5B 38 60   ld   de,(guard_1_logical_address_6038)
 13C8: ED 53 91 60   ld   (guard_logical_address_6091),de
 13CC: DD 21 35 60   ld   ix,guard_1_ladder_frame_6035
-13D0: D4 23 21      call nc,$2123	; change guard 2 direction
+13D0: D4 23 21      call nc,choose_guard_random_direction_2123	; change guard 2 direction
 13D3: 3A 9A 60      ld   a,(guard_2_screen_609A)
 13D6: 32 98 60      ld   (screen_index_param_6098),a
 13D9: FD 21 98 65   ld   iy,guard_2_struct_6598
@@ -2501,7 +2501,7 @@ mainloop_1242:
 143A: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
 143E: ED 53 91 60   ld   (guard_logical_address_6091),de
 1442: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
-1446: D4 23 21      call nc,$2123	; change guard 1 direction
+1446: D4 23 21      call nc,choose_guard_random_direction_2123	; change guard 1 direction
 1449: FB            ei
 144A: CD 75 55      call update_guard_2_screen_address_from_xy_5575
 144D: 7E            ld   a,(hl)
@@ -2517,11 +2517,11 @@ mainloop_1242:
 1462: 18 05         jr   $1469
 1464: 3E 01         ld   a,$01
 1466: 32 37 60      ld   (unknown_6037),a
-1469: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1469: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 146C: FD 21 37 60   ld   iy,unknown_6037
 1470: DD 21 94 65   ld   ix,guard_1_struct_6594
 1474: CD 05 26      call $2605
-1477: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1477: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 147A: DD 21 94 65   ld   ix,guard_1_struct_6594
 147E: CD 0E 25      call $250E
 1481: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
@@ -2581,11 +2581,13 @@ mainloop_1242:
 150E: 32 98 60      ld   (screen_index_param_6098),a
 1511: DD 21 80 65   ld   ix,player_struct_6580
 1515: FD 21 94 65   ld   iy,guard_1_struct_6594
-1519: ED 5B 38 60   ld   de,(guard_1_screen_address_6038)
+1519: ED 5B 38 60   ld   de,(guard_1_logical_address_6038)
 151D: 21 3B 60      ld   hl,guard_1_in_elevator_603B
 1520: CD FA 2A      call guard_wait_for_elevator_test_2AFA
 1523: 18 04         jr   $1529
 	;; guard_2_sees_player
+	
+guard_2_sees_player_1525:
 1525: AF            xor  a
 1526: 32 48 61      ld   (unknown_6148),a
 1529: DD 21 7C 60   ld   ix,guard_1_sees_player_right_607C
@@ -3332,7 +3334,7 @@ analyse_guard_direction_change_19D1:
 1B30: DD 77 15      ld   (ix+$15),a
 1B33: C9            ret
 
-1B38: 2A 38 60      ld   hl,(guard_1_screen_address_6038)                                     
+1B38: 2A 38 60      ld   hl,(guard_1_logical_address_6038)                                     
 1B3B: 22 91 60      ld   (guard_logical_address_6091),hl
 1B3E: FD 21 94 65   ld   iy,guard_1_struct_6594
 1B42: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
@@ -3387,6 +3389,7 @@ set_guard_direction_left_1B8B:
 1BA7: E1            pop  hl
 1BA8: C9            ret
 
+set_guard_direction_down_1ba9:
 1BA9: AF            xor  a
 1BAA: E5            push hl
 1BAB: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
@@ -3473,7 +3476,7 @@ set_guard_direction_up_1BB3:
 1C37: B8            cp   b
 1C38: C0            ret  nz
 1C39: DD 21 3D 60   ld   ix,guard_2_sees_player_left_603D
-1C3D: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1C3D: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1C40: 01 E0 FF      ld   bc,$FFE0
 1C43: 3A CF 61      ld   a,(has_pick_61CF)
 1C46: FE 00         cp   $00
@@ -3483,7 +3486,7 @@ set_guard_direction_up_1BB3:
 1C50: 3E 80         ld   a,$80
 1C52: 08            ex   af,af'
 1C53: CD 33 1D      call is_way_clear_to_player_1D33
-1C56: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1C56: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1C59: DD 21 3C 60   ld   ix,guard_2_sees_player_right_603C
 1C5D: 01 20 00      ld   bc,$0020
 1C60: 3A CF 61      ld   a,(has_pick_61CF)
@@ -3494,13 +3497,13 @@ set_guard_direction_up_1BB3:
 1C6D: 3E 40         ld   a,$40
 1C6F: 08            ex   af,af'
 1C70: CD 33 1D      call is_way_clear_to_player_1D33
-1C73: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1C73: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1C76: 01 FF FF      ld   bc,$FFFF
 1C79: 3E 10         ld   a,$10
 1C7B: 08            ex   af,af'
 1C7C: DD 21 3E 60   ld   ix,guard_2_sees_player_up_603E
 1C80: CD 33 1D      call is_way_clear_to_player_1D33
-1C83: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+1C83: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1C86: DD 21 3F 60   ld   ix,guard_2_sees_player_down_603F
 1C8A: 01 01 00      ld   bc,$0001
 1C8D: 3E 20         ld   a,$20
@@ -3831,7 +3834,7 @@ display_maze_1E94:
 1EEB: 3E 40         ld   a,$40
 1EED: 32 E8 61      ld   (time_61E8),a
 1EF0: 3E 01         ld   a,$01
-1EF2: 32 86 62      ld   (extra_life_not_awarded_yet_6286),a
+1EF2: 32 86 62      ld   (extra_life_awarded_6286),a
 1EF5: 32 19 60      ld   (unknown_6019),a
 1EF8: 3E B0         ld   a,$B0
 1EFA: 32 9A 65      ld   (guard_2_x_659A),a
@@ -4020,7 +4023,7 @@ memset_2054
 20C6: CD 34 2C      call $2C34
 20C9: F3            di
 20CA: CD 5B 35      call set_bags_coordinates_355b
-20CD: CD 67 35      call $3567
+20CD: CD 67 35      call set_bags_coordinates_3567
 20D0: CD 63 2A      call $2A63
 20D3: AF            xor  a
 20D4: 32 53 60      ld   (unknown_6053),a
@@ -4031,30 +4034,7 @@ memset_2054
 20E2: FB            ei
 20E3: 3E 01         ld   a,$01
 20E5: C9            ret
-20E6: 0E 10         ld   c,$10
-20E8: 42            ld   b,d
-20E9: 59            ld   e,c
-20EA: 10 56         djnz $2142
-20EC: 41            ld   b,c
-20ED: 4C            ld   c,h
-20EE: 41            ld   b,c
-20EF: 44            ld   b,h
-20F0: 4F            ld   c,a
-20F1: 4E            ld   c,(hl)
-20F2: 10 41         djnz $2135
-20F4: 55            ld   d,l
-20F5: 54            ld   d,h
-20F6: 4F            ld   c,a
-20F7: 4D            ld   c,l
-20F8: 41            ld   b,c
-20F9: 54            ld   d,h
-20FA: 49            ld   c,c
-20FB: 4F            ld   c,a
-20FC: 4E            ld   c,(hl)
-20FD: 10 31         djnz $2130
-20FF: 39            add  hl,sp
-2100: 38 32         jr   c,$2134
-2102: 3F            ccf
+
 2103: 3E 00         ld   a,$00
 2105: 32 03 A0      ld   ($A003),a
 2108: CD 00 2A      call clear_screen_2a00
@@ -4069,6 +4049,7 @@ memset_2054
 211F: 32 03 A0      ld   ($A003),a
 2122: C9            ret
 ;; put random direction (amongst $80,$40,$20,$10) in ($6095,ind)
+choose_guard_random_direction_2123:
 2123: 3A 00 A0      ld   a,(vertical_beam_pos_A000)   ; random 0-3 direction
 2126: 21 70 59      ld   hl,direction_table_5970
 2129: E6 03         and  $03
@@ -4241,7 +4222,7 @@ convert_logical_to_screen_address_222d:
 2265: 32 57 60      ld   (unknown_6057),a
 2268: 3E 21         ld   a,$21
 226A: 32 94 65      ld   (guard_1_struct_6594),a
-226D: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+226D: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 2270: FD 21 37 60   ld   iy,unknown_6037
 2274: DD 21 94 65   ld   ix,guard_1_struct_6594
 2278: CD 05 26      call $2605
@@ -4637,66 +4618,66 @@ get_XUP_screen_address_2501:
 2673: ED B0         ldir
 2675: 21 44 9B      ld   hl,$9B44
 2678: 06 04         ld   b,$04
-267A: CD 7B 29      call $297B
+267A: CD 7B 29      call write_line_of_zeroes_297b
 267D: 21 24 99      ld   hl,$9924
 2680: 06 0F         ld   b,$0F
-2682: CD 7B 29      call $297B
+2682: CD 7B 29      call write_line_of_zeroes_297b
 2685: 21 44 98      ld   hl,$9844
 2688: 06 04         ld   b,$04
-268A: CD 7B 29      call $297B
+268A: CD 7B 29      call write_line_of_zeroes_297b
 268D: 21 71 98      ld   hl,$9871
 2690: 06 03         ld   b,$03
-2692: CD 7B 29      call $297B
+2692: CD 7B 29      call write_line_of_zeroes_297b
 2695: 21 31 99      ld   hl,$9931
 2698: 06 04         ld   b,$04
-269A: CD 7B 29      call $297B
+269A: CD 7B 29      call write_line_of_zeroes_297b
 269D: 21 50 9B      ld   hl,$9B50
 26A0: 06 04         ld   b,$04
-26A2: CD 7B 29      call $297B
+26A2: CD 7B 29      call write_line_of_zeroes_297b
 26A5: 21 58 9B      ld   hl,$9B58
 26A8: 06 04         ld   b,$04
-26AA: CD 7B 29      call $297B
+26AA: CD 7B 29      call write_line_of_zeroes_297b
 26AD: 21 18 9A      ld   hl,$9A18
 26B0: 06 08         ld   b,$08
-26B2: CD 7B 29      call $297B
+26B2: CD 7B 29      call write_line_of_zeroes_297b
 26B5: 21 B4 99      ld   hl,$99B4
 26B8: 06 0B         ld   b,$0B
-26BA: CD 7B 29      call $297B
+26BA: CD 7B 29      call write_line_of_zeroes_297b
 26BD: 21 D8 98      ld   hl,$98D8
 26C0: 06 07         ld   b,$07
-26C2: CD 7B 29      call $297B
+26C2: CD 7B 29      call write_line_of_zeroes_297b
 26C5: 21 C8 98      ld   hl,$98C8
 26C8: 06 0A         ld   b,$0A
-26CA: CD 7B 29      call $297B
+26CA: CD 7B 29      call write_line_of_zeroes_297b
 26CD: 21 9B 98      ld   hl,$989B
 26D0: 06 1A         ld   b,$1A
-26D2: CD 85 29      call $2985
+26D2: CD 85 29      call write_line_of_2F_attributes_2985
 26D5: 21 25 99      ld   hl,$9925
-26D8: CD 89 29      call $2989
+26D8: CD 89 29      call write_3_attributes_2989
 26DB: 21 85 9A      ld   hl,$9A85
-26DE: CD 89 29      call $2989
+26DE: CD 89 29      call write_3_attributes_2989
 26E1: 21 45 9B      ld   hl,$9B45
-26E4: CD 89 29      call $2989
+26E4: CD 89 29      call write_3_attributes_2989
 26E7: 21 59 9B      ld   hl,$9B59
-26EA: CD 89 29      call $2989
+26EA: CD 89 29      call write_3_attributes_2989
 26ED: 21 19 9A      ld   hl,$9A19
-26F0: CD 89 29      call $2989
+26F0: CD 89 29      call write_3_attributes_2989
 26F3: 21 D9 9A      ld   hl,$9AD9
-26F6: CD 89 29      call $2989
+26F6: CD 89 29      call write_3_attributes_2989
 26F9: 21 B5 9A      ld   hl,$9AB5
-26FC: CD 89 29      call $2989
+26FC: CD 89 29      call write_3_attributes_2989
 26FF: 21 51 9B      ld   hl,$9B51
-2702: CD 89 29      call $2989
+2702: CD 89 29      call write_3_attributes_2989
 2705: 21 D9 98      ld   hl,$98D9
-2708: CD 89 29      call $2989
+2708: CD 89 29      call write_3_attributes_2989
 270B: 21 79 99      ld   hl,$9979
-270E: CD 89 29      call $2989
+270E: CD 89 29      call write_3_attributes_2989
 2711: 21 15 9A      ld   hl,$9A15
-2714: CD 89 29      call $2989
+2714: CD 89 29      call write_3_attributes_2989
 2717: 21 29 99      ld   hl,$9929
-271A: CD 89 29      call $2989
+271A: CD 89 29      call write_3_attributes_2989
 271D: 21 C9 99      ld   hl,$99C9
-2720: CD 89 29      call $2989
+2720: CD 89 29      call write_3_attributes_2989
 2723: 21 B8 9A      ld   hl,$9AB8
 2726: 3E 3F         ld   a,$3F
 2728: 77            ld   (hl),a
@@ -4735,63 +4716,63 @@ get_XUP_screen_address_2501:
 2771: ED B0         ldir
 2773: 21 B0 99      ld   hl,$99B0
 2776: 06 11         ld   b,$11
-2778: CD 7B 29      call $297B
+2778: CD 7B 29      call write_line_of_zeroes_297b
 277B: 21 0B 9A      ld   hl,$9A0B
 277E: 06 0A         ld   b,$0A
-2780: CD 7B 29      call $297B
+2780: CD 7B 29      call write_line_of_zeroes_297b
 2783: 21 07 9B      ld   hl,$9B07
 2786: 06 06         ld   b,$06
-2788: CD 7B 29      call $297B
+2788: CD 7B 29      call write_line_of_zeroes_297b
 278B: 21 5B 99      ld   hl,$995B
 278E: 06 08         ld   b,$08
-2790: CD 7B 29      call $297B
+2790: CD 7B 29      call write_line_of_zeroes_297b
 2793: 21 BB 9A      ld   hl,$9ABB
 2796: 06 09         ld   b,$09
-2798: CD 7B 29      call $297B
+2798: CD 7B 29      call write_line_of_zeroes_297b
 279B: 21 A7 99      ld   hl,$99A7
 279E: 06 08         ld   b,$08
-27A0: CD 7B 29      call $297B
+27A0: CD 7B 29      call write_line_of_zeroes_297b
 27A3: 21 44 98      ld   hl,$9844
 27A6: 06 08         ld   b,$08
-27A8: CD 7B 29      call $297B
+27A8: CD 7B 29      call write_line_of_zeroes_297b
 27AB: 21 50 98      ld   hl,$9850
 27AE: 06 09         ld   b,$09
-27B0: CD 7B 29      call $297B
+27B0: CD 7B 29      call write_line_of_zeroes_297b
 27B3: 21 58 98      ld   hl,$9858
 27B6: 06 04         ld   b,$04
-27B8: CD 7B 29      call $297B
+27B8: CD 7B 29      call write_line_of_zeroes_297b
 27BB: 21 AA 99      ld   hl,$99AA
 27BE: 06 0D         ld   b,$0D
-27C0: CD 85 29      call $2985
+27C0: CD 85 29      call write_line_of_2F_attributes_2985
 27C3: 21 5B 98      ld   hl,$985B
 27C6: 06 05         ld   b,$05
-27C8: CD 85 29      call $2985
+27C8: CD 85 29      call write_line_of_2F_attributes_2985
 27CB: 21 9E 98      ld   hl,$989E
 27CE: 06 1A         ld   b,$1A
-27D0: CD 85 29      call $2985
+27D0: CD 85 29      call write_line_of_2F_attributes_2985
 27D3: 21 AA 9B      ld   hl,$9BAA
 27D6: 3E 2F         ld   a,$2F
 27D8: 77            ld   (hl),a
 27D9: 21 31 99      ld   hl,$9931
-27DC: CD 89 29      call $2989
+27DC: CD 89 29      call write_3_attributes_2989
 27DF: 21 C5 98      ld   hl,$98C5
-27E2: CD 89 29      call $2989
+27E2: CD 89 29      call write_3_attributes_2989
 27E5: 21 FC 9A      ld   hl,$9AFC
-27E8: CD 89 29      call $2989
+27E8: CD 89 29      call write_3_attributes_2989
 27EB: 21 28 9A      ld   hl,$9A28
-27EE: CD 89 29      call $2989
+27EE: CD 89 29      call write_3_attributes_2989
 27F1: 21 D1 99      ld   hl,$99D1
-27F4: CD 89 29      call $2989
+27F4: CD 89 29      call write_3_attributes_2989
 27F7: 21 5C 99      ld   hl,$995C
-27FA: CD 89 29      call $2989
+27FA: CD 89 29      call write_3_attributes_2989
 27FD: 21 1C 9A      ld   hl,$9A1C
-2800: CD 89 29      call $2989
+2800: CD 89 29      call write_3_attributes_2989
 2803: 21 EC 9A      ld   hl,$9AEC
-2806: CD 89 29      call $2989
+2806: CD 89 29      call write_3_attributes_2989
 2809: 21 08 9B      ld   hl,$9B08
-280C: CD 89 29      call $2989
+280C: CD 89 29      call write_3_attributes_2989
 280F: 21 91 9B      ld   hl,$9B91
-2812: CD 89 29      call $2989
+2812: CD 89 29      call write_3_attributes_2989
 2815: 21 FB 99      ld   hl,$99FB
 2818: 3E 3F         ld   a,$3F
 281A: 77            ld   (hl),a
@@ -4829,52 +4810,52 @@ get_XUP_screen_address_2501:
 2860: ED B0         ldir
 2862: 21 07 99      ld   hl,$9907
 2865: 06 0E         ld   b,$0E
-2867: CD 7B 29      call $297B
+2867: CD 7B 29      call write_line_of_zeroes_297b
 286A: 21 17 99      ld   hl,$9917
 286D: 06 0E         ld   b,$0E
-286F: CD 7B 29      call $297B
+286F: CD 7B 29      call write_line_of_zeroes_297b
 2872: 21 5B 98      ld   hl,$985B
 2875: 06 14         ld   b,$14
-2877: CD 7B 29      call $297B
+2877: CD 7B 29      call write_line_of_zeroes_297b
 287A: 21 47 98      ld   hl,$9847
 287D: 06 03         ld   b,$03
-287F: CD 7B 29      call $297B
+287F: CD 7B 29      call write_line_of_zeroes_297b
 2882: 21 50 98      ld   hl,$9850
 2885: 06 03         ld   b,$03
-2887: CD 7B 29      call $297B
+2887: CD 7B 29      call write_line_of_zeroes_297b
 288A: 21 3B 9B      ld   hl,$9B3B
 288D: 06 03         ld   b,$03
-288F: CD 7B 29      call $297B
+288F: CD 7B 29      call write_line_of_zeroes_297b
 2892: 21 4A 9B      ld   hl,$9B4A
 2895: 06 03         ld   b,$03
-2897: CD 7B 29      call $297B
+2897: CD 7B 29      call write_line_of_zeroes_297b
 289A: 21 4A 98      ld   hl,$984A
 289D: 06 03         ld   b,$03
-289F: CD 85 29      call $2985
+289F: CD 85 29      call write_line_of_2F_attributes_2985
 28A2: 21 0A 99      ld   hl,$990A
 28A5: 06 0E         ld   b,$0E
-28A7: CD 85 29      call $2985
+28A7: CD 85 29      call write_line_of_2F_attributes_2985
 28AA: 21 5E 98      ld   hl,$985E
 28AD: 06 1A         ld   b,$1A
-28AF: CD 85 29      call $2985
+28AF: CD 85 29      call write_line_of_2F_attributes_2985
 28B2: 21 68 9A      ld   hl,$9A68
-28B5: CD 89 29      call $2989
+28B5: CD 89 29      call write_3_attributes_2989
 28B8: 21 68 99      ld   hl,$9968
-28BB: CD 89 29      call $2989
+28BB: CD 89 29      call write_3_attributes_2989
 28BE: 21 18 99      ld   hl,$9918
-28C1: CD 89 29      call $2989
+28C1: CD 89 29      call write_3_attributes_2989
 28C4: 21 98 99      ld   hl,$9998
-28C7: CD 89 29      call $2989
+28C7: CD 89 29      call write_3_attributes_2989
 28CA: 21 78 9A      ld   hl,$9A78
-28CD: CD 89 29      call $2989
+28CD: CD 89 29      call write_3_attributes_2989
 28D0: 21 9C 98      ld   hl,$989C
-28D3: CD 89 29      call $2989
+28D3: CD 89 29      call write_3_attributes_2989
 28D6: 21 9C 9A      ld   hl,$9A9C
-28D9: CD 89 29      call $2989
+28D9: CD 89 29      call write_3_attributes_2989
 28DC: 21 71 98      ld   hl,$9871
-28DF: CD 89 29      call $2989
+28DF: CD 89 29      call write_3_attributes_2989
 28E2: 21 3C 9B      ld   hl,$9B3C
-28E5: CD 89 29      call $2989
+28E5: CD 89 29      call write_3_attributes_2989
 28E8: 3E 3F         ld   a,$3F
 28EA: 21 7B 9A      ld   hl,$9A7B
 28ED: 77            ld   (hl),a
@@ -4949,14 +4930,19 @@ get_XUP_screen_address_2501:
 2975: ED B0         ldir
 2977: CD E0 1E      call $1EE0
 297A: C9            ret
+
+write_line_of_zeroes_297b:
 297B: 3E 1F         ld   a,$1F
 297D: 11 20 00      ld   de,$0020
 2980: 77            ld   (hl),a
 2981: 19            add  hl,de
 2982: 10 FC         djnz $2980
 2984: C9            ret
+write_line_of_2F_attributes_2985:
 2985: 3E 2F         ld   a,$2F
 2987: 18 F4         jr   $297D
+
+write_3_attributes_2989:
 2989: 11 20 00      ld   de,$0020
 298C: 3E 1F         ld   a,$1F
 298E: 77            ld   (hl),a
@@ -4965,6 +4951,7 @@ get_XUP_screen_address_2501:
 2991: 23            inc  hl
 2992: 77            ld   (hl),a
 2993: C9            ret
+
 2994: 41            ld   b,c
 2995: 35            dec  (hl)
 2996: 04            inc  b
@@ -5363,7 +5350,7 @@ get_elevator_exit_y_2BD1:
 	;; lockup the game (not visible immediately)
 
 nasty_protection_2c28:
-2C28: 3A 78 61      ld   a,(score_ten_thousands_6178)
+2C28: 3A 78 61      ld   a,(score_ten_thousands_player_1_6178)
 2C2B: FE 06         cp   $06
 2C2D: C0            ret  nz
 2C2E: 3A A3 58      ld   a,($58A3)
@@ -5391,12 +5378,12 @@ compute_guard_speed_from_dipsw_2C4D:
 2C50: FE 01         cp   $01
 2C52: 3E 00         ld   a,$00
 2C54: 28 22         jr   z,$2C78
-2C56: 3A 78 61      ld   a,(score_ten_thousands_6178)
+2C56: 3A 78 61      ld   a,(score_ten_thousands_player_1_6178)
 2C59: 47            ld   b,a
 2C5A: 3A 7C 61      ld   a,(current_player_617C)
 2C5D: FE 01         cp   $01
 2C5F: 20 04         jr   nz,$2C65
-2C61: 3A 7B 61      ld   a,(unknown_617B)
+2C61: 3A 7B 61      ld   a,(score_ten_thousands_player_2_617B)
 2C64: 47            ld   b,a
 2C65: 3A 00 B0      ld   a,(dip_switch_B000)
 2C68: CB 1F         rr   a
@@ -5481,7 +5468,7 @@ compute_guard_speed_2C7C:
 2D1D: FE 05         cp   $05
 2D1F: D0            ret  nc
 2D20: CD 03 21      call $2103
-2D23: CD FB 2F      call $2FFB
+2D23: CD FB 2F      call high_score_entry_2ffb
 2D26: 3A 6C 62      ld   a,(unknown_626C)
 2D29: FE 01         cp   $01
 2D2B: CC 70 2A      call z,$2A70
@@ -5836,6 +5823,7 @@ compute_guard_speed_2C7C:
 2FF7: C1            pop  bc
 2FF8: DD E1         pop  ix
 2FFA: C9            ret
+high_score_entry_2ffb:
 2FFB: 3E 01         ld   a,$01
 2FFD: 32 67 62      ld   (unknown_6267),a
 3000: 21 72 93      ld   hl,$9372
@@ -6406,6 +6394,11 @@ draw_wheelbarrow_tiles_3417:
 34A0: C9            ret
 34A1: 3E 01         ld   a,$01
 34A3: C9            ret
+
+* pulses A004 to 1 when coin is inserted
+* not useful for game per se, only to compute
+* machine rentability
+log_inserted_coins_34A4:
 34A4: 21 04 A0      ld   hl,$A004
 34A7: FD 21 E5 61   ld   iy,unknown_61E5
 34AB: FD 7E 00      ld   a,(iy+$00)
@@ -6437,28 +6430,28 @@ draw_wheelbarrow_tiles_3417:
 34D8: 3A 00 B0      ld   a,(dip_switch_B000)
 34DB: E6 40         and  $40
 34DD: FE 40         cp   $40
-34DF: 3E 03         ld   a,$03
+34DF: 3E 03         ld   a,$03		; 30000 points
 34E1: 28 02         jr   z,$34E5
-34E3: 3E 04         ld   a,$04
+34E3: 3E 04         ld   a,$04		; 40000 points
 34E5: 47            ld   b,a
 34E6: 3A 7C 61      ld   a,(current_player_617C)
 34E9: FE 01         cp   $01
-34EB: 3A 78 61      ld   a,(score_ten_thousands_6178)
+34EB: 3A 78 61      ld   a,(score_ten_thousands_player_1_6178)
 34EE: 20 03         jr   nz,$34F3
-34F0: 3A 7B 61      ld   a,(unknown_617B)
+34F0: 3A 7B 61      ld   a,(score_ten_thousands_player_2_617B)
 34F3: B8            cp   b
 34F4: 30 05         jr   nc,$34FB
 34F6: AF            xor  a
-34F7: 32 86 62      ld   (extra_life_not_awarded_yet_6286),a
+34F7: 32 86 62      ld   (extra_life_awarded_6286),a
 34FA: C9            ret
-34FB: 3A 86 62      ld   a,(extra_life_not_awarded_yet_6286)
+34FB: 3A 86 62      ld   a,(extra_life_awarded_6286)
 34FE: FE 00         cp   $00
 3500: C0            ret  nz
 3501: 3A 56 60      ld   a,(lives_6056)
 3504: 3C            inc  a
 3505: 32 56 60      ld   (lives_6056),a
 3508: 3E 01         ld   a,$01
-350A: 32 86 62      ld   (extra_life_not_awarded_yet_6286),a
+350A: 32 86 62      ld   (extra_life_awarded_6286),a
 350D: C9            ret
 350E: 7E            ld   a,(hl)
 350F: FE E0         cp   $E0
@@ -6517,6 +6510,7 @@ set_bags_coordinates_355b:
 3564: ED B0         ldir
 3566: C9            ret
 
+set_bags_coordinates_3567:
 3567: 11 7F 61      ld   de,unknown_617F
 356A: 21 E8 5A      ld   hl,$5AE8
 356D: 01 3A 00      ld   bc,$003A
@@ -6590,7 +6584,7 @@ is_background_tile_3573:
 35FA: 3E 1F         ld   a,$1F
 35FC: 32 74 99      ld   ($9974),a
 35FF: 32 94 9A      ld   ($9A94),a
-3602: CD BE 39      call $39BE
+3602: CD BE 39      call write_credits_and_lives_39be
 3605: 3E 00         ld   a,$00
 3607: 32 03 98      ld   ($9803),a
 360A: 32 07 98      ld   ($9807),a
@@ -6946,8 +6940,10 @@ play_intro_3700:
 39B2: 22 40 61      ld   (unknown_pointer_6140),hl
 39B5: AF            xor  a
 39B6: 32 42 61      ld   (unknown_6142),a
-39B9: CD BE 39      call $39BE
+39B9: CD BE 39      call write_credits_and_lives_39be
 39BC: 18 D9         jr   $3997
+
+write_credits_and_lives_39be:
 39BE: 3A 00 60      ld   a,(number_of_credits_6000)
 39C1: E6 0F         and  $0F
 39C3: 32 9F 90      ld   ($909F),a
@@ -6970,13 +6966,14 @@ play_intro_3700:
 39EA: 3E CA         ld   a,$CA
 39EC: CD BC 29      call write_text_29bc
 39EF: C9            ret
-39F0: 01 01 01      ld   bc,$0101
-39F3: 00            nop
-39F4: 01 00 79      ld   bc,$7900
+
+39F6: 79            ld   a,c                                            
 39F7: 21 E5 61      ld   hl,unknown_61E5
 39FA: 86            add  a,(hl)
 39FB: 77            ld   (hl),a
 39FC: C9            ret
+
+read_player_controls_39fd:
 39FD: 3A 26 60      ld   a,(player_input_6026)
 3A00: 32 50 60      ld   (player_move_direction_6050),a
 3A03: AF            xor  a
@@ -7307,7 +7304,7 @@ check_remaining_bags_3BBC:
 3D2C: FD 21 56 61   ld   iy,unknown_6156
 3D30: 21 94 65      ld   hl,guard_1_struct_6594
 3D33: 22 15 62      ld   (unknown_6215),hl
-3D36: 2A 38 60      ld   hl,(guard_1_screen_address_6038)
+3D36: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 3D39: 11 3B 60      ld   de,guard_1_in_elevator_603B
 3D3C: 3A 99 60      ld   a,(guard_1_screen_6099)
 3D3F: 32 98 60      ld   (screen_index_param_6098),a
@@ -7534,7 +7531,7 @@ update_player_screen_address_from_xy_555E:
 
 update_guard_1_screen_address_from_xy_5568:
 5568: DD 21 94 65   ld   ix,guard_1_struct_6594
-556C: FD 21 38 60   ld   iy,guard_1_screen_address_6038
+556C: FD 21 38 60   ld   iy,guard_1_logical_address_6038
 5570: 3A 99 60      ld   a,(guard_1_screen_6099)
 5573: 18 10         jr   $5585
 
