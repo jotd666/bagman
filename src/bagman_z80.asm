@@ -5541,9 +5541,9 @@ compute_guard_speed_2C7C:
 2DBF: DD E1         pop  ix
 2DC1: 3E 00         ld   a,$00
 2DC3: 32 79 62      ld   (unknown_6279),a
-2DC6: CD 19 2F      call $2F19
-2DC9: CD 19 2F      call $2F19
-2DCC: CD 19 2F      call $2F19
+2DC6: CD 19 2F      call busy_wait_2f19
+2DC9: CD 19 2F      call busy_wait_2f19
+2DCC: CD 19 2F      call busy_wait_2f19
 2DCF: CD 58 2E      call $2E58
 2DD2: C9            ret
 2DD3: AF            xor  a
@@ -5654,7 +5654,7 @@ compute_guard_speed_2C7C:
 2EB7: 06 10         ld   b,$10
 2EB9: 04            inc  b
 2EBA: CD 0A 2F      call $2F0A
-2EBD: CD 19 2F      call $2F19
+2EBD: CD 19 2F      call busy_wait_2f19
 2EC0: C9            ret
 2EC1: 78            ld   a,b
 2EC2: FE 10         cp   $10
@@ -5662,7 +5662,7 @@ compute_guard_speed_2C7C:
 2EC6: 06 2A         ld   b,$2A
 2EC8: 05            dec  b
 2EC9: CD 0A 2F      call $2F0A
-2ECC: CD 19 2F      call $2F19
+2ECC: CD 19 2F      call busy_wait_2f19
 2ECF: C9            ret
 2ED0: 7D            ld   a,l
 2ED1: E6 F0         and  $F0
@@ -5678,7 +5678,7 @@ compute_guard_speed_2C7C:
 2EE4: DD 2B         dec  ix
 2EE6: 46            ld   b,(hl)
 2EE7: CD 0A 2F      call $2F0A
-2EEA: CD 19 2F      call $2F19
+2EEA: CD 19 2F      call busy_wait_2f19
 2EED: C9            ret
 2EEE: 7D            ld   a,l
 2EEF: E6 F0         and  $F0
@@ -5693,7 +5693,7 @@ compute_guard_speed_2C7C:
 2EFF: DD 23         inc  ix
 2F01: 06 11         ld   b,$11
 2F03: CD 0A 2F      call $2F0A
-2F06: CD 19 2F      call $2F19
+2F06: CD 19 2F      call busy_wait_2f19
 2F09: C9            ret
 2F0A: 78            ld   a,b
 2F0B: DD 77 00      ld   (ix+$00),a
@@ -5706,6 +5706,7 @@ compute_guard_speed_2C7C:
 2F16: 77            ld   (hl),a
 2F17: E1            pop  hl
 2F18: C9            ret
+busy_wait_2f19:
 2F19: C5            push bc
 2F1A: F5            push af
 2F1B: E5            push hl
