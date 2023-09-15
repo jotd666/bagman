@@ -7283,7 +7283,7 @@ check_remaining_bags_3BBC:
 3CEE: DD 21 8F 60   ld   ix,unknown_608F
 3CF2: FD 21 57 61   ld   iy,unknown_6157
 3CF6: 21 98 65      ld   hl,guard_2_struct_6598
-3CF9: 22 15 62      ld   (unknown_6215),hl
+3CF9: 22 15 62      ld   (guard_struct_pointer_6215),hl
 3CFC: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 3CFF: 11 7B 60      ld   de,guard_2_in_elevator_607B
 3D02: 3A 9A 60      ld   a,(guard_2_screen_609A)
@@ -7304,7 +7304,7 @@ check_remaining_bags_3BBC:
 3D28: DD 21 4F 60   ld   ix,unknown_604F
 3D2C: FD 21 56 61   ld   iy,unknown_6156
 3D30: 21 94 65      ld   hl,guard_1_struct_6594
-3D33: 22 15 62      ld   (unknown_6215),hl
+3D33: 22 15 62      ld   (guard_struct_pointer_6215),hl
 3D36: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 3D39: 11 3B 60      ld   de,guard_1_in_elevator_603B
 3D3C: 3A 99 60      ld   a,(guard_1_screen_6099)
@@ -7353,7 +7353,7 @@ check_remaining_bags_3BBC:
 3D87: C9            ret
 
 
-3DB8: 2A 15 62      ld   hl,(unknown_6215)
+3DB8: 2A 15 62      ld   hl,(guard_struct_pointer_6215)
 3DBB: 3E 22         ld   a,$22
 3DBD: 77            ld   (hl),a
 * sometimes called with BC=0, will do nothing useful!
