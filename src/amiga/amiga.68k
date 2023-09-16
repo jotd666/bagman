@@ -730,14 +730,10 @@ osd_small_wait:
 *	movem.l	(a7)+,a0/d0-d1
 *	rts
 
-* < A0: pointer on 8FF2 zone:
-* the first byte contains the sprite image number (bits 2-7), Y flip (bit 0),
-*                        X flip (bit 1); the second byte the color
-* < A1: pointer on 9022 zone (X,Y coords)
-	.ifdef	xxxxx
+* < A0: pointer on sprite shadow zone 65A0:
+
 osd_update_sprites:
-	*lea		test_sprites_xy,a1
-	*lea		test_sprites_code,a0
+	lea		test_sprites,a0
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
 
@@ -857,7 +853,13 @@ osd_update_sprites:
 	cmp.w	#NB_HOST_SPRITES,d6
 	jne	10b	
 	rts
-	.endif
+
+
+* guard chasing bagman+barrow
+* priorities are from last to first
+test_sprites:
+	.byte	0x3A,0x28,0x9D,0xC1,0x00,0x00,0x00,0x38,0x1E,0x08,0x90,0xC1,0x00,0x00,0x00,0xE1
+	.byte	0x00,0x00,0x00,0x41,0x00,0x00,0x00,0xC9,0x2E,0x0C,0x30,0xC1,0x00,0x00,0x00,0x00
 
 * < D0: sprite X
 * < D1: sprite Y
@@ -1654,6 +1656,7 @@ osd_r_videoram:
 0:
 	* should not happen
 	blitz
+	move.b	D0,d0
 	nop
 1:
 	lea		bg_videoram,a0

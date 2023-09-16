@@ -277,13 +277,13 @@ l_0067:
 	jcs	l_0394                             	| [$0098: jp   c,$0394]
 l_009b:
 										| [$009b: ld   a,(watchdog_reset_B800)] watchdog
-	move.w	#0x9800,d6                      	| [$009e: ld   de,$9800]
-	lea	unknown_65A0,a0                	| [$00a1: ld   hl,unknown_65A0]
-	move.w	#0x1F,d1                        	| [$00a4: ld   bc,$0020] 32
-0:
-	move.b	(a0)+,d0                              	| [$00a7: ldir]
-	jbsr	osd_w_colorram
-	dbf		D1,0b
+	                      	| [$009e: ld   de,$9800]
+	lea	sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,sprite_shadow_ram_65A0]
+	jbsr	osd_update_sprites						| [$00a4: ld   bc,$0020] 32
+								
+										| [$00a7: ldir]
+								
+								
 	*jbsr	log_inserted_coins_34A4                            	| [$00a9: call $34A4]
 	jbsr	l_353e                            	| [$00ac: call $353E]
 	addq.b	#1,unknown_6143                 	| [$00af: ld   a,(unknown_6143)]
@@ -1249,7 +1249,7 @@ player_grip_handle_test_0784:
 	jbsr	update_player_screen_address_from_xy_555E	| [$0784: call update_player_screen_address_from_xy_555E]
 	move.w	player_logical_address_6009,d6	| [$0787: ld   hl,(player_logical_address_6009)]
 	subq.b	#3,d6                           	| [$078a: dec  hl] * 3
-	jbsr	osd_r_videoram                         	| [$078d: ld   a,(hl)] check what's above player head on screen
+	bsr		read_rom                         	| [$078d: ld   a,(hl)] check what's above player head on screen
 	cmp.b	#0xDC,d0                         	| [$078e: cp   $DC]
 	jeq	l_0795                             	| [$0790: jr   z,$0795]
 	cmp.b	#0x0B,d0                         	| [$0792: cp   $0B]
@@ -1601,8 +1601,8 @@ l_09ce:
 l_09da:
 	clr.b	d0                               	| [$09da: xor  a]
 	move.b	d0,(a0)                         	| [$09db: ld   (hl),a]
-	subq.b	#1,a0                           	| [$09dc: dec  hl]
-	move.b	d0,(a0)                         	| [$09dd: ld   (hl),a]
+	                           	| [$09dc: dec  hl]
+	move.b	d0,-(a0)                         	| [$09dd: ld   (hl),a]
 	rts                                    	| [$09de: ret]
 
  * player entering in the elevator
@@ -2081,7 +2081,7 @@ l_0d07:
 	    	| [$0d1c: sbc  a,$00]
     
 	    	| [$0d1e: ld   h,a]
-	jbsr	osd_r_videoram                         	| [$0d1f: ld   a,(hl)]
+	jbsr	read_rom                         	| [$0d1f: ld   a,(hl)]
 	jbsr	l_0da2                            	| [$0d20: call $0DA2]
 	move.b	unknown_600B,d0                 	| [$0d23: ld   a,(unknown_600B)]
 	cmp.b	#0x02,d0                         	| [$0d26: cp   $02]
@@ -2089,7 +2089,7 @@ l_0d07:
 	rts                                    	| [$0d28: ret  nz]
 0:
 	subq.w	#1,d6                           	| [$0d29: dec  hl]
-	jbsr	osd_r_videoram                         	| [$0d2a: ld   a,(hl)]
+	jbsr	read_rom                         	| [$0d2a: ld   a,(hl)]
 	jbsr	l_0da2                            	| [$0d2b: call $0DA2]
 	addq.w	#2,a0                           	| [$0d2e: inc  hl] * 2
 	jbsr	l_0d34                            	| [$0d30: call $0D34]
@@ -2146,7 +2146,7 @@ l_0d76:
 	                         	| [$0d83: ld   a,h]
  
 	                           	| [$0d86: ld   h,a]
-	jbsr	osd_r_videoram                         	| [$0d87: ld   a,(hl)]
+	bsr	read_rom                         	| [$0d87: ld   a,(hl)]
 	jbsr	l_0da2                            	| [$0d88: call $0DA2]
 	move.b	unknown_600B,d0                 	| [$0d8b: ld   a,(unknown_600B)]
 	cmp.b	#0x02,d0                         	| [$0d8e: cp   $02]
@@ -2154,7 +2154,7 @@ l_0d76:
 	rts                                    	| [$0d90: ret  nz]
 0:
 	subq.w	#1,d6										| [$0d91: dec  hl]
-	jbsr	osd_r_videoram                         	| [$0d92: ld   a,(hl)]
+	bsr	read_rom                         	| [$0d92: ld   a,(hl)]
 	jbsr	l_0da2                            	| [$0d93: call $0DA2]
 	addq.w	#2,a0                           	| [$0d96: inc  hl] * 2
 	jbsr	l_0d34                            	| [$0d98: call $0D34]
@@ -2194,7 +2194,7 @@ l_0dc7:
 0:
  * climb down
 	move.w	player_logical_address_6009,d6	| [$0dde: ld   hl,(player_logical_address_6009)]
-	jbsr	osd_r_videoram                          	| [$0de1: ld   a,(hl)]
+	jbsr	read_rom                          	| [$0de1: ld   a,(hl)]
 	cmp.b	#0xFF,d0                         	| [$0de2: cp   $FF]
 	beq.b	0f
 	rts                                    	| [$0de4: ret  nz]
@@ -2205,7 +2205,7 @@ l_0dc7:
 l_0de9:
 	move.w	player_logical_address_6009,d6	| [$0de9: ld   hl,(player_logical_address_6009)]
 	subq.b	#1,d6                           	| [$0dec: dec  hl]
-	jbsr	osd_r_videoram                    	| [$0ded: ld   a,(hl)]
+	jbsr	read_rom                    	| [$0ded: ld   a,(hl)]
 	cmp.b	#0xFF,d0                         	| [$0dee: cp   $FF]
 	beq.b	0f
 	rts                                    	| [$0df0: ret  nz]
@@ -2979,7 +2979,7 @@ l_1469:
 	jbsr	update_player_screen_address_from_xy_555E	| [$149c: call update_player_screen_address_from_xy_555E]
 
 	jbsr	osd_enable_vblank_interrupt
-	jbsr	osd_r_videoram                         	| [$14a0: ld   a,(hl)]
+	jbsr	read_rom                         	| [$14a0: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$14a1: cp   $E0]
 	jeq	l_14b3                             	| [$14a3: jr   z,$14B3]
 	move.b	fatal_fall_height_reached_604E,d0	| [$14a5: ld   a,(fatal_fall_height_reached_604E)]
@@ -4251,7 +4251,7 @@ l_1d0e:
 * d1: direction increment (1:	down, -1: up, 32: right, -32: left)
 
 is_way_clear_to_player_1D33:
-	subq.b	#2,a0                           	| [$1d33: dec  hl] * 2
+	subq.w	#2,a0                           	| [$1d33: dec  hl] * 2
 l_1d35:
 	clr.b	d0                               	| [$1d35: xor  a]
 	move.b	d0,(a2)                    	| [$1d36: ld   (ix+$00),a] set "visible" flag to 0
@@ -5271,7 +5271,7 @@ get_XUP_screen_address_2501:
 	rts                                    	| [$250d: ret]
 	
 l_250e:
-	subq.b	#1,a0                           	| [$250e: dec  hl]
+	subq.w	#1,a0                           	| [$250e: dec  hl]
 	jbsr	l_25c8                            	| [$250f: call $25C8]
 	addq.w	#1,a0                           	| [$2512: inc  hl]
 	jbsr	l_25c8                            	| [$2513: call $25C8]
@@ -5620,6 +5620,7 @@ l_275d:
 	move.w	#0x0400-1,d1                        	| [$276e: ld   bc,$0400] 1024
 									| [$276e: ld   bc,$0400] 1024
 										| [$2771: ldir]
+0:
 	move.b	(a0)+,d0
 	jbsr	osd_w_videoram
 	addq.w	#1,d6
@@ -5944,8 +5945,8 @@ l_29dc:
 l_29e1:
 	move.b	d0,d2                           	| [$29e1: ld   c,a]
 l_29e2:
-	move.b	d0,(a0)                         	| [$29e2: ld   (hl),a]
-	addq.w	#1,a0                           	| [$29e3: inc  hl]
+	move.b	d0,(a0)+                         	| [$29e2: ld   (hl),a]
+	                           	| [$29e3: inc  hl]
 	subq.b	#1,d2                           	| [$29e4: dec  c]
 	jne	l_29e2                             	| [$29e5: jr   nz,$29E2]
 	subq.b	#1,d1                           	| [...]
@@ -5953,8 +5954,10 @@ l_29e2:
 	jra	l_2486                             	| [$29e9: jp   $2486]
 	
 change_attribute_everywhere_29ec:
+	* 8 is too much as it writes beyond $9C00
+	* changing to 4
 	* set all attributes to passed d0
-	move.b	#0x08,d1                        	| [$29ec: ld   b,$08]
+	move.b	#0x04,d1                        	| [$29ec: ld   b,$08]
 	move.w	#0x9800,d6                      	| [$29ee: ld   hl,$9800]
 l_29f1:
 	clr.b	d2                               	| [$29f1: ld   c,$00]
@@ -7970,8 +7973,7 @@ l_37cd:
 	exg	d0,d7                              	| [$37f9: ex   af,af']
 	jbsr	write_text_55f0                            	| [$37fa: call $55F0]
 *im   1
-	**jbsr	rst_38                            	| [$37ff: rst  $38]
-	jbsr	osd_break
+	jbsr	game_tick_0038                            	| [$37ff: rst  $38]
 l_3800:
 	move.b	player_input_6026,d0            	| [$3800: ld   a,(player_input_6026)]
 	or.b	#0x08,d0                          	| [$3803: or   $08]
@@ -8055,7 +8057,7 @@ l_3899:
 l_38b6:
 	lea	game_mem+0x5000,a0                      	| [$38b6: ld   hl,$5000]
 l_38b9:
-	subq.b	#1,a0                           	| [$38b9: dec  hl]
+	subq.w	#1,a0                           	| [$38b9: dec  hl]
 	jbsr	l_38d7                            	| [$38ba: call $38D7]
 	move.b	d5,d0                           	| [$38bd: ld   a,h]
 											| [$38be: cp   $00]
@@ -8712,7 +8714,7 @@ l_3d5e:
 	clr.b	d0                               	| [$3d63: xor  a]
 	rts                                    	| [$3d64: ret]
 l_3d65:
-	jbsr	osd_r_videoram                        	| [$3d65: ld   a,(hl)]
+	jbsr	read_rom                        	| [$3d65: ld   a,(hl)]
 
 	move.l	a0,-(sp)                        	| [$3d66: push hl]
 	movem.w	d1/d2,-(sp)                    	| [$3d67: push bc]
@@ -8805,7 +8807,7 @@ l_3df9:
 	lea	unknown_65B4,a3                	| [$3e2c: ld   iy,unknown_65B4]
 	jbsr	copy_4_bytes_ix_iy_1001           	| [$3e30: call copy_4_bytes_ix_iy_1001]
 	lea	unknown_659C,a2                	| [$3e33: ld   ix,unknown_659C]
-	lea	unknown_65A0,a3                	| [$3e37: ld   iy,unknown_65A0]
+	lea	sprite_shadow_ram_65A0,a3                	| [$3e37: ld   iy,sprite_shadow_ram_65A0]
 	jbsr	copy_4_bytes_ix_iy_1001           	| [$3e3b: call copy_4_bytes_ix_iy_1001]
 	clr.b	d0                               	| [$3e3e: xor  a]
 	move.w	#0x985F,d6                       	| [$3e3f: ld   ($985F),a]

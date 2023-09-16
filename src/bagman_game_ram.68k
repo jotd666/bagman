@@ -202,7 +202,7 @@
 	.global	unknown_659D
 	.global	unknown_659E
 	.global	unknown_659F
-	.global	unknown_65A0
+	.global	sprite_shadow_ram_65A0
 	.global	unknown_65A3
 	.global	unknown_65A4
 	.global	unknown_65A6
@@ -634,7 +634,7 @@ unknown_659E:
 	ds.b	1
 unknown_659F:
 	ds.b	1
-unknown_65A0:
+sprite_shadow_ram_65A0:
 	ds.b	3
 unknown_65A3:
 	ds.b	1

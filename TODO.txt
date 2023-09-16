@@ -1,2 +1,3 @@
-- handle move.w xxxx,ax
+- bonus 9900 => ... decreasing: wrong
 - display sprites
+

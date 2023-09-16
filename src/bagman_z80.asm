@@ -185,8 +185,9 @@
 0096: FE 0F         cp   $0F
 0098: DA 94 03      jp   c,$0394
 009B: 3A 00 B8      ld   a,(io_read_shit_B800)
+* update sprite shadow ram
 009E: 11 00 98      ld   de,$9800
-00A1: 21 A0 65      ld   hl,unknown_65A0
+00A1: 21 A0 65      ld   hl,sprite_shadow_ram_65A0
 00A4: 01 20 00      ld   bc,$0020
 00A7: ED B0         ldir
 00A9: CD A4 34      call log_inserted_coins_34A4
@@ -5015,6 +5016,7 @@ write_text_29bc:
 29E9: C3 86 24      jp   $2486
 
 change_attribute_everywhere_29ec:
+; 8 is too much as it writes beyond $9C00
 29EC: 06 08         ld   b,$08
 29EE: 21 00 98      ld   hl,$9800
 29F1: 0E 00         ld   c,$00
@@ -7406,7 +7408,7 @@ can_pick_bag_3DEB:
 3E2C: FD 21 B4 65   ld   iy,unknown_65B4
 3E30: CD 01 10      call copy_4_bytes_ix_iy_1001
 3E33: DD 21 9C 65   ld   ix,unknown_659C
-3E37: FD 21 A0 65   ld   iy,unknown_65A0
+3E37: FD 21 A0 65   ld   iy,sprite_shadow_ram_65A0
 3E3B: CD 01 10      call copy_4_bytes_ix_iy_1001
 3E3E: AF            xor  a
 3E3F: 32 5F 98      ld   ($985F),a

@@ -20,15 +20,41 @@ sprites_dump_dir = os.path.join(dump_dir,"sprites")
 
 NB_POSSIBLE_SPRITES = 128  #64+64 alternate
 
-rw_json = os.path.join(this_dir,"used_sprites.json")
-if os.path.exists(rw_json):
-    with open(rw_json) as f:
-        used_sprites = json.load(f)
-    # key as integer, list as set for faster lookup (not that it matters...)
-    used_sprites = {int(k):set(v) for k,v in used_sprites.items()}
-else:
-    print("Warning: no {} file, no sprite/clut filter, expect BIG graphics.68k file")
-    used_sprites = None
+##rw_json = os.path.join(this_dir,"used_sprites.json")
+##if os.path.exists(rw_json):
+##    with open(rw_json) as f:
+##        used_sprites = json.load(f)
+##    # key as integer, list as set for faster lookup (not that it matters...)
+##    used_sprites = {int(k):set(v) for k,v in used_sprites.items()}
+##else:
+##    print("Warning: no {} file, no sprite/clut filter, expect BIG graphics.68k file")
+##    used_sprites = None
+
+used_sprites = {}
+# this game is so simple sprite-wise that it's possible to manually enter the clut/code
+# combination instead of ripping them from running game. Besides, the game has a tendency
+# to display sprites with wrong clut (briefly but would still be logged)
+
+def add_sprites(start,stop,clut):
+    for i in range(start,stop+1):
+        used_sprites[i] = clut
+
+# guard frames
+add_sprites(0x21,0x31,0xC)
+# player frames
+add_sprites(0x11,0x21,0x8)
+# pick frames
+add_sprites(0x77,0x79,0x9)
+#add_sprites(0x77,0x79,0x9)  # intro: pick has a different color!
+# barrow frames
+add_sprites(0x7A,0x7B,0x8)
+# wagon
+#add_sprites(0x35,0x35,0x??)
+# elevator
+#add_sprites(????)
+# bag
+add_sprites(0x7F,0x7F,0x9)  # yellow
+add_sprites(0x7F,0x7F,0x4)  # blue
 
 
 # load all tiles/cluts from screens
