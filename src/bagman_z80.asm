@@ -191,7 +191,7 @@
 00A4: 01 20 00      ld   bc,$0020
 00A7: ED B0         ldir
 00A9: CD A4 34      call log_inserted_coins_34A4
-00AC: CD 3E 35      call $353E
+00AC: CD 3E 35      call decrease_timer_353e
 00AF: 3A 43 61      ld   a,(unknown_6143)
 00B2: 3C            inc  a
 00B3: 32 43 61      ld   (unknown_6143),a
@@ -468,7 +468,7 @@
 0386: FE 00         cp   $00
 0388: CC BC 0E      call z,$0EBC
 038B: CD BE 39      call write_credits_and_lives_39be
-038E: CD 0F 56      call $560F
+038E: CD 0F 56      call write_scores_and_time_560f
 0391: CD FD 39      call read_player_controls_39fd
 0394: CD 66 3C      call $3C66
 0397: 3A 00 B8      ld   a,(io_read_shit_B800)
@@ -1944,7 +1944,7 @@ character_can_walk_left_0D69:
 0F2E: 3C            inc  a
 0F2F: 32 54 60      ld   (gameplay_allowed_6054),a
 0F32: AF            xor  a
-0F33: 21 76 61      ld   hl,unknown_6176
+0F33: 21 76 61      ld   hl,player_1_score_6176
 0F36: 06 06         ld   b,$06
 0F38: 77            ld   (hl),a
 0F39: 23            inc  hl
@@ -2881,7 +2881,7 @@ guard_1_sees_player_1560:
 17AA: DD 77 03      ld   (ix+$03),a
 17AD: C9            ret
 
-17D5: 2A E7 61      ld   hl,(unknown_61E7)
+17D5: 2A E7 61      ld   hl,(timer_high_prec_61E7)
 17D8: 2E 00         ld   l,$00
 17DA: CD 90 5C      call add_to_score_5C90
 17DD: C9            ret
@@ -5080,7 +5080,7 @@ clear_screen_2a00:
 2A5D: 3E 01         ld   a,$01
 2A5F: 32 03 A0      ld   ($A003),a
 2A62: C9            ret
-2A63: DD 21 76 61   ld   ix,unknown_6176
+2A63: DD 21 76 61   ld   ix,player_1_score_6176
 2A67: 06 07         ld   b,$07
 2A69: AF            xor  a
 2A6A: 00            nop
@@ -5459,12 +5459,12 @@ compute_guard_speed_2C7C:
 2D03: 3A 10 62      ld   a,(unknown_6210)
 2D06: FE 01         cp   $01
 2D08: C0            ret  nz
-2D09: FD 21 76 61   ld   iy,unknown_6176
+2D09: FD 21 76 61   ld   iy,player_1_score_6176
 2D0D: CD D8 2D      call $2DD8
 2D10: 78            ld   a,b
 2D11: FE 05         cp   $05
 2D13: 38 0B         jr   c,$2D20
-2D15: FD 21 79 61   ld   iy,unknown_6179
+2D15: FD 21 79 61   ld   iy,player_2_score_6179
 2D19: CD D8 2D      call $2DD8
 2D1C: 78            ld   a,b
 2D1D: FE 05         cp   $05
@@ -5478,7 +5478,7 @@ compute_guard_speed_2C7C:
 2D31: 3E 01         ld   a,$01
 2D33: 32 01 A0      ld   ($A001),a
 2D36: 32 02 A0      ld   ($A002),a
-2D39: FD 21 76 61   ld   iy,unknown_6176
+2D39: FD 21 76 61   ld   iy,player_1_score_6176
 2D3D: CD D8 2D      call $2DD8
 2D40: 78            ld   a,b
 2D41: FE 05         cp   $05
@@ -5518,7 +5518,7 @@ compute_guard_speed_2C7C:
 2D8C: E6 80         and  $80
 2D8E: FE 80         cp   $80
 2D90: 28 F7         jr   z,$2D89
-2D92: FD 21 79 61   ld   iy,unknown_6179
+2D92: FD 21 79 61   ld   iy,player_2_score_6179
 2D96: CD D8 2D      call $2DD8
 2D99: 78            ld   a,b
 2D9A: FE 05         cp   $05
@@ -6485,7 +6485,8 @@ log_inserted_coins_34A4:
 3537: DD 77 00      ld   (ix+$00),a
 353A: FD 77 00      ld   (iy+$00),a
 353D: C9            ret
-353E: 21 E7 61      ld   hl,unknown_61E7
+decrease_timer_353e:
+353E: 21 E7 61      ld   hl,timer_high_prec_61E7
 3541: 7E            ld   a,(hl)
 3542: D6 01         sub  $01
 3544: 27            daa
@@ -7465,7 +7466,7 @@ can_pick_bag_3DEB:
 5506: 3A 7C 61      ld   a,(current_player_617C)
 5509: FE 00         cp   $00
 550B: C2 31 55      jp   nz,$5531
-550E: DD 21 76 61   ld   ix,unknown_6176
+550E: DD 21 76 61   ld   ix,player_1_score_6176
 5512: AF            xor  a
 5513: 7D            ld   a,l
 5514: 47            ld   b,a
@@ -7487,7 +7488,7 @@ can_pick_bag_3DEB:
 
 
 
-5531: DD 21 79 61   ld   ix,unknown_6179
+5531: DD 21 79 61   ld   ix,player_2_score_6179
 5535: 18 DB         jr   $5512
 
 ;; < in:	 ix:	 player "structure"
@@ -7648,12 +7649,13 @@ write_attribute_on_line_5605:
 560C: 10 FC         djnz $560A
 560E: C9            ret
 
-560F: DD 21 76 61   ld   ix,unknown_6176
+write_scores_and_time_560f:
+560F: DD 21 76 61   ld   ix,player_1_score_6176
 5613: 21 E1 92      ld   hl,$92E1
-5616: CD 3C 56      call $563C
-5619: DD 21 79 61   ld   ix,unknown_6179
+5616: CD 3C 56      call write_numeric_value_563C
+5619: DD 21 79 61   ld   ix,player_2_score_6179
 561D: 21 61 90      ld   hl,$9061
-5620: CD 3C 56      call $563C
+5620: CD 3C 56      call write_numeric_value_563C
 5623: DD 21 E8 61   ld   ix,time_61E8
 5627: 21 01 92      ld   hl,$9201
 562A: 06 01         ld   b,$01
@@ -7664,16 +7666,17 @@ write_attribute_on_line_5605:
 5638: CD 41 56      call $5641
 563B: C9            ret
 
+write_numeric_value_563C:
 563C: 06 03         ld   b,$03
 563E: 11 20 00      ld   de,$0020
 5641: DD 7E 00      ld   a,(ix+$00)
-5644: CD 4D 56      call write_numeric_value_564d
+5644: CD 4D 56      call write_digit_564d
 5647: DD 23         inc  ix
 5649: 19            add  hl,de
 564A: 10 F5         djnz $5641
 564C: C9            ret
 
-write_numeric_value_564d:
+write_digit_564d:
 564D: F5            push af
 564E: E6 0F         and  $0F
 5650: 77            ld   (hl),a

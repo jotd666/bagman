@@ -3,3 +3,4 @@
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
+- sprite mirror not implemented

@@ -285,7 +285,7 @@ l_009b:
 								
 								
 	*jbsr	log_inserted_coins_34A4                            	| [$00a9: call $34A4]
-	jbsr	l_353e                            	| [$00ac: call $353E]
+	jbsr	decrease_timer_353e                            	| [$00ac: call $353E]
 	addq.b	#1,unknown_6143                 	| [$00af: ld   a,(unknown_6143)]
 												| [$00b2: inc  a]
 												| [$00b3: ld   (unknown_6143),a]
@@ -597,7 +597,7 @@ l_0380:
 	jbsr	l_0ebc                            	| [$0388: call z,$0EBC]
 0:
 	jbsr	write_credits_and_lives_39be                            	| [$038b: call $39BE]
-	jbsr	l_560f                            	| [$038e: call $560F]
+	jbsr	write_scores_and_time_560f                            	| [$038e: call $560F]
 	jbsr	read_player_controls_39fd                            	| [$0391: call $39FD]
 l_0394:
 	jbsr	l_3c66                            	| [$0394: call $3C66]
@@ -2405,7 +2405,7 @@ l_0f00:
 	addq.b	#1,d0                           	| [$0f2e: inc  a]
 	move.b	d0,gameplay_allowed_6054        	| [$0f2f: ld   (gameplay_allowed_6054),a]
 	clr.b	d0                               	| [$0f32: xor  a]
-	lea	unknown_6176,a0                	| [$0f33: ld   hl,unknown_6176]
+	lea	player_1_score_6176,a0                	| [$0f33: ld   hl,player_1_score_6176]
 	move.b	#0x06,d1                        	| [$0f36: ld   b,$06]
 l_0f38:
 	move.b	d0,(a0)                         	| [$0f38: ld   (hl),a]
@@ -3381,7 +3381,7 @@ l_17a0:
 	rts                                    	| [$17ad: ret]
 
 l_17d5:
-	move.b	unknown_61E7+1,d6             	| [$17d5: ld   hl,(unknown_61E7)]
+	move.b	timer_high_prec_61E7+1,d6             	| [$17d5: ld   hl,(timer_high_prec_61E7)]
 	lsl.w	#8,d6                              	| [$17d8: ld   l,$00]
 	jbsr	add_to_score_5C90                 	| [$17da: call add_to_score_5C90]
 	rts                                    	| [$17dd: ret]
@@ -6039,7 +6039,7 @@ l_2a50:
 *	move.b	d0,0xA003                       	| [$2a5f: ld   ($A003),a]
 	rts                                    	| [$2a62: ret]
 l_2a63:
-	lea	unknown_6176,a2                      	| [$2a63: ld   ix,$6176]
+	lea	player_1_score_6176,a2                      	| [$2a63: ld   ix,$6176]
 	move.b	#0x07,d1                        	| [$2a67: ld   b,$07]
 	clr.b	d0                               	| [$2a69: xor  a]
 l_2a6a:
@@ -6442,12 +6442,12 @@ l_2d03:
 	beq.b	0f                               	| [$2d08: ret  nz] [...]
 	rts                                    	| [$2d08: ret  nz]
 0:
-	lea	unknown_6176,a3                	| [$2d09: ld   iy,unknown_6176]
+	lea	player_1_score_6176,a3                	| [$2d09: ld   iy,player_1_score_6176]
 	jbsr	l_2dd8                            	| [$2d0d: call $2DD8]
 	move.b	d1,d0                           	| [$2d10: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d11: cp   $05]
 	jcs	l_2d20                             	| [$2d13: jr   c,$2D20]
-	lea	unknown_6179,a3                	| [$2d15: ld   iy,unknown_6179]
+	lea	player_2_score_6179,a3                	| [$2d15: ld   iy,player_2_score_6179]
 	jbsr	l_2dd8                            	| [$2d19: call $2DD8]
 	move.b	d1,d0                           	| [$2d1c: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d1d: cp   $05]
@@ -6466,7 +6466,7 @@ l_2d20:
                    	| [$2d31: ld   a,$01]
                    	| [$2d33: ld   ($A001),a]
                         	| [$2d36: ld   ($A002),a]
-	lea	unknown_6176,a3                	| [$2d39: ld   iy,unknown_6176]
+	lea	player_1_score_6176,a3                	| [$2d39: ld   iy,player_1_score_6176]
 	jbsr	l_2dd8                            	| [$2d3d: call $2DD8]
 	move.b	d1,d0                           	| [$2d40: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d41: cp   $05]
@@ -6509,7 +6509,7 @@ l_2d89:
 	and.b	#0x80,d0                         	| [$2d8c: and  $80]
 	cmp.b	#0x80,d0                         	| [$2d8e: cp   $80]
 	jeq	l_2d89                             	| [$2d90: jr   z,$2D89]
-	lea	unknown_6179,a3                	| [$2d92: ld   iy,unknown_6179]
+	lea	player_2_score_6179,a3                	| [$2d92: ld   iy,player_2_score_6179]
 	jbsr	l_2dd8                            	| [$2d96: call $2DD8]
 	move.b	d1,d0                           	| [$2d99: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d9a: cp   $05]
@@ -7653,8 +7653,9 @@ l_3536:
 	move.b	d0,(a2)                    	| [$3537: ld   (ix+$00),a]
 	move.b	d0,(a3)                    	| [$353a: ld   (iy+$00),a]
 	rts                                    	| [$353d: ret]
-l_353e:
-	lea	unknown_61E7,a0                	| [$353e: ld   hl,unknown_61E7]
+
+decrease_timer_353e:
+	lea	timer_high_prec_61E7,a0                	| [$353e: ld   hl,timer_high_prec_61E7]
 	move.b	(a0),d0                         	| [$3541: ld   a,(hl)]
 	moveq	#1,d7
 	sbcd	d7,d0                        	| [$3542: sub  $01 + daa]
@@ -7662,6 +7663,7 @@ l_353e:
 												| [$3546: push af]
 												| [$3547: inc  hl]
 												| [$3548: pop  af]
+	* update "visible" part if carry set
 	move.b	(a0),d0                         	| [$3549: ld   a,(hl)]
 	clr.w	d7
 	sbcd.b	d7,d0                        	| [$354a: sbc  a,$00]
@@ -8874,7 +8876,7 @@ l_5500:
 	move.b	current_player_617C,d0          	| [$5506: ld   a,(current_player_617C)]
 	                         	| [$5509: cp   $00]
 	jne	l_5531                             	| [$550b: jp   nz,$5531]
-	lea	unknown_6176,a2                	| [$550e: ld   ix,unknown_6176]
+	lea	player_1_score_6176,a2                	| [$550e: ld   ix,player_1_score_6176]
 l_5512:
 	clr.b	d0                               	| [$5512: xor  a]
 	move.b	d6,d0                           	| [$5513: ld   a,l]
@@ -8896,7 +8898,7 @@ l_5512:
 
 
 l_5531:
-	lea	unknown_6179,a2                	| [$5531: ld   ix,unknown_6179]
+	lea	player_2_score_6179,a2                	| [$5531: ld   ix,player_2_score_6179]
 	jra	l_5512                             	| [$5535: jr   $5512]
 
 * < in:	 ix:	 player "structure"
@@ -9095,13 +9097,13 @@ l_560a:
 	jne	l_560a                             	| [$560c: djnz $560A]
 	rts                                    	| [$560e: ret]
 	
-l_560f:
-	lea	unknown_6176,a2                	| [$560f: ld   ix,unknown_6176]
+write_scores_and_time_560f:
+	lea	player_1_score_6176,a2                	| [$560f: ld   ix,player_1_score_6176]
 	move.w	#0x92E1,d6                      	| [$5613: ld   hl,$92E1]
-	jbsr	l_563c                            	| [$5616: call $563C]
-	lea	unknown_6179,a2                	| [$5619: ld   ix,unknown_6179]
+	jbsr	write_numeric_value_563C                            	| [$5616: call $563C]
+	lea	player_2_score_6179,a2                	| [$5619: ld   ix,player_2_score_6179]
 	move.w	#0x9061,d6                      	| [$561d: ld   hl,$9061]
-	jbsr	l_563c                            	| [$5620: call $563C]
+	jbsr	write_numeric_value_563C                            	| [$5620: call $563C]
 	lea	time_61E8,a2                   	| [$5623: ld   ix,time_61E8]
 	move.w	#0x9201,d6                      	| [$5627: ld   hl,$9201]
 	move.b	#0x01,d1                        	| [$562a: ld   b,$01]
@@ -9111,18 +9113,19 @@ l_560f:
 	move.b	#0x01,d1                        	| [$5636: ld   b,$01]
 	jbsr	l_5641                            	| [$5638: call $5641]
 	rts                                    	| [$563b: ret]
-l_563c:
+
+write_numeric_value_563C:
 	move.b	#0x03,d1                        	| [$563c: ld   b,$03]
 	move.w	#0x0020,d3                      	| [$563e: ld   de,$0020] 32
 l_5641:
 	move.b	(a2),d0                    	| [$5641: ld   a,(ix+$00)]
-	jbsr	write_numeric_value_564d                            	| [$5644: call $564D]
+	jbsr	write_digit_564d                            	| [$5644: call $564D]
 	addq.w	#1,a2                           	| [$5647: inc  ix]
 	add.w	d3,d6                            	| [$5649: add  hl,de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_5641                             	| [$564a: djnz $5641]
 	rts                                    	| [$564c: ret]
-write_numeric_value_564d:
+write_digit_564d:
 	move.w	d0,-(sp)                        	| [$564d: push af]
 	and.b	#0x0F,d0                         	| [$564e: and  $0F]
 	jbsr	osd_w_videoram                         	| [$5650: ld   (hl),a]

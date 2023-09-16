@@ -124,8 +124,8 @@
 	.global	unknown_6163
 	.global	unknown_6165
 	.global	unknown_6166
-	.global	unknown_6176
-	.global	unknown_6179
+	.global	player_1_score_6176
+	.global	player_2_score_6179
 	.global	score_ten_thousands_player_2_617B
 	.global	unknown_617D
 	.global	unknown_617E
@@ -143,7 +143,7 @@
 	.global	pickaxe_timer_duration_61E0
 	.global	unknown_61E4
 	.global	unknown_61E5
-	.global	unknown_61E7
+	.global	timer_high_prec_61E7
 	.global	unknown_61E9
 	.global	unknown_61EB
 	.global	unknown_61EC
@@ -437,11 +437,11 @@ unknown_6165:
 	ds.b	1
 unknown_6166:
 	ds.b	16
-unknown_6176:
+player_1_score_6176:
 	ds.b	2
 score_ten_thousands_player_1_6178:
 	ds.b	1
-unknown_6179:
+player_2_score_6179:
 	ds.b	2
 score_ten_thousands_player_2_617B:
 	ds.b	1
@@ -483,7 +483,7 @@ unknown_61E4:
 	ds.b	1
 unknown_61E5:
 	ds.b	2
-unknown_61E7:
+timer_high_prec_61E7:
 	ds.b	1
 time_61E8:
 	ds.b	1
