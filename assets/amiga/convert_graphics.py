@@ -18,7 +18,7 @@ dump_dir = os.path.join(this_dir,"dumps")
 tiles_dump_dir = os.path.join(dump_dir,"tiles")
 sprites_dump_dir = os.path.join(dump_dir,"sprites")
 
-NB_POSSIBLE_SPRITES = 128  #64+64 alternate
+NB_POSSIBLE_SPRITES = 128  # not a lot are really used
 
 ##rw_json = os.path.join(this_dir,"used_sprites.json")
 ##if os.path.exists(rw_json):
@@ -31,30 +31,17 @@ NB_POSSIBLE_SPRITES = 128  #64+64 alternate
 ##    used_sprites = None
 
 used_sprites = {}
-# this game is so simple sprite-wise that it's possible to manually enter the clut/code
-# combination instead of ripping them from running game. Besides, the game has a tendency
-# to display sprites with wrong clut (briefly but would still be logged)
 
-def add_sprites(start,stop,clut):
+
+def add_sprites(start,stop,clut,name,mirror=True):
     for i in range(start,stop+1):
-        used_sprites[i] = clut
+        add_sprite(i,clut,name,mirror)
+def add_sprite(start,clut,name,mirror=True):
+    if start in used_sprites:
+        used_sprites[start]["clut"].add(clut)
+    else:
+        used_sprites[start] = {"name":name,"clut":{clut},"mirror":mirror}
 
-# guard frames
-add_sprites(0x21,0x31,0xC)
-# player frames
-add_sprites(0x11,0x21,0x8)
-# pick frames
-add_sprites(0x77,0x79,0x9)
-#add_sprites(0x77,0x79,0x9)  # intro: pick has a different color!
-# barrow frames
-add_sprites(0x7A,0x7B,0x8)
-# wagon
-#add_sprites(0x35,0x35,0x??)
-# elevator
-#add_sprites(????)
-# bag
-add_sprites(0x7F,0x7F,0x9)  # yellow
-add_sprites(0x7F,0x7F,0x4)  # blue
 
 
 # load all tiles/cluts from screens
@@ -82,11 +69,16 @@ for sf in glob.glob(os.path.join(screens_dir,"*.bin")):
 
 used_cluts.update({k:range(0,16) for k in range(0,64)})
 
-dump_tiles = True
+dump_tiles = False
+dump_sprites = True
 if dump_tiles:
     if not os.path.exists(dump_dir):
         os.mkdir(dump_dir)
     ensure_empty(tiles_dump_dir)
+if dump_sprites:
+    if not os.path.exists(dump_dir):
+        os.mkdir(dump_dir)
+    ensure_empty(sprites_dump_dir)
 
 def dump_asm_bytes(*args,**kwargs):
     bitplanelib.dump_asm_bytes(*args,**kwargs,mit_format=True)
@@ -132,6 +124,9 @@ palette = block_dict["palette"]["data"]
 
 palette = [tuple(x) for x in palette]
 
+
+
+
 with open(os.path.join(src_dir,"palette.68k"),"w") as f:
     bitplanelib.palette_dump(palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
 
@@ -146,6 +141,59 @@ character_codes_list = list()
 
 rgb_cluts = [[tuple(palette[pidx]) for pidx in clut] for clut in bg_cluts]
 
+# this game is so simple sprite-wise that it's possible to manually enter the clut/code
+# combination instead of ripping them from running game. Besides, the game has a tendency
+# to display sprites with wrong clut (briefly but would still be logged)
+
+add_sprites(0x21,0x31,0xC,"guard")
+# player frames
+add_sprites(0x11,0x20,0x8,"player")
+# pick frames
+add_sprites(0x77,0x79,0x9,"pickaxe")
+#add_sprite(0x79,0x9,"pickaxe",False)  # no mirror
+#add_sprites(0x77,0x79,0x9)  # intro: pick has a different color!
+# barrow frames
+add_sprites(0x7A,0x7B,0x8,"barrow",False)
+# wagon
+#add_sprites(0x35,0x35,0x??)
+# elevator
+#add_sprites(????)
+# bag
+add_sprite(0x7F,0x9,"bag",False)  # yellow
+add_sprite(0x7F,0x4,"bag",False)  # blue
+
+# some sprite frames aren't used until super bagman. They're already in the sprite sheet, interesting!!!
+
+# guard jumping/sliding
+del used_sprites[0x2f]
+del used_sprites[0x28]
+del used_sprites[0x29]
+# player jumping/sliding
+
+del used_sprites[0x1d]
+del used_sprites[0x13]
+del used_sprites[0x11]
+
+# compute colors used for sprites, we have to put them in the upper part 16:32
+
+##sprite_colors = set()
+##for s in used_sprites.values():
+##    clut = s["clut"]
+##    sprite_colors.update(rgb_cluts[clut][1:])
+##
+##if len(sprite_colors)>16:
+##    # this is very unlikely, only 26 colors are used for that game!
+##    raise Exception("Too many colors for sprites")
+##
+### now reorder RGB palette
+##unordered_palette = set(palette)-sprite_colors
+##palette = sorted(unordered_palette)
+### pad if needed
+##if len(palette)<16:
+##    palette += [(255,255,255)]*(16-len(palette))
+##
+### mow sprite colors are above 16 index
+##palette += sorted(sprite_colors)
 
 
 # dump cluts as RGB4 for sprites
@@ -206,38 +254,41 @@ for k,chardat in enumerate(block_dict["tile"]["data"]):
 ### convert our picked palette to RGB
 ##spritepal = [tuple(palette[pidx]) for pidx in spritepal]
 ##
-##for k,data in sprite_config.items():
-##    sprdat = block_dict["sprite"]["data"][k]
-##
-##    d = iter(sprdat)
-##    img = Image.new('RGB',(16,16))
-##    y_start = 0
-##
-##
-##    for i in range(16):
-##        for j in range(16):
-##            v = next(d)
-##            if j >= y_start:
-##                img.putpixel((j,i),spritepal[v])
-##
-##    spr = sprites[k]
-##    spr["name"] = data['name']
-##    mirror = any(x in data["name"] for x in ("left","right"))
-##
-##    right = None
-##    outname = f"{k:02x}_{clut_index}_{data['name']}.png"
-##
-##    left = bitplanelib.palette_image2sprite(img,None,spritepal)
-##    if mirror:
-##        right = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal)
-##
-##    spr["left"] = left
-##    spr["right"] = right
-##
-##    if dump_sprites:
-##        scaled = ImageOps.scale(img,5,0)
-##        scaled.save(os.path.join(sprites_dump_dir,outname))
+for k,data in used_sprites.items():
+    sprdat = block_dict["sprite"]["data"][k]
 
+
+    for clut_index in data["clut"]:
+        spritepal = rgb_cluts[clut_index]
+        d = iter(sprdat)
+        img = Image.new('RGB',(16,16))
+        y_start = 0
+
+        for i in range(16):
+            for j in range(16):
+                v = next(d)
+                if j >= y_start:
+                    img.putpixel((j,i),spritepal[v])
+
+
+        name = data['name']
+        right = None
+
+        outname = f"{k:02x}_{clut_index}_{name}.png"
+
+
+        if "left" not in data:
+            # all bitmaps are the same, only the colors change
+            # the loop on the cluts is only useful for sprite dump
+            left = bitplanelib.palette_image2sprite(img,None,spritepal)
+            if data["mirror"]:
+                data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal)
+            data["left"] = left
+
+
+        if dump_sprites:
+            scaled = ImageOps.scale(img,5,0)
+            scaled.save(os.path.join(sprites_dump_dir,outname))
 
 
 with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
@@ -268,56 +319,48 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
                     bitplanelib.dump_asm_bytes(cc,f,mit_format=True)
     f.write("sprite_table:\n")
 
-##    sprite_names = [None]*NB_POSSIBLE_SPRITES
-##    for i in range(NB_POSSIBLE_SPRITES):
-##        sprite = sprites.get(i)
-##        f.write("\t.long\t")
-##        if sprite:
-##            name = f"{sprite['name']}_{i:02x}"
-##            sprite_names[i] = name
-##            f.write(name)
-##        else:
-##            f.write("0")
-##        f.write("\n")
-##
-##    for i in range(NB_POSSIBLE_SPRITES):
-##        sprite = sprites.get(i)
-##        if sprite:
-##            name = sprite_names[i]
-##            f.write(f"{name}:\n")
-##            for j in range(8):
-##                f.write("\t.long\t")
-##                f.write(f"{name}_{j}")
-##                f.write("\n")
-##
-##    for i in range(NB_POSSIBLE_SPRITES):
-##        sprite = sprites.get(i)
-##        if sprite:
-##            name = sprite_names[i]
-##            for j in range(8):
-##                f.write(f"{name}_{j}:\n")
-##
-##                for d in ["left","right"]:
-##                    bitmap = sprite[d]
-##                    if bitmap:
-##                        f.write(f"\t.long\t{name}_{j}_sprdata\n".replace(d,opposite[d]))
-##                    else:
-##                        # same for both
-##                        f.write(f"\t.long\t{name}_{j}_sprdata\n")
+    # main table
+    for i in range(NB_POSSIBLE_SPRITES):
+        sprite = used_sprites.get(i)
+        f.write("\t.long\t")
+        if sprite:
+            name = f"{sprite['name']}_{i:02x}"
+            f.write(name)
+        else:
+            f.write("0")  # not used (yet)
+        f.write("\n")
+
+    for i in range(NB_POSSIBLE_SPRITES):
+        sprite = used_sprites.get(i)
+        if sprite:
+            name = f"{sprite['name']}_{i:02x}:\n"
+            f.write(name)
+            for j in range(8):
+                name = f"{sprite['name']}_{i:02x}_{j}"
+                f.write(f"\t.long\t{name}\n")
+    for i in range(NB_POSSIBLE_SPRITES):
+        sprite = used_sprites.get(i)
+        if sprite:
+            for j in range(8):
+                name = f"{sprite['name']}_{i:02x}_{j}"
+                f.write(f"{name}:\n")
+                f.write(f"\t.long   {name}_left\n")
+                if sprite["mirror"]:
+                    f.write(f"\t.long   {name}_right\n")
+                else:
+                    f.write(f"\t.long   {name}_left\n")
+
 
     f.write("\t.section\t.datachip\n")
 
-##    for i in range(256):
-##        sprite = sprites.get(i)
-##        if sprite:
-##            name = sprite_names[i]
-##            for j in range(8):
-##                # clut is valid for this sprite
-##
-##                for d in ["left","right"]:
-##                    bitmap = sprite[d]
-##                    if bitmap:
-##                        sprite_label = f"{name}_{j}_sprdata".replace(d,opposite[d])
-##                        f.write(f"{sprite_label}:\n\t.long\t0\t| control word")
-##                        bitplanelib.dump_asm_bytes(sprite[d],f,mit_format=True)
-##                        f.write("\t.long\t0\n")
+    for i in range(NB_POSSIBLE_SPRITES):
+        sprite = used_sprites.get(i)
+        if sprite:
+            name = f"{sprite['name']}_{i:02x}"
+            for j in range(8):
+                f.write(f"{name}_{j}_left:")
+                bitplanelib.dump_asm_bytes(sprite["left"],f,mit_format=True)
+                if sprite["mirror"]:
+                    f.write(f"{name}_{j}_right:")
+                    bitplanelib.dump_asm_bytes(sprite["right"],f,mit_format=True)
+

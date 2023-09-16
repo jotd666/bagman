@@ -1,3 +1,5 @@
 - bonus 9900 => ... decreasing: wrong
 - display sprites
-
+- memory optim: fixed number of bitmap repeats for sprites:
+  - 1 for player, barrow
+  - 2 for others

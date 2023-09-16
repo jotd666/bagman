@@ -733,7 +733,7 @@ osd_small_wait:
 * < A0: pointer on sprite shadow zone 65A0:
 
 osd_update_sprites:
-	lea		test_sprites,a0
+	lea		test_sprites,a0  | TODO priority!!!
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
 
@@ -747,19 +747,33 @@ osd_update_sprites:
 	* check active sprites, we'll disable the sprites that aren't active anymore
 	moveq	#NB_TARGET_SPRITES-1,d7
 1:
-	move.b	(a1),d0
+	* code = 0 and clut = 0 => disabled
+	moveq	#0,d2
+	moveq	#0,d3
+	move.b	(a0),d2
 	beq.b	2f
-	move.b	(1,a1),d1
+	move.b	(1,a0),d3
 	beq.b	2f
-	move.w	(a0),d3	| clut index
-	move.w	d3,d2
-	lsr.w	#8,d2	| code & flip bits
+	move.b	(2,a0),d0  | sprite X
+	neg.b	d0
+	add.b	#240,d0
+	move.b	(3,a0),d1  | sprite Y
+	and.b	#0x3F,d2	| TODO: flip bits killed
+	btst	#5,d3
+	beq.b	11f
+	add.w	#0x40,d2
+11:
+	and.b	#0x1F,d3	| get attributes
+	
+* < D2: sprite code & flags
+* < D3: sprite color (clut index)
+* > D6: allocated sprite index
+
 	* sprite active: allocate a sprite in host table
 	* it HAS to succeed
 	bsr		alloc_sprite
 2:
-	addq.w	#2,a1
-	addq.w	#2,a0
+	addq.w	#4,a0
 	dbf		d7,1b
 	
 	* all sprites are allocated: now display them
@@ -785,17 +799,18 @@ osd_update_sprites:
 	moveq	#0,d2
 	move.b	(SPRITE_CODE,a2),d2
 	move.w	d2,d4
-	and.b	#0xFC,d4	| mask 2 last bits
-
+	**and.b	#0xFC,d4	| mask 2 last bits
+	add.w	d4,d4
+	add.w	d4,d4
 	move.l	(a4,d4.w),a5	| get pointer
 	move.w	d6,d4
 	add.w	d4,d4
 	add.w	d4,d4
 	move.l	(a5,d4.W),a5			| get buffer for this sprite index
-	btst	#1,d2			| x flip bit
-	beq.b	21f
-	addq.w	#4,a5
-21:
+*	btst	#1,d2			| x flip bit
+*	beq.b	21f
+*	addq.w	#4,a5
+*21:
 	move.l	(a5),d4
 	bne.b	22f
 	blitz		| should not happen
@@ -822,7 +837,7 @@ osd_update_sprites:
 	bne.b	24f
 	tst.l	d3
 	bne.b	24f
-	* all black: snobees would hide bagman sprites & tiles
+	* all black sprites would hide bagman sprites & tiles
 	* we want to hide them instead (no need to change palette)
 	move.l	#blank_sprite,d4
 	bra.b	25f
