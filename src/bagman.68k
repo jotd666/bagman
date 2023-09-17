@@ -207,7 +207,6 @@ cpdr:
 assert_failed_blitz:
 	jbra		osd_break
 	
-bagman_irq:
 	
 	
 bagman_reset:
@@ -218,6 +217,7 @@ bagman_reset:
 
 	jra	l_1200                             	| [$0000: jp   $1200]
 
+bagman_irq:
 
 game_tick_0038:
 	move.w	d0,-(sp)                        	| [$0038: push af]
@@ -3681,7 +3681,7 @@ l_195f:
 	rts                                    	| [$198f: ret  nz]
 0:
 	move.w	#0x0021,d3                      	| [$1990: ld   de,$0021] 33
-	add.w	d3,a0                            	| [$1993: add  hl,de]
+	add.w	d3,d6                            	| [$1993: add  hl,de]
 	jbsr	l_19b3                            	| [$1994: call $19B3]
 	beq.b	0f
 	rts                                    	| [$1997: ret  nz]
@@ -7976,6 +7976,7 @@ l_37cd:
 	jbsr	write_text_55f0                            	| [$37fa: call $55F0]
 *im   1
 	jbsr	game_tick_0038                            	| [$37ff: rst  $38]
+	move.b	#0x1,0x200
 l_3800:
 	move.b	player_input_6026,d0            	| [$3800: ld   a,(player_input_6026)]
 	or.b	#0x08,d0                          	| [$3803: or   $08]
@@ -7985,16 +7986,18 @@ l_3800:
 	move.b	#0x01,d0                        	| [$3809: ld   a,$01]
 	move.b	d0,holds_barrow_61C7                 	| [$380b: ld   (holds_barrow_61C7),a]
 	jbsr	l_38d7                            	| [$380e: call $38D7]
-	move.b	is_intermission_6274,d0                 	| [$3811: ld   a,(is_intermission_6274)]
-	cmp.b	#0x01,d0                         	| [$3814: cp   $01]
-	jeq	l_3820                             	| [$3816: jr   z,$3820]
-	move.b	#0x01,d0                        	| [$3818: ld   a,$01]
-	move.b	d0,0xA001                       	| [$381a: ld   ($A001),a]
-	move.b	d0,0xA002                       	| [$381d: ld   ($A002),a]
+												| [$3811: ld   a,(is_intermission_6274)]
+												| [$3814: cp   $01]
+												| [$3816: jr   z,$3820]
+												| [$3818: ld   a,$01]
+												| [$381a: ld   ($A001),a]
+												| [$381d: ld   ($A002),a]
+	* player walks from right to left pulling the barrow
 l_3820:
 	move.b	player_x_6582,d0                	| [$3820: ld   a,(player_x_6582)]
 	cmp.b	#0x20,d0                         	| [$3823: cp   $20]
 	jne	l_3800                             	| [$3825: jr   nz,$3800]
+	jbsr	osd_break
 l_3827:
 	move.b	player_input_6026,d0            	| [$3827: ld   a,(player_input_6026)]
 	or.b	#0x10,d0                          	| [$382a: or   $10]
@@ -8003,6 +8006,7 @@ l_3827:
 	move.b	player_x_6582,d0                	| [$3832: ld   a,(player_x_6582)]
 	cmp.b	#0x20,d0                         	| [$3835: cp   $20]
 	jne	l_3827                             	| [$3837: jr   nz,$3827]
+	* player sees guard, turns back, guard chases the player
 	lea	guard_1_struct_6594,a1         	| [$3839: ld   de,guard_1_struct_6594]
 	lea	game_mem+0x38F6,a0                      	| [$383c: ld   hl,$38F6]
 	moveq	#0x04,d1                        	| [$383f: ld   bc,$0004] 4
@@ -8022,6 +8026,7 @@ l_385b:
 	move.b	guard_1_x_6596,d0               	| [$385e: ld   a,(guard_1_x_6596)]
 	cmp.b	#0xD0,d0                         	| [$3861: cp   $D0]
 	jne	l_385b                             	| [$3863: jr   nz,$385B]
+	* guard reaches right part of the screen
 	clr.b	d0                               	| [$3865: ld   a,$00]
 	move.b	d0,holds_barrow_61C7                 	| [$3867: ld   (holds_barrow_61C7),a]
 	move.b	#0x01,d0                        	| [$386a: ld   a,$01]
@@ -8067,6 +8072,8 @@ l_38b9:
 	subq.b	#1,d1                           	| [...]
 	jne	l_38b6                             	| [$38c2: djnz $38B6]
 l_38c4:
+	* reached when bagman has stunned the guard
+	* and guard is stunned for a few seconds
 	clr.b	d0                               	| [$38c4: ld   a,$00]
 	jra	l_5e69                             	| [$38c6: jp   $5E69]
 l_38c9:
@@ -8758,7 +8765,7 @@ l_3dbe:
 	move.b	d0,(a4)                         	| [$3dbf: ld   (bc),a]
 0:
 	move.b	#0x01,d0                        	| [$3dc0: ld   a,$01]
-	move.b	d0,(0x00,a3)                    	| [$3dc2: ld   (iy+$00),a]
+	move.b	d0,(a3)                    	| [$3dc2: ld   (iy+$00),a]
 	exg	a1,a0                              	| [$3dc5: ex   de,hl]
 	move.w	#0x0004,d3                      	| [$3dc6: ld   de,$0004] 4
 	clr.b	d0                               	| [$3dc9: xor  a]
@@ -9098,7 +9105,6 @@ l_560a:
 	rts                                    	| [$560e: ret]
 	
 write_scores_and_time_560f:
-	jbsr	osd_break
 	lea	player_1_score_6176,a2                	| [$560f: ld   ix,player_1_score_6176]
 	move.w	#0x92E1,d6                      	| [$5613: ld   hl,$92E1]
 	jbsr	write_numeric_value_563C                            	| [$5616: call $563C]

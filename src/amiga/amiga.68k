@@ -733,7 +733,8 @@ osd_small_wait:
 * < A0: pointer on sprite shadow zone 65A0:
 
 osd_update_sprites:
-	lea		test_sprites,a0  | TODO priority!!!
+	**lea		test_sprites,a0
+	***add.w	#NB_TARGET_SPRITES*4,a0
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
 
