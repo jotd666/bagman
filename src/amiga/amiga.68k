@@ -759,17 +759,15 @@ osd_update_sprites:
 	cmp.b	#255,d1
 	beq.b	2f			| Y set to 255: not shown	
 	move.b	(2,a0),d0  | sprite X
-	move.b	d2,d5		| save attributes with flip bits
-	and.b	#0x3F,d2
+	* bits 6 and 7 are used to flip Y and X
+	* bit 6 is only set in cocktail mode, so we
+	* can let bit 7 pass, add 0x40 if second bank
+	* and filter it later when displaying
 	btst	#5,d3
 	beq.b	11f
 	add.w	#0x40,d2
 11:
 	and.b	#0x1F,d3	| get attributes
-	* handle flip bit
-	btst	#7,d5
-	beq.b	12f
-	bset	#7,d2
 12:
 * < D2: sprite code & flags
 * < D3: sprite color (clut index)

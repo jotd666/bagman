@@ -282,9 +282,9 @@ for k,data in used_sprites.items():
         if "left" not in data:
             # all bitmaps are the same, only the colors change
             # the loop on the cluts is only useful for sprite dump
-            left = bitplanelib.palette_image2sprite(img,None,spritepal)
+            left = bitplanelib.palette_image2sprite(img,None,spritepal) + bytes(4)
             if data["mirror"]:
-                data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal)
+                data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal) + bytes(4)
             data["left"] = left
 
 

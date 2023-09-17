@@ -1,7 +1,16 @@
-- bonus 9900 => ... decreasing: wrong
-- display sprites
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
-- sprite mirror not implemented
-- debug write_scores_and_time_560f
+  
+- code insert coin (write into number_of_credits_6000)
+
+- guard doesn't show (sprite works ok, transcoding issue)
+
+- sprite/tiles conflict.
+
+  * maybe make tile palette fit in 16 colors (forgetting BAGMAN title
+  and green, purple on screen which can be faked using coppper, which forces to reactivate
+  dynamic copper for sprites too unless we restore original colors when displaying title)
+
+  * setting green & purple & title cols after 16 would also work then we just set colors at the line where
+  the sprite is displayed (and not in the global copperlist)

@@ -4,7 +4,7 @@
 	.global	elevator_timer_current_screen_6011
 	.global	elevator_y_current_screen_6587
 	.global	gameplay_allowed_6054
-	.global	guard_1_direction_6067
+	.global	guard_2_direction_6067
 	.global	guard_1_in_elevator_603B
 	.global	guard_1_ladder_frame_6035
 	.global	guard_1_screen_6099
@@ -16,7 +16,7 @@
 	.global	guard_1_struct_6594
 	.global	guard_1_x_6596
 	.global	guard_1_y_6597
-	.global	guard_2_direction_6027
+	.global	guard_1_direction_6027
 	.global	guard_2_in_elevator_607B
 	.global	guard_2_ladder_frame_6075
 	.global	guard_2_screen_609A
@@ -59,7 +59,7 @@
 	.global	fake_credit_digit_6005
 	.global	player_climb_frame_counter_6007
 	.global	unknown_6008
-	.global	unknown_600B
+	.global	way_clear_flag_600B
 	.global	unknown_600C
 	.global	unknown_6013
 	.global	unknown_6014
@@ -147,7 +147,7 @@
 	.global	unknown_61E9
 	.global	unknown_61EB
 	.global	unknown_61EC
-	.global	unknown_61ED
+	.global	check_scenery_disabled_61ED
 	.global	unknown_61F1
 	.global	unknown_61F2
 	.global	unknown_61F3
@@ -160,7 +160,7 @@
 	.global	unknown_61FD
 	.global	unknown_61FF
 	.global	unknown_pointer_6201
-	.global	unknown_6203
+	.global	unknown_pointer_6203
 	.global	unknown_6205
 	.global	unknown_6208
 	.global	unknown_6209
@@ -229,7 +229,7 @@ unknown_6008:
 	.align	2
 player_logical_address_6009:
 	ds.l	1
-unknown_600B:
+way_clear_flag_600B:
 	ds.b	1
 unknown_600C:
 	ds.b	1
@@ -267,7 +267,7 @@ player_death_flag_6025:
 	ds.b	1
 player_input_6026:
 	ds.b	1
-guard_2_direction_6027:
+guard_1_direction_6027:
 	ds.b	1
 player_controls_frozen_6028:
 	ds.b	1
@@ -338,7 +338,7 @@ lives_6056:
 	ds.b	1
 unknown_6057:
 	ds.b	16
-guard_1_direction_6067:
+guard_2_direction_6067:
 	ds.b	13
 unknown_6074:
 	ds.b	1
@@ -493,7 +493,7 @@ unknown_61EB:
 	ds.b	1
 unknown_61EC:
 	ds.b	1
-unknown_61ED:
+check_scenery_disabled_61ED:
 	ds.b	4
 unknown_61F1:
 	ds.b	1
@@ -521,8 +521,8 @@ unknown_61FF:
 	.align	2
 unknown_pointer_6201:
 	ds.l	1
-unknown_6203:
-	ds.b	2
+unknown_pointer_6203:
+	ds.l	1
 unknown_6205:
 	ds.b	3
 unknown_6208:
