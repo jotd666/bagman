@@ -7997,7 +7997,6 @@ l_3820:
 	move.b	player_x_6582,d0                	| [$3820: ld   a,(player_x_6582)]
 	cmp.b	#0x20,d0                         	| [$3823: cp   $20]
 	jne	l_3800                             	| [$3825: jr   nz,$3800]
-	jbsr	osd_break
 l_3827:
 	move.b	player_input_6026,d0            	| [$3827: ld   a,(player_input_6026)]
 	or.b	#0x10,d0                          	| [$382a: or   $10]

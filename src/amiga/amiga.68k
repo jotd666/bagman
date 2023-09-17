@@ -71,7 +71,7 @@ FG_SCREEN_SIZE =  FG_SCREEN_PLANE_SIZE*NB_PLAYFIELD_PLANES
 * the extra 2 sprites will hopefully help to get more
 * independent colors
 NB_HOST_SPRITES = 8
-NB_TARGET_SPRITES = 6
+NB_TARGET_SPRITES = 8
 
 SPRITE_X = 0
 SPRITE_Y = 1
@@ -733,7 +733,7 @@ osd_small_wait:
 * < A0: pointer on sprite shadow zone 65A0:
 
 osd_update_sprites:
-	**lea		test_sprites,a0
+	*lea		test_sprites,a0
 	***add.w	#NB_TARGET_SPRITES*4,a0
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
@@ -755,17 +755,22 @@ osd_update_sprites:
 	beq.b	2f
 	move.b	(1,a0),d3
 	beq.b	2f
-	move.b	(2,a0),d0  | sprite X
-	neg.b	d0
-	add.b	#240,d0
 	move.b	(3,a0),d1  | sprite Y
-	and.b	#0x3F,d2	| TODO: flip bits killed
+	cmp.b	#255,d1
+	beq.b	2f			| Y set to 255: not shown	
+	move.b	(2,a0),d0  | sprite X
+	move.b	d2,d5		| save attributes with flip bits
+	and.b	#0x3F,d2
 	btst	#5,d3
 	beq.b	11f
 	add.w	#0x40,d2
 11:
 	and.b	#0x1F,d3	| get attributes
-	
+	* handle flip bit
+	btst	#7,d5
+	beq.b	12f
+	bset	#7,d2
+12:
 * < D2: sprite code & flags
 * < D3: sprite color (clut index)
 * > D6: allocated sprite index
@@ -799,8 +804,9 @@ osd_update_sprites:
 	move.b	(SPRITE_Y,a2),d1
 	moveq	#0,d2
 	move.b	(SPRITE_CODE,a2),d2
+	move.b	d2,d5		| for flip bit
+	bclr	#7,d2		| clear flip bit
 	move.w	d2,d4
-	**and.b	#0xFC,d4	| mask 2 last bits
 	add.w	d4,d4
 	add.w	d4,d4
 	move.l	(a4,d4.w),a5	| get pointer
@@ -808,18 +814,21 @@ osd_update_sprites:
 	add.w	d4,d4
 	add.w	d4,d4
 	move.l	(a5,d4.W),a5			| get buffer for this sprite index
-*	btst	#1,d2			| x flip bit
-*	beq.b	21f
-*	addq.w	#4,a5
-*21:
+	tst.b	d5			| x flip bit
+	bpl.b	21f
+	addq.w	#4,a5
+21:
 	move.l	(a5),d4
 	bne.b	22f
 	blitz		| should not happen
 22:
 	move.l	d4,a5	| sprite pointer
-	not.b	d0
-	add.b	#8,d0
-	not.b	d1
+
+* MAME driver
+*	sx = m_colorram[offs + 3];
+*	sy = 256 - m_colorram[offs + 2] - 16;
+
+
 	add.b	#16,d1
 
 	bsr		store_sprite_pos_16
@@ -871,11 +880,22 @@ osd_update_sprites:
 	rts
 
 
-* guard chasing bagman+barrow
 * priorities are from last to first
 test_sprites:
+* guard chasing bagman+barrow
 	.byte	0x3A,0x28,0x9D,0xC1,0x00,0x00,0x00,0x38,0x1E,0x08,0x90,0xC1,0x00,0x00,0x00,0xE1
 	.byte	0x00,0x00,0x00,0x41,0x00,0x00,0x00,0xC9,0x2E,0x0C,0x30,0xC1,0x00,0x00,0x00,0x00
+
+* guard only
+
+	.byte  0x30,0xc,0x64,0xc1
+	.rept	28
+	.byte  0x0
+	.endr
+
+* in game with wagons & guards
+	.byte  0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x12,0x1b,0x8,0x5e,0xe1,0x35,0x4,0x69,0xe1
+	.byte  0x35,0x4,0x67,0xff,0x35,0x4,0x18,0xff,0x0,0x0,0x0,0x0,0x31,0xc,0x51,0x63
 
 * < D0: sprite X
 * < D1: sprite Y

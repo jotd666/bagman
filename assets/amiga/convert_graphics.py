@@ -149,15 +149,17 @@ add_sprites(0x21,0x31,0xC,"guard")
 # player frames
 add_sprites(0x11,0x20,0x8,"player")
 # pick frames
-add_sprites(0x77,0x79,0x9,"pickaxe")
+add_sprites(0x77,0x78,0x9,"pickaxe")
 #add_sprite(0x79,0x9,"pickaxe",False)  # no mirror
 #add_sprites(0x77,0x79,0x9)  # intro: pick has a different color!
 # barrow frames
 add_sprites(0x7A,0x7B,0x8,"barrow",False)
 # wagon
-#add_sprites(0x35,0x35,0x??)
-# elevator
-#add_sprites(????)
+add_sprite(0x35,4,"wagon",False)
+# elevators!!
+add_sprites(0x33,4,"elevator",False)
+add_sprites(0x33,8,"elevator",False)
+#add_sprites(0x10,xx,"elevator",False)  # from Super Bagman ?
 # bag
 add_sprite(0x7F,0x9,"bag",False)  # yellow
 add_sprite(0x7F,0x4,"bag",False)  # blue
