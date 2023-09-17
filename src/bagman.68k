@@ -9098,6 +9098,7 @@ l_560a:
 	rts                                    	| [$560e: ret]
 	
 write_scores_and_time_560f:
+	jbsr	osd_break
 	lea	player_1_score_6176,a2                	| [$560f: ld   ix,player_1_score_6176]
 	move.w	#0x92E1,d6                      	| [$5613: ld   hl,$92E1]
 	jbsr	write_numeric_value_563C                            	| [$5616: call $563C]
@@ -9106,30 +9107,32 @@ write_scores_and_time_560f:
 	jbsr	write_numeric_value_563C                            	| [$5620: call $563C]
 	lea	time_61E8,a2                   	| [$5623: ld   ix,time_61E8]
 	move.w	#0x9201,d6                      	| [$5627: ld   hl,$9201]
-	move.b	#0x01,d1                        	| [$562a: ld   b,$01]
+	moveq	#0x01,d1                        	| [$562a: ld   b,$01]
 	jbsr	l_5641                            	| [$562c: call $5641]
 	lea	unknown_61E9,a2                	| [$562f: ld   ix,unknown_61E9]
 	move.w	#0x91C1,d6                     	| [$5633: ld   hl,$91C1]
-	move.b	#0x01,d1                        	| [$5636: ld   b,$01]
+	moveq	#0x01,d1                        	| [$5636: ld   b,$01]
 	jbsr	l_5641                            	| [$5638: call $5641]
 	rts                                    	| [$563b: ret]
 
 write_numeric_value_563C:
-	move.b	#0x03,d1                        	| [$563c: ld   b,$03]
-	move.w	#0x0020,d3                      	| [$563e: ld   de,$0020] 32
+	moveq	#3,d1                        	| [$563c: ld   b,$03]
 l_5641:
-	move.b	(a2),d0                    	| [$5641: ld   a,(ix+$00)]
-	jbsr	write_digit_564d                            	| [$5644: call $564D]
-	addq.w	#1,a2                           	| [$5647: inc  ix]
+	move.w	#0x0020,d3                      	| [$563e: ld   de,$0020] 32
+	subq.w	#1,d1
+0:
+	move.b	(a2)+,d0                    	| [$5641: ld   a,(ix+$00)]
+	jbsr	write_byte_value_563C                            	| [$5644: call $564D]
+											| [$5647: inc  ix]
 	add.w	d3,d6                            	| [$5649: add  hl,de]
-	subq.b	#1,d1                           	| [...]
-	jne	l_5641                             	| [$564a: djnz $5641]
+	dbf		d1,0b                             	| [$564a: djnz $5641]
 	rts                                    	| [$564c: ret]
-write_digit_564d:
+	
+write_byte_value_563C:
 	move.w	d0,-(sp)                        	| [$564d: push af]
 	and.b	#0x0F,d0                         	| [$564e: and  $0F]
 	jbsr	osd_w_videoram                         	| [$5650: ld   (hl),a]
-	add.w	d3,a0                            	| [$5651: add  hl,de]
+	add.w	d3,d6                            	| [$5651: add  hl,de]
 	move.w	(sp)+,d0                        	| [$5652: pop  af]
 	ror.b	#4,d0                            	| [$5653: rrc  a] * 4
 	and.b	#0x0F,d0                         	| [$565b: and  $0F]

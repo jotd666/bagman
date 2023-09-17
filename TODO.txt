@@ -4,3 +4,4 @@
   - 1 for player, barrow
   - 2 for others
 - sprite mirror not implemented
+- debug write_scores_and_time_560f
