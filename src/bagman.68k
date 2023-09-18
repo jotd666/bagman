@@ -109,11 +109,11 @@
 	.endm
 	
 	.macro	STORE_DX_BE_WORD_AY	dx,ay
-	move.b	\dx,(0x01,\ay)
 	move.w	\dx,-(sp)
 	lsr.w	#8,\dx
 	move.b	\dx,(\ay)
 	move.w	(sp)+,\dx
+	move.b	\dx,(0x01,\ay)
 	.endm	
 	
 	.macro CLEAR_XC_FLAG
@@ -677,19 +677,18 @@ l_0403:
 	bne.b	0f
 	rts                                    	| [$0408: ret  z]
 0:
-	lea		game_mem,a0
-	add.w	unknown_6154,a0             	| [$0409: ld   hl,(unknown_6154)]
+	move.w	unknown_6154,d6             	| [$0409: ld   hl,(unknown_6154)]
 	move.b	unknown_6153,d0                 	| [$040c: ld   a,(unknown_6153)]
 	cmp.b	#0x07,d0                         	| [$040f: cp   $07]
 	jne	l_0424                             	| [$0411: jr   nz,$0424]
 	* reads a table starting at $437 in ROM
-	move.b	(a0),d0                         	| [$0413: ld   a,(hl)]
+	bsr		read_rom                         	| [$0413: ld   a,(hl)]
 	cmp.b	#0xFF,d0                         	| [$0414: cp   $FF]
 	jeq	l_042c                             	| [$0416: jr   z,$042C]
 	move.b	d0,(A2)                    	| [$0418: ld   (ix+$00),a]
 											| [$041b: inc  hl]
-	sub.l	#game_mem-1,a0
-	move.w	a0,unknown_6154                 	| [$041c: ld   (unknown_6154),hl]
+	addq.w	#1,d6
+	move.w	d6,unknown_6154                 	| [$041c: ld   (unknown_6154),hl]
 	clr.b	d0                               	| [$041f: xor  a]
 	move.b	d0,unknown_6153                 	| [$0420: ld   (unknown_6153),a]
 	rts                                    	| [$0423: ret]
@@ -709,8 +708,7 @@ l_042c:
 l_0472:
 	lea	unknown_6151,a3                	| [$0472: ld   iy,unknown_6151]
 	lea	player_struct_6580,a2          	| [$0476: ld   ix,player_struct_6580]
-	lea	game_mem,a0
-	add.w	unknown_6154,a0             	| [$047a: ld   hl,(unknown_6154)]
+	move.w	unknown_6154,d6             	| [$047a: ld   hl,(unknown_6154)]
 	move.b	(a3),d0                    	| [$047d: ld   a,(iy+$00)]
 	                         	| [$0480: cp   $00]
 	bne.b	0f
@@ -719,13 +717,12 @@ l_0472:
 	move.b	unknown_6153,d0                 	| [$0483: ld   a,(unknown_6153)]
 	cmp.b	#0x07,d0                         	| [$0486: cp   $07]
 	jne	l_049b                             	| [$0488: jr   nz,$049B]
-	move.b	(a0),d0                         	| [$048a: ld   a,(hl)]
+	bsr		read_rom                         	| [$048a: ld   a,(hl)]
 	cmp.b	#0xFF,d0                         	| [$048b: cp   $FF]
 	jeq	l_04a3                             	| [$048d: jr   z,$04A3]
 	move.b	d0,(a2)                    	| [$048f: ld   (ix+$00),a]
-	addq.w	#1,a0                           	| [$0492: inc  hl]
-	move.l	a0,d6
-	sub.l	#game_mem,d6
+	addq.w	#1,d6                           	| [$0492: inc  hl]
+
 	move.w	d6,unknown_6154                 	| [$0493: ld   (unknown_6154),hl]
 	clr.b	d0                               	| [$0496: xor  a]
 	move.b	d0,unknown_6153                 	| [$0497: ld   (unknown_6153),a]
@@ -784,6 +781,7 @@ l_04cb:
 0:
 	move.b	#0x80,d1                        	| [$04d5: ld   b,$80]
 l_04d7:
+	* change climb frame
 	move.b	(a0),d0                         	| [$04d7: ld   a,(hl)]
 	cmp.b	#0x0B,d0                         	| [$04d8: cp   $0B]
 	jne	l_04e1                             	| [$04da: jr   nz,$04E1]
@@ -1251,7 +1249,8 @@ l_0772:
 player_grip_handle_test_0784:
 	jbsr	update_player_screen_address_from_xy_555E	| [$0784: call update_player_screen_address_from_xy_555E]
 	move.w	player_logical_address_6009,d6	| [$0787: ld   hl,(player_logical_address_6009)]
-	subq.b	#3,d6                           	| [$078a: dec  hl] * 3
+	subq.w	#3,d6                           	| [$078a: dec  hl] * 3
+	move.w	d6,0x200
 	bsr		read_rom                         	| [$078d: ld   a,(hl)] check what's above player head on screen
 	cmp.b	#0xDC,d0                         	| [$078e: cp   $DC]
 	jeq	l_0795                             	| [$0790: jr   z,$0795]
@@ -1410,7 +1409,7 @@ l_086a:
 	jra	l_08a3                             	| [$0874: jr   $08A3]
 l_0876:
 	move.b	(A3),d0                    	| [$0876: ld   a,(iy+$00)]
-	cmp.b	#0x00,d0                         	| [$0879: cp   $00]
+										| [$0879: cp   $00]
 	jne	l_0894                             	| [$087b: jr   nz,$0894]
 
 	move.l	a0,-(sp)                        	| [$087d: push hl]
@@ -1493,14 +1492,14 @@ l_08f4:
 	rts                                    	| [$0924: ret]
 l_0925:
 	move.b	(A2),d0                    	| [$0925: ld   a,(ix+$00)]
-	cmp.b	#0x00,d0                         	| [$0928: cp   $00]
+	                         	| [$0928: cp   $00]
 	jne	l_0961                             	| [$092a: jp   nz,$0961]
 	move.b	(a0),d0                         	| [$092d: ld   a,(hl)]
 	subq.b	#1,d0                           	| [$092e: dec  a]
 	move.b	d0,(a0)                         	| [$092f: ld   (hl),a]
 	move.w	d0,-(sp)                        	| [$0930: push af]
 	move.b	(0x06,a2),d0                    	| [$0931: ld   a,(ix+$06)]
-	cmp.b	#0x00,d0                         	| [$0934: cp   $00]
+	                         	| [$0934: cp   $00]
 	jeq	l_093f                             	| [$0936: jr   z,$093F]
 	move.b	player_x_6582,d0                	| [$0938: ld   a,(player_x_6582)]
 	subq.b	#1,d0                           	| [$093b: dec  a]
@@ -1509,7 +1508,7 @@ l_093f:
 	move.w	(sp)+,d0                        	| [$093f: pop  af]
 	cmp.b	(0x02,a3),d0                     	| [$0940: cp   (iy+$02)]
 	jeq	l_094c                             	| [$0943: jp   z,$094C]
-	cmp.b	#0x00,d0                         	| [$0946: cp   $00]
+	tst.b	d0                         	| [$0946: cp   $00]
 	jeq	l_0959                             	| [$0948: jp   z,$0959]
 	rts                                    	| [$094b: ret]
 l_094c:
@@ -1527,16 +1526,16 @@ l_0959:
 	move.b	d0,(0x03,a2)                    	| [$095d: ld   (ix+$03),a]
 	rts                                    	| [$0960: ret]
 l_0961:
-	move.b	(a0),d0                         	| [$0961: ld   a,(hl)]
-	addq.b	#1,d0                           	| [$0962: inc  a]
-	move.b	d0,(a0)                         	| [$0963: ld   (hl),a]
+	addq.b	#1,(a0)                         	| [$0961: ld   a,(hl)]
+											| [$0962: inc  a]
+											| [$0963: ld   (hl),a]
 	move.w	d0,-(sp)                        	| [$0964: push af]
 	move.b	(0x06,a2),d0                    	| [$0965: ld   a,(ix+$06)]
-	cmp.b	#0x00,d0                         	| [$0968: cp   $00]
+	                         	| [$0968: cp   $00]
 	jeq	l_0973                             	| [$096a: jr   z,$0973]
-	move.b	player_x_6582,d0                	| [$096c: ld   a,(player_x_6582)]
-	addq.b	#1,d0                           	| [$096f: inc  a]
-	move.b	d0,player_x_6582                	| [$0970: ld   (player_x_6582),a]
+	addq.b	#1,player_x_6582                	| [$096c: ld   a,(player_x_6582)]
+	         	| [$096f: inc  a]
+	             	| [$0970: ld   (player_x_6582),a]
 l_0973:
 	move.w	(sp)+,d0                        	| [$0973: pop  af]
 	cmp.b	(A3),d0                     	| [$0974: cp   (iy+$00)]
@@ -1774,10 +1773,10 @@ l_0b2e:
 	cmp.b	#0x01,d0                         	| [$0b2e: cp   $01]
 	jeq	l_0b5f                             	| [$0b30: jr   z,$0B5F]
 	move.b	(a0),d0                         	| [$0b32: ld   a,(hl)]
-	cmp.b	#0x00,d0                         	| [$0b33: cp   $00]
+	                         	| [$0b33: cp   $00]
 	jeq	l_0b5f                             	| [$0b35: jr   z,$0B5F]
 	move.b	d2,d0                           	| [$0b37: ld   a,c]
-	cmp.b	#0x00,d0                         	| [$0b38: cp   $00]
+	                         	| [$0b38: cp   $00]
 	beq.b	0f
 	rts                                    	| [$0b3a: ret  nz]
 0:
@@ -1786,7 +1785,7 @@ l_0b2e:
 	addq.b	#1,(0x03,a2)                    	| [$0b3f: inc  (ix+$03)]
 	addq.b	#1,(A3)                    	| [$0b42: inc  (iy+$00)]
 	move.b	unknown_61F5,d0                 	| [$0b45: ld   a,(unknown_61F5)]
-	cmp.b	#0x00,d0                         	| [$0b48: cp   $00]
+	                         	| [$0b48: cp   $00]
 	beq.b	0f
 	rts                                    	| [$0b4a: ret  nz]
 0:
@@ -1875,10 +1874,10 @@ l_0bd0:
 	addq.b	#1,d0                           	| [$0bd0: inc  a]
 	move.w	d0,-(sp)                        	| [$0bd1: push af]
 	move.b	has_bag_6158,d0                 	| [$0bd2: ld   a,(has_bag_6158)]
-	cmp.b	#0x00,d0                         	| [$0bd5: cp   $00]
+	                         	| [$0bd5: cp   $00]
 	jeq	l_0be0                             	| [$0bd7: jr   z,$0BE0]
 	jbsr	l_0cd9                            	| [$0bd9: call $0CD9]
-	cmp.b	#0x00,d0                         	| [$0bdc: cp   $00]
+	tst.b	d0                         	| [$0bdc: cp   $00]
 
 	jeq	l_0c19                             	| [$0bde: jr   z,$0C19] skip animation because player has bag
 l_0be0:
@@ -1988,7 +1987,7 @@ l_0c72:
 	rts                                    	| [$0c7b: ret]
 l_0c7c:
 	move.b	has_pick_61CF,d0                	| [$0c7c: ld   a,(has_pick_61CF)]
-	cmp.b	#0x00,d0                         	| [$0c7f: cp   $00]
+	                         	| [$0c7f: cp   $00]
 	bne.b	0f
 	rts                                    	| [$0c81: ret  z]
 0:
@@ -1997,11 +1996,11 @@ l_0c7c:
 	rts                                    	| [$0c88: ret]
 l_0c89:
 	move.b	holds_barrow_61C7,d0            	| [$0c89: ld   a,(holds_barrow_61C7)]
-	cmp.b	#0x00,d0                         	| [$0c8c: cp   $00]
+	                         	| [$0c8c: cp   $00]
 	rts                                    	| [$0c8e: ret]
-	lea	  game_mem+0x3F3F,a0                      	| [$0c8f: ld   hl,$3F3F]
-	jbsr	l_2018                            	| [$0c92: call $2018]
-	rts                                    	| [$0c95: ret]
+*	lea	  game_mem+0x3F3F,a0                      	| [$0c8f: ld   hl,$3F3F]
+*	jbsr	l_2018                            	| [$0c92: call $2018]
+*	rts                                    	| [$0c95: ret]
 l_0c96:
 	move.w	player_logical_address_6009,d6	| [$0c96: ld   hl,(player_logical_address_6009)]
 	jbsr	character_can_walk_left_0D69      	| [$0c99: call character_can_walk_left_0D69]
@@ -2021,7 +2020,7 @@ l_0c96:
 	jne	l_0ccf                             	| [$0cbd: jr   nz,$0CCF]
 	jbsr	l_0c89                            	| [$0cbf: call $0C89]
 	move.b	unknown_61F3,d0                 	| [$0cc2: ld   a,(unknown_61F3)]
-	cmp.b	#0x00,d0                         	| [$0cc5: cp   $00]
+	                         	| [$0cc5: cp   $00]
 	jne	l_0ccf                             	| [$0cc7: jr   nz,$0CCF]
 	lea	  game_mem+0x3F33,a0                      	| [$0cc9: ld   hl,$3F33]
 	jbsr	l_2018                            	| [$0ccc: call $2018]
@@ -2094,11 +2093,11 @@ l_0d07:
 	subq.w	#1,d6                           	| [$0d29: dec  hl]
 	jbsr	read_rom                         	| [$0d2a: ld   a,(hl)]
 	jbsr	l_0da2                            	| [$0d2b: call $0DA2]
-	addq.w	#2,a0                           	| [$0d2e: inc  hl] * 2
+	addq.w	#2,d6                           	| [$0d2e: inc  hl] * 2
 	jbsr	l_0d34                            	| [$0d30: call $0D34]
 	rts                                    	| [$0d33: ret]
 l_0d34:
-	move.b	(a0),d0                         	| [$0d34: ld   a,(hl)]
+	jbsr	read_rom                         	| [$0d34: ld   a,(hl)]
 
 	move.l	a0,-(sp)                        	| [$0d35: push hl]
 	movem.w	d1/d2,-(sp)                    	| [$0d36: push bc]
@@ -2207,7 +2206,7 @@ l_0dc7:
  * climb up
 l_0de9:
 	move.w	player_logical_address_6009,d6	| [$0de9: ld   hl,(player_logical_address_6009)]
-	subq.b	#1,d6                           	| [$0dec: dec  hl]
+	subq.w	#1,d6                           	| [$0dec: dec  hl]
 	jbsr	read_rom                    	| [$0ded: ld   a,(hl)]
 	cmp.b	#0xFF,d0                         	| [$0dee: cp   $FF]
 	beq.b	0f
@@ -2949,7 +2948,7 @@ l_13d3:
 l_1449:
     jbsr	osd_enable_vblank_interrupt
 	jbsr	update_guard_2_screen_address_from_xy_5575	| [$144a: call update_guard_2_screen_address_from_xy_5575]
-	move.b	(a0),d0                         	| [$144d: ld   a,(hl)]
+	bsr		read_rom                         	| [$144d: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$144e: cp   $E0]
 	*jeq	l_1455                             	| [$1450: jp   z,$1455]
 	jne	l_145a                             	| [$1453: jr   $145A]
@@ -2958,7 +2957,7 @@ l_1449:
 	move.b	d0,unknown_6077                 	| [$1457: ld   (unknown_6077),a]
 l_145a:
 	jbsr	update_guard_1_screen_address_from_xy_5568	| [$145a: call update_guard_1_screen_address_from_xy_5568]
-	move.b	(a0),d0                         	| [$145d: ld   a,(hl)]
+	bsr		read_rom                         	| [$145d: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$145e: cp   $E0]
 	*jeq	l_1464                             	| [$1460: jr   z,$1464]
 	jne	l_1469                             	| [$1462: jr   $1469]
@@ -3548,7 +3547,7 @@ l_18c7:
 	add.w	d3,d6                            	| [$18ea: add  hl,de]
 	jbsr	l_192f                            	| [$18eb: call $192F]
 	jbsr	l_1915                            	| [$18ee: call $1915]
-	subq.b	#1,d6                           	| [$18f1: dec  hl]
+	subq.w	#1,d6                           	| [$18f1: dec  hl]
 	jbsr	l_192f                            	| [$18f2: call $192F]
 	jbsr	l_1915                            	| [$18f5: call $1915]
 	move.b	unknown_627E,d0                 	| [$18f8: ld   a,(unknown_627E)]
@@ -3566,7 +3565,7 @@ l_1908:
 	bne.b	0f
 	rts                                    	| [$190d: ret  z]
 0:
-	move.b	(a0),d0                         	| [$190e: ld   a,(hl)]
+	jbsr	osd_r_videoram                         	| [$190e: ld   a,(hl)] not ROM
 	cmp.b	#0xF0,d0                         	| [$190f: cp   $F0]
 	bcc.b	0f
 	rts                                    	| [$1911: ret  c]
@@ -3576,7 +3575,7 @@ l_1908:
 	rts                                    	| [$1914: ret]
 l_1915:
 	move.b	#0x1F,d1                        	| [$1915: ld   b,$1F]
-	move.b	(a0),d0                         	| [$1917: ld   a,(hl)]
+	jbsr	osd_r_videoram                         	| [$1917: ld   a,(hl)]
 	cmp.b	#0x49,d0                         	| [$1918: cp   $49]
 	jeq	l_1926                             	| [$191a: jr   z,$1926]
 	cmp.b	#0x4A,d0                         	| [$191c: cp   $4A]
@@ -3586,13 +3585,12 @@ l_1915:
 	move.b	#0x3F,d1                        	| [$1924: ld   b,$3F]
 l_1926:
 
-	move.l	a0,-(sp)                        	| [$1926: push hl]
-	move.b	d5,d0                           	| [$1927: ld   a,h]
-	add.b	#0x08,d0                         	| [$1928: add  a,$08]
-	move.b	d0,d5                           	| [$192a: ld   h,a]
+	move.w	d6,-(sp)                        	| [$1926: push hl]
+										| [$1927: ld   a,h]
+	add.w	#0x0800,d6                         	| [$1928: add  a,$08]
 	move.b	d1,d0                           	| [$192b: ld   a,b]
-	move.b	d0,(a0)                         	| [$192c: ld   (hl),a]
-	move.l	(sp)+,a0                        	| [$192d: pop  hl]
+	jbsr	osd_w_colorram
+	move.w	(sp)+,d6                        	| [$192d: pop  hl]
 	rts                                    	| [$192e: ret]
 l_192f:
 	* D6 contains screen memory, copy to D3
@@ -3613,13 +3611,13 @@ l_1936:
 												| [$1939: cp   (hl)]
 											| [$193a: jr   nz,$1936]
 
-	move.l	a0,-(sp)                        	| [$193c: push hl]
-	move.b	d5,d0                           	| [$193d: ld   a,h]
-	add.b	#0x08,d0                         	| [$193e: add  a,$08]
-	move.b	d0,d5                           	| [$1940: ld   h,a]
+	move.w	d6,-(sp)                        	| [$193c: push hl]
+	                           	| [$193d: ld   a,h]
+	add.w	#0x0800,d6                         	| [$193e: add  a,$08]
+	                           	| [$1940: ld   h,a]
 	clr.b	d0                               	| [$1941: xor  a]
-	move.b	d0,(a0)                         	| [$1942: ld   (hl),a]
-	move.l	(sp)+,a0                        	| [$1943: pop  hl]
+	jbsr	osd_w_colorram                         	| [$1942: ld   (hl),a]
+	move.w	(sp)+,d6                        	| [$1943: pop  hl]
 	rts                                    	| [$1944: ret]
 
 * < D3: screen address
@@ -3668,7 +3666,7 @@ l_195f:
 	move.b	d0,screen_index_param_6098      	| [$197a: ld   (screen_index_param_6098),a]
 	jbsr	compute_logical_address_from_xy_558c	| [$197d: call compute_logical_address_from_xy_558c]
     jbsr	osd_enable_vblank_interrupt
-	subq.b	#1,d6                           	| [$1981: dec  hl]
+	subq.w	#1,d6                           	| [$1981: dec  hl]
 	bsr	read_rom                         	| [$1982: ld   a,(hl)]
 
 	move.w	d6,-(sp)                        	| [$1983: push hl]
@@ -3677,7 +3675,7 @@ l_195f:
 	beq.b	0f
 	rts                                    	| [$1988: ret  nz]
 0:
-	subq.b	#1,d6                           	| [$1989: dec  hl]
+	subq.w	#1,d6                           	| [$1989: dec  hl]
 
 	move.w	d6,-(sp)                        	| [$198a: push hl]
 	jbsr	l_19b3                            	| [$198b: call $19B3]
@@ -4154,7 +4152,7 @@ l_1c6f:
 	rts                                    	| [$1c93: ret]
 
 l_1c94:
-	move.l	guard_2_logical_address_6078,guard_logical_address_6091	| [$1c94: ld   hl,(guard_2_logical_address_6078)]
+	move.w	guard_2_logical_address_6078,guard_logical_address_6091	| [$1c94: ld   hl,(guard_2_logical_address_6078)]
 											| [$1c97: ld   (guard_logical_address_6091),hl]
 	move.l	#guard_2_struct_6598,guard_struct_pointer_6093         	| [$1c9a: ld   iy,guard_2_struct_6598]
 								| [$1c9e: ld   (guard_struct_pointer_6093),iy]
@@ -4922,7 +4920,7 @@ l_21ba:
 	move.b	d1,d0                           	| [$21eb: ld   a,b]
 
 	movem.w	(sp)+,d1/d2                    	| [$21ec: pop  bc]
-	cmp.b	#0x00,d0                         	| [$21ed: cp   $00]
+	tst.b	d0                         	| [$21ed: cp   $00]
 	jeq	l_3cb7                             	| [$21ef: jp   z,$3CB7]
 	movem.w	(sp)+,d5/d6                        	| [$21f2: pop  hl]
 
@@ -5012,7 +5010,7 @@ l_2241:
 	move.b	d0,unknown_6057                 	| [$2265: ld   (unknown_6057),a]
 	move.b	#0x21,d0                        	| [$2268: ld   a,$21]
 	move.b	d0,guard_1_struct_6594          	| [$226a: ld   (guard_1_struct_6594),a]
-	move.l	guard_1_logical_address_6038,d6	| [$226d: ld   hl,(guard_1_logical_address_6038)]
+	move.w	guard_1_logical_address_6038,d6	| [$226d: ld   hl,(guard_1_logical_address_6038)]
 	lea	unknown_6037,a3                	| [$2270: ld   iy,unknown_6037]
 	lea	guard_1_struct_6594,a2         	| [$2274: ld   ix,guard_1_struct_6594]
 	jbra	l_2605                            	| [$2278: call $2605]
@@ -6853,7 +6851,7 @@ l_2fa5:
 	subq.b	#1,d1                           	| [...]
 	jne	l_2fa5                             	| [$2fc0: djnz $2FA5]
 	move.w	(sp)+,d6                        	| [$2fc2: pop  hl]
-	subq.b	#2,d6                           	| [$2fc3: dec  hl] * 2
+	subq.w	#2,d6                           	| [$2fc3: dec  hl] * 2
 
 	movem.w	(sp)+,d1/d2                    	| [$2fc5: pop  bc]
 	move.w	#0x000D,d3                      	| [$2fc6: ld   de,$000D] 13
@@ -6878,7 +6876,7 @@ l_2fe3:
 	subq.b	#1,d1                           	| [...]
 	jne	l_2fe3                             	| [$2fed: djnz $2FE3]
 	move.w	(sp)+,d6                        	| [$2fef: pop  hl]
-	subq.b	#2,d6                           	| [$2ff0: dec  hl] * 2
+	subq.w	#2,d6                           	| [$2ff0: dec  hl] * 2
 
 	movem.w	(sp)+,d1/d2                    	| [$2ff2: pop  bc]
 	subq.b	#1,d1                           	| [...]
@@ -7040,9 +7038,10 @@ l_313d:
 	rts                                    	| [$3150: ret]
 	
 draw_bag_3151:
-	move.b	(0x01,a2),d6                    	| [$3155: ld   a,(ix+$01)]
-	lsl.w	#8,d6
-	move.b	(A2),d6                    	| [$3151: ld   a,(ix+$00)]
+	LOAD_AX_BE_WORD_DY	a2,d6
+											| [$3155: ld   a,(ix+$01)]
+						
+										| [$3151: ld   a,(ix+$00)]
 												| [$3154: ld   l,a]
 												| [$3158: ld   h,a]
 	move.b	player_screen_600D,d0           	| [$3159: ld   a,(player_screen_600D)]
@@ -7074,7 +7073,7 @@ draw_bag_3151:
 	move.l	(sp)+,d6                        	| [$317b: pop  hl]
 l_317c:
 	move.w	#0x0020,d3                      	| [$317c: ld   de,$0020] 32
-	add.w	d3,a6                            	| [$317f: add  hl,de]
+	add.w	d3,d6                            	| [$317f: add  hl,de]
 * read screen tile
 	jbsr	osd_r_videoram                         	| [$3180: ld   a,(hl)]
 	cmp.b	#0xD1,d0                         	| [$3181: cp   $D1]
@@ -7102,15 +7101,15 @@ l_317c:
 	jbsr	l_3197                            	| [$3193: call $3197]
 	rts                                    	| [$3196: ret]
 l_3197:
-	move.b	d5,d0                           	| [$3197: ld   a,h]
-	cmp.b	#0x00,d0                         	| [$3198: cp   $00]
-	bne.b	0f
-	rts                                    	| [$319a: ret  z]
-0:
-	add.b	#0x08,d0                         	| [$319b: add  a,$08]
-	move.b	d0,d5                           	| [$319d: ld   h,a]
+*	move.b	d5,d0                           	| [$3197: ld   a,h]
+*	cmp.b	#0x00,d0                         	| [$3198: cp   $00]
+*	bne.b	0f
+*	rts                                    	| [$319a: ret  z]
+*0:
+	add.w	#0x0800,d6                         	| [$319b: add  a,$08]
+	                           	| [$319d: ld   h,a]
 	move.b	unknown_627A,d0                 	| [$319e: ld   a,(unknown_627A)]
-	jbsr	osd_w_videoram                         	| [$31a1: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$31a1: ld   (hl),a]
 	rts                                    	| [$31a2: ret]
 l_31a3:
 	lea	guard_1_struct_6594,a2         	| [$31a3: ld   ix,guard_1_struct_6594]
@@ -7446,7 +7445,7 @@ l_33ee:
 	move.b	d0,player_screen_600D           	| [$33f3: ld   (player_screen_600D),a]
 	move.b	#0x53,d0                        	| [$33f6: ld   a,$53]
 
-	move.l	a0,-(sp)                        	| [$33f8: push hl]
+	move.l	d6,-(sp)                        	| [$33f8: push hl]
 	movem.w	d3/d4,-(sp)                    	| [$33f9: push de]
 	movem.w	d1/d2,-(sp)                    	| [$33fa: push bc]
 	move.w	#0x93B6,d6                      	| [$33fb: ld   hl,$93B6]
@@ -7471,7 +7470,7 @@ l_3403:
 
 	movem.w	(sp)+,d1/d2                    	| [$3413: pop  bc]
 	movem.w	(sp)+,d3/d4                    	| [$3414: pop  de]
-	move.l	(sp)+,a0                        	| [$3415: pop  hl]
+	move.l	(sp)+,d6                        	| [$3415: pop  hl]
 	rts                                    	| [$3416: ret]	
 	
 * < D0: tile code
@@ -7621,9 +7620,9 @@ l_34fb:
 	beq.b	0f                               	| [$3500: ret  nz] [...]
 	rts                                    	| [$3500: ret  nz]
 0:
-	move.b	lives_6056,d0                   	| [$3501: ld   a,(lives_6056)]
-	addq.b	#1,d0                           	| [$3504: inc  a]
-	move.b	d0,lives_6056                   	| [$3505: ld   (lives_6056),a]
+	addq.b	#1,lives_6056                   	| [$3501: ld   a,(lives_6056)]
+												| [$3504: inc  a]
+												| [$3505: ld   (lives_6056),a]
 	move.b	#0x01,d0                        	| [$3508: ld   a,$01]
 	move.b	d0,extra_life_awarded_6286	| [$350a: ld   (extra_life_awarded_6286),a]
 	rts                                    	| [$350d: ret]
@@ -8042,10 +8041,14 @@ l_385b:
 	jne	l_385b                             	| [$3863: jr   nz,$385B]
 	* guard reaches right part of the screen: bagman now has pick
 	* and hits the guard
+
+	move.w	d6,0x204
+
+	
 	clr.b	d0                               	| [$3865: ld   a,$00]
 	move.b	d0,holds_barrow_61C7                 	| [$3867: ld   (holds_barrow_61C7),a]
-	move.b	#0x01,d0                        	| [$386a: ld   a,$01]
-	move.b	d0,has_pick_61CF                	| [$386c: ld   (has_pick_61CF),a]
+	move.b	#0x01,has_pick_61CF                        	| [$386a: ld   a,$01]
+	                	| [$386c: ld   (has_pick_61CF),a]
 	move.b	#0x37,d0                        	| [$386f: ld   a,$37]
 	move.b	d0,unknown_659C                 	| [$3871: ld   (unknown_659C),a]
 l_3874:
@@ -8062,7 +8065,8 @@ l_3874:
 	move.b	is_intermission_6274,d0                 	| [$388b: ld   a,(is_intermission_6274)]
 	cmp.b	#0x01,d0                         	| [$388e: cp   $01]
 	jeq	l_3899                             	| [$3890: jr   z,$3899]
-	move.b	0x9248,d0                       	| [$3892: ld   a,($9248)]
+	move.w	#0x9248,d6                       	| [$3892: ld   a,($9248)]
+	jbsr	osd_r_videoram
 	cmp.b	#0xF6,d0                         	| [$3895: cp   $F6]
 	jne	l_38c4                             	| [$3897: jr   nz,$38C4]
 l_3899:
@@ -8078,13 +8082,17 @@ l_3899:
 	jbsr	l_2241                            	| [$38b1: call $2241]
 	move.b	#0x03,d1                        	| [$38b4: ld   b,$03]
 l_38b6:
-	lea	game_mem+0x5000,a0                      	| [$38b6: ld   hl,$5000]
+*	 should be a delay loop
 l_38b9:
-	subq.w	#1,a0                           	| [$38b9: dec  hl]
+	jbsr	osd_break
+	nop
+	move.b	d0,d0
+	nop
+                           	| [$38b9: dec  hl]
 	jbsr	check_if_credit_inserted_38d7                            	| [$38ba: call $38D7]
-	move.b	d5,d0                           	| [$38bd: ld   a,h]
+	                           	| [$38bd: ld   a,h]
 											| [$38be: cp   $00]
-	jne	l_38b9                             	| [$38c0: jr   nz,$38B9]
+	                             	| [$38c0: jr   nz,$38B9]
 	subq.b	#1,d1                           	| [...]
 	jne	l_38b6                             	| [$38c2: djnz $38B6]
 l_38c4:
@@ -8453,16 +8461,6 @@ l_39be:
 	move.b	#0xCA,d0                        	| [$39ea: ld   a,$CA]
 	jbsr	write_text_29bc                   	| [$39ec: call write_text_29bc]
 	rts                                    	| [$39ef: ret]
-	* unreachd!
-	move.b	#0x01,d1                        	| [$39f0: ld   bc,$0101] 257
-	move.b	#0x01,d2                        	| [$39f0: ld   bc,$0101] 257
-	nop                                    	| [$39f3: nop]
-	move.b	#0x79,d1                        	| [$39f4: ld   bc,$7900] 30976
-	move.b	#0x00,d2                        	| [$39f4: ld   bc,$7900] 30976
-	lea	unknown_61E5,a0                	| [$39f7: ld   hl,unknown_61E5]
-	add.b	(a0),d0                          	| [$39fa: add  a,(hl)]
-	move.b	d0,(a0)                         	| [$39fb: ld   (hl),a]
-	rts                                    	| [$39fc: ret]
 
 
 * < return c=0 if still bags, c=1 otherwise (level completed)
@@ -8627,11 +8625,7 @@ test_non_blocking_tiles_3c85:
 	move.w	d0,-(sp)                        	| [$3c85: push af]
 	movem.w	d3/d4,-(sp)                    	| [$3c86: push de]
 
-	move.l	a0,-(sp)                        	| [$3c87: push hl]
-	* convert D6 to real address
-	and.l	#0xFFFF,d6
-	lea		game_mem,a0
-	add.l	d6,a0
+	move.w	d6,-(sp)                        	| [$3c87: push hl]
 	
 	clr.b	d1                               	| [$3c88: ld   b,$00]
 	jbsr	l_3caa                            	| [$3c8a: call $3CAA]
@@ -8648,13 +8642,13 @@ test_non_blocking_tiles_3c85:
 	jne	l_3ca6                             	| [$3ca2: jr   nz,$3CA6]
 	move.b	#0x01,d1                        	| [$3ca4: ld   b,$01]
 l_3ca6:
-	move.l	(sp)+,a0                        	| [$3ca6: pop  hl]
+	move.w	(sp)+,d6                        	| [$3ca6: pop  hl]
 	movem.w	(sp)+,d3/d4                    	| [$3ca7: pop  de]
 	move.w	(sp)+,d0                        	| [$3ca8: pop  af]
 	rts                                    	| [$3ca9: ret]
 
 l_3caa:
-	move.b	(a0),d0                         	| [$3caa: ld   a,(hl)]
+	bsr		read_rom                         	| [$3caa: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$3cab: cp   $E0]
 	bne.b	0f
 	rts                                    	| [$3cad: ret  z]
@@ -8674,7 +8668,7 @@ l_3cb7:
 	clr.b	d0                               	| [$3cb7: xor  a]
 	move.b	d0,(A3)                    	| [$3cb8: ld   (iy+$00),a]
 	move.b	d0,(0x01,a3)                    	| [$3cbb: ld   (iy+$01),a]
-	move.l	(sp)+,a0                        	| [$3cbe: pop  hl]
+	movem.w	(sp)+,d5/d6                        	| [$3cbe: pop  hl]
 	rts             
 	
 l_3cd4:
@@ -8761,7 +8755,7 @@ l_3d65:
 	rts                                    	| [$3d77: ret]
 
 l_3d7a:
-	move.b	(a0),d0                         	| [$3d7a: ld   a,(hl)]
+	jbsr	read_rom                         	| [$3d7a: ld   a,(hl)]
 
 	move.l	a0,-(sp)                        	| [$3d7b: push hl]
 	movem.w	d1/d2,-(sp)                    	| [$3d7c: push bc]
@@ -8997,11 +8991,9 @@ l_5585:
 * > D6 logical address
 compute_logical_address_from_xy_558c:
 	jbsr	l_55ac                            	| [$558c: call $55AC]
+	* > D6.W logical ROM address
 	jbsr	l_559a                            	| [$558f: call $559A]
 	* store as big endian now (was little!)
-	lsl.w	#8,d5
-	move.b	d6,d5
-	move.w	d5,d6
 	STORE_DX_BE_WORD_AY	d6,a3               | [$5592: ld   (iy+$00),l]
 											| [$5595: ld   (iy+$01),h]
 
@@ -9010,15 +9002,17 @@ compute_logical_address_from_xy_558c:
 
 l_559a:
 	* align X coord
+	moveq	#0,d0
 	move.b	(0x03,a2),d0                    	| [$559a: ld   a,(ix+$03)]  character y value
 	add.b	#0x10,d0                         	| [$559d: add  a,$10]
 	lsr.b	#3,d0                            	| [$559f: srl  a] * 3
-	add.b	d6,d0                            	| [$55a5: add  a,l]
-	move.b	d0,d6                           	| [$55a6: ld   l,a]
-	move.b	d5,d0                           	| [$55a7: ld   a,h]
-	clr		d7
-	addx.b  d7,d0
-	move.b	d0,d5                           	| [$55aa: ld   h,a]
+	add.w	d0,d6
+											| [$55a5: add  a,l]
+										| [$55a6: ld   l,a]
+										| [$55a7: ld   a,h]
+			
+			
+										| [$55aa: ld   h,a]
 	rts                                    	| [$55ab: ret]
 
 l_55ac:
@@ -9029,12 +9023,12 @@ l_55ac:
 	jra	l_5bcd                             	| [$55b4: jp   $5BCD]
 
  * multiply $20 * a and add it to $4000
-l_55b8:
+get_screen_base_logical_address_55b8:
 	move.b	d0,d1                           	| [$55b8: ld   b,a]
 	move.w	#0x0020,d3                      	| [$55b9: ld   de,$0020] 32
-	lea	game_mem+0x4000,a0                      	| [$55bc: ld   hl,$4000]
+	move.w	#0x4000,d6                      	| [$55bc: ld   hl,$4000]
 l_55bf:
-	add.w	d3,a0                            	| [$55bf: add  hl,de]
+	add.w	d3,d6                            	| [$55bf: add  hl,de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_55bf                             	| [$55c0: djnz $55BF]
 
@@ -9047,7 +9041,7 @@ l_55c2:
 	cmp.b	#0x02,d0                         	| [$55c8: cp   $02]
 	jne	l_55d1                             	| [$55ca: jr   nz,$55D1]
 	                           	| [$55cc: ld   a,h]
-	add.w	#0x0400,a0                        	| [$55cd: add  a,$04]  screen 2:	add $400
+	add.w	#0x0400,d6                        	| [$55cd: add  a,$04]  screen 2:	add $400
 	                           	| [$55cf: ld   h,a]
 	rts                                    	| [$55d0: ret]
 l_55d1:
@@ -9056,7 +9050,7 @@ l_55d1:
 	rts                                    	| [$55d3: ret  nz]
 0:
 	                           	| [$55d4: ld   a,h]
-	add.w	#0x0800,a0                         	| [$55d5: add  a,$08]
+	add.w	#0x0800,d6                         	| [$55d5: add  a,$08]
 	                           	| [$55d7: ld   h,a]
 	rts                                    	| [$55d8: ret]
 
@@ -9170,7 +9164,7 @@ l_5bcd:
                             	| [$5bcf: srl  a]
 	                         	| [$5bd1: cp   $00]
 	jeq	l_55c2                             	| [$5bd3: jp   z,$55C2]
-	jra	l_55b8                             	| [$5bd6: jp   $55B8]
+	jra	get_screen_base_logical_address_55b8                             	| [$5bd6: jp   $55B8]
 
 
  * in:	 d6 contains 16 bit hex value of the points to add

@@ -759,6 +759,8 @@ osd_update_sprites:
 	cmp.b	#255,d1
 	beq.b	2f			| Y set to 255: not shown	
 	move.b	(2,a0),d0  | sprite X
+	cmp.b	#240,d0
+	beq.b	2f			| X >= 240: not shown	
 	* bits 6 and 7 are used to flip Y and X
 	* bit 6 is only set in cocktail mode, so we
 	* can let bit 7 pass, add 0x40 if second bank
@@ -822,11 +824,8 @@ osd_update_sprites:
 22:
 	move.l	d4,a5	| sprite pointer
 
-* MAME driver
-*	sx = m_colorram[offs + 3];
-*	sy = 256 - m_colorram[offs + 2] - 16;
-
-
+	* add 16 to both X & Y
+	add.b	#16,d0
 	add.b	#16,d1
 
 	bsr		store_sprite_pos_16

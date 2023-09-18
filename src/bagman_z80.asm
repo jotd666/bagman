@@ -7594,6 +7594,7 @@ compute_logical_address_from_xy_558c:
 * seems unreached
 55B7: 00            nop
 	;; multiply $20 * a and add it to $4000
+get_screen_base_logical_address_55b8:
 55B8: 47            ld   b,a
 55B9: 11 20 00      ld   de,$0020
 55BC: 21 00 40      ld   hl,$4000
@@ -7713,7 +7714,7 @@ write_byte_value_563C:
 5BCF: CB 3F  		srl  a                                              
 5BD1: FE 00  		cp   $00                                            
 5BD3: CA C2 55  	jp   z,$55C2                                        
-5BD6: C3 B8 55  	jp   $55B8                                          
+5BD6: C3 B8 55  	jp   get_screen_base_logical_address_55b8                                          
                                               
 
 	;; in:	 hl contains 16 bit hex value of the points to add
