@@ -172,6 +172,7 @@ w\@:
 		.global osd_sound_enable
 		.global osd_sound_disable
 		.global	osd_get_random
+		.global	osd_wait
 
 	
 	.include	"ReadJoypad.i"
@@ -659,6 +660,8 @@ _vblank:
 	tst.b	pause_flag
 	bne.b	23f
 
+	sub.w	d1,delay_timer
+	
 	jbsr		bagman_irq
 	.ifne  OPT_ENABLE_DOUBLE_BUFFERING_BG
 	bsr		switch_screen_buffers
@@ -698,21 +701,13 @@ osd_get_sync_period:
 	move.w	#13,d0
 	rts
 	
-* this needs tuning. waits roughly 400 micro seconds
-* this emulates Z80 active loop found in the intro and in other
-* places too
-*        djnz itself (10 FE)
-* < D1: 0: max (actually $100), > 0: lower
-osd_small_wait:
-	movem.w	d0/d1,-(a7)
-	and.w	#0xFF,d1
-	bne.b	0f
-	move.w	#0x100,d1
+
+* < D0: number of 1/60Hz ticks
+osd_wait:
+	move.w	d0,delay_timer
 0:
-	divu	#12,d1		| empiric
-	move.w	d1,d0
-	bsr		beamdelay
-	movem.w	(a7)+,d0/d1
+	tst.w	delay_timer
+	bne.b	0b
 	rts
 	
 *osd_calibrate_display:
@@ -760,7 +755,7 @@ osd_update_sprites:
 	beq.b	2f			| Y set to 255: not shown	
 	move.b	(2,a0),d0  | sprite X
 	cmp.b	#240,d0
-	beq.b	2f			| X >= 240: not shown	
+	bcc.b	2f			| X >= 240: not shown	
 	* bits 6 and 7 are used to flip Y and X
 	* bit 6 is only set in cocktail mode, so we
 	* can let bit 7 pass, add 0x40 if second bank
@@ -776,7 +771,7 @@ osd_update_sprites:
 * > D6: allocated sprite index
 
 	* sprite active: allocate a sprite in host table
-	* it HAS to succeed
+	* it HAS to succeed (in Pengo it did, here I'm less sure)
 	bsr		alloc_sprite
 2:
 	addq.w	#4,a0
@@ -1404,6 +1399,7 @@ osd_w_videoram:
 	blitz
 	nop	
 	nop	
+	bra.b	0f
 	
 1:
 	lea		bg_videoram,a1
@@ -1438,6 +1434,7 @@ osd_w_colorram:
 	nop
 	nop
 	nop
+	bra.b	0f
 1:
 	lea		bg_colorram,a1
 	add.w	d6,a1
@@ -1689,11 +1686,14 @@ osd_r_videoram:
 0:
 	* should not happen
 	blitz
+	clr.b	d0
 	move.b	D0,d0
 	nop
+	bra.b	2f
 1:
 	lea		bg_videoram,a0
 	move.b	(a0,d6.w),d0
+2:
 	movem.l	(a7)+,a0/d6
 	rts
 
@@ -2086,6 +2086,8 @@ _gfxbase:
 	.long	0
 _dosbase:
 	.long	0
+delay_timer:
+	.word	0
 bg_drawed_screen_ptr:
 	.long	bg_screen_data_1
 bg_displayed_screen_ptr:

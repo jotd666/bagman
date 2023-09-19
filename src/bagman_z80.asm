@@ -4629,37 +4629,37 @@ check_breakable_wall_present_25a1:
 2673: ED B0         ldir
 2675: 21 44 9B      ld   hl,$9B44
 2678: 06 04         ld   b,$04
-267A: CD 7B 29      call write_line_of_zeroes_297b
+267A: CD 7B 29      call write_line_of_zero_attributes_297b
 267D: 21 24 99      ld   hl,$9924
 2680: 06 0F         ld   b,$0F
-2682: CD 7B 29      call write_line_of_zeroes_297b
+2682: CD 7B 29      call write_line_of_zero_attributes_297b
 2685: 21 44 98      ld   hl,$9844
 2688: 06 04         ld   b,$04
-268A: CD 7B 29      call write_line_of_zeroes_297b
+268A: CD 7B 29      call write_line_of_zero_attributes_297b
 268D: 21 71 98      ld   hl,$9871
 2690: 06 03         ld   b,$03
-2692: CD 7B 29      call write_line_of_zeroes_297b
+2692: CD 7B 29      call write_line_of_zero_attributes_297b
 2695: 21 31 99      ld   hl,$9931
 2698: 06 04         ld   b,$04
-269A: CD 7B 29      call write_line_of_zeroes_297b
+269A: CD 7B 29      call write_line_of_zero_attributes_297b
 269D: 21 50 9B      ld   hl,$9B50
 26A0: 06 04         ld   b,$04
-26A2: CD 7B 29      call write_line_of_zeroes_297b
+26A2: CD 7B 29      call write_line_of_zero_attributes_297b
 26A5: 21 58 9B      ld   hl,$9B58
 26A8: 06 04         ld   b,$04
-26AA: CD 7B 29      call write_line_of_zeroes_297b
+26AA: CD 7B 29      call write_line_of_zero_attributes_297b
 26AD: 21 18 9A      ld   hl,$9A18
 26B0: 06 08         ld   b,$08
-26B2: CD 7B 29      call write_line_of_zeroes_297b
+26B2: CD 7B 29      call write_line_of_zero_attributes_297b
 26B5: 21 B4 99      ld   hl,$99B4
 26B8: 06 0B         ld   b,$0B
-26BA: CD 7B 29      call write_line_of_zeroes_297b
+26BA: CD 7B 29      call write_line_of_zero_attributes_297b
 26BD: 21 D8 98      ld   hl,$98D8
 26C0: 06 07         ld   b,$07
-26C2: CD 7B 29      call write_line_of_zeroes_297b
+26C2: CD 7B 29      call write_line_of_zero_attributes_297b
 26C5: 21 C8 98      ld   hl,$98C8
 26C8: 06 0A         ld   b,$0A
-26CA: CD 7B 29      call write_line_of_zeroes_297b
+26CA: CD 7B 29      call write_line_of_zero_attributes_297b
 26CD: 21 9B 98      ld   hl,$989B
 26D0: 06 1A         ld   b,$1A
 26D2: CD 85 29      call write_line_of_2F_attributes_2985
@@ -4727,31 +4727,31 @@ check_breakable_wall_present_25a1:
 2771: ED B0         ldir
 2773: 21 B0 99      ld   hl,$99B0
 2776: 06 11         ld   b,$11
-2778: CD 7B 29      call write_line_of_zeroes_297b
+2778: CD 7B 29      call write_line_of_zero_attributes_297b
 277B: 21 0B 9A      ld   hl,$9A0B
 277E: 06 0A         ld   b,$0A
-2780: CD 7B 29      call write_line_of_zeroes_297b
+2780: CD 7B 29      call write_line_of_zero_attributes_297b
 2783: 21 07 9B      ld   hl,$9B07
 2786: 06 06         ld   b,$06
-2788: CD 7B 29      call write_line_of_zeroes_297b
+2788: CD 7B 29      call write_line_of_zero_attributes_297b
 278B: 21 5B 99      ld   hl,$995B
 278E: 06 08         ld   b,$08
-2790: CD 7B 29      call write_line_of_zeroes_297b
+2790: CD 7B 29      call write_line_of_zero_attributes_297b
 2793: 21 BB 9A      ld   hl,$9ABB
 2796: 06 09         ld   b,$09
-2798: CD 7B 29      call write_line_of_zeroes_297b
+2798: CD 7B 29      call write_line_of_zero_attributes_297b
 279B: 21 A7 99      ld   hl,$99A7
 279E: 06 08         ld   b,$08
-27A0: CD 7B 29      call write_line_of_zeroes_297b
+27A0: CD 7B 29      call write_line_of_zero_attributes_297b
 27A3: 21 44 98      ld   hl,$9844
 27A6: 06 08         ld   b,$08
-27A8: CD 7B 29      call write_line_of_zeroes_297b
+27A8: CD 7B 29      call write_line_of_zero_attributes_297b
 27AB: 21 50 98      ld   hl,$9850
 27AE: 06 09         ld   b,$09
-27B0: CD 7B 29      call write_line_of_zeroes_297b
+27B0: CD 7B 29      call write_line_of_zero_attributes_297b
 27B3: 21 58 98      ld   hl,$9858
 27B6: 06 04         ld   b,$04
-27B8: CD 7B 29      call write_line_of_zeroes_297b
+27B8: CD 7B 29      call write_line_of_zero_attributes_297b
 27BB: 21 AA 99      ld   hl,$99AA
 27BE: 06 0D         ld   b,$0D
 27C0: CD 85 29      call write_line_of_2F_attributes_2985
@@ -4821,25 +4821,25 @@ check_breakable_wall_present_25a1:
 2860: ED B0         ldir
 2862: 21 07 99      ld   hl,$9907
 2865: 06 0E         ld   b,$0E
-2867: CD 7B 29      call write_line_of_zeroes_297b
+2867: CD 7B 29      call write_line_of_zero_attributes_297b
 286A: 21 17 99      ld   hl,$9917
 286D: 06 0E         ld   b,$0E
-286F: CD 7B 29      call write_line_of_zeroes_297b
+286F: CD 7B 29      call write_line_of_zero_attributes_297b
 2872: 21 5B 98      ld   hl,$985B
 2875: 06 14         ld   b,$14
-2877: CD 7B 29      call write_line_of_zeroes_297b
+2877: CD 7B 29      call write_line_of_zero_attributes_297b
 287A: 21 47 98      ld   hl,$9847
 287D: 06 03         ld   b,$03
-287F: CD 7B 29      call write_line_of_zeroes_297b
+287F: CD 7B 29      call write_line_of_zero_attributes_297b
 2882: 21 50 98      ld   hl,$9850
 2885: 06 03         ld   b,$03
-2887: CD 7B 29      call write_line_of_zeroes_297b
+2887: CD 7B 29      call write_line_of_zero_attributes_297b
 288A: 21 3B 9B      ld   hl,$9B3B
 288D: 06 03         ld   b,$03
-288F: CD 7B 29      call write_line_of_zeroes_297b
+288F: CD 7B 29      call write_line_of_zero_attributes_297b
 2892: 21 4A 9B      ld   hl,$9B4A
 2895: 06 03         ld   b,$03
-2897: CD 7B 29      call write_line_of_zeroes_297b
+2897: CD 7B 29      call write_line_of_zero_attributes_297b
 289A: 21 4A 98      ld   hl,$984A
 289D: 06 03         ld   b,$03
 289F: CD 85 29      call write_line_of_2F_attributes_2985
@@ -4942,7 +4942,7 @@ check_breakable_wall_present_25a1:
 2977: CD E0 1E      call $1EE0
 297A: C9            ret
 
-write_line_of_zeroes_297b:
+write_line_of_zero_attributes_297b:
 297B: 3E 1F         ld   a,$1F
 297D: 11 20 00      ld   de,$0020
 2980: 77            ld   (hl),a
@@ -6243,6 +6243,8 @@ reset_guard_position_31DF:
 336E: D0            ret  nc
 336F: FE 18         cp   $18
 3371: D8            ret  c
+; this is probably incorrect, as instructions above return
+; but below we pop the stack first which results in a crash
 3372: F1            pop  af
 3373: C9            ret
 3374: AF            xor  a

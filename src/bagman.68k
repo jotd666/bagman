@@ -96,7 +96,7 @@
     .global bagman_irq
     .global bagman_reset
 
-	*.include	"bagman.inc"
+	.include	"bagman.inc"
 	.ifdef	__amiga__
 	.include "bagman_ram.68k"
 	.align	2
@@ -1501,9 +1501,9 @@ l_0925:
 	move.b	(0x06,a2),d0                    	| [$0931: ld   a,(ix+$06)]
 	                         	| [$0934: cp   $00]
 	jeq	l_093f                             	| [$0936: jr   z,$093F]
-	move.b	player_x_6582,d0                	| [$0938: ld   a,(player_x_6582)]
-	subq.b	#1,d0                           	| [$093b: dec  a]
-	move.b	d0,player_x_6582                	| [$093c: ld   (player_x_6582),a]
+	                	| [$0938: ld   a,(player_x_6582)]
+	subq.b	#1,player_x_6582                           	| [$093b: dec  a]
+	                	| [$093c: ld   (player_x_6582),a]
 l_093f:
 	move.w	(sp)+,d0                        	| [$093f: pop  af]
 	cmp.b	(0x02,a3),d0                     	| [$0940: cp   (iy+$02)]
@@ -1517,13 +1517,13 @@ l_094c:
 	beq.b	0f
 	rts                                    	| [$0952: ret  nz]
 0:
-	move.b	#0x01,d0                        	| [$0953: ld   a,$01]
-	move.b	d0,(A2)                    	| [$0955: ld   (ix+$00),a]
+	move.b	#0x01,(A2)                        	| [$0953: ld   a,$01]
+	                    	| [$0955: ld   (ix+$00),a]
 	rts                                    	| [$0958: ret]
 l_0959:
-	move.b	(0x03,a2),d0                    	| [$0959: ld   a,(ix+$03)]
-	subq.b	#1,d0                           	| [$095c: dec  a]
-	move.b	d0,(0x03,a2)                    	| [$095d: ld   (ix+$03),a]
+	                    	| [$0959: ld   a,(ix+$03)]
+	subq.b	#1,(0x03,a2)                           	| [$095c: dec  a]
+	                    	| [$095d: ld   (ix+$03),a]
 	rts                                    	| [$0960: ret]
 l_0961:
 	addq.b	#1,(a0)                         	| [$0961: ld   a,(hl)]
@@ -1549,13 +1549,13 @@ l_097f:
 	beq.b	0f
 	rts                                    	| [$0985: ret  nz]
 0:
-	clr.b	d0                               	| [$0986: ld   a,$00]
-	move.b	d0,(A2)                    	| [$0988: ld   (ix+$00),a]
+	clr.b	(A2)                               	| [$0986: ld   a,$00]
+	                    	| [$0988: ld   (ix+$00),a]
 	rts                                    	| [$098b: ret]
 l_098c:
-	move.b	(0x03,a2),d0                    	| [$098c: ld   a,(ix+$03)]
-	addq.b	#1,d0                           	| [$098f: inc  a]
-	move.b	d0,(0x03,a2)                    	| [$0990: ld   (ix+$03),a]
+	                    	| [$098c: ld   a,(ix+$03)]
+	addq.b	#1,(0x03,a2)                           	| [$098f: inc  a]
+	                    	| [$0990: ld   (ix+$03),a]
 	rts                                    	| [$0993: ret]
 
 
@@ -1625,7 +1625,7 @@ l_0a09:
 	cmp.b	#0x01,d0                         	| [$0a0c: cp   $01]
 	jeq	l_09da                             	| [$0a0e: jr   z,$09DA]
 	move.b	fatal_fall_height_reached_604E,d0	| [$0a10: ld   a,(fatal_fall_height_reached_604E)]
-	cmp.b	#0x00,d0                         	| [$0a13: cp   $00]
+	                         	| [$0a13: cp   $00]
 	jeq	l_0a21                             	| [$0a15: jr   z,$0A21]
 	move.b	d6,d0                           	| [$0a17: ld   a,l]
 	cmp.b	#0x14,d0                         	| [$0a18: cp   $14]
@@ -1742,25 +1742,25 @@ l_0af6:
 	move.b	(A3),d0                    	| [$0af9: ld   a,(iy+$00)]
 	cmp.b	#0x01,d0                         	| [$0afc: cp   $01]
 	jne	l_0b07                             	| [$0afe: jr   nz,$0B07]
-	move.b	(0x03,a2),d0                    	| [$0b00: ld   a,(ix+$03)]
-	addq.b	#1,d0                           	| [$0b03: inc  a]
-	move.b	d0,(0x03,a2)                    	| [$0b04: ld   (ix+$03),a]
+	                    	| [$0b00: ld   a,(ix+$03)]
+	addq.b	#1,(0x03,a2)                           	| [$0b03: inc  a]
+	                    	| [$0b04: ld   (ix+$03),a]
 l_0b07:
 	move.b	(0x27,a3),d0                    	| [$0b07: ld   a,(iy+$27)]
 	cmp.b	#0x01,d0                         	| [$0b0a: cp   $01]
 	jne	l_0b15                             	| [$0b0c: jr   nz,$0B15]
-	move.b	(0x17,a2),d0                    	| [$0b0e: ld   a,(ix+$17)]
-	addq.b	#1,d0                           	| [$0b11: inc  a]
-	move.b	d0,(0x17,a2)                    	| [$0b12: ld   (ix+$17),a]
+	                    	| [$0b0e: ld   a,(ix+$17)]
+	addq.b	#1,(0x17,a2)                           	| [$0b11: inc  a]
+	                    	| [$0b12: ld   (ix+$17),a]
 l_0b15:
 	move.b	(0x67,a3),d0                    	| [$0b15: ld   a,(iy+$67)]
 	cmp.b	#0x01,d0                         	| [$0b18: cp   $01]
 	beq.b	0f
 	rts                                    	| [$0b1a: ret  nz]
 0:
-	move.b	(0x1b,a2),d0                    	| [$0b1b: ld   a,(ix+$1b)]
-	addq.b	#1,d0                           	| [$0b1e: inc  a]
-	move.b	d0,(0x1b,a2)                    	| [$0b1f: ld   (ix+$1b),a]
+	                    	| [$0b1b: ld   a,(ix+$1b)]
+	addq.b	#1,(0x1b,a2)                           	| [$0b1e: inc  a]
+	                    	| [$0b1f: ld   (ix+$1b),a]
 	rts                                    	| [$0b22: ret]
 l_0b23:
 	move.b	#0x01,d0                        	| [$0b23: ld   a,$01]
@@ -3559,13 +3559,17 @@ l_18c7:
 	jbsr	l_33e3                            	| [$1904: call z,$33E3]
 0:
 	rts                                    	| [$1907: ret]
+	
+* < A0: pointer to read from
+* < A2: pointer to read from
+* < A1: pointer to write to
 l_1908:
 	move.b	(A2),d0                    	| [$1908: ld   a,(ix+$00)]
 	cmp.b	#0x01,d0                         	| [$190b: cp   $01]
 	bne.b	0f
 	rts                                    	| [$190d: ret  z]
 0:
-	jbsr	osd_r_videoram                         	| [$190e: ld   a,(hl)] not ROM
+	move.b	(a0),d0                         	| [$190e: ld   a,(hl)] read RAM
 	cmp.b	#0xF0,d0                         	| [$190f: cp   $F0]
 	bcc.b	0f
 	rts                                    	| [$1911: ret  c]
@@ -3573,6 +3577,7 @@ l_1908:
 	clr.b	d0                               	| [$1912: xor  a]
 	move.b	d0,(a1)                         	| [$1913: ld   (de),a]
 	rts                                    	| [$1914: ret]
+
 l_1915:
 	move.b	#0x1F,d1                        	| [$1915: ld   b,$1F]
 	jbsr	osd_r_videoram                         	| [$1917: ld   a,(hl)]
@@ -3656,7 +3661,7 @@ l_195f:
 0:
 	jbsr	test_pickup_flag_19A4             	| [$1968: call test_pickup_flag_19A4]
 	move.b	d1,d0                           	| [$196b: ld   a,b]
-	cmp.b	#0x00,d0                         	| [$196c: cp   $00]
+	                         	| [$196c: cp   $00]
 	bne.b	0f
 	rts                                    	| [$196e: ret  z]
 0:
@@ -5150,7 +5155,7 @@ l_235c:
 	lsl.w	#8,d5
 	move.b	d6,d5
 	move.w	d5,d6		| screen address
-	subq.b	#1,a1                           	| [$2365: dec  de]
+	subq.w	#1,a1                           	| [$2365: dec  de]
 	move.b	player_screen_600D,d0           	| [$2366: ld   a,(player_screen_600D)]
 	move.l	(sp),a3                        	| [$2369: pop  iy]
 	cmp.b	(0x02,a3),d0                     	| [$236b: cp   (iy+$02)]
@@ -5528,37 +5533,37 @@ l_265f:
 	
 	move.w   #0x9B44,d6                      	| [$2675: ld   hl,$9B44]
 	move.b	#0x04,d1                        	| [$2678: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$267a: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$267a: call $297B]
 	move.w   #0x9924,d6                      	| [$267d: ld   hl,$9924]
 	move.b	#0x0F,d1                        	| [$2680: ld   b,$0F]
-	jbsr	write_line_of_zeroes_297b                            	| [$2682: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2682: call $297B]
 	move.w   #0x9844,d6                      	| [$2685: ld   hl,$9844]
 	move.b	#0x04,d1                        	| [$2688: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$268a: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$268a: call $297B]
 	move.w   #0x9871,d6                      	| [$268d: ld   hl,$9871]
 	move.b	#0x03,d1                        	| [$2690: ld   b,$03]
-	jbsr	write_line_of_zeroes_297b                            	| [$2692: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2692: call $297B]
 	move.w   #0x9931,d6                      	| [$2695: ld   hl,$9931]
 	move.b	#0x04,d1                        	| [$2698: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$269a: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$269a: call $297B]
 	move.w   #0x9B50,d6                      	| [$269d: ld   hl,$9B50]
 	move.b	#0x04,d1                        	| [$26a0: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$26a2: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26a2: call $297B]
 	move.w   #0x9B58,d6                      	| [$26a5: ld   hl,$9B58]
 	move.b	#0x04,d1                        	| [$26a8: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$26aa: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26aa: call $297B]
 	move.w   #0x9A18,d6                      	| [$26ad: ld   hl,$9A18]
 	move.b	#0x08,d1                        	| [$26b0: ld   b,$08]
-	jbsr	write_line_of_zeroes_297b                            	| [$26b2: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26b2: call $297B]
 	move.w   #0x99B4,d6                      	| [$26b5: ld   hl,$99B4]
 	move.b	#0x0B,d1                        	| [$26b8: ld   b,$0B]
-	jbsr	write_line_of_zeroes_297b                            	| [$26ba: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26ba: call $297B]
 	move.w   #0x98D8,d6                      	| [$26bd: ld   hl,$98D8]
 	move.b	#0x07,d1                        	| [$26c0: ld   b,$07]
-	jbsr	write_line_of_zeroes_297b                            	| [$26c2: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26c2: call $297B]
 	move.w   #0x98C8,d6                      	| [$26c5: ld   hl,$98C8]
 	move.b	#0x0A,d1                        	| [$26c8: ld   b,$0A]
-	jbsr	write_line_of_zeroes_297b                            	| [$26ca: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$26ca: call $297B]
 	move.w   #0x989B,d6                      	| [$26cd: ld   hl,$989B]
 	move.b	#0x1A,d1                        	| [$26d0: ld   b,$1A]
 	jbsr	write_line_of_2F_attributes_2985                            	| [$26d2: call $2985]
@@ -5637,31 +5642,31 @@ l_275d:
 	
  	move.w   #0x99B0,d6                      	| [$2773: ld   hl,$99B0]
 	move.b	#0x11,d1                        	| [$2776: ld   b,$11]
-	jbsr	write_line_of_zeroes_297b                            	| [$2778: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2778: call $297B]
 	move.w   #0x9A0B,d6                      	| [$277b: ld   hl,$9A0B]
 	move.b	#0x0A,d1                        	| [$277e: ld   b,$0A]
-	jbsr	write_line_of_zeroes_297b                            	| [$2780: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2780: call $297B]
 	move.w   #0x9B07,d6                      	| [$2783: ld   hl,$9B07]
 	move.b	#0x06,d1                        	| [$2786: ld   b,$06]
-	jbsr	write_line_of_zeroes_297b                            	| [$2788: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2788: call $297B]
 	move.w   #0x995B,d6                      	| [$278b: ld   hl,$995B]
 	move.b	#0x08,d1                        	| [$278e: ld   b,$08]
-	jbsr	write_line_of_zeroes_297b                            	| [$2790: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2790: call $297B]
 	move.w   #0x9ABB,d6                      	| [$2793: ld   hl,$9ABB]
 	move.b	#0x09,d1                        	| [$2796: ld   b,$09]
-	jbsr	write_line_of_zeroes_297b                            	| [$2798: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2798: call $297B]
 	move.w   #0x99A7,d6                      	| [$279b: ld   hl,$99A7]
 	move.b	#0x08,d1                        	| [$279e: ld   b,$08]
-	jbsr	write_line_of_zeroes_297b                            	| [$27a0: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$27a0: call $297B]
 	move.w   #0x9844,d6                      	| [$27a3: ld   hl,$9844]
 	move.b	#0x08,d1                        	| [$27a6: ld   b,$08]
-	jbsr	write_line_of_zeroes_297b                            	| [$27a8: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$27a8: call $297B]
 	move.w   #0x9850,d6                      	| [$27ab: ld   hl,$9850]
 	move.b	#0x09,d1                        	| [$27ae: ld   b,$09]
-	jbsr	write_line_of_zeroes_297b                            	| [$27b0: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$27b0: call $297B]
 	move.w   #0x9858,d6                      	| [$27b3: ld   hl,$9858]
 	move.b	#0x04,d1                        	| [$27b6: ld   b,$04]
-	jbsr	write_line_of_zeroes_297b                            	| [$27b8: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$27b8: call $297B]
 	move.w   #0x99AA,d6                      	| [$27bb: ld   hl,$99AA]
 	move.b	#0x0D,d1                        	| [$27be: ld   b,$0D]
 	jbsr	write_line_of_2F_attributes_2985                            	| [$27c0: call $2985]
@@ -5673,7 +5678,7 @@ l_275d:
 	jbsr	write_line_of_2F_attributes_2985                            	| [$27d0: call $2985]
 	move.w   #0x9BAA,d6                      	| [$27d3: ld   hl,$9BAA]
 	move.b	#0x2F,d0                        	| [$27d6: ld   a,$2F]
-	move.b	d0,(a0)                         	| [$27d8: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$27d8: ld   (hl),a]
 	move.w   #0x9931,d6                      	| [$27d9: ld   hl,$9931]
 	jbsr	write_3_attributes_2989                            	| [$27dc: call $2989]
 	move.w   #0x98C5,d6                      	| [$27df: ld   hl,$98C5]
@@ -5696,11 +5701,11 @@ l_275d:
 	jbsr	write_3_attributes_2989                            	| [$2812: call $2989]
 	move.w   #0x99FB,d6                      	| [$2815: ld   hl,$99FB]
 	move.b	#0x3F,d0                        	| [$2818: ld   a,$3F]
-	jbsr	osd_w_videoram                         	| [$281a: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$281a: ld   (hl),a]
 	move.w   #0x9A07,d6                      	| [$281b: ld   hl,$9A07]
-	jbsr	osd_w_videoram                         	| [$281e: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$281e: ld   (hl),a]
 	move.w   #0x9898,d6                      	| [$281f: ld   hl,$9898]
-	jbsr	osd_w_videoram                         	| [$2822: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$2822: ld   (hl),a]
 	            	| [$2823: ld   a,(io_read_shit_B800)]
 	
 	* write "BONUS"
@@ -5739,25 +5744,25 @@ l_284c:
 	
  	move.w   #0x9907,d6                      	| [$2862: ld   hl,$9907]
 	move.b	#0x0E,d1                        	| [$2865: ld   b,$0E]
-	jbsr	write_line_of_zeroes_297b                            	| [$2867: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2867: call $297B]
 	move.w   #0x9917,d6                      	| [$286a: ld   hl,$9917]
 	move.b	#0x0E,d1                        	| [$286d: ld   b,$0E]
-	jbsr	write_line_of_zeroes_297b                            	| [$286f: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$286f: call $297B]
 	move.w   #0x985B,d6                      	| [$2872: ld   hl,$985B]
 	move.b	#0x14,d1                        	| [$2875: ld   b,$14]
-	jbsr	write_line_of_zeroes_297b                            	| [$2877: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2877: call $297B]
 	move.w   #0x9847,d6                      	| [$287a: ld   hl,$9847]
 	move.b	#0x03,d1                        	| [$287d: ld   b,$03]
-	jbsr	write_line_of_zeroes_297b                            	| [$287f: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$287f: call $297B]
 	move.w   #0x9850,d6                      	| [$2882: ld   hl,$9850]
 	move.b	#0x03,d1                        	| [$2885: ld   b,$03]
-	jbsr	write_line_of_zeroes_297b                            	| [$2887: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2887: call $297B]
 	move.w   #0x9B3B,d6                      	| [$288a: ld   hl,$9B3B]
 	move.b	#0x03,d1                        	| [$288d: ld   b,$03]
-	jbsr	write_line_of_zeroes_297b                            	| [$288f: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$288f: call $297B]
 	move.w   #0x9B4A,d6                      	| [$2892: ld   hl,$9B4A]
 	move.b	#0x03,d1                        	| [$2895: ld   b,$03]
-	jbsr	write_line_of_zeroes_297b                            	| [$2897: call $297B]
+	jbsr	write_line_of_1F_attributes_297b                            	| [$2897: call $297B]
 	move.w   #0x984A,d6                      	| [$289a: ld   hl,$984A]
 	move.b	#0x03,d1                        	| [$289d: ld   b,$03]
 	jbsr	write_line_of_2F_attributes_2985                            	| [$289f: call $2985]
@@ -5880,11 +5885,12 @@ l_2957:
 	jbsr	l_1ee0                            	| [$2977: call $1EE0]
 	rts                                    	| [$297a: ret]
 
-write_line_of_zeroes_297b:
-	move.b	#0x1F,d0                        	| [$297b: ld   a,$1F]
+write_line_of_1F_attributes_297b:
+	move.b	#0x1F,d0                       	| [$297b: ld   a,$1F]
+l_297b:
 	move.w	#0x0020,d3                      	| [$297d: ld   de,$0020] 32
 l_2980:
-	jbsr		osd_w_videoram	| [$2980: ld   (hl),a]
+	jbsr		osd_w_colorram	| [$2980: ld   (hl),a]
 	add.w	d3,d6                            	| [$2981: add  hl,de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_2980                             	| [$2982: djnz $2980]
@@ -5892,15 +5898,7 @@ l_2980:
 
 write_line_of_2F_attributes_2985:
 	move.b	#0x2F,d0                        	| [$2985: ld   a,$2F]
-	* we have to duplicate the code because of the
-	* osd API (color/video)
-	move.w	#0x0020,d3                      	| [$297d: ld   de,$0020] 32
-0:
-	jbsr		osd_w_colorram	| [$2980: ld   (hl),a]
-	add.w	d3,d6                            	| [$2981: add  hl,de]
-	subq.b	#1,d1                           	| [...]
-	jne	0b                             	| [$2982: djnz $2980]
-	rts                                    	| [$2984: ret]
+	bra.b	l_297b
 
 
 write_3_attributes_2989:
@@ -5968,11 +5966,29 @@ change_attribute_everywhere_29ec:
 	* set all attributes to passed d0
 	move.b	#0x04,d1                        	| [$29ec: ld   b,$08]
 	move.w	#0x9800,d6                      	| [$29ee: ld   hl,$9800]
+0:
+	clr.b	d2                               	| [$29f1: ld   c,$00]
+1:
+	jbsr	osd_w_colorram                         	| [$29f3: ld   (hl),a]
+	addq.w	#1,d6                           	| [$29f4: inc  hl]
+	* kick watchdog
+												| [$29f5: push af]
+												| [$29f6: ld   a,(watchdog_reset_B800)]
+												| [$29f9: pop  af]
+	subq.b	#1,d2                           	| [$29fa: dec  c]
+	jne	1b                             	| [$29fb: jr   nz,$29F3]
+	subq.b	#1,d1                           	| [...]
+	jne	0b                             	| [$29fd: djnz $29F1]
+	rts                                    	| [$29ff: ret]
+	
+	* had to separate both routines
+	* as one writes to color ram and the other one
+	* writes to RAM with A0
 l_29f1:
 	clr.b	d2                               	| [$29f1: ld   c,$00]
 l_29f3:
-	jbsr	osd_w_colorram                         	| [$29f3: ld   (hl),a]
-	addq.w	#1,d6                           	| [$29f4: inc  hl]
+	move.b	d0,(a0)+                         	| [$29f3: ld   (hl),a]
+	                           	| [$29f4: inc  hl]
 	* kick watchdog
 												| [$29f5: push af]
 												| [$29f6: ld   a,(watchdog_reset_B800)]
@@ -5982,7 +5998,6 @@ l_29f3:
 	subq.b	#1,d1                           	| [...]
 	jne	l_29f1                             	| [$29fd: djnz $29F1]
 	rts                                    	| [$29ff: ret]
-	
 	
 clear_screen_2a00:
 	move.b	#0x04,d1                        	| [$2a00: ld   b,$04]
@@ -6361,9 +6376,7 @@ compute_guard_speed_from_dipsw_2C4D:
 	move.b	score_ten_thousands_player_2_617B,d0                 	| [$2c61: ld   a,(score_ten_thousands_player_2_617B)]
 	move.b	d0,d1                           	| [$2c64: ld   b,a]
 l_2c65:
-	moveq	#0,d0
-	*jbsr	osd_read_dipswitches
-	*move.b	dip_switch_B000,d0              	| [$2c65: ld   a,(dip_switch_B000)]
+	jbsr	osd_read_dipswitches            	| [$2c65: ld   a,(dip_switch_B000)]
 	roxr.b	#3,d0                           	| [$2c68: rr   a] * 3
 	not.b	d0                               	| [$2c6e: cpl]
 	and.b	#0x03,d0                         	| [$2c6f: and  $03]
@@ -7055,9 +7068,9 @@ draw_bag_3151:
 	move.b	#0xD0,d0                        	| [$3162: ld   a,$D0]
 	jbsr	osd_w_videoram                         	| [$3164: ld   (hl),a]
 
-	move.l	d6,-(sp)                        	| [$3165: push hl]
+	move.w	d6,-(sp)                        	| [$3165: push hl]
 	jbsr	l_3197                            	| [$3166: call $3197]
-	move.l	(sp)+,d6                        	| [$3169: pop  hl]
+	move.w	(sp)+,d6                        	| [$3169: pop  hl]
 	addq.w	#1,d6                           	| [$316a: inc  hl]
 * read screen tile
 	jbsr	osd_r_videoram                         	| [$316b: ld   a,(hl)]
@@ -7068,9 +7081,9 @@ draw_bag_3151:
 	move.b	#0xD1,d0                        	| [$3174: ld   a,$D1]
 	jbsr	osd_w_videoram                         	| [$3176: ld   (hl),a]
 
-	move.l	d6,-(sp)                        	| [$3177: push hl]
+	move.w	d6,-(sp)                        	| [$3177: push hl]
 	jbsr	l_3197                            	| [$3178: call $3197]
-	move.l	(sp)+,d6                        	| [$317b: pop  hl]
+	move.w	(sp)+,d6                        	| [$317b: pop  hl]
 l_317c:
 	move.w	#0x0020,d3                      	| [$317c: ld   de,$0020] 32
 	add.w	d3,d6                            	| [$317f: add  hl,de]
@@ -7371,6 +7384,9 @@ l_3369:
 	bcc.b	0f
 	rts                                    	| [$3371: ret  c]
 0:
+* this is probably incorrect, as instructions above return
+* but below we pop the stack first which results in a crash
+	illegal
 	move.w	(sp)+,d0                        	| [$3372: pop  af]
 	rts                                    	| [$3373: ret]
 l_3374:
@@ -7481,7 +7497,7 @@ draw_wheelbarrow_tiles_3417:
 	move.w	d1,-(sp)                    	| [$3417: push bc]
 	                           	| [$3418: ld   b,a]
 	move.w	d6,d1                           	| [$3419: ld   a,h]
-	lsr.w	#8,d6
+	lsr.w	#8,d1
 	                         	| [$341a: cp   $00]
 	                           	| [$341c: ld   a,b]
 
@@ -7994,8 +8010,8 @@ l_3800:
 	jbsr	osd_enable_vblank_interrupt			| [    jbsr	osd_enable_vblank_interrupt]
 	move.b	d0,player_input_6026            	| [$3806: ld   (player_input_6026),a]
 	* give barrow to player
-	move.b	#0x01,d0                        	| [$3809: ld   a,$01]
-	move.b	d0,holds_barrow_61C7                 	| [$380b: ld   (holds_barrow_61C7),a]
+	move.b	#0x01,holds_barrow_61C7                        	| [$3809: ld   a,$01]
+	                	| [$380b: ld   (holds_barrow_61C7),a]
 	jbsr	check_if_credit_inserted_38d7                            	| [$380e: call $38D7]
 												| [$3811: ld   a,(is_intermission_6274)]
 												| [$3814: cp   $01]
@@ -8004,10 +8020,13 @@ l_3800:
 												| [$381a: ld   ($A001),a]
 												| [$381d: ld   ($A002),a]
 	* player walks from right to left pulling the barrow
+
 l_3820:
 	move.b	player_x_6582,d0                	| [$3820: ld   a,(player_x_6582)]
 	cmp.b	#0x20,d0                         	| [$3823: cp   $20]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
 	jne	l_3800                             	| [$3825: jr   nz,$3800]
+	.endif
 l_3827:
 	move.b	player_input_6026,d0            	| [$3827: ld   a,(player_input_6026)]
 	or.b	#0x10,d0                          	| [$382a: or   $10]
@@ -8015,7 +8034,9 @@ l_3827:
 	jbsr	check_if_credit_inserted_38d7                            	| [$382f: call $38D7]
 	move.b	player_x_6582,d0                	| [$3832: ld   a,(player_x_6582)]
 	cmp.b	#0x20,d0                         	| [$3835: cp   $20]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
 	jne	l_3827                             	| [$3837: jr   nz,$3827]
+	.endif
 	* player sees guard, turns back, guard chases the player
 	lea	guard_1_struct_6594,a1         	| [$3839: ld   de,guard_1_struct_6594]
 	lea	game_mem+0x38F6,a0                      	| [$383c: ld   hl,$38F6]
@@ -8032,21 +8053,23 @@ l_3844:
 	jbsr	check_if_credit_inserted_38d7                            	| [$3851: call $38D7]
 	move.b	player_x_6582,d0                	| [$3854: ld   a,(player_x_6582)]
 	cmp.b	#0xF0,d0                         	| [$3857: cp   $F0]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
 	jne	l_3844                             	| [$3859: jr   nz,$3844]
+	.endif
 	* bagman reached end of screen. now wait until guard does the same
 l_385b:
 	jbsr	check_if_credit_inserted_38d7                            	| [$385b: call $38D7]
 	move.b	guard_1_x_6596,d0               	| [$385e: ld   a,(guard_1_x_6596)]
 	cmp.b	#0xD0,d0                         	| [$3861: cp   $D0]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
 	jne	l_385b                             	| [$3863: jr   nz,$385B]
+	.endif
 	* guard reaches right part of the screen: bagman now has pick
 	* and hits the guard
 
-	move.w	d6,0x204
-
-	
-	clr.b	d0                               	| [$3865: ld   a,$00]
-	move.b	d0,holds_barrow_61C7                 	| [$3867: ld   (holds_barrow_61C7),a]
+	* remove player barrow and give him pickaxe
+	clr.b	holds_barrow_61C7                               	| [$3865: ld   a,$00]
+	                 	| [$3867: ld   (holds_barrow_61C7),a]
 	move.b	#0x01,has_pick_61CF                        	| [$386a: ld   a,$01]
 	                	| [$386c: ld   (has_pick_61CF),a]
 	move.b	#0x37,d0                        	| [$386f: ld   a,$37]
@@ -8060,8 +8083,12 @@ l_3874:
 	move.b	d0,guard_1_direction_6027       	| [$387e: ld   (guard_1_direction_6027),a]
 	jbsr	check_if_credit_inserted_38d7                            	| [$3881: call $38D7]
 	move.b	player_x_6582,d0                	| [$3884: ld   a,(player_x_6582)]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
 	cmp.b	#0x10,d0                         	| [$3887: cp   $10]
 	jcs	l_38c4                             	| [$3889: jr   c,$38C4]
+	.else
+	jra	l_38c4
+	.endif
 	move.b	is_intermission_6274,d0                 	| [$388b: ld   a,(is_intermission_6274)]
 	cmp.b	#0x01,d0                         	| [$388e: cp   $01]
 	jeq	l_3899                             	| [$3890: jr   z,$3899]
@@ -8081,13 +8108,13 @@ l_3899:
 	jne	l_3874                             	| [$38af: jr   nz,$3874]
 	jbsr	l_2241                            	| [$38b1: call $2241]
 	move.b	#0x03,d1                        	| [$38b4: ld   b,$03]
+	.ifeq	OPT_SKIP_INTRO_SCREEN
+
 l_38b6:
-*	 should be a delay loop
+*	 delay loop, approx 3 seconds
 l_38b9:
-	jbsr	osd_break
-	nop
-	move.b	d0,d0
-	nop
+	move.w	#60,d0
+	jbsr	osd_wait
                            	| [$38b9: dec  hl]
 	jbsr	check_if_credit_inserted_38d7                            	| [$38ba: call $38D7]
 	                           	| [$38bd: ld   a,h]
@@ -8095,6 +8122,8 @@ l_38b9:
 	                             	| [$38c0: jr   nz,$38B9]
 	subq.b	#1,d1                           	| [...]
 	jne	l_38b6                             	| [$38c2: djnz $38B6]
+	.endif
+	
 l_38c4:
 	* reached when bagman has stunned the guard
 	* and guard is stunned for a few seconds
@@ -8839,8 +8868,8 @@ l_3df9:
 	jbsr	osd_read_dipswitches              	| [$3e42: ld   a,(dip_switch_B000)]
 	not.b	d0                               	| [$3e45: cpl]
 	and.b	#0x80,d0                         	| [$3e46: and  $80]
-	rol.b	#1,d0                            	| [$3e48: rlc  a]
 	move.b	#0x01,d1                        	| [$3e4a: ld   b,$01]
+	rol.b	#1,d0                            	| [$3e48: rlc  a]
 	                         	| [$3e4c: cp   $00]
 	jeq	l_3e57                             	| [$3e4e: jr   z,$3E57]
 	move.b	d0,d1                           	| [$3e50: ld   b,a]

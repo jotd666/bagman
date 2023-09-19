@@ -1,11 +1,13 @@
+- demo mode displays screen 2
+
+- immediate wrong behaviour / crash
+
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
   
 - code insert coin (write into number_of_credits_6000)
 
-- compute_logical_address_from_xy_558c to debug as player_grip_handle_test_0784
-  yields bogus logical value
 
 - sprite/tiles conflict.
 
@@ -13,10 +15,10 @@
   and green, purple on screen which can be faked using coppper, which forces to reactivate
   dynamic copper for sprites too unless we restore original colors when displaying title)
 
-  * setting green & purple & title cols after 16 would also work then we just set colors at the line where
-  the sprite is displayed (and not in the global copperlist)
+  * setting green & purple & title cols after 16 would also work
 
 converter: 
 
 - signal move.w from/to ax
 - inc hl/de/bc: addq.w
+- dec hl/de/bc: subq.w
