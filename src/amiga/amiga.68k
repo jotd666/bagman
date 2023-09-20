@@ -357,7 +357,6 @@ _user:
 	bne.b	0f
 	bset	#0,d0
 0:
-	not.b	d0		| active low
 	move.b	d0,dip_switches+1
 
 *	btst	#1,d1
@@ -1698,77 +1697,79 @@ osd_r_videoram:
 	rts
 
 osd_read_dipswitches:
+	* actual dipswitches
 	move.b	dip_switches(pc),d0
+	not.b	d0		| active low
+	
+
 	rts
 	
 * reads most inputs in one call
-* bits 0-8     coins
-* bits 16-24   start buttons
-* bits 24-28   joystick directions
-* bit 31       joystick fire
+* bits 0-1    coins
+
 osd_read_inputs:
 	bsr		handle_keyboard
 	moveq	#-1,d0
 	movem.l	a0/d1,-(a7)
-	* misc control keys
 	lea		keyboard_table(pc),a0
-	tst.b	(5,a0)		| "5" key like in MAME
-	beq.b	0f
-	bclr	#6,d0
-0:
+	* misc control keys
 	tst.b	(6,a0)		| "6" key like in MAME
 	beq.b	0f
-	bclr	#6,d0
+	bclr	#1,d0
 0:	
+	tst.b	(5,a0)		| "5" key like in MAME
+	beq.b	0f
+	bclr	#0,d0
+0:
 	tst.b	(1,a0)		| "1" key like in MAME
 	beq.b	0f
-	bclr	#5+16,d0
+	bclr	#2,d0
 0:
-	tst.b	(2,a0)		| "2" key like in MAME
-	beq.b	0f
-	bclr	#6+16,d0
-0:	
+*	tst.b	(2,a0)		| "2" key like in MAME
+*	beq.b	0f
+*	bclr	#6+16,d0
+*0:	
 	tst.b	(0x4F,a0)		| "<-" key
 	beq.b	0f
-	bclr	#26,d0
+	bclr	#3,d0
 0:
 	tst.b	(0x4E,a0)		| "->" key
 	beq.b	0f
-	bclr	#27,d0
+	bclr	#4,d0
 0:
 	tst.b	(0x4C,a0)		| "up" key
 	beq.b	0f
-	bclr	#24,d0
+	bclr	#5,d0
 0:
 	tst.b	(0x4D,a0)		| "down" key
 	beq.b	0f
-	bclr	#25,d0
+	bclr	#6,d0
 0:
 	tst.b	(0x63,a0)		| "ctrl" key
 	beq.b	0f
-	bclr	#31,d0
+	bclr	#7,d0
 0:
 	* directions + fire
 	move.l	_joypad_state(pc),d1
 	btst	#JPB_BTN_UP,d1
 	beq.b	0f
-	bclr	#24,d0
+	bclr	#5,d0
 0:
 	btst	#JPB_BTN_DOWN,d1
 	beq.b	0f
-	bclr	#25,d0
+	bclr	#6,d0
 0:
 	btst	#JPB_BTN_LEFT,d1
 	beq.b	0f
-	bclr	#26,d0
+	bclr	#3,d0
 0:
 	btst	#JPB_BTN_RIGHT,d1
 	beq.b	0f
-	bclr	#27,d0
+	bclr	#4,d0
 0:
 	btst	#JPB_BTN_RED,d1
 	beq.b	0f
-	bclr	#31,d0
+	bclr	#7,d0
 0:
 	*tst.b	game_playing_8817
 	*bne.b	3f
@@ -1780,22 +1781,22 @@ osd_read_inputs:
 	move.l	_joypad_state,_previous_joypad_state
 	
 	* game not in play, accept start 1P game with "up"
-	btst	#JPB_BTN_UP,d1
-	beq.b	0f
-	bclr	#5+16,d0
-0:
-	* game not in play, accept start 2P game with "down"
-	btst	#JPB_BTN_DOWN,d1
-	beq.b	0f
-	bclr	#6+16,d0
-0:
-	btst	#JPB_BTN_RED,d1
-	beq.b	0f
-	btst	#JPB_BTN_RED,d2
-	bne.b	0f
-	* game not in play, accept insert coin with fire
-	bclr	#6,d0
-0:
+*	btst	#JPB_BTN_UP,d1
+*	beq.b	0f
+*	bclr	#5+16,d0
+*0:
+*	* game not in play, accept start 2P game with "down"
+*	btst	#JPB_BTN_DOWN,d1
+*	beq.b	0f
+*	bclr	#6+16,d0
+*0:
+*	btst	#JPB_BTN_RED,d1
+*	beq.b	0f
+*	btst	#JPB_BTN_RED,d2
+*	bne.b	0f
+*	* game not in play, accept insert coin with fire
+*	bclr	#6,d0
+*0:
 	move.l	(a7)+,d2
 3:
 

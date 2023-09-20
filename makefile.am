@@ -39,8 +39,8 @@ all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDL
 clean:
 	del $(OBJS) "$(MAIN)"
 	
-#$(AMIGASRC)/graphics.68k: $(ASSETS)/used_tiles_and_sprites.json $(ASSETS)/convert_graphics.py $(ASSETS)/../kchampvs2_gfx.c $(ASSETS)/no_mirror.json
-#	cmd /c $(ASSETS)\convert_graphics.py
+$(AMIGASRC)/graphics.68k: $(ASSETS)/convert_graphics.py $(ASSETS)/../bagman_gfx.c
+	cmd /c $(ASSETS)\convert_graphics.py
 
 
 #$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME)_conv.mod

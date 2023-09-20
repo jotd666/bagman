@@ -41,7 +41,7 @@
 	.global	player_has_blue_bag_flag_627C
 	.global	player_in_wagon_flag_6029
 	.global	player_input_6026
-	.global	player_move_direction_6050
+	.global	player_input_6050
 	.global	player_screen_600D
 	.global	player_logical_address_6009
 	.global	player_struct_6580
@@ -121,7 +121,7 @@
 	.global	unknown_615E
 	.global	unknown_615F
 	.global	unknown_6161
-	.global	unknown_6163
+	.global	flipped_dip_switches_copy_6163
 	.global	unknown_6165
 	.global	unknown_6166
 	.global	player_1_score_6176
@@ -322,7 +322,7 @@ fatal_fall_height_reached_604E:
 	ds.b	1
 unknown_604F:
 	ds.b	1
-player_move_direction_6050:
+player_input_6050:
 	ds.b	1
 unknown_6051:
 	ds.b	1
@@ -429,7 +429,7 @@ pickup_flag_6160:
 	ds.b	1
 unknown_6161:
 	ds.b	2
-unknown_6163:
+flipped_dip_switches_copy_6163:
 	ds.b	1
 guard_speed_6164:
 	ds.b	1
@@ -656,6 +656,7 @@ previous_guard_1_struct_65B8:
 	ds.b	4
 previous_guard_2_struct_65BC:
 	ds.b	564
+	.align	2
 	* more stack!
 	ds.l	0x1000
 stack_top_67F0:

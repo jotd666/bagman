@@ -157,8 +157,8 @@ add_sprites(0x7A,0x7B,0x8,"barrow",False)
 # wagon
 add_sprite(0x35,4,"wagon",False)
 # elevators!!
-add_sprites(0x33,4,"elevator",False)
-add_sprites(0x33,8,"elevator",False)
+add_sprite(0x33,4,"elevator",False)
+add_sprite(0x33,8,"elevator",False)
 #add_sprites(0x10,xx,"elevator",False)  # from Super Bagman ?
 # bag
 add_sprite(0x7F,0x9,"bag",False)  # yellow

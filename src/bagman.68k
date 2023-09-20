@@ -108,6 +108,11 @@
 	move.b	(1,\ax),\dy
 	.endm
 	
+	.macro	LOAD_AX_LE_WORD_DY	ax,dy
+	LOAD_AX_BE_WORD_DY	\ax,\dy
+	ror.w	#8,\dy
+	.endm
+	
 	.macro	STORE_DX_BE_WORD_AY	dx,ay
 	move.w	\dx,-(sp)
 	lsr.w	#8,\dx
@@ -1283,7 +1288,7 @@ l_0795:
 	move.b	gameplay_allowed_6054,d0        	| [$07ae: ld   a,(gameplay_allowed_6054)]
 									| [$07b1: cp   $00]
 	jeq	player_grips_handle_07BD           	| [$07b3: jr   z,player_grips_handle_07BD]
-	move.b	player_move_direction_6050,d0   	| [$07b5: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$07b5: ld   a,(player_input_6050)]
 	and.b	#0x80,d0                         	| [$07b8: and  $80]
 	cmp.b	#0x80,d0                         	| [$07ba: cp   $80]
 	bne.b	0f
@@ -1350,7 +1355,7 @@ l_07fb:
 	move.b	gameplay_allowed_6054,d0        	| [$0809: ld   a,(gameplay_allowed_6054)]
 	cmp.b	#0x00,d0                         	| [$080c: cp   $00]
 	jeq	l_0818                             	| [$080e: jr   z,$0818]
-	move.b	player_move_direction_6050,d0   	| [$0810: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$0810: ld   a,(player_input_6050)]
 	and.b	#0x80,d0                         	| [$0813: and  $80]
 	cmp.b	#0x80,d0                         	| [$0815: cp   $80]
 	bne.b	0f
@@ -2414,7 +2419,7 @@ l_0f38:
 	addq.w	#1,a0                           	| [$0f39: inc  hl]
 	subq.b	#1,d1                           	| [...]
 	jne	l_0f38                             	| [$0f3a: djnz $0F38]
-	move.b	unknown_6163,d0                 	| [$0f3c: ld   a,(unknown_6163)]
+	move.b	flipped_dip_switches_copy_6163,d0                 	| [$0f3c: ld   a,(flipped_dip_switches_copy_6163)]
 	and.b	#0x03,d0                         	| [$0f3f: and  $03]
 	addq.b	#0x01,d0                        	| [$0f41: add  a,$01]
 	move.b	d0,lives_6056                   	| [$0f43: ld   (lives_6056),a]
@@ -2543,7 +2548,7 @@ l_109d:
 	move.b	gameplay_allowed_6054,d0        	| [$109d: ld   a,(gameplay_allowed_6054)]
 	cmp.b	#0x01,d0                         	| [$10a0: cp   $01]
 	jeq	object_pickup_test_10AE            	| [$10a2: jr   z,object_pickup_test_10AE]
-	move.b	player_move_direction_6050,d0   	| [$10a4: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$10a4: ld   a,(player_input_6050)]
 	and.b	#0x80,d0                         	| [$10a7: and  $80]
 	cmp.b	#0x80,d0                         	| [$10a9: cp   $80]
 	jeq	l_10bf                             	| [$10ab: jr   z,$10BF]
@@ -2555,7 +2560,7 @@ object_pickup_test_10AE:
 	cmp.b	#0x80,d0                         	| [$10b3: cp   $80]
 	jne	l_10c5                             	| [$10b5: jr   nz,$10C5]
 * fire pressed
-	move.b	player_move_direction_6050,d0   	| [$10b7: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$10b7: ld   a,(player_input_6050)]
 	and.b	#0x80,d0                         	| [$10ba: and  $80]
 	cmp.b	#0x80,d0                         	| [$10bc: cp   $80] just leaving the wagon handle
 	bne.b	0f
@@ -2698,19 +2703,9 @@ l_121c:
 	move.l	a0,unknown_pointer_6140                 	| [$1228: ld   (unknown_pointer_6140),hl]
  * reset guards and player
 l_122b:
+
 	jbsr	osd_disable_vblank_interrupt | jbsr	osd_disable_vblank_interrupt
 									| [$122c: ld   a,(io_read_shit_B800)]
-	jbsr	display_maze_1E94                 	| [$122f: call display_maze_1E94]
-	jbsr	l_2957                            	| [$1232: call $2957]
-	clr.b	d0                               	| [$1235: xor  a]
-	move.b	d0,player_death_flag_6025       	| [$1236: ld   (player_death_flag_6025),a]
-	addq.b	#1,d0                           	| [$1239: inc  a]
-	move.b	d0,guard_2_screen_609A          	| [$123a: ld   (guard_2_screen_609A),a]
-	move.b	#0x03,d0                        	| [$123d: ld   a,$03]
-	move.b	d0,guard_1_screen_6099          	| [$123f: ld   (guard_1_screen_6099),a]
-
-* game main loop
-	jbsr	osd_disable_vblank_interrupt		| jbsr	osd_disable_vblank_interrupt
 	            	| [$122c: ld   a,(io_read_shit_B800)]
 	jbsr	display_maze_1E94                 	| [$122f: call display_maze_1E94]
 	jbsr	l_2957                            	| [$1232: call $2957]
@@ -3427,7 +3422,7 @@ l_180c:
 
 	movem.w	(sp)+,d1/d2                    	| [$1815: pop  bc]
 	jne	l_1830                             	| [$1816: jp   nz,$1830]
-	LOAD_AX_BE_WORD_DY	a3,d3
+	LOAD_AX_LE_WORD_DY	a3,d3
 										| [$1819: ld   d,(iy+$01)]
 								
 										| [$181c: ld   e,(iy+$00)]
@@ -5115,7 +5110,7 @@ l_2320:
 	cmp.b	d1,d0                            	| [$232b: cp   b]
 	jne	l_2350                             	| [$232c: jr   nz,$2350]
 							
-	LOAD_AX_BE_WORD_DY	a3,d6                  	| [$232e: ld   l,(iy+$00)]
+	LOAD_AX_LE_WORD_DY	a3,d6                  	| [$232e: ld   l,(iy+$00)]
 												| [$2331: ld   h,(iy+$01)]
 	jbsr	osd_r_videoram                         	| [$2334: ld   a,(hl)]
 	jbsr	is_background_tile_3573                            	| [$2335: call $3573]
@@ -5244,7 +5239,8 @@ l_24bd:
 	move.b	#0x01,d0                        	| [$24d2: ld   a,$01]
 	move.b	d0,unknown_626E                 	| [$24d4: ld   (unknown_626E),a]
 l_24d7:
-	move.w	(sp)+,d0                        	| [$24d7: pop  af]
+	* actual stack pop!
+	addq.w	#4,a7                        	| [$24d7: pop  af]
 	rts                                    	| [$24d8: ret]
 l_24d9:
 	* display PLAYER2
@@ -5602,14 +5598,14 @@ l_265f:
 	jbsr	display_text_30F9                 	| [$272f: call display_text_30F9]
 	lea	unknown_6584,a0                	| [$2732: ld   hl,unknown_6584]
 	move.b	#0x33,d0                        	| [$2735: ld   a,$33]
-	move.b	d0,(a0)                         	| [$2737: ld   (hl),a]
-	addq.w	#1,a0                           	| [$2738: inc  hl]
+	move.b	d0,(a0)+                         	| [$2737: ld   (hl),a]
+	                           	| [$2738: inc  hl]
 	move.b	#0x0C,d0                        	| [$2739: ld   a,$0C]
-	move.b	d0,(a0)                         	| [$273b: ld   (hl),a]
-	addq.w	#1,a0                           	| [$273c: inc  hl]
+	move.b	d0,(a0)+                         	| [$273b: ld   (hl),a]
+	                           	| [$273c: inc  hl]
 	move.b	#0x2F,d0                        	| [$273d: ld   a,$2F]
-	move.b	d0,(a0)                         	| [$273f: ld   (hl),a]
-	addq.w	#1,a0                           	| [$2740: inc  hl]
+	move.b	d0,(a0)+                         	| [$273f: ld   (hl),a]
+	                           	| [$2740: inc  hl]
 	            	| [$2741: ld   a,(io_read_shit_B800)]
 	move.b	unknown_6166,d0                 	| [$2744: ld   a,(unknown_6166)]
 	move.b	d0,(a0)                         	| [$2747: ld   (hl),a]
@@ -5714,15 +5710,15 @@ l_275d:
 	jbsr	display_text_30F9                 	| [$282c: call display_text_30F9]
 	lea	unknown_6584,a0                	| [$282f: ld   hl,unknown_6584]
 	move.b	#0x33,d0                        	| [$2832: ld   a,$33]
-	move.b	d0,(a0)                         	| [$2834: ld   (hl),a]
+	move.b	d0,(a0)+                         	| [$2834: ld   (hl),a]
 	move.b	#0x04,d0                        	| [$2835: ld   a,$04]
-	addq.w	#1,a0                           	| [$2837: inc  hl]
-	move.b	d0,(a0)                         	| [$2838: ld   (hl),a]
+	                           	| [$2837: inc  hl]
+	move.b	d0,(a0)+                         	| [$2838: ld   (hl),a]
 	move.b	#0x97,d0                        	| [$2839: ld   a,$97]
-	addq.w	#1,a0                           	| [$283b: inc  hl]
-	move.b	d0,(a0)                         	| [$283c: ld   (hl),a]
+	                           	| [$283b: inc  hl]
+	move.b	d0,(a0)+                         	| [$283c: ld   (hl),a]
 	move.b	unknown_6165,d0                 	| [$283d: ld   a,(unknown_6165)]
-	addq.w	#1,a0                           	| [$2840: inc  hl]
+	                           	| [$2840: inc  hl]
 	move.b	d0,(a0)                         	| [$2841: ld   (hl),a]
 	            	| [$2842: ld   a,(io_read_shit_B800)]
 	jbsr	l_1e26                            	| [$2845: call $1E26]
@@ -5792,27 +5788,27 @@ l_284c:
 	jbsr	write_3_attributes_2989                            	| [$28e5: call $2989]
 	move.b	#0x3F,d0                        	| [$28e8: ld   a,$3F]
 	move.w   #0x9A7B,d6                      	| [$28ea: ld   hl,$9A7B]
-	move.b	d0,(a0)                         	| [$28ed: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$28ed: ld   (hl),a]
 	move.w   #0x98DB,d6                      	| [$28ee: ld   hl,$98DB]
-	move.b	d0,(a0)                         	| [$28f1: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$28f1: ld   (hl),a]
 	move.w   #0x9A27,d6                      	| [$28f2: ld   hl,$9A27]
-	move.b	d0,(a0)                         	| [$28f5: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$28f5: ld   (hl),a]
 	move.w   #0x9867,d6                      	| [$28f6: ld   hl,$9867]
-	move.b	d0,(a0)                         	| [$28f9: ld   (hl),a]
+	jbsr	osd_w_colorram                         	| [$28f9: ld   (hl),a]
 	clr.b	d0                               	| [$28fa: xor  a]
 	lea	unknown_6584,a0                	| [$28fb: ld   hl,unknown_6584]
-	move.b	d0,(a0)                         	| [$28fe: ld   (hl),a]
-	addq.w	#1,a0                           	| [$28ff: inc  hl]
-	move.b	d0,(a0)                         	| [$2900: ld   (hl),a]
-	addq.w	#1,a0                           	| [$2901: inc  hl]
-	move.b	d0,(a0)                         	| [$2902: ld   (hl),a]
-	addq.w	#1,a0                           	| [$2903: inc  hl]
+	move.b	d0,(a0)+                         	| [$28fe: ld   (hl),a]
+	                           	| [$28ff: inc  hl]
+	move.b	d0,(a0)+                         	| [$2900: ld   (hl),a]
+	                           	| [$2901: inc  hl]
+	move.b	d0,(a0)+                         	| [$2902: ld   (hl),a]
+	                           	| [$2903: inc  hl]
 	move.b	d0,(a0)                         	| [$2904: ld   (hl),a]
 	            	| [$2905: ld   a,(io_read_shit_B800)]
 	jbsr	l_1e26                            	| [$2908: call $1E26]
 	jbsr	l_3110                            	| [$290b: call $3110]
 	move.b	unknown_6210,d0                 	| [$290e: ld   a,(unknown_6210)]
-	cmp.b	#0x00,d0                         	| [$2911: cp   $00]
+	                         	| [$2911: cp   $00]
 	bne.b	0f
 	rts                                    	| [$2913: ret  z]
 0:
@@ -6073,8 +6069,8 @@ l_2a6a:
 	jne	l_2a6a                             	| [$2a6d: djnz $2A6A]
 	rts                                    	| [$2a6f: ret]
 l_2a70:
-	* cocktail mode?
-*	move.b	unknown_6163,d0                       	| [$2a70: ld   a,($6163)]
+	* cocktail mode
+*	move.b	flipped_dip_switches_copy_6163,d0                       	| [$2a70: ld   a,($6163)]
 *	and.b	#0x80,d0                         	| [$2a73: and  $80]
 *	                         	| [$2a75: cp   $00]
 *	jeq	l_2a85                             	| [$2a77: jr   z,$2A85]
@@ -7384,10 +7380,8 @@ l_3369:
 	bcc.b	0f
 	rts                                    	| [$3371: ret  c]
 0:
-* this is probably incorrect, as instructions above return
-* but below we pop the stack first which results in a crash
-	illegal
-	move.w	(sp)+,d0                        	| [$3372: pop  af]
+	* pops the call stack, not D0!
+	addq.l	#4,a7                        	| [$3372: pop  af]
 	rts                                    	| [$3373: ret]
 l_3374:
 										| [$3374: xor  a]
@@ -7709,7 +7703,7 @@ set_bags_coordinates_355b:
 	lea	bags_coordinates_609C,a1       	| [$355b: ld   de,bags_coordinates_609C]
 0:
 	lea	game_mem+0x5AE8(pc),a0                      	| [$355e: ld   hl,$5AE8]
-	move.b	#0x003A,d1                        	| [$3561: ld   bc,$003A] 58
+	move.w	#0x003A,d1                        	| [$3561: ld   bc,$003A] 58
 	jbra	ldir                              	| [$3564: ldir]
  	rts                                    	| [$3566: ret]
 
@@ -8085,9 +8079,9 @@ l_3874:
 	move.b	player_x_6582,d0                	| [$3884: ld   a,(player_x_6582)]
 	.ifeq	OPT_SKIP_INTRO_SCREEN
 	cmp.b	#0x10,d0                         	| [$3887: cp   $10]
-	jcs	l_38c4                             	| [$3889: jr   c,$38C4]
+	jcs	intro_end_38c4                             	| [$3889: jr   c,$38C4]
 	.else
-	jra	l_38c4
+	jra	intro_end_38c4
 	.endif
 	move.b	is_intermission_6274,d0                 	| [$388b: ld   a,(is_intermission_6274)]
 	cmp.b	#0x01,d0                         	| [$388e: cp   $01]
@@ -8095,7 +8089,7 @@ l_3874:
 	move.w	#0x9248,d6                       	| [$3892: ld   a,($9248)]
 	jbsr	osd_r_videoram
 	cmp.b	#0xF6,d0                         	| [$3895: cp   $F6]
-	jne	l_38c4                             	| [$3897: jr   nz,$38C4]
+	jne	intro_end_38c4                             	| [$3897: jr   nz,$38C4]
 l_3899:
 	move.b	player_x_6582,d0                	| [$3899: ld   a,(player_x_6582)]
 	cmp.b	#0x03,d0                         	| [$389c: cp   $03]
@@ -8124,7 +8118,7 @@ l_38b9:
 	jne	l_38b6                             	| [$38c2: djnz $38B6]
 	.endif
 	
-l_38c4:
+intro_end_38c4:
 	* reached when bagman has stunned the guard
 	* and guard is stunned for a few seconds
 	*
@@ -8156,7 +8150,7 @@ check_if_credit_inserted_38d7:
 	move.b	d0,check_scenery_disabled_61ED                 	| [$38e5: ld   (check_scenery_disabled_61ED),a]
 												| [$38e8: ld   a,(watchdog_reset_B800)]
 	move.l	(sp)+,a0                        	| [$38eb: pop  hl]
-	jra	l_38c4                             	| [$38ec: jr   $38C4]
+	jra	intro_end_38c4                             	| [$38ec: jr   $38C4]
 
 
 write_credits_and_lives_39be:
@@ -8194,21 +8188,21 @@ l_39f6:
 
 read_player_controls_39fd:
 	move.b	player_input_6026,d0            	| [$39fd: ld   a,(player_input_6026)]
-	move.b	d0,player_move_direction_6050   	| [$3a00: ld   (player_move_direction_6050),a]
+	move.b	d0,player_input_6050   	| [$3a00: ld   (player_input_6050),a]
 	clr.b	d0                               	| [$3a03: xor  a]
-* probably play walk sound
 *	move.b	d0,0xA007                       	| [$3a04: ld   ($A007),a]
-*          ^^^^^^ TODO: review absolute 16-bit address write
-*	move.b	#0x07,d0                        	| [$3a07: ld   a,$07]
-*out  ($08),a
-*	move.b	#0x38,d0                        	| [$3a0b: ld   a,$38]
-*out  ($09),a
-*	move.b	#0x0E,d0                        	| [$3a0f: ld   a,$0E]
-*out  ($08),a
-*in   a,($0C)
+* actually read the controls
+	jbsr	osd_read_inputs
+												| [$3a07: ld   a,$07]
+								
+												| [$3a0b: ld   a,$38]
+								
+												| [$3a0f: ld   a,$0E]
+								
+								
 	not.b	d0                               	| [$3a15: cpl]
 	jbsr	l_3a3f                            	| [$3a16: call $3A3F]
-	jbsr	l_3a54                            	| [$3a19: call $3A54]
+	**jbsr	handle_cocktail_3a54                            	| [$3a19: call $3A54]
 	move.b	d0,player_input_6026            	| [$3a1c: ld   (player_input_6026),a]
 	move.b	unknown_6051,d0                 	| [$3a1f: ld   a,(unknown_6051)]
 	move.b	d0,unknown_6052                 	| [$3a22: ld   (unknown_6052),a]
@@ -8220,8 +8214,8 @@ read_player_controls_39fd:
 	move.b	d0,unknown_6051                 	| [$3a2f: ld   (unknown_6051),a]
 	jbsr	osd_read_dipswitches              	| [$3a32: ld   a,(dip_switch_B000)]
 	not.b	d0                               	| [$3a35: cpl]
-	move.b	d0,unknown_6163                 	| [$3a36: ld   (unknown_6163),a]
-	move.b	#0x01,d0                        	| [$3a39: ld   a,$01]
+	move.b	d0,flipped_dip_switches_copy_6163                 	| [$3a36: ld   (flipped_dip_switches_copy_6163),a]
+*	move.b	#0x01,d0                        	| [$3a39: ld   a,$01]
 *	move.b	d0,0xA007                       	| [$3a3b: ld   ($A007),a]
 	rts                                    	| [$3a3e: ret]
 l_3a3f:
@@ -8238,10 +8232,11 @@ l_3a50:
 	move.w	(sp)+,d0                        	| [$3a50: pop  af]
 	and.b	#0x07,d0                         	| [$3a51: and  $07]
 	rts                                    	| [$3a53: ret]
-l_3a54:
+handle_cocktail_3a54:
 	move.b	d0,d1                           	| [$3a54: ld   b,a]
 	jbsr	osd_read_dipswitches              	| [$3a55: ld   a,(dip_switch_B000)]
 	not.b	d0                               	| [$3a58: cpl]
+	* cocktail mode
 	rol.b	#1,d0                            	| [$3a59: rlc  a]
 	and.b	#0x01,d0                         	| [$3a5b: and  $01]
 	move.b	d0,d2                           	| [$3a5d: ld   c,a]
@@ -8266,7 +8261,7 @@ l_3a6b:
 l_3b00:
 	jbsr	check_remaining_bags_3BBC         	| [$3b00: call check_remaining_bags_3BBC]
 	move.b	d2,d0                           	| [$3b03: ld   a,c]
-	cmp.b	#0x00,d0                         	| [$3b04: cp   $00]
+	                         	| [$3b04: cp   $00]
 	bne.b	0f
 	rts                                    	| [$3b06: ret  z]
 0:
@@ -8343,13 +8338,13 @@ l_3907:
 	move.b	player_input_6026,d0            	| [$3907: ld   a,(player_input_6026)]
 	and.b	#0x01,d0                         	| [$390a: and  $01]
 	move.b	d0,d1                           	| [$390c: ld   b,a]
-	move.b	player_move_direction_6050,d0   	| [$390d: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$390d: ld   a,(player_input_6050)]
 	and.b	#0x01,d0                         	| [$3910: and  $01]
 	cmp.b	d1,d0                            	| [$3912: cp   b]
 	bne.b	0f                               	| [$3913: ret  z] [...]
 	rts                                    	| [$3913: ret  z]
 0:
-	move.b	player_move_direction_6050,d0   	| [$3914: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$3914: ld   a,(player_input_6050)]
 	and.b	#0x01,d0                         	| [$3917: and  $01]
 	cmp.b	#0x01,d0                         	| [$3919: cp   $01]
 	beq.b	0f                               	| [$391b: ret  nz] [...]
@@ -8363,13 +8358,13 @@ l_3924:
 	move.b	player_input_6026,d0            	| [$3924: ld   a,(player_input_6026)]
 	and.b	#0x02,d0                         	| [$3927: and  $02]
 	move.b	d0,d1                           	| [$3929: ld   b,a]
-	move.b	player_move_direction_6050,d0   	| [$392a: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$392a: ld   a,(player_input_6050)]
 	and.b	#0x02,d0                         	| [$392d: and  $02]
 	cmp.b	d1,d0                            	| [$392f: cp   b]
 	bne.b	0f                               	| [$3930: ret  z] [...]
 	rts                                    	| [$3930: ret  z]
 0:
-	move.b	player_move_direction_6050,d0   	| [$3931: ld   a,(player_move_direction_6050)]
+	move.b	player_input_6050,d0   	| [$3931: ld   a,(player_input_6050)]
 	and.b	#0x02,d0                         	| [$3934: and  $02]
 	cmp.b	#0x02,d0                         	| [$3936: cp   $02]
 	beq.b	0f                               	| [$3938: ret  nz] [...]
@@ -8424,7 +8419,7 @@ l_397b:
 	jbsr	l_39f6                            	| [$397c: call $39F6]
 	move.w	(sp)+,d0                        	| [$397f: pop  af]
 	move.b	d0,d1                           	| [$3980: ld   b,a]
-	move.b	unknown_6163,d0                 	| [$3981: ld   a,(unknown_6163)]
+	move.b	flipped_dip_switches_copy_6163,d0                 	| [$3981: ld   a,(flipped_dip_switches_copy_6163)]
 	and.b	#0x04,d0                         	| [$3984: and  $04]
 	cmp.b	#0x04,d0                         	| [$3986: cp   $04]
 	jeq	l_398c                             	| [$3989: jr   z,$398C]
@@ -8454,6 +8449,7 @@ l_3997:
 	bne.b	0f                               	| [$39a3: ret  z] [...]
 	rts                                    	| [$39a3: ret  z]
 0:
+	* add one credit
 	moveq	#1,d7
 	abcd	d7,d0                        	| [$39a4: add  a,$01 + daa]
 
@@ -8867,6 +8863,7 @@ l_3df9:
 
 	jbsr	osd_read_dipswitches              	| [$3e42: ld   a,(dip_switch_B000)]
 	not.b	d0                               	| [$3e45: cpl]
+	* cocktail mode shit again
 	and.b	#0x80,d0                         	| [$3e46: and  $80]
 	move.b	#0x01,d1                        	| [$3e4a: ld   b,$01]
 	rol.b	#1,d0                            	| [$3e48: rlc  a]
@@ -8980,7 +8977,7 @@ within_bounds_554E:
 	rts                                    	| [$555a: ret]
 * okay:	return from guard_collision_5537 directly (pop)
 l_555b:
-	move.w	(sp)+,d0                        	| [$555b: pop  af]
+	addq.l	#4,a7                        	| [$555b: pop  af]
 	clr.b	d0                               	| [$555c: xor  a]
 	rts                                    	| [$555d: ret]
 

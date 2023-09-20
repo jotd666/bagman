@@ -1,13 +1,13 @@
-- demo mode displays screen 2
+- demo mode displays screen 2 (maybe 3)
+- start game: starts screen 3, guards & player are bogus
+- sprites shifted by 8 pixels (X)
 
-- immediate wrong behaviour / crash
+
 
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
   
-- code insert coin (write into number_of_credits_6000)
-
 
 - sprite/tiles conflict.
 
