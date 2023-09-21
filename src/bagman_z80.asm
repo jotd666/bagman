@@ -673,7 +673,7 @@ guard_ladder_movement_04AD:
 0536: FE 00         cp   $00
 0538: 20 06         jr   nz,$0540
 053A: 21 15 3F      ld   hl,$3F15
-053D: CD 18 20      call $2018
+053D: CD 18 20      call copy_to_61bd_2018
 0540: C1            pop  bc
 0541: F1            pop  af
 0542: F5            push af
@@ -826,7 +826,7 @@ guard_unconditional_move_0614:
 0627: FE 00         cp   $00
 0629: 20 06         jr   nz,$0631
 062B: 21 39 3F      ld   hl,$3F39
-062E: CD 18 20      call $2018
+062E: CD 18 20      call copy_to_61bd_2018
 0631: C1            pop  bc
 0632: AF            xor  a
 0633: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
@@ -1041,7 +1041,7 @@ player_grips_handle_07BD:
 07C9: 3E 01         ld   a,$01
 07CB: 32 75 62      ld   (unknown_6275),a
 07CE: 21 FD 3E      ld   hl,$3EFD
-07D1: CD 18 20      call $2018
+07D1: CD 18 20      call copy_to_61bd_2018
 07D4: C9            ret
 07D5: 3A 2A 60      ld   a,(player_gripping_handle_602A)
 07D8: FE 01         cp   $01
@@ -1132,7 +1132,7 @@ l_07F6:
 0880: 21 00 01      ld   hl,$0100
 0883: CD 90 5C      call add_to_score_5C90
 0886: 21 03 3F      ld   hl,$3F03
-0889: CD 18 20      call $2018
+0889: CD 18 20      call copy_to_61bd_2018
 088C: 3E 01         ld   a,$01
 088E: 32 75 62      ld   (unknown_6275),a
 0891: DD E1         pop  ix
@@ -1464,11 +1464,12 @@ handle_elevators_0a66:
 0B53: 3E 01         ld   a,$01
 0B55: 32 F5 61      ld   (unknown_61F5),a
 0B58: 21 45 3F      ld   hl,$3F45
-0B5B: CD 18 20      call $2018
+0B5B: CD 18 20      call copy_to_61bd_2018
 0B5E: C9            ret
 0B5F: AF            xor  a
 0B60: FD 77 00      ld   (iy+$00),a
 0B63: C9            ret
+cant_walk_in_current_direction_0b64:
 0B64: F1            pop  af
 0B65: AF            xor  a
 0B66: 32 9B 60      ld   (unknown_609B),a
@@ -1507,7 +1508,7 @@ player_movement_0B6D:
 0BAD: 06 00         ld   b,$00
 0BAF: 3A 06 60      ld   a,(player_animation_frame_6006)
 0BB2: FE 0B         cp   $0B
-0BB4: 20 1A         jr   nz,$0BD0
+0BB4: 20 1A         jr   nz,animate_player_1_frame_0bd0
 0BB6: 3E 01         ld   a,$01
 0BB8: 32 06 60      ld   (player_animation_frame_6006),a
 0BBB: C5            push bc
@@ -1522,6 +1523,8 @@ player_movement_0B6D:
 0BCC: E1            pop  hl
 0BCD: C1            pop  bc
 0BCE: 18 14         jr   $0BE4
+
+animate_player_1_frame_0bd0:
 0BD0: 3C            inc  a
 0BD1: F5            push af
 0BD2: 3A 58 61      ld   a,(has_bag_6158)
@@ -1536,21 +1539,21 @@ player_movement_0B6D:
 0BE4: 3A 06 60      ld   a,(player_animation_frame_6006)
 0BE7: 21 80 65      ld   hl,player_struct_6580
 0BEA: FE 02         cp   $02
-0BEC: CC 36 0C      call z,$0C36
+0BEC: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0BEF: FE 05         cp   $05
-0BF1: CC 36 0C      call z,$0C36
+0BF1: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0BF4: FE 09         cp   $09
-0BF6: CC 36 0C      call z,$0C36
+0BF6: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0BF9: FE FF         cp   $FF
 0BFB: C8            ret  z
 0BFC: FE 04         cp   $04
-0BFE: CC 36 0C      call z,$0C36
+0BFE: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0C01: FE 06         cp   $06
-0C03: CC 36 0C      call z,$0C36
+0C03: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0C06: FE 08         cp   $08
-0C08: CC 36 0C      call z,$0C36
+0C08: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0C0B: FE 0A         cp   $0A
-0C0D: CC 36 0C      call z,$0C36
+0C0D: CC 36 0C      call z,player_tries_to_move_laterally_0c36
 0C10: FE 01         cp   $01
 0C12: 20 07         jr   nz,$0C1B
 0C14: 3E 20         ld   a,$20	;  player sprite index
@@ -1581,6 +1584,8 @@ player_movement_0B6D:
 0C33: 77            ld   (hl),a
 0C34: C9            ret
 0C35: C9            ret
+
+player_tries_to_move_laterally_0c36:
 0C36: F5            push af
 0C37: 78            ld   a,b
 0C38: FE 80         cp   $80
@@ -1589,7 +1594,7 @@ player_movement_0B6D:
 0C3F: CD FA 0C      call character_can_walk_right_0CFA
 0C42: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0C45: FE 02         cp   $02
-0C47: C2 64 0B      jp   nz,$0B64
+0C47: C2 64 0B      jp   nz,cant_walk_in_current_direction_0b64
 0C4A: 3A 82 65      ld   a,(player_x_6582)
 0C4D: 3C            inc  a
 0C4E: 32 82 65      ld   (player_x_6582),a
@@ -1605,7 +1610,7 @@ player_movement_0B6D:
 0C68: FE 00         cp   $00
 0C6A: 20 06         jr   nz,$0C72
 0C6C: 21 33 3F      ld   hl,$3F33
-0C6F: CD 18 20      call $2018
+0C6F: CD 18 20      call copy_to_61bd_2018
 0C72: 3E 01         ld   a,$01
 0C74: FD 77 00      ld   (iy+$00),a
 0C77: 32 9B 60      ld   (unknown_609B),a
@@ -1615,23 +1620,23 @@ player_movement_0B6D:
 0C7F: FE 00         cp   $00
 0C81: C8            ret  z
 0C82: 21 2D 3F      ld   hl,$3F2D
-0C85: CD 18 20      call $2018
+0C85: CD 18 20      call copy_to_61bd_2018
 0C88: C9            ret
 0C89: 3A C7 61      ld   a,(holds_barrow_61C7)
 0C8C: FE 00         cp   $00
 0C8E: C9            ret
 0C8F: 21 3F 3F      ld   hl,$3F3F
-0C92: CD 18 20      call $2018
+0C92: CD 18 20      call copy_to_61bd_2018
 0C95: C9            ret
 0C96: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C99: CD 69 0D      call character_can_walk_left_0D69
 0C9C: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0C9F: FE 02         cp   $02
-0CA1: C2 64 0B      jp   nz,$0B64
+0CA1: C2 64 0B      jp   nz,cant_walk_in_current_direction_0b64
 0CA4: 3A 82 65      ld   a,(player_x_6582)
 0CA7: 3D            dec  a
 0CA8: 32 82 65      ld   (player_x_6582),a
-0CAB: CD 17 25      call $2517
+0CAB: CD 17 25      call handle_player_destroying_wall_2517
 0CAE: 3A F3 61      ld   a,(unknown_61F3)
 0CB1: FE 00         cp   $00
 0CB3: 20 1A         jr   nz,$0CCF
@@ -1644,7 +1649,7 @@ player_movement_0B6D:
 0CC5: FE 00         cp   $00
 0CC7: 20 06         jr   nz,$0CCF
 0CC9: 21 33 3F      ld   hl,$3F33
-0CCC: CD 18 20      call $2018
+0CCC: CD 18 20      call copy_to_61bd_2018
 0CCF: 3E 01         ld   a,$01
 0CD1: FD 77 00      ld   (iy+$00),a
 0CD4: 32 9B 60      ld   (unknown_609B),a
@@ -1683,7 +1688,7 @@ player_movement_0B6D:
 0D07: 3A F2 61      ld   a,(unknown_61F2)
 0D0A: FE 01         cp   $01
 0D0C: 28 F3         jr   z,$0D01
-0D0E: CD 85 25      call $2585
+0D0E: CD 85 25      call check_breakable_wall_2585
 0D11: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0D14: FE 02         cp   $02
 0D16: C8            ret  z
@@ -1695,13 +1700,13 @@ player_movement_0B6D:
 0D1C: DE 00         sbc  a,$00
 0D1E: 67            ld   h,a
 0D1F: 7E            ld   a,(hl)
-0D20: CD A2 0D      call $0DA2
+0D20: CD A2 0D      call check_against_space_tiles_0da2
 0D23: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0D26: FE 02         cp   $02
 0D28: C0            ret  nz
 0D29: 2B            dec  hl
 0D2A: 7E            ld   a,(hl)
-0D2B: CD A2 0D      call $0DA2
+0D2B: CD A2 0D      call check_against_space_tiles_0da2
 0D2E: 23            inc  hl
 0D2F: 23            inc  hl
 0D30: CD 34 0D      call $0D34
@@ -1710,6 +1715,7 @@ player_movement_0B6D:
 0D35: E5            push hl
 0D36: C5            push bc
 0D37: 01 0D 00      ld   bc,$000D
+; check edges tiles
 0D3A: 21 45 0D      ld   hl,$0D45
 0D3D: ED B1         cpir
 0D3F: C1            pop  bc
@@ -1749,13 +1755,13 @@ character_can_walk_left_0D69:
 0D84: CE 00         adc  a,$00
 0D86: 67            ld   h,a
 0D87: 7E            ld   a,(hl)
-0D88: CD A2 0D      call $0DA2
+0D88: CD A2 0D      call check_against_space_tiles_0da2
 0D8B: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0D8E: FE 02         cp   $02
 0D90: C0            ret  nz
 0D91: 2B            dec  hl
 0D92: 7E            ld   a,(hl)
-0D93: CD A2 0D      call $0DA2
+0D93: CD A2 0D      call check_against_space_tiles_0da2
 0D96: 23            inc  hl
 0D97: 23            inc  hl
 0D98: CD 34 0D      call $0D34
@@ -1763,6 +1769,7 @@ character_can_walk_left_0D69:
 0D9C: 3E 02         ld   a,$02
 0D9E: 32 0B 60      ld   (way_clear_flag_600B),a
 0DA1: C9            ret
+check_against_space_tiles_0da2:
 0DA2: 4F            ld   c,a
 0DA3: 11 B1 0D      ld   de,$0DB1
 0DA6: 06 16         ld   b,$16
@@ -1852,7 +1859,7 @@ character_can_walk_left_0D69:
 0E63: FE 00         cp   $00
 0E65: 20 06         jr   nz,$0E6D
 0E67: 21 27 3F      ld   hl,$3F27
-0E6A: CD 18 20      call $2018
+0E6A: CD 18 20      call copy_to_61bd_2018
 0E6D: 3A 58 61      ld   a,(has_bag_6158)
 0E70: FE 00         cp   $00
 0E72: C8            ret  z
@@ -1935,7 +1942,7 @@ character_can_walk_left_0D69:
 0F14: CD 91 35      call $3591
 0F17: 3E 01         ld   a,$01
 0F19: 32 10 62      ld   (unknown_6210),a
-0F1C: CD 94 1E      call display_maze_1E94
+0F1C: CD 94 1E      call init_new_game_1E94
 0F1F: CD 57 29      call $2957
 
 ;; put one guard on screen 1
@@ -2296,7 +2303,7 @@ guard_2_movement_119B:
 	;; reset guards and player
 122B: F3            di
 122C: 3A 00 B8      ld   a,(io_read_shit_B800)
-122F: CD 94 1E      call display_maze_1E94
+122F: CD 94 1E      call init_new_game_1E94
 1232: CD 57 29      call $2957
 1235: AF            xor  a
 1236: 32 25 60      ld   (player_death_flag_6025),a
@@ -2860,7 +2867,7 @@ guard_1_sees_player_1560:
 176F: CD D5 17      call $17D5
 1772: CD D5 17      call $17D5
 1775: 21 1B 3F      ld   hl,$3F1B
-1778: CD 18 20      call $2018
+1778: CD 18 20      call copy_to_61bd_2018
 177B: CD EB 3D      call can_pick_bag_3DEB
 177E: 20 0A         jr   nz,$178A
 1780: 21 78 5B      ld   hl,$5B78
@@ -3792,7 +3799,7 @@ display_player_ids_and_credit_1dec:
 1E90: 32 53 60      ld   (unknown_6053),a
 1E93: C9            ret
 
-display_maze_1E94:
+init_new_game_1E94:
 1E94: 3A 10 62      ld   a,(unknown_6210)
 1E97: FE 01         cp   $01
 1E99: 20 0F         jr   nz,$1EAA
@@ -3804,7 +3811,7 @@ display_maze_1E94:
 1EA7: 32 42 61      ld   (unknown_6142),a
 1EAA: AF            xor  a
 1EAB: 32 03 A0      ld   ($A003),a
-1EAE: CD 4C 28      call $284C
+1EAE: CD 4C 28      call display_maze_284c
 1EB1: 3E 01         ld   a,$01
 1EB3: 32 16 60      ld   (unknown_6016),a
 1EB6: CD EC 1D      call display_player_ids_and_credit_1dec
@@ -3888,7 +3895,7 @@ display_maze_1E94:
 1F83: AF            xor  a
 1F84: 32 52 61      ld   (unknown_6152),a
 1F87: FB            ei
-1F88: CD 18 20      call $2018
+1F88: CD 18 20      call copy_to_61bd_2018
 1F8B: 21 38 5B      ld   hl,$5B38
 1F8E: 22 40 61      ld   (unknown_pointer_6140),hl
 1F91: AF            xor  a
@@ -3947,6 +3954,8 @@ display_maze_1E94:
 2012: CD 57 29      call $2957
 2015: 3E 01         ld   a,$01
 2017: C9            ret
+
+copy_to_61bd_2018:
 2018: 11 BD 61      ld   de,unknown_61BD
 201B: 01 06 00      ld   bc,$0006
 201E: ED B0         ldir
@@ -4219,7 +4228,7 @@ convert_logical_to_screen_address_222d:
 2253: 21 00 05      ld   hl,$0500
 2256: CD 90 5C      call add_to_score_5C90
 2259: 21 09 3F      ld   hl,$3F09
-225C: CD 18 20      call $2018
+225C: CD 18 20      call copy_to_61bd_2018
 225F: DD E1         pop  ix
 2261: CD BE 3D      call $3DBE
 2264: AF            xor  a
@@ -4241,7 +4250,7 @@ convert_logical_to_screen_address_222d:
 228E: 21 00 05      ld   hl,$0500
 2291: CD 90 5C      call add_to_score_5C90
 2294: 21 09 3F      ld   hl,$3F09
-2297: CD 18 20      call $2018
+2297: CD 18 20      call copy_to_61bd_2018
 229A: DD E1         pop  ix
 229C: CD BE 3D      call $3DBE
 229F: AF            xor  a
@@ -4444,6 +4453,7 @@ get_XUP_screen_address_2501:
 2513: CD C8 25      call $25C8
 2516: C9            ret
 
+handle_player_destroying_wall_2517:
 2517: 3A 0D 60      ld   a,(player_screen_600D)
 251A: FE 02         cp   $02
 251C: C0            ret  nz
@@ -4503,6 +4513,7 @@ get_XUP_screen_address_2501:
 2583: C1            pop  bc
 2584: C9            ret
 
+check_breakable_wall_2585:
 2585: C5            push bc
 2586: E5            push hl
 2587: D5            push de
@@ -4811,6 +4822,8 @@ check_breakable_wall_present_25a1:
 2845: CD 26 1E      call $1E26
 2848: CD 10 31      call $3110
 284B: C9            ret
+
+display_maze_284c:
 284C: CD 16 2A      call $2A16
 284F: 3E 3F         ld   a,$3F
 2851: CD EC 29      call change_attribute_everywhere_29ec
@@ -6154,7 +6167,7 @@ reset_guard_position_31DF:
 3291: C8            ret  z
 3292: FE 02         cp   $02
 3294: 20 16         jr   nz,$32AC
-3296: CD 4C 28      call $284C
+3296: CD 4C 28      call display_maze_284c
 3299: 3E 01         ld   a,$01
 329B: 32 0D 60      ld   (player_screen_600D),a
 329E: CD DC 22      call $22DC
@@ -7074,7 +7087,7 @@ read_player_controls_39fd:
 3B21: FD 5E 00      ld   e,(iy+$00)
 3B24: CD 76 21      call $2176
 3B27: 21 1B 3F      ld   hl,$3F1B
-3B2A: CD 18 20      call $2018
+3B2A: CD 18 20      call copy_to_61bd_2018
 ; add one life for level completed
 3B2D: 3A 56 60      ld   a,(lives_6056)
 3B30: 3C            inc  a
@@ -7394,7 +7407,7 @@ check_remaining_bags_3BBC:
 3DDE: B8            cp   b
 3DDF: C0            ret  nz
 3DE0: 21 4B 3F      ld   hl,$3F4B
-3DE3: CD 18 20      call $2018
+3DE3: CD 18 20      call copy_to_61bd_2018
 3DE6: AF            xor  a
 3DE7: 32 53 61      ld   (unknown_6153),a
 3DEA: C9            ret
@@ -7602,6 +7615,8 @@ get_screen_base_logical_address_55b8:
 55BC: 21 00 40      ld   hl,$4000
 55BF: 19            add  hl,de
 55C0: 10 FD         djnz $55BF
+
+add_current_screen_logical_address_offset_55c2:
 55C2: 3A 98 60      ld   a,(screen_index_param_6098)
 55C5: FE 01         cp   $01
 55C7: C8            ret  z
@@ -7715,7 +7730,7 @@ write_byte_value_563C:
 5BCD: CB 3F  		srl  a                                              
 5BCF: CB 3F  		srl  a                                              
 5BD1: FE 00  		cp   $00                                            
-5BD3: CA C2 55  	jp   z,$55C2                                        
+5BD3: CA C2 55  	jp   z,add_current_screen_logical_address_offset_55c2                                        
 5BD6: C3 B8 55  	jp   get_screen_base_logical_address_55b8                                          
                                               
 
