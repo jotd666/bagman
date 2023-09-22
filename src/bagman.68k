@@ -2109,9 +2109,10 @@ l_0d07:
 	jbsr	read_rom                         	| [$0d2a: ld   a,(hl)]
 	jbsr	check_against_space_tiles_0da2                            	| [$0d2b: call $0DA2]
 	addq.w	#2,d6                           	| [$0d2e: inc  hl] * 2
-	jbsr	l_0d34                            	| [$0d30: call $0D34]
+	jbsr	check_edge_tiles_0d34                            	| [$0d30: call $0D34]
 	rts                                    	| [$0d33: ret]
-l_0d34:
+
+check_edge_tiles_0d34:
 	jbsr	read_rom                         	| [$0d34: ld   a,(hl)]
 
 	                        	| [$0d35: push hl]
@@ -2140,8 +2141,8 @@ l_0d52:
 	                	| [$0d5f: ld   (way_clear_flag_600B),a]
 	        	| [$0d62: ret]
 l_0d63:
-	move.b	#0x01,d0                        	| [$0d63: ld   a,$01]
-	move.b	d0,way_clear_flag_600B                 	| [$0d65: ld   (way_clear_flag_600B),a]
+	move.b	#0x01,way_clear_flag_600B                        	| [$0d63: ld   a,$01]
+	                	| [$0d65: ld   (way_clear_flag_600B),a]
 	rts                                    	| [$0d68: ret]
 
 character_can_walk_left_0D69:
@@ -2175,7 +2176,7 @@ l_0d76:
 	bsr	read_rom                         	| [$0d92: ld   a,(hl)]
 	jbsr	check_against_space_tiles_0da2                            	| [$0d93: call $0DA2]
 	addq.w	#2,d6                           	| [$0d96: inc  hl] * 2
-	jbsr	l_0d34                            	| [$0d98: call $0D34]
+	jbsr	check_edge_tiles_0d34                            	| [$0d98: call $0D34]
 	rts                                    	| [$0d9b: ret]
 l_0d9c:
 											| [$0d9c: ld   a,$02]
@@ -9012,7 +9013,7 @@ l_555b:
 update_player_screen_address_from_xy_555E:
 	lea	player_struct_6580,a2          	| [$555e: ld   ix,player_struct_6580]
 	lea	player_logical_address_6009,a3  	| [$5562: ld   iy,player_logical_address_6009]
-	jra	l_5582                             	| [$5566: jr   $5582]
+	jra	compute_player_logical_address_from_xy_5582                             	| [$5566: jr   $5582]
 
 update_guard_1_screen_address_from_xy_5568:
 	lea	guard_1_struct_6594,a2         	| [$5568: ld   ix,guard_1_struct_6594]
@@ -9026,7 +9027,7 @@ update_guard_2_screen_address_from_xy_5575:
 	move.b	guard_2_screen_609A,d0          	| [$557d: ld   a,(guard_2_screen_609A)]
 	jra	l_5585                             	| [$5580: jr   $5585]
 
-l_5582:
+compute_player_logical_address_from_xy_5582:
 	move.b	player_screen_600D,d0           	| [$5582: ld   a,(player_screen_600D)]
 l_5585:
 	move.b	d0,screen_index_param_6098      	| [$5585: ld   (screen_index_param_6098),a]
@@ -9038,9 +9039,9 @@ l_5585:
 * < iy: where to update
 * > D6 logical address
 compute_logical_address_from_xy_558c:
-	jbsr	l_55ac                            	| [$558c: call $55AC]
+	jbsr	process_x_55ac                            	| [$558c: call $55AC]
 	* > D6.W logical ROM address
-	jbsr	l_559a                            	| [$558f: call $559A]
+	jbsr	process_y_559a                            	| [$558f: call $559A]
 	* store as big endian now (was little!)
 	STORE_DX_BE_WORD_AY	d6,a3               | [$5592: ld   (iy+$00),l]
 											| [$5595: ld   (iy+$01),h]
@@ -9048,7 +9049,7 @@ compute_logical_address_from_xy_558c:
 	rts                                    	| [$5598: ret]
 
 
-l_559a:
+process_y_559a:
 	* align Y coord
 	moveq	#0,d0
 	move.b	(0x03,a2),d0                    	| [$559a: ld   a,(ix+$03)]  character y value
@@ -9063,16 +9064,21 @@ l_559a:
 										| [$55aa: ld   h,a]
 	rts                                    	| [$55ab: ret]
 
-l_55ac:
+process_x_55ac:
 	* align X coord
 	move.b	(0x02,a2),d0                    	| [$55ac: ld   a,(ix+$02)]  character x value
 	addq.b	#0x07,d0                        	| [$55af: add  a,$07]
 	not.b	d0                               	| [$55b1: cpl]
-	lsr.b	#1,d0                            	| [$55b2: srl  a]
-	jra	l_5bcd                             	| [$55b4: jp   $5BCD]
+											| [$55b2: srl  a]
+                         	| [$55b4: jp   $5BCD]
+* merged all parts of the function
+	lsr.b	#3,d0                            	| [$5bcd: srl  a]
+                            	| [$5bcf: srl  a]
+	                         	| [$5bd1: cp   $00]
+	jeq	add_current_screen_logical_address_offset_55c2                             	| [$5bd3: jp   z,$55C2]
+                             	| [$5bd6: jp   $55B8]
 
  * multiply $20 * a and add it to $4000
-get_screen_base_logical_address_55b8:
 	move.b	d0,d1                           	| [$55b8: ld   b,a]
 	move.w	#0x0020,d3                      	| [$55b9: ld   de,$0020] 32
 	move.w	#0x4000,d6                      	| [$55bc: ld   hl,$4000]
@@ -9208,12 +9214,6 @@ write_byte_value_563C:
 	jbsr	osd_w_videoram                         	| [$565d: ld   (hl),a]
 	rts                                    	| [$565e: ret]
 
-l_5bcd:
-	lsr.b	#2,d0                            	| [$5bcd: srl  a]
-                            	| [$5bcf: srl  a]
-	                         	| [$5bd1: cp   $00]
-	jeq	add_current_screen_logical_address_offset_55c2                             	| [$5bd3: jp   z,$55C2]
-	jra	get_screen_base_logical_address_55b8                             	| [$5bd6: jp   $55B8]
 
 
  * in:	 d6 contains 16 bit hex value of the points to add

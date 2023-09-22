@@ -31,17 +31,19 @@
 
 ;;; xy <-> logical address conversions (Python proto code)
 ;def xy2addr(x,y,current_screen):
-;     rval = 0x4062 + 0x400 * current_screen + y/8 + ((0xE0-x)/8)*0x20
+; # current screen 1..3
+;     rval = 0x4062 + 0x400 * (current_screen-1) + y//8 + ((0xE0-x)//8)*0x20
 ;     return rval
 ;def addr2xy(addr):
+; # current screen 1..3
 ;     b = addr - 0x4000
-;     current_screen = 0
+;     current_screen = 1
 ;     while b < 0x400:
 ;	b-=0x400
 ;	current_screen+=1
 ;     b -= 0x62
 ;     y = (b % 0x20) * 8
-;     x = 0xE0 - b / 4
+;     x = 0xE0 - b // 4
 ;     return [x,y,current_screen]
 
 ;tables:
@@ -1709,8 +1711,10 @@ player_tries_to_move_laterally_0c36:
 0D2B: CD A2 0D      call check_against_space_tiles_0da2
 0D2E: 23            inc  hl
 0D2F: 23            inc  hl
-0D30: CD 34 0D      call $0D34
+0D30: CD 34 0D      call check_edge_tiles_0d34
 0D33: C9            ret
+
+check_edge_tiles_0d34:
 0D34: 7E            ld   a,(hl)
 0D35: E5            push hl
 0D36: C5            push bc
@@ -1764,7 +1768,7 @@ character_can_walk_left_0D69:
 0D93: CD A2 0D      call check_against_space_tiles_0da2
 0D96: 23            inc  hl
 0D97: 23            inc  hl
-0D98: CD 34 0D      call $0D34
+0D98: CD 34 0D      call check_edge_tiles_0d34
 0D9B: C9            ret
 0D9C: 3E 02         ld   a,$02
 0D9E: 32 0B 60      ld   (way_clear_flag_600B),a
@@ -7559,7 +7563,7 @@ within_bounds_554E:
 update_player_screen_address_from_xy_555E:
 555E: DD 21 80 65   ld   ix,player_struct_6580
 5562: FD 21 09 60   ld   iy,player_logical_address_6009
-5566: 18 1A         jr   $5582
+5566: 18 1A         jr   compute_player_logical_address_from_xy_5582
 
 update_guard_1_screen_address_from_xy_5568:
 5568: DD 21 94 65   ld   ix,guard_1_struct_6594
@@ -7573,6 +7577,7 @@ update_guard_2_screen_address_from_xy_5575:
 557D: 3A 9A 60      ld   a,(guard_2_screen_609A)
 5580: 18 03         jr   $5585
 
+compute_player_logical_address_from_xy_5582:
 5582: 3A 0D 60      ld   a,(player_screen_600D)
 5585: 32 98 60      ld   (screen_index_param_6098),a
 5588: CD 8C 55      call compute_logical_address_from_xy_558c

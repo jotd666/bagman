@@ -1,7 +1,6 @@
-- debug compute_logical_address_from_xy_558c using python proto / compare with real game
 - sprites shifted by 8 pixels (X)
 
-
+- debug 2640 with values not 10 or E0 (not at start)
 
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
