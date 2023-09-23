@@ -2428,8 +2428,8 @@ l_0f00:
 	lea	player_1_score_6176,a0                	| [$0f33: ld   hl,player_1_score_6176]
 	move.b	#0x06,d1                        	| [$0f36: ld   b,$06]
 l_0f38:
-	move.b	d0,(a0)                         	| [$0f38: ld   (hl),a]
-	addq.w	#1,a0                           	| [$0f39: inc  hl]
+	move.b	d0,(a0)+                         	| [$0f38: ld   (hl),a]
+	                           	| [$0f39: inc  hl]
 	subq.b	#1,d1                           	| [...]
 	jne	l_0f38                             	| [$0f3a: djnz $0F38]
 	move.b	flipped_dip_switches_copy_6163,d0                 	| [$0f3c: ld   a,(flipped_dip_switches_copy_6163)]
@@ -3182,9 +3182,9 @@ l_1641:
 	jbsr	compute_guard_speed_from_dipsw_2C4D	| [$1642: call compute_guard_speed_from_dipsw_2C4D]
 	jbsr	l_3ba1                            	| [$1645: call $3BA1]
 	move.b	check_scenery_disabled_61ED,d0                 	| [$1648: ld   a,(check_scenery_disabled_61ED)]
-	cmp.b	#0x00,d0                         	| [$164b: cp   $00]
+	                         	| [$164b: cp   $00]
 	bne.b	0f
-	jbsr	l_22dc                            	| [$164d: call z,$22DC]
+	jbsr	draw_bag_tiles_22dc                            	| [$164d: call z,$22DC]
 0:
 	jra	mainloop_1242                      	| [$1650: jp   mainloop_1242]
 
@@ -3461,12 +3461,12 @@ l_1830:
 l_183e:
 	jbsr	test_pickup_flag_19A4             	| [$183e: call test_pickup_flag_19A4]
 	move.b	d1,d0                           	| [$1841: ld   a,b]
-	cmp.b	#0x00,d0                         	| [$1842: cp   $00]
+	                         	| [$1842: cp   $00]
 	bne.b	0f
 	rts                                    	| [$1844: ret  z]
 0:
 	move.b	has_pick_61CF,d0                	| [$1845: ld   a,(has_pick_61CF)]
-	cmp.b	#0x00,d0                         	| [$1848: cp   $00]
+	                         	| [$1848: cp   $00]
 	jeq	l_186b                             	| [$184a: jr   z,$186B]
 
 	move.l	a3,-(sp)                        	| [$184c: push iy]
@@ -4454,7 +4454,7 @@ l_1e3f:
 	cmp.b	#0xF8,d0                         	| [$1e4f: cp   $F8]
 
 	move.l	a0,-(sp)                        	| [$1e51: push hl]
-	lea	game_mem+0x1E67(pc),a0                      	| [$1e52: ld   hl,$1E67]
+	lea	game_mem+0x1E67,a0                      	| [$1e52: ld   hl,$1E67]
 	move.w	#0x02,d1                        	| [$1e55: ld   bc,$0002] 2
 	jbsr	cpdr                              	| [$1e58: cpdr]
 	movem.l	(sp)+,a0                        	| [$1e5a: pop  hl]
@@ -4583,7 +4583,7 @@ l_1f50:
 	move.b	d2,d0                           	| [$1f58: ld   a,c]
 	cmp.b	#0x01,d0                         	| [$1f59: cp   $01]
 	bne.b	0f
-	jbsr	set_bags_coordinates_354f         	| [$1f5b: call z,set_bags_coordinates_354f]
+	jbsr	set_bags_coordinates_hard_level_354f         	| [$1f5b: call z,set_bags_coordinates_hard_level_354f]
 0:
 	move.b	current_player_617C,d0          	| [$1f5e: ld   a,(current_player_617C)]
 	move.b	d0,unknown_626C                 	| [$1f61: ld   (unknown_626C),a]
@@ -4733,7 +4733,7 @@ l_205c:
 	jne	l_20c9                             	| [$208b: jr   nz,$20C9]
 	jbsr	l_2103                            	| [$208d: call $2103]
 	* "INSERT COIN"
-	lea	game_mem+0x56AC(pc),a1                      	| [$2090: ld   de,$56AC]
+	lea	game_mem+0x56AC,a1                      	| [$2090: ld   de,$56AC]
 	move.w	#0x935A,d6                      	| [$2093: ld   hl,$935A]
 	jbsr	display_text_30F9                 	| [$2096: call display_text_30F9]
 	* "BY VALADON AUTOMATION 1982"
@@ -4764,7 +4764,7 @@ l_205c:
 l_20c9:
 	jbsr	osd_disable_vblank_interrupt  | [di]
 	jbsr	set_bags_coordinates_355b         	| [$20ca: call set_bags_coordinates_355b]
-	jbsr	l_3567                            	| [$20cd: call $3567]
+	jbsr	set_bags_coordinates_3567                            	| [$20cd: call $3567]
 	jbsr	l_2a63                            	| [$20d0: call $2A63]
 	clr.b	d0                               	| [$20d3: xor  a]
 	move.b	d0,unknown_6053                 	| [$20d4: ld   (unknown_6053),a]
@@ -5084,10 +5084,10 @@ l_22c2:
 	movem.w	(sp)+,d1/d2                    	| [$22da: pop  bc]
 	rts                                    	| [$22db: ret]
 
-l_22dc:
+draw_bag_tiles_22dc:
 	lea	bags_coordinates_609C,a2       	| [$22dc: ld   ix,bags_coordinates_609C]
 	move.b	#0x04,d0                        	| [$22e0: ld   a,$04]
-	move.b	d0,unknown_627A                 	| [$22e2: ld   (unknown_627A),a]
+	move.b	d0,bag_color_color_attribute_627A                 	| [$22e2: ld   (bag_color_color_attribute_627A),a]
 	move.b	#0x13,d1                        	| [$22e5: ld   b,$13]
 l_22e7:
 
@@ -5099,7 +5099,7 @@ l_22e7:
 	move.l	(sp)+,a2                        	| [$22ee: pop  ix]
 	addq.w	#3,a2                           	| [$22f0: inc  ix] * 3
 	move.b	#0x01,d0                        	| [$22f6: ld   a,$01]
-	move.b	d0,unknown_627A                 	| [$22f8: ld   (unknown_627A),a]
+	move.b	d0,bag_color_color_attribute_627A                 	| [$22f8: ld   (bag_color_color_attribute_627A),a]
 	subq.b	#1,d1                           	| [...]
 	jne	l_22e7                             	| [$22fb: djnz $22E7]
 	move.b	holds_barrow_61C7,d0            	| [$22fd: ld   a,(holds_barrow_61C7)]
@@ -5941,12 +5941,6 @@ write_text_29bc:
 	subq.b	#1,d1                           	| [...]
 	jne	write_text_29bc                             	| [$29c3: djnz $29BC]
 	rts                                    	| [$29c5: ret]
-l_29c6:
-	move.b	d0,(a0)                         	| [$29c6: ld   (hl),a]
-	addq.w	#1,a0                           	| [$29c7: inc  hl]
-	subq.b	#1,d1                           	| [...]
-	jne	l_29c6                             	| [$29c8: djnz $29C6]
-	rts                                    	| [$29ca: ret]
 
 l_29cb:
 	move.b	#0x08,d1                        	| [$29cb: ld   b,$08]
@@ -6104,7 +6098,7 @@ l_2a70:
 *	move.b	d0,0xA002                       	| [$2a82: ld   ($A002),a]
 *l_2a85:
 	lea	bags_coordinates_609C,a2                      	| [$2a85: ld   ix,$609C]
-	lea	unknown_617F,a3                      	| [$2a89: ld   iy,$617F]
+	lea	bags_coordinates_617F,a3                      	| [$2a89: ld   iy,$617F]
 	move.b	#0x36,d1                        	| [$2a8d: ld   b,$36]
 	jbsr	l_2abc                            	| [$2a8f: call $2ABC]
 	lea	barrow_start_screen_address_61C4,a2                      	| [$2a92: ld   ix,$61C4]
@@ -6819,7 +6813,7 @@ l_2f2d:
 	move.b	#0x12,d0                        	| [$2f56: ld   a,$12]
 	exg	d0,d7                              	| [$2f58: ex   af,af']
  	jbsr	write_text_55f0                   	| [$2f59: call write_text_55f0]
-	lea	game_mem+0x4D1B(pc),a1                      	| [$2f5c: ld   de,$4D1B]
+	lea	game_mem+0x4D1B,a1                      	| [$2f5c: ld   de,$4D1B]
 	move.w	#0x9390,d6                      	| [$2f5f: ld   hl,$9390]
 	move.b	#0x12,d0                        	| [$2f62: ld   a,$12]
 	exg	d0,d7                              	| [$2f64: ex   af,af']
@@ -7070,7 +7064,7 @@ l_313d:
 	rts                                    	| [$3150: ret]
 	
 draw_bag_3151:
-	LOAD_AX_BE_WORD_DY	a2,d6
+	LOAD_AX_LE_WORD_DY	a2,d6
 											| [$3155: ld   a,(ix+$01)]
 						
 										| [$3151: ld   a,(ix+$00)]
@@ -7088,7 +7082,7 @@ draw_bag_3151:
 	jbsr	osd_w_videoram                         	| [$3164: ld   (hl),a]
 
 	move.w	d6,-(sp)                        	| [$3165: push hl]
-	jbsr	l_3197                            	| [$3166: call $3197]
+	jbsr	set_bag_color_attribute_3197                            	| [$3166: call $3197]
 	move.w	(sp)+,d6                        	| [$3169: pop  hl]
 	addq.w	#1,d6                           	| [$316a: inc  hl]
 * read screen tile
@@ -7101,7 +7095,7 @@ draw_bag_3151:
 	jbsr	osd_w_videoram                         	| [$3176: ld   (hl),a]
 
 	move.w	d6,-(sp)                        	| [$3177: push hl]
-	jbsr	l_3197                            	| [$3178: call $3197]
+	jbsr	set_bag_color_attribute_3197                            	| [$3178: call $3197]
 	move.w	(sp)+,d6                        	| [$317b: pop  hl]
 l_317c:
 	move.w	#0x0020,d3                      	| [$317c: ld   de,$0020] 32
@@ -7130,9 +7124,10 @@ l_317c:
 0:
 	move.b	#0xD3,d0                        	| [$3190: ld   a,$D3]
 	jbsr	osd_w_videoram                         	| [$3192: ld   (hl),a]
-	jbsr	l_3197                            	| [$3193: call $3197]
+	jbsr	set_bag_color_attribute_3197                            	| [$3193: call $3197]
 	rts                                    	| [$3196: ret]
-l_3197:
+	
+set_bag_color_attribute_3197:
 *	move.b	d5,d0                           	| [$3197: ld   a,h]
 *	cmp.b	#0x00,d0                         	| [$3198: cp   $00]
 *	bne.b	0f
@@ -7140,7 +7135,7 @@ l_3197:
 *0:
 	add.w	#0x0800,d6                         	| [$319b: add  a,$08]
 	                           	| [$319d: ld   h,a]
-	move.b	unknown_627A,d0                 	| [$319e: ld   a,(unknown_627A)]
+	move.b	bag_color_color_attribute_627A,d0                 	| [$319e: ld   a,(bag_color_color_attribute_627A)]
 	jbsr	osd_w_colorram                         	| [$31a1: ld   (hl),a]
 	rts                                    	| [$31a2: ret]
 l_31a3:
@@ -7259,7 +7254,7 @@ l_3243:
 	move.b	#0x11,d0                        	| [$3250: ld   a,$11]
 	move.b	d0,player_x_6582                	| [$3252: ld   (player_x_6582),a]
 	jbsr	l_33e3                            	| [$3255: call $33E3]
-	jbsr	l_22dc                            	| [$3258: call $22DC]
+	jbsr	draw_bag_tiles_22dc                            	| [$3258: call $22DC]
 	jbsr	l_33b1                            	| [$325b: call $33B1]
 	jra	l_32ce                             	| [$325e: jp   $32CE]
 l_3261:
@@ -7271,7 +7266,7 @@ l_3261:
 	jbsr	l_265f                            	| [$326e: call $265F]
 	move.b	#0x03,d0                        	| [$3271: ld   a,$03]
 	move.b	d0,player_screen_600D           	| [$3273: ld   (player_screen_600D),a]
-	jbsr	l_22dc                            	| [$3276: call $22DC]
+	jbsr	draw_bag_tiles_22dc                            	| [$3276: call $22DC]
 	move.b	#0x11,d0                        	| [$3279: ld   a,$11]
 	move.b	d0,player_x_6582                	| [$327b: ld   (player_x_6582),a]
 	jbsr	l_33b1                            	| [$327e: call $33B1]
@@ -7291,7 +7286,7 @@ l_3284:
 	jbsr	display_maze_284c                            	| [$3296: call $284C]
 	move.b	#0x01,d0                        	| [$3299: ld   a,$01]
 	move.b	d0,player_screen_600D           	| [$329b: ld   (player_screen_600D),a]
-	jbsr	l_22dc                            	| [$329e: call $22DC]
+	jbsr	draw_bag_tiles_22dc                            	| [$329e: call $22DC]
 	move.b	#0xE3,d0                        	| [$32a1: ld   a,$E3]
 	move.b	d0,player_x_6582                	| [$32a3: ld   (player_x_6582),a]
 	jbsr	l_33b1                            	| [$32a6: call $33B1]
@@ -7309,7 +7304,7 @@ l_32ac:
 	move.b	#0xE3,d0                        	| [$32c0: ld   a,$E3]
 	move.b	d0,player_x_6582                	| [$32c2: ld   (player_x_6582),a]
 	jbsr	l_33e3                            	| [$32c5: call $33E3]
-	jbsr	l_22dc                            	| [$32c8: call $22DC]
+	jbsr	draw_bag_tiles_22dc                            	| [$32c8: call $22DC]
 	jbsr	l_33b1                            	| [$32cb: call $33B1]
 l_32ce:
 											| [$32ce: ld   a,$01]
@@ -7472,7 +7467,7 @@ l_33e3:
 	jeq	l_33ee                             	| [$33eb: jr   z,$33EE]
 	subq.b	#1,d0                           	| [$33ed: dec  a]
 l_33ee:
-	move.w	#0x9318,d6
+	move.w	#0x9319,d6
 	jbsr	osd_w_videoram                       	| [$33ee: ld   ($9319),a]
 	move.b	#0x02,d0                        	| [$33f1: ld   a,$02]
 	move.b	d0,player_screen_600D           	| [$33f3: ld   (player_screen_600D),a]
@@ -7714,7 +7709,7 @@ decrease_timer_353e:
 	move.b	d0,(a0)                         	| [$354d: ld   (hl),a]
 	rts                                    	| [$354e: ret]
 	
-set_bags_coordinates_354f:
+set_bags_coordinates_hard_level_354f:
 	lea	bags_coordinates_609C,a1       	| [$354f: ld   de,bags_coordinates_609C]
 	lea	game_mem+0x5C54,a0                      	| [$3552: ld   hl,$5C54]
 	move.w	#0x3A,d1                        	| [$3555: ld   bc,$003A] 58
@@ -7725,22 +7720,15 @@ set_bags_coordinates_354f:
 set_bags_coordinates_355b:
 	lea	bags_coordinates_609C,a1       	| [$355b: ld   de,bags_coordinates_609C]
 0:
-	lea	game_mem+0x5AE8(pc),a0                      	| [$355e: ld   hl,$5AE8]
+	lea	game_mem+0x5AE8,a0                      	| [$355e: ld   hl,$5AE8]
 	move.w	#0x003A,d1                        	| [$3561: ld   bc,$003A] 58
 	jbra	ldir                              	| [$3564: ldir]
  	rts                                    	| [$3566: ret]
 
 
 set_bags_coordinates_3567:
-	lea	unknown_617F,a1                	| [$3567: ld   de,unknown_617F]
+	lea	bags_coordinates_617F,a1                	| [$3567: ld   de,bags_coordinates_617F]
 	bra.b	0b
-
-l_3567:
-	lea	unknown_617F,a1                	| [$3567: ld   de,unknown_617F]
-	lea	game_mem+0x5AE8,a0                      	| [$356a: ld   hl,$5AE8]
-	move.w	#0x003A,d1                        	| [$356d: ld   bc,$003A] 58
-	jbsr	ldir                              	| [$3570: ldir]
-	rts                                    	| [$3572: ret]
 
 
 * check if tile can be walked into
@@ -8345,7 +8333,7 @@ l_3b65:
 	move.b	d0,is_intermission_6274         	| [$3b7c: ld   (is_intermission_6274),a]
 	addq.b	#1,d0                           	| [$3b7f: inc  a]
 	move.b	d0,gameplay_allowed_6054        	| [$3b80: ld   (gameplay_allowed_6054),a]
-	jbsr	set_bags_coordinates_354f         	| [$3b83: call set_bags_coordinates_354f]
+	jbsr	set_bags_coordinates_hard_level_354f         	| [$3b83: call set_bags_coordinates_hard_level_354f]
 	* restart next level ?
 	lea		stack_top_67F0,sp       | [ld   sp,stack_top_67F0]
 	jra	l_122b                             	| [$3b89: jp   $122B]
@@ -8600,10 +8588,9 @@ l_3c0a:
 	jbsr	l_3c2c                            	| [$3c13: call $3C2C]
 	move.b	#0x03,d1                        	| [$3c16: ld   b,$03]
 l_3c18:
-	addq.w	#1,a1                           	| [$3c18: inc  de]
+	addq.w	#1,d3                           	| [$3c18: inc  de]
 	movem.w	d1/d2,-(sp)                    	| [$3c19: push bc]
-	move.l	a1,d6
-	sub.l	#game_mem,d6
+	move.w	d3,d6
 	jbsr	osd_r_videoram                         	| [$3c1a: ld   a,(de)]
 	move.w	#0x08,d1                        	| [$3c1b: ld   bc,$0008] 8
 											| [$3c1b: ld   bc,$0008] 8
@@ -8678,14 +8665,14 @@ test_non_blocking_tiles_3c85:
 	clr.b	d1                               	| [$3c88: ld   b,$00]
 	jbsr	l_3caa                            	| [$3c8a: call $3CAA]
 	jne	l_3ca6                             	| [$3c8d: jr   nz,$3CA6]
-	addq.w	#1,a0                           	| [$3c8f: inc  hl]
+	addq.w	#1,d6                           	| [$3c8f: inc  hl]
 	jbsr	l_3caa                            	| [$3c90: call $3CAA]
 	jne	l_3ca6                             	| [$3c93: jr   nz,$3CA6]
 	move.w	#0x001F,d3                      	| [$3c95: ld   de,$001F] 31
-	add.w	d3,a0                            	| [$3c98: add  hl,de]
+	add.w	d3,d6                            	| [$3c98: add  hl,de]
 	jbsr	l_3caa                            	| [$3c99: call $3CAA]
 	jne	l_3ca6                             	| [$3c9c: jr   nz,$3CA6]
-	addq.w	#1,a0                           	| [$3c9e: inc  hl]
+	addq.w	#1,d6                           	| [$3c9e: inc  hl]
 	jbsr	l_3caa                            	| [$3c9f: call $3CAA]
 	jne	l_3ca6                             	| [$3ca2: jr   nz,$3CA6]
 	move.b	#0x01,d1                        	| [$3ca4: ld   b,$01]
@@ -8948,7 +8935,7 @@ l_5500:
 	jne	l_5531                             	| [$550b: jp   nz,$5531]
 	lea	player_1_score_6176,a2                	| [$550e: ld   ix,player_1_score_6176]
 l_5512:
-	clr.b	d0                               	| [$5512: xor  a]
+	CLEAR_XC_FLAG                              	| [$5512: xor  a]
 	move.b	d6,d0                           	| [$5513: ld   a,l]
 	move.b	d0,d1                           	| [$5514: ld   b,a]
 	move.b	(A2),d0                    	| [$5515: ld   a,(ix+$00)]

@@ -1,6 +1,9 @@
-- sprites shifted by 8 pixels (X)
-
+- walk blocks, guards frozen (same bug probably)
+- add 10 to score (walk) OK but resets to 0 at 90 (debug add_to_score_5C90)
+- wagon moves completely off
+- picks drawn twice, blinking
 - debug 2640 with values not 10 or E0 (not at start)
+- maybe try to cookie cut bags & pickaxes, avoid to destroy background
 
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow

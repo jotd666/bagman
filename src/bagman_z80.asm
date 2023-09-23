@@ -2725,7 +2725,7 @@ guard_1_sees_player_1560:
 1645: CD A1 3B      call $3BA1
 1648: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 164B: FE 00         cp   $00
-164D: CC DC 22      call z,$22DC
+164D: CC DC 22      call z,draw_bag_tiles_22dc
 1650: C3 42 12      jp   mainloop_1242
 1653: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 1656: FE 00         cp   $00
@@ -3883,7 +3883,7 @@ init_new_game_1E94:
 1F55: CD 8C 3B      call check_remaining_bags_3BBC
 1F58: 79            ld   a,c
 1F59: FE 01         cp   $01
-1F5B: CC 4F 35      call z,set_bags_coordinates_354f
+1F5B: CC 4F 35      call z,set_bags_coordinates_hard_level_354f
 1F5E: 3A 7C 61      ld   a,(current_player_617C)
 1F61: 32 6C 62      ld   (unknown_626C),a
 1F64: 2A 09 60      ld   hl,(player_logical_address_6009)
@@ -4284,9 +4284,10 @@ convert_logical_to_screen_address_222d:
 22D8: FD E1         pop  iy
 22DA: C1            pop  bc
 22DB: C9            ret
+draw_bag_tiles_22dc:
 22DC: DD 21 9C 60   ld   ix,bags_coordinates_609C
 22E0: 3E 04         ld   a,$04
-22E2: 32 7A 62      ld   (unknown_627A),a
+22E2: 32 7A 62      ld   (bag_color_color_attribute_627A),a
 22E5: 06 13         ld   b,$13
 22E7: DD E5         push ix
 22E9: C5            push bc
@@ -4297,7 +4298,7 @@ convert_logical_to_screen_address_222d:
 22F2: DD 23         inc  ix
 22F4: DD 23         inc  ix
 22F6: 3E 01         ld   a,$01
-22F8: 32 7A 62      ld   (unknown_627A),a
+22F8: 32 7A 62      ld   (bag_color_color_attribute_627A),a
 22FB: 10 EA         djnz $22E7
 22FD: 3A C7 61      ld   a,(holds_barrow_61C7)
 2300: FE 01         cp   $01
@@ -5124,7 +5125,7 @@ clear_screen_2a00:
 2A7F: 32 01 A0      ld   ($A001),a
 2A82: 32 02 A0      ld   ($A002),a
 2A85: DD 21 9C 60   ld   ix,bags_coordinates_609C
-2A89: FD 21 7F 61   ld   iy,unknown_617F
+2A89: FD 21 7F 61   ld   iy,bags_coordinates_617F
 2A8D: 06 36         ld   b,$36
 2A8F: CD BC 2A      call $2ABC
 2A92: DD 21 C4 61   ld   ix,barrow_start_screen_address_61C4
@@ -6019,7 +6020,7 @@ draw_bag_3151:
 3162: 3E D0         ld   a,$D0
 3164: 77            ld   (hl),a
 3165: E5            push hl
-3166: CD 97 31      call $3197
+3166: CD 97 31      call set_bag_color_attribute_3197
 3169: E1            pop  hl
 316A: 23            inc  hl
 * read screen tile
@@ -6031,7 +6032,7 @@ draw_bag_3151:
 3174: 3E D1         ld   a,$D1
 3176: 77            ld   (hl),a
 3177: E5            push hl
-3178: CD 97 31      call $3197
+3178: CD 97 31      call set_bag_color_attribute_3197
 317B: E1            pop  hl
 317C: 11 20 00      ld   de,$0020
 317F: 19            add  hl,de
@@ -6049,14 +6050,15 @@ draw_bag_3151:
 318F: C8            ret  z
 3190: 3E D3         ld   a,$D3
 3192: 77            ld   (hl),a
-3193: CD 97 31      call $3197
+3193: CD 97 31      call set_bag_color_attribute_3197
 3196: C9            ret
+set_bag_color_attribute_3197:
 3197: 7C            ld   a,h
 3198: FE 00         cp   $00
 319A: C8            ret  z
 319B: C6 08         add  a,$08
 319D: 67            ld   h,a
-319E: 3A 7A 62      ld   a,(unknown_627A)
+319E: 3A 7A 62      ld   a,(bag_color_color_attribute_627A)
 31A1: 77            ld   (hl),a
 31A2: C9            ret
 31A3: DD 21 94 65   ld   ix,guard_1_struct_6594
@@ -6147,7 +6149,7 @@ reset_guard_position_31DF:
 3250: 3E 11         ld   a,$11
 3252: 32 82 65      ld   (player_x_6582),a
 3255: CD E3 33      call $33E3
-3258: CD DC 22      call $22DC
+3258: CD DC 22      call draw_bag_tiles_22dc
 325B: CD B1 33      call $33B1
 325E: C3 CE 32      jp   $32CE
 3261: 3A 0D 60      ld   a,(player_screen_600D)
@@ -6158,7 +6160,7 @@ reset_guard_position_31DF:
 326E: CD 5F 26      call $265F
 3271: 3E 03         ld   a,$03
 3273: 32 0D 60      ld   (player_screen_600D),a
-3276: CD DC 22      call $22DC
+3276: CD DC 22      call draw_bag_tiles_22dc
 3279: 3E 11         ld   a,$11
 327B: 32 82 65      ld   (player_x_6582),a
 327E: CD B1 33      call $33B1
@@ -6174,7 +6176,7 @@ reset_guard_position_31DF:
 3296: CD 4C 28      call display_maze_284c
 3299: 3E 01         ld   a,$01
 329B: 32 0D 60      ld   (player_screen_600D),a
-329E: CD DC 22      call $22DC
+329E: CD DC 22      call draw_bag_tiles_22dc
 32A1: 3E E3         ld   a,$E3
 32A3: 32 82 65      ld   (player_x_6582),a
 32A6: CD B1 33      call $33B1
@@ -6190,7 +6192,7 @@ reset_guard_position_31DF:
 32C0: 3E E3         ld   a,$E3
 32C2: 32 82 65      ld   (player_x_6582),a
 32C5: CD E3 33      call $33E3
-32C8: CD DC 22      call $22DC
+32C8: CD DC 22      call draw_bag_tiles_22dc
 32CB: CD B1 33      call $33B1
 32CE: 3E 01         ld   a,$01
 32D0: 32 03 A0      ld   ($A003),a
@@ -6529,7 +6531,7 @@ decrease_timer_353e:
 354D: 77            ld   (hl),a
 354E: C9            ret
 
-set_bags_coordinates_354f:
+set_bags_coordinates_hard_level_354f:
 354F: 11 9C 60      ld   de,bags_coordinates_609C
 3552: 21 54 5C      ld   hl,$5C54
 3555: 01 3A 00      ld   bc,$003A
@@ -6544,7 +6546,7 @@ set_bags_coordinates_355b:
 3566: C9            ret
 
 set_bags_coordinates_3567:
-3567: 11 7F 61      ld   de,unknown_617F
+3567: 11 7F 61      ld   de,bags_coordinates_617F
 356A: 21 E8 5A      ld   hl,$5AE8
 356D: 01 3A 00      ld   bc,$003A
 3570: ED B0         ldir
@@ -7131,7 +7133,7 @@ read_player_controls_39fd:
 3B7C: 32 74 62      ld   (is_intermission_6274),a
 3B7F: 3C            inc  a
 3B80: 32 54 60      ld   (gameplay_allowed_6054),a
-3B83: CD 4F 35      call set_bags_coordinates_354f
+3B83: CD 4F 35      call set_bags_coordinates_hard_level_354f
 3B86: 31 F0 67      ld   sp,stack_top_67F0
 3B89: C3 2B 12      jp   $122B
 

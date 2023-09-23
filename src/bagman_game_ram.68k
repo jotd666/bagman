@@ -129,7 +129,7 @@
 	.global	score_ten_thousands_player_2_617B
 	.global	unknown_617D
 	.global	unknown_617E
-	.global	unknown_617F
+	.global	bags_coordinates_617F
 	.global	unknown_61BD
 	.global	unknown_61C0
 	.global	barrow_start_screen_address_61C4
@@ -181,7 +181,7 @@
 	.global	unknown_6275
 	.global	unknown_6278
 	.global	unknown_6279
-	.global	unknown_627A
+	.global	bag_color_color_attribute_627A
 	.global	unknown_627B
 	.global	unknown_627D
 	.global	unknown_627E
@@ -451,7 +451,7 @@ unknown_617D:
 	ds.b	1
 unknown_617E:
 	ds.b	1
-unknown_617F:
+bags_coordinates_617F:
 	ds.b	62
 unknown_61BD:
 	ds.b	3
@@ -566,7 +566,7 @@ unknown_6278:
 	ds.b	1
 unknown_6279:
 	ds.b	1
-unknown_627A:
+bag_color_color_attribute_627A:
 	ds.b	1
 unknown_627B:
 	ds.b	1
