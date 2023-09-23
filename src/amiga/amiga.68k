@@ -1412,6 +1412,9 @@ osd_w_videoram:
 	move.b	d0,(a1)	| update logical grid
 	lea		bg_colorram,a1
 	move.b	(a1,d6.W),d1
+	
+	move.b	d0,0x200
+	
 	jbsr		update_bg_tile
 0:
 	movem.l	(a7)+,d0-d3/d6/a0-a2

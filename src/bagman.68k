@@ -3565,7 +3565,7 @@ l_18c7:
 	move.b	player_screen_600D,d0           	| [$18ff: ld   a,(player_screen_600D)]
 	cmp.b	#0x02,d0                         	| [$1902: cp   $02]
 	bne.b	0f
-	jbsr	l_33e3                            	| [$1904: call z,$33E3]
+	jbsr	switch_to_screen_2_33e3                            	| [$1904: call z,$33E3]
 0:
 	rts                                    	| [$1907: ret]
 	
@@ -4824,7 +4824,7 @@ l_2137:
 0:
 	move.b	(a4),d0                         	| [$2143: ld   a,(bc)]
 	jbsr	exx                               	| [$2144: exx]
-                         	| [$2145: cp   $00]
+    tst.b	d0                     	| [$2145: cp   $00]
 	jne	l_21a7                             	| [$2147: jp   nz,$21A7]
 	move.w	player_logical_address_6009,d6	| [$214a: ld   hl,(player_logical_address_6009)]
 	move.b	player_screen_600D,d0           	| [$214d: ld   a,(player_screen_600D)]
@@ -4978,7 +4978,7 @@ l_2219:
 						
 											| [$221b: ld   l,(iy+$00)]
 	move.b	(0x06,a3),d0                    	| [$2221: ld   a,(iy+$06)]
-	jbsr	draw_wheelbarrow_tiles_3417                            	| [$2224: call $3417]
+	jbsr	draw_object_tiles_3417                            	| [$2224: call $3417]
 	st.b	d0                                	| [$2227: ld   a,$FF]
 	move.b	d0,unknown_659F                 	| [$2229: ld   (unknown_659F),a]
 	rts                                    	| [$222c: ret]
@@ -5117,7 +5117,7 @@ l_22e7:
 	move.b	#0x28,d0                        	| [$2318: ld   a,$28]
 	exg	d0,d7                              	| [$231a: ex   af,af']
 	move.b	#0xEC,d0                        	| [$231b: ld   a,$EC]
-	jbsr	draw_wheelbarrow_tiles_3417                            	| [$231d: call $3417]
+	jbsr	draw_object_tiles_3417                            	| [$231d: call $3417]
 l_2320:
 	move.b	player_screen_600D,d0           	| [$2320: ld   a,(player_screen_600D)]
 	move.b	d0,d1                           	| [$2323: ld   b,a]
@@ -5132,19 +5132,20 @@ l_2320:
 	jbsr	is_background_tile_3573                            	| [$2335: call $3573]
 	jne	l_2350                             	| [$2338: jr   nz,$2350]
 
-	move.l	a0,-(sp)                        	| [$233a: push hl]
-	movem.w	d3/d4,-(sp)                    	| [$233b: push de]
+	                        	| [$233a: push hl]
+	movem.w	d3/d4/d6,-(sp)                    	| [$233b: push de]
 	move.w	#0x0020,d3                      	| [$233c: ld   de,$0020] 32
 	add.w	d3,d6                            	| [$233f: add  hl,de]
 	jbsr	osd_r_videoram                         	| [$2340: ld   a,(hl)]
 	jbsr	is_background_tile_3573                            	| [$2341: call $3573]
-	movem.w	(sp)+,d3/d4                    	| [$2344: pop  de]
-	move.l	(sp)+,a0                        	| [$2345: pop  hl]
+	movem.w	(sp)+,d3/d4/d6                    	| [$2344: pop  de]
+	                        	| [$2345: pop  hl]
 	jne	l_2350                             	| [$2346: jr   nz,$2350]
 	move.b	#0x20,d0                        	| [$2348: ld   a,$20]
 	exg	d0,d7                              	| [$234a: ex   af,af']
+	* pickaxe
 	move.b	#0xE4,d0                        	| [$234b: ld   a,$E4]
-	jbsr	draw_wheelbarrow_tiles_3417                            	| [$234d: call $3417]
+	jbsr	draw_object_tiles_3417                            	| [$234d: call $3417]
 l_2350:
 	move.b	#0x04,d1                        	| [$2350: ld   b,$04]
 	lea	unknown_61D3,a3                	| [$2352: ld   iy,unknown_61D3]
@@ -5191,7 +5192,7 @@ l_235c:
 	move.b	#0x20,d0                        	| [$2386: ld   a,$20]
 	exg	d0,d7                              	| [$2388: ex   af,af']
 	move.b	#0xE4,d0                        	| [$2389: ld   a,$E4]
-	jbsr	draw_wheelbarrow_tiles_3417                            	| [$238b: call $3417]
+	jbsr	draw_object_tiles_3417                            	| [$238b: call $3417]
 l_238e:
 	move.l	(sp)+,a1                        	| [$238e: pop  de]
 	movem.w	(sp)+,d3/d4                    	| [$238e: pop  de]
@@ -5535,7 +5536,7 @@ l_2640:
 	jbsr	l_2923                            	| [$265b: call $2923]
 	rts                                    	| [$265e: ret]
 
-l_265f:
+display_screen_3_265f:
 	jbsr	l_2a16                            	| [$265f: call $2A16]
 	move.b	#0x3F,d0                        	| [$2662: ld   a,$3F]
 	jbsr	change_attribute_everywhere_29ec  	| [$2664: call change_attribute_everywhere_29ec]
@@ -5643,7 +5644,8 @@ l_265f:
 	clr.b	d0                               	| [$2758: xor  a]
 	move.b	d0,unknown_6142                 	| [$2759: ld   (unknown_6142),a]
 	rts                                    	| [$275c: ret]
-l_275d:
+	
+display_screen_2_275d:
 	jbsr	l_2a16                            	| [$275d: call $2A16]
 	move.b	#0x3F,d0                        	| [$2760: ld   a,$3F]
 	jbsr	change_attribute_everywhere_29ec  	| [$2762: call change_attribute_everywhere_29ec]
@@ -6222,12 +6224,12 @@ l_2b31:
 	move.b	#0x01,d0                        	| [$2b50: ld   a,$01]
 	move.b	d0,(a0)                         	| [$2b52: ld   (hl),a]
 	move.l	(sp)+,a0                        	| [$2b53: pop  hl]
-	movem.w	d3/d4,-(sp)                    	| [$2b54: push de]
-	move.l	a1,-(sp)                        	| [$2b54: push de]
-	move.w	#0x001C,d3                      	| [$2b55: ld   de,$001C] 28
-	add.w	d3,a0                            	| [$2b58: add  hl,de]
-	move.l	(sp)+,a1                        	| [$2b59: pop  de]
-	movem.w	(sp)+,d3/d4                    	| [$2b59: pop  de]
+                  	| [$2b54: push de]
+                   	| [$2b54: push de]
+                   	| [$2b55: ld   de,$001C] 28
+	add.w	#0x1C,a0                            	| [$2b58: add  hl,de]
+               	| [$2b59: pop  de]
+              	| [$2b59: pop  de]
 	clr.b	d0                               	| [$2b5a: xor  a]
 	move.b	d0,(a0)                         	| [$2b5b: ld   (hl),a]
 	move.b	(0x07,a2),d0                    	| [$2b5c: ld   a,(ix+$07)] elevator y for current screen
@@ -7250,26 +7252,28 @@ l_3243:
 	move.b	player_screen_600D,d0           	| [$3246: ld   a,(player_screen_600D)]
 	cmp.b	#0x01,d0                         	| [$3249: cp   $01]
 	jne	l_3261                             	| [$324b: jr   nz,$3261]
-	jbsr	l_275d                            	| [$324d: call $275D]
+	* entering screen 2 by screen 1
+	jbsr	display_screen_2_275d                            	| [$324d: call $275D]
 	move.b	#0x11,d0                        	| [$3250: ld   a,$11]
 	move.b	d0,player_x_6582                	| [$3252: ld   (player_x_6582),a]
-	jbsr	l_33e3                            	| [$3255: call $33E3]
+	jbsr	switch_to_screen_2_33e3                            	| [$3255: call $33E3]
 	jbsr	draw_bag_tiles_22dc                            	| [$3258: call $22DC]
-	jbsr	l_33b1                            	| [$325b: call $33B1]
+	jbsr	reposition_wagons_33b1                            	| [$325b: call $33B1]
 	jra	l_32ce                             	| [$325e: jp   $32CE]
 l_3261:
 	move.b	player_screen_600D,d0           	| [$3261: ld   a,(player_screen_600D)]
 	cmp.b	#0x02,d0                         	| [$3264: cp   $02]
 	jne	l_3281                             	| [$3266: jr   nz,$3281]
+	* switch to screen 3
 	move.b	elevator_y_current_screen_6587,d0	| [$3268: ld   a,(elevator_y_current_screen_6587)]
 	move.b	d0,unknown_6165                 	| [$326b: ld   (unknown_6165),a]
-	jbsr	l_265f                            	| [$326e: call $265F]
-	move.b	#0x03,d0                        	| [$3271: ld   a,$03]
-	move.b	d0,player_screen_600D           	| [$3273: ld   (player_screen_600D),a]
+	jbsr	display_screen_3_265f                            	| [$326e: call $265F]
+	move.b	#0x03,player_screen_600D                        	| [$3271: ld   a,$03]
+	           	| [$3273: ld   (player_screen_600D),a]
 	jbsr	draw_bag_tiles_22dc                            	| [$3276: call $22DC]
 	move.b	#0x11,d0                        	| [$3279: ld   a,$11]
 	move.b	d0,player_x_6582                	| [$327b: ld   (player_x_6582),a]
-	jbsr	l_33b1                            	| [$327e: call $33B1]
+	jbsr	reposition_wagons_33b1                            	| [$327e: call $33B1]
 l_3281:
 	jra	l_32ce                             	| [$3281: jp   $32CE]
 l_3284:
@@ -7289,7 +7293,7 @@ l_3284:
 	jbsr	draw_bag_tiles_22dc                            	| [$329e: call $22DC]
 	move.b	#0xE3,d0                        	| [$32a1: ld   a,$E3]
 	move.b	d0,player_x_6582                	| [$32a3: ld   (player_x_6582),a]
-	jbsr	l_33b1                            	| [$32a6: call $33B1]
+	jbsr	reposition_wagons_33b1                            	| [$32a6: call $33B1]
 	jra	l_32ce                             	| [$32a9: jp   $32CE]
 l_32ac:
 	cmp.b	#0x03,d0                         	| [$32ac: cp   $03]
@@ -7300,12 +7304,12 @@ l_32ac:
 	move.b	d0,unknown_6166                 	| [$32b2: ld   (unknown_6166),a]
 	lea	game_mem+0x4442,a2                      	| [$32b5: ld   ix,$4442]
 	* bogus write, not read anywhere   | [$32b9: ld   (unknown_6281),ix]
-	jbsr	l_275d                            	| [$32bd: call $275D]
+	jbsr	display_screen_2_275d                            	| [$32bd: call $275D]
 	move.b	#0xE3,d0                        	| [$32c0: ld   a,$E3]
 	move.b	d0,player_x_6582                	| [$32c2: ld   (player_x_6582),a]
-	jbsr	l_33e3                            	| [$32c5: call $33E3]
+	jbsr	switch_to_screen_2_33e3                            	| [$32c5: call $33E3]
 	jbsr	draw_bag_tiles_22dc                            	| [$32c8: call $22DC]
-	jbsr	l_33b1                            	| [$32cb: call $33B1]
+	jbsr	reposition_wagons_33b1                            	| [$32cb: call $33B1]
 l_32ce:
 											| [$32ce: ld   a,$01]
 											| [$32d0: ld   ($A003),a]
@@ -7434,7 +7438,8 @@ l_33a2:
 	move.b	d0,unknown_61EC                 	| [$33aa: ld   (unknown_61EC),a]
 	move.b	d0,unknown_607A                 	| [$33ad: ld   (unknown_607A),a]
 	rts                                    	| [$33b0: ret]
-l_33b1:
+	
+reposition_wagons_33b1:
 	lea	unknown_6019,a2                	| [$33b1: ld   ix,unknown_6019]
 	lea	player_x_6582,a0               	| [$33b5: ld   hl,player_x_6582]
 	lea	wagon_data_658A,a3             	| [$33b8: ld   iy,wagon_data_658A]
@@ -7459,7 +7464,8 @@ l_33d1:
 	subq.b	#1,d0                           	| [$33de: dec  a]
 	move.b	d0,(a2)                    	| [$33df: ld   (ix+$00),a]
 	rts                                    	| [$33e2: ret]
-l_33e3:
+	
+switch_to_screen_2_33e3:
 	move.b	unknown_627D,d0                 	| [$33e3: ld   a,(unknown_627D)]
 	move.w	#0x9318,d6
 	jbsr	osd_w_videoram                       	| [$33e6: ld   ($9318),a]
@@ -7504,7 +7510,7 @@ l_3403:
 * < D0: tile code
 * < D6: screen address
 * < D7: tile attribute
-draw_wheelbarrow_tiles_3417:
+draw_object_tiles_3417:
 	* check code in case screen MSB address is null
 	move.w	d1,-(sp)                    	| [$3417: push bc]
 	                           	| [$3418: ld   b,a]
@@ -8924,7 +8930,8 @@ l_3e8e:
  * internal actual add to score routine
  * score is stored from 6176 to 6178 for player 1
  * 6179 to 617B for player 2
-l_5500:
+really_add_to_score_5500:
+	* we don't want to score if moves are guided / intermission
 	move.b	check_scenery_disabled_61ED,d0                 	| [$5500: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$5503: cp   $01]
 	bne.b	0f
@@ -8935,17 +8942,19 @@ l_5500:
 	jne	l_5531                             	| [$550b: jp   nz,$5531]
 	lea	player_1_score_6176,a2                	| [$550e: ld   ix,player_1_score_6176]
 l_5512:
+	move.b	#1,0x200
+	* pre-shift D6 MSB as it would destroy X flag
+	move.w	d6,d5                           	| [$551d: ld   a,h]
+	lsr.w	#8,d5
 	CLEAR_XC_FLAG                              	| [$5512: xor  a]
 	move.b	d6,d0                           	| [$5513: ld   a,l]
 	move.b	d0,d1                           	| [$5514: ld   b,a]
 	move.b	(A2),d0                    	| [$5515: ld   a,(ix+$00)]
 	abcd	d1,d0                            	| [$5518: add  a,b + daa]
 	move.b	d0,(A2)                    	| [$551a: ld   (ix+$00),a]
-	move.w	d6,d0                           	| [$551d: ld   a,h]
-	lsr.w	#8,d0
-	move.b	d0,d1                           	| [$551e: ld   b,a]
+											| [$551e: ld   b,a]
 	move.b	(0x01,a2),d0                    	| [$551f: ld   a,(ix+$01)]
-	abcd	d1,d0 								| [ adc  a,b+daa ]
+	abcd	d5,d0 								| [ adc  a,b+daa ]
 	move.b	d0,(0x01,a2)                    	| [$5524: ld   (ix+$01),a]
 	move.b	(0x02,a2),d0                    	| [$5527: ld   a,(ix+$02)]
 	moveq	#0,d7
@@ -9211,8 +9220,8 @@ add_to_score_5C90:
 	bne.b	0f
 	rts                                    	| [$5c95: ret  z]
 0:
-	jbsr	l_5500                            	| [$5c96: call $5500]
-	rts                                    	| [$5c99: ret]
+	jra	really_add_to_score_5500                            	| [$5c96: call $5500]
+	                                    	| [$5c99: ret]
 
 l_5c9a:
 	jra	l_5e46                             	| [$5c9a: jp   $5E46]

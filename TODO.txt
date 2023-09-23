@@ -1,7 +1,6 @@
 - walk blocks, guards frozen (same bug probably)
-- add 10 to score (walk) OK but resets to 0 at 90 (debug add_to_score_5C90)
+  => test check_against_space_tiles_0da2 around $0756 (for player)
 - wagon moves completely off
-- picks drawn twice, blinking
 - debug 2640 with values not 10 or E0 (not at start)
 - maybe try to cookie cut bags & pickaxes, avoid to destroy background
 
@@ -9,6 +8,7 @@
   - 1 for player, barrow
   - 2 for others
   
+- add elevator wire tiles (unknown clut atm)
 
 - sprite/tiles conflict.
 
@@ -23,3 +23,4 @@ converter:
 - signal move.w from/to ax
 - inc hl/de/bc: addq.w
 - dec hl/de/bc: subq.w
+- sbc => cmp.w avec review

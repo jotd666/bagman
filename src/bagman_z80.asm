@@ -3030,7 +3030,7 @@ guard_1_sees_player_1560:
 18FC: 32 7E 62      ld   (unknown_627E),a
 18FF: 3A 0D 60      ld   a,(player_screen_600D)
 1902: FE 02         cp   $02
-1904: CC E3 33      call z,$33E3
+1904: CC E3 33      call z,switch_to_screen_2_33e3
 1907: C9            ret
 1908: DD 7E 00      ld   a,(ix+$00)
 190B: FE 01         cp   $01
@@ -4635,6 +4635,8 @@ check_breakable_wall_present_25a1:
 2659: CB 10         rl   b
 265B: CD 23 29      call $2923
 265E: C9            ret
+
+display_screen_3_265f:
 265F: CD 16 2A      call $2A16
 2662: 3E 3F         ld   a,$3F
 2664: CD EC 29      call change_attribute_everywhere_29ec
@@ -4733,6 +4735,7 @@ check_breakable_wall_present_25a1:
 2758: AF            xor  a
 2759: 32 42 61      ld   (unknown_6142),a
 275C: C9            ret
+display_screen_2_275d:
 275D: CD 16 2A      call $2A16
 2760: 3E 3F         ld   a,$3F
 2762: CD EC 29      call change_attribute_everywhere_29ec
@@ -6145,25 +6148,25 @@ reset_guard_position_31DF:
 3246: 3A 0D 60      ld   a,(player_screen_600D)
 3249: FE 01         cp   $01
 324B: 20 14         jr   nz,$3261
-324D: CD 5D 27      call $275D
+324D: CD 5D 27      call display_screen_2_275d
 3250: 3E 11         ld   a,$11
 3252: 32 82 65      ld   (player_x_6582),a
-3255: CD E3 33      call $33E3
+3255: CD E3 33      call switch_to_screen_2_33e3
 3258: CD DC 22      call draw_bag_tiles_22dc
-325B: CD B1 33      call $33B1
+325B: CD B1 33      call reposition_wagons_33b1
 325E: C3 CE 32      jp   $32CE
 3261: 3A 0D 60      ld   a,(player_screen_600D)
 3264: FE 02         cp   $02
 3266: 20 19         jr   nz,$3281
 3268: 3A 87 65      ld   a,(elevator_y_current_screen_6587)
 326B: 32 65 61      ld   (unknown_6165),a
-326E: CD 5F 26      call $265F
+326E: CD 5F 26      call display_screen_3_265f
 3271: 3E 03         ld   a,$03
 3273: 32 0D 60      ld   (player_screen_600D),a
 3276: CD DC 22      call draw_bag_tiles_22dc
 3279: 3E 11         ld   a,$11
 327B: 32 82 65      ld   (player_x_6582),a
-327E: CD B1 33      call $33B1
+327E: CD B1 33      call reposition_wagons_33b1
 3281: C3 CE 32      jp   $32CE
 3284: 3E 01         ld   a,$01
 3286: 32 85 62      ld   (unknown_6285),a
@@ -6179,7 +6182,7 @@ reset_guard_position_31DF:
 329E: CD DC 22      call draw_bag_tiles_22dc
 32A1: 3E E3         ld   a,$E3
 32A3: 32 82 65      ld   (player_x_6582),a
-32A6: CD B1 33      call $33B1
+32A6: CD B1 33      call reposition_wagons_33b1
 32A9: C3 CE 32      jp   $32CE
 32AC: FE 03         cp   $03
 32AE: C0            ret  nz
@@ -6188,12 +6191,12 @@ reset_guard_position_31DF:
 32B5: DD 21 42 44   ld   ix,$4442
 ; bogus write, not read anywhere
 32B9: DD 22 81 62   ld   (unknown_6281),ix
-32BD: CD 5D 27      call $275D
+32BD: CD 5D 27      call display_screen_2_275d
 32C0: 3E E3         ld   a,$E3
 32C2: 32 82 65      ld   (player_x_6582),a
-32C5: CD E3 33      call $33E3
+32C5: CD E3 33      call switch_to_screen_2_33e3
 32C8: CD DC 22      call draw_bag_tiles_22dc
-32CB: CD B1 33      call $33B1
+32CB: CD B1 33      call reposition_wagons_33b1
 32CE: 3E 01         ld   a,$01
 32D0: 32 03 A0      ld   ($A003),a
 32D3: DD 21 94 65   ld   ix,guard_1_struct_6594
@@ -6292,6 +6295,7 @@ reset_guard_position_31DF:
 33AA: 32 EC 61      ld   (unknown_61EC),a
 33AD: 32 7A 60      ld   (unknown_607A),a
 33B0: C9            ret
+reposition_wagons_33b1:
 33B1: DD 21 19 60   ld   ix,unknown_6019
 33B5: 21 82 65      ld   hl,player_x_6582
 33B8: FD 21 8A 65   ld   iy,wagon_data_658A
@@ -6313,6 +6317,7 @@ reset_guard_position_31DF:
 33DE: 3D            dec  a
 33DF: DD 77 00      ld   (ix+$00),a
 33E2: C9            ret
+switch_to_screen_2_33e3:
 33E3: 3A 7D 62      ld   a,(unknown_627D)
 33E6: 32 18 93      ld   ($9318),a
 33E9: FE E0         cp   $E0
@@ -7494,6 +7499,7 @@ can_pick_bag_3DEB:
 	;; internal actual add to score routine
 	;; score is stored from 6176 to 6178 for player 1
 	;; 6179 to 617B for player 2
+really_add_to_score_5500:
 5500: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 5503: FE 01         cp   $01
 5505: C8            ret  z

@@ -69,6 +69,8 @@ for sf in glob.glob(os.path.join(screens_dir,"*.bin")):
 
 used_cluts.update({k:range(0,16) for k in range(0,64)})
 
+# elevator wire 1F4 -> 1FB clut??
+
 dump_tiles = False
 dump_sprites = True
 if dump_tiles:
