@@ -4204,7 +4204,7 @@ choose_guard_random_direction_2123:
 221B: FD 6E 00      ld   l,(iy+$00)
 221E: FD 66 01      ld   h,(iy+$01)
 2221: FD 7E 06      ld   a,(iy+$06)
-2224: CD 17 34      call draw_wheelbarrow_tiles_3417
+2224: CD 17 34      call draw_object_tiles_3417
 2227: 3E FF         ld   a,$FF
 2229: 32 9F 65      ld   (unknown_659F),a
 222C: C9            ret
@@ -4314,7 +4314,7 @@ draw_bag_tiles_22dc:
 2318: 3E 28         ld   a,$28
 231A: 08            ex   af,af'
 231B: 3E EC         ld   a,$EC
-231D: CD 17 34      call draw_wheelbarrow_tiles_3417
+231D: CD 17 34      call draw_object_tiles_3417
 2320: 3A 0D 60      ld   a,(player_screen_600D)
 2323: 47            ld   b,a
 2324: FD 21 CC 61   ld   iy,unknown_61CC
@@ -4338,7 +4338,7 @@ draw_bag_tiles_22dc:
 2348: 3E 20         ld   a,$20
 234A: 08            ex   af,af'
 234B: 3E E4         ld   a,$E4
-234D: CD 17 34      call draw_wheelbarrow_tiles_3417
+234D: CD 17 34      call draw_object_tiles_3417
 2350: 06 04         ld   b,$04
 2352: FD 21 D3 61   ld   iy,unknown_61D3
 2356: 11 CC 61      ld   de,unknown_61CC
@@ -4374,7 +4374,7 @@ draw_bag_tiles_22dc:
 2386: 3E 20         ld   a,$20
 2388: 08            ex   af,af'
 2389: 3E E4         ld   a,$E4
-238B: CD 17 34      call draw_wheelbarrow_tiles_3417
+238B: CD 17 34      call draw_object_tiles_3417
 238E: D1            pop  de
 238F: FD E1         pop  iy
 2391: C1            pop  bc
@@ -6351,7 +6351,7 @@ switch_to_screen_2_33e3:
 3415: E1            pop  hl
 3416: C9            ret
 
-draw_wheelbarrow_tiles_3417:
+draw_object_tiles_3417:
 * check code in case screen MSB address is null
 3417: C5            push bc
 3418: 47            ld   b,a
