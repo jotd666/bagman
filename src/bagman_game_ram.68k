@@ -149,7 +149,7 @@
 	.global	unknown_61EC
 	.global	check_scenery_disabled_61ED
 	.global	unknown_61F1
-	.global	unknown_61F2
+	.global	player_controls_blocked_61F2
 	.global	unknown_61F3
 	.global	unknown_61F4
 	.global	unknown_61F5
@@ -497,7 +497,7 @@ check_scenery_disabled_61ED:
 	ds.b	4
 unknown_61F1:
 	ds.b	1
-unknown_61F2:
+player_controls_blocked_61F2:
 	ds.b	1
 unknown_61F3:
 	ds.b	1

@@ -272,7 +272,7 @@ l_0067:
 	move.b	gameplay_allowed_6054,d0        	| [$0079: ld   a,(gameplay_allowed_6054)]
 	                         	| [$007c: cp   $00]
 	jeq	l_009b                             	| [$007e: jr   z,$009B]
-	move.b	unknown_61F2,d0                 	| [$0080: ld   a,(unknown_61F2)]
+	move.b	player_controls_blocked_61F2,d0                 	| [$0080: ld   a,(player_controls_blocked_61F2)]
 	cmp.b	#0x01,d0                         	| [$0083: cp   $01]
 	jeq	l_009b                             	| [$0085: jr   z,$009B]
 	move.b	check_scenery_disabled_61ED,d0                 	| [$0087: ld   a,(check_scenery_disabled_61ED)]
@@ -464,7 +464,7 @@ l_021e:
 	lea	player_struct_6580,a2          	| [$0232: ld   ix,player_struct_6580]
 	jbsr	l_0a27                            	| [$0236: call $0A27]
 	           	| [$0239: ld   a,(watchdog_reset_B800)]
-	move.b	unknown_61F2,d0                 	| [$023c: ld   a,(unknown_61F2)]
+	move.b	player_controls_blocked_61F2,d0                 	| [$023c: ld   a,(player_controls_blocked_61F2)]
 	                         	| [$023f: cp   $00]
 	jne	l_0263                             	| [$0241: jr   nz,$0263]
 	move.b	player_screen_600D,d0           	| [$0243: ld   a,(player_screen_600D)]
@@ -1564,14 +1564,8 @@ l_098c:
 
 
 l_09a0:
-	move.b	elevator_not_moving_6012,d0                       	| [$09a0: ld   a,($6012)]
+	tst.b	elevator_not_moving_6012                       	| [$09a0: ld   a,($6012)]
 											| [$09a3: cp   $00]
-	bne.b	0f
-	rts                                    	| [$09a5: ret  z]
-0:
-	move.b	d0,(a1)                         	| [$09a1: ld   (de),a]
-	move.b	d1,d5                           	| [$09a2: ld   h,b]
-	tst.b	d0                         	| [$09a3: cp   $00]
 	bne.b	0f
 	rts                                    	| [$09a5: ret  z]
 0:
@@ -1817,6 +1811,7 @@ l_0b65:
 	move.b	d0,(A3)                    	| [$0b69: ld   (iy+$00),a]
 	rts                                    	| [$0b6c: ret]
 
+* routine which allows player to move
 player_movement_0B6D:
 	cmp.b	#1,player_death_flag_6025       	| [$0b6d: ld   a,(player_death_flag_6025)]
 	                         	| [$0b70: cp   $01]
@@ -1832,7 +1827,6 @@ player_movement_0B6D:
 	cmp.b	#0x10,d0                         	| [$0b80: cp   $10]
 	jne	l_0b91                             	| [$0b82: jr   nz,$0B91]
  * try to move right
-	
 	move.w	player_logical_address_6009,d6	| [$0b84: ld   hl,(player_logical_address_6009)]
 	jbsr	character_can_walk_right_0CFA     	| [$0b87: call character_can_walk_right_0CFA]
 	move.b	way_clear_flag_600B,d0                 	| [$0b8a: ld   a,(way_clear_flag_600B)]
@@ -2080,7 +2074,7 @@ l_0d01:
 	rts                                    	| [$0d06: ret]
 
 l_0d07:
-	move.b	unknown_61F2,d0                 	| [$0d07: ld   a,(unknown_61F2)]
+	move.b	player_controls_blocked_61F2,d0                 	| [$0d07: ld   a,(player_controls_blocked_61F2)]
 	cmp.b	#0x01,d0                         	| [$0d0a: cp   $01]
 	jeq	l_0d01                             	| [$0d0c: jr   z,$0D01]
 	jbsr	check_breakable_wall_2585                            	| [$0d0e: call $2585]
@@ -2186,6 +2180,8 @@ check_against_space_tiles_0da2:
 	                           	| [$0da2: ld   c,a]
 	* check against possible space tiles
 	lea	game_mem+0x0DB1,a1                      	| [$0da3: ld   de,$0DB1]
+	move.l	A1,0x204
+	
 	move.w	#0x16-1,d1                        	| [$0da6: ld   b,$16]
 l_0da8:
 	cmp.b	(a1)+,d0                         	| [$0da8: ld   a,(de)]
@@ -8240,7 +8236,7 @@ l_3a3f:
 	move.b	check_scenery_disabled_61ED,d0                 	| [$3a40: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$3a43: cp   $01]
 	jeq	l_3a50                             	| [$3a45: jr   z,$3A50]
-	move.b	unknown_61F2,d0                 	| [$3a47: ld   a,(unknown_61F2)]
+	move.b	player_controls_blocked_61F2,d0                 	| [$3a47: ld   a,(player_controls_blocked_61F2)]
 	cmp.b	#0x01,d0                         	| [$3a4a: cp   $01]
 	jeq	l_3a50                             	| [$3a4c: jr   z,$3A50]
 	move.w	(sp)+,d0                        	| [$3a4e: pop  af]
@@ -8310,14 +8306,14 @@ l_3b34:
 	move.b	d0,guard_2_x_659A               	| [$3b40: ld   (guard_2_x_659A),a]
 	move.b	#0x01,d0                        	| [$3b43: ld   a,$01]
 										| [$3b45: ld   (interrupt_control_A000),a]
-	move.b	d0,unknown_61F2                 	| [$3b48: ld   (unknown_61F2),a]
+	move.b	d0,player_controls_blocked_61F2                 	| [$3b48: ld   (player_controls_blocked_61F2),a]
 	jbsr	osd_enable_vblank_interrupt	|     jbsr	osd_enable_vblank_interrupt
 	jbsr	l_1653                            	| [$3b4c: call $1653]
 	move.b	player_x_6582,d0                	| [$3b4f: ld   a,(player_x_6582)]
 	cmp.b	#0xF0,d0                         	| [$3b52: cp   $F0]
 	jne	l_3b34                             	| [$3b54: jr   nz,$3B34]
 	clr.b	d0                               	| [$3b56: xor  a]
-	move.b	d0,unknown_61F2                 	| [$3b57: ld   (unknown_61F2),a]
+	move.b	d0,player_controls_blocked_61F2                 	| [$3b57: ld   (player_controls_blocked_61F2),a]
 	move.b	d0,holds_barrow_61C7            	| [$3b5a: ld   (holds_barrow_61C7),a]
 	jbsr	osd_disable_vblank_interrupt    | jbsr	osd_disable_vblank_interrupt
 	move.b	#0x40,d1                        	| [$3b5e: ld   b,$40]
@@ -8942,7 +8938,6 @@ really_add_to_score_5500:
 	jne	l_5531                             	| [$550b: jp   nz,$5531]
 	lea	player_1_score_6176,a2                	| [$550e: ld   ix,player_1_score_6176]
 l_5512:
-	move.b	#1,0x200
 	* pre-shift D6 MSB as it would destroy X flag
 	move.w	d6,d5                           	| [$551d: ld   a,h]
 	lsr.w	#8,d5
