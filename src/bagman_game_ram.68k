@@ -41,7 +41,7 @@
 	.global	player_has_blue_bag_flag_627C
 	.global	player_in_wagon_flag_6029
 	.global	player_input_6026
-	.global	player_input_6050
+	.global	player_previous_input_6050
 	.global	player_screen_600D
 	.global	player_logical_address_6009
 	.global	player_struct_6580
@@ -64,13 +64,13 @@
 	.global	unknown_6013
 	.global	unknown_6014
 	.global	unknown_6015
-	.global	unknown_6016
+	.global	wagon_direction_array_6016
 	.global	unknown_6019
 	.global	unknown_601A
 	.global	unknown_601B
-	.global	unknown_601C
-	.global	unknown_601D
-	.global	unknown_601E
+	.global	player_in_wagon_1_601C
+	.global	player_in_wagon_2_601D
+	.global	player_in_wagon_3_601E
 	.global	unknown_6022
 	.global	unknown_602B
 	.global	unknown_602C
@@ -193,21 +193,21 @@
 	.global	unknown_628A
 	.global	unknown_628C
 	.global	unknown_6290
-	.global	unknown_6584
-	.global	unknown_6588
+	.global	elevator_struct_6584
+	.global	wagon_1_struct_6588
 	.global	unknown_658B
-	.global	unknown_658C
-	.global	unknown_6590
-	.global	unknown_659C
+	.global	wagon_2_shadow_sprite_658C
+	.global	wagon_3_shadow_sprite_6590
+	.global	object_held_struct_659C
 	.global	unknown_659D
 	.global	unknown_659E
 	.global	unknown_659F
 	.global	sprite_shadow_ram_65A0
 	.global	unknown_65A3
-	.global	unknown_65A4
+	.global	elevator_shadow_sprite_65A4
 	.global	unknown_65A6
-	.global	unknown_65A8
-	.global	unknown_65AC
+	.global	player_shadow_sprite_65A8
+	.global	wagon_1_shadow_sprite_65AC
 	.global	unknown_65AF
 	.global	unknown_65B0
 	.global	unknown_65B4
@@ -247,7 +247,8 @@ unknown_6014:
 	ds.b	1
 unknown_6015:
 	ds.b	1
-unknown_6016:
+* 601C = 6016+6 don't add data in between!
+wagon_direction_array_6016:
 	ds.b	3
 unknown_6019:
 	ds.b	1
@@ -255,11 +256,11 @@ unknown_601A:
 	ds.b	1
 unknown_601B:
 	ds.b	1
-unknown_601C:
+player_in_wagon_1_601C:
 	ds.b	1
-unknown_601D:
+player_in_wagon_2_601D:
 	ds.b	1
-unknown_601E:
+player_in_wagon_3_601E:
 	ds.b	4
 unknown_6022:
 	ds.b	3
@@ -322,7 +323,7 @@ fatal_fall_height_reached_604E:
 	ds.b	1
 unknown_604F:
 	ds.b	1
-player_input_6050:
+player_previous_input_6050:
 	ds.b	1
 unknown_6051:
 	ds.b	1
@@ -600,19 +601,19 @@ player_x_6582:
 	ds.b	1
 player_y_6583:
 	ds.b	1
-unknown_6584:
+elevator_struct_6584:
 	ds.b	3
 elevator_y_current_screen_6587:
 	ds.b	1
-unknown_6588:
+wagon_1_struct_6588:
 	ds.b	2
 wagon_data_658A:
 	ds.b	1
 unknown_658B:
 	ds.b	1
-unknown_658C:
+wagon_2_shadow_sprite_658C:
 	ds.b	4
-unknown_6590:
+wagon_3_shadow_sprite_6590:
 	ds.b	4
 guard_1_struct_6594:
 	ds.b	2
@@ -626,7 +627,7 @@ guard_2_x_659A:
 	ds.b	1
 guard_2_y_659B:
 	ds.b	1
-unknown_659C:
+object_held_struct_659C:
 	ds.b	1
 unknown_659D:
 	ds.b	1
@@ -638,13 +639,13 @@ sprite_shadow_ram_65A0:
 	ds.b	3
 unknown_65A3:
 	ds.b	1
-unknown_65A4:
+elevator_shadow_sprite_65A4:
 	ds.b	2
 unknown_65A6:
 	ds.b	2
-unknown_65A8:
+player_shadow_sprite_65A8:
 	ds.b	4
-unknown_65AC:
+wagon_1_shadow_sprite_65AC:
 	ds.b	3
 unknown_65AF:
 	ds.b	1

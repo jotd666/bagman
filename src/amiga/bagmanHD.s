@@ -36,10 +36,11 @@ _expmem
     dc.w    _config-_base
 ;---
 _config
-*	dc.b    "C1:X:cheat keys F1-F2 instant win:0;"
-*	dc.b    "C1:X:human player wins in 1 round:1;"
-*	dc.b    "C1:X:invincible in bull and evade:2;"
-	dc.b    "C2:L:difficulty:easy,medium,hard,hardest;"
+	dc.b    "C1:X:cheat keys:0;"
+	dc.b    "C1:X:invincible:1;"
+	dc.b    "C1:X:infinite lives:2;"
+	dc.b    "C4:L:difficulty:easy,medium,hard,hardest;"
+	dc.b    "C5:L:start lives:2,3,4,5;"
 	dc.b	0
 
 	IFD BARFLY

@@ -1,14 +1,17 @@
-- walk blocks, guards frozen (same bug probably)
-  => test check_against_space_tiles_0da2 around $0756 (for player)
-- wagon moves completely off
+- guards frozen / not shown
+- wagon moves off screen: direction change doesn't work??
+- can't pickup objects (debug around 214a)
+
 - debug 2640 with values not 10 or E0 (not at start)
-- maybe try to cookie cut bags & pickaxes, avoid to destroy background
 
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
+
+- level 2 right part off / player blocked
+- level 3 not reachable
   
-- add elevator wire tiles (unknown clut atm)
+- add elevator missing wire tiles (unknown clut atm)
 
 - sprite/tiles conflict.
 
@@ -18,9 +21,13 @@
 
   * setting green & purple & title cols after 16 would also work
 
+- sounds
+- music
+- maybe try to cookie cut bags & pickaxes, avoid to destroy background
+
 converter: 
 
 - signal move.w from/to ax
 - inc hl/de/bc: addq.w
 - dec hl/de/bc: subq.w
-- sbc => cmp.w avec review
+- sbc => sub.w avec review

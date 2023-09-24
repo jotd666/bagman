@@ -189,7 +189,7 @@
 0093: D2 94 03      jp   nc,$0394
 0096: FE 0F         cp   $0F
 0098: DA 94 03      jp   c,$0394
-009B: 3A 00 B8      ld   a,(io_read_shit_B800)
+009B: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 * update sprite shadow ram
 009E: 11 00 98      ld   de,$9800
 00A1: 21 A0 65      ld   hl,sprite_shadow_ram_65A0
@@ -218,7 +218,7 @@
 	;; same screen guard 1 / player
 00D3: DD 21 94 65   ld   ix,guard_1_struct_6594
 00D7: FD 21 B8 65   ld   iy,previous_guard_1_struct_65B8
-00DB: CD 01 10      call copy_4_bytes_ix_iy_1001
+00DB: CD 01 10      call update_sprite_data_1001
 
 00DE: FD 21 BC 65   ld   iy,previous_guard_2_struct_65BC
 00E2: 3A 0D 60      ld   a,(player_screen_600D)
@@ -232,7 +232,7 @@
 	;;; same screen guard 2 / player
 00F1: DD 21 98 65   ld   ix,guard_2_struct_6598
 00F5: FD 21 BC 65   ld   iy,previous_guard_2_struct_65BC
-00F9: CD 01 10      call copy_4_bytes_ix_iy_1001
+00F9: CD 01 10      call update_sprite_data_1001
 
 00FC: 3A 53 60      ld   a,(unknown_6053)
 00FF: FE 01         cp   $01
@@ -242,12 +242,12 @@
 010A: FE 01         cp   $01
 010C: CA 80 03      jp   z,$0380
 010F: CD 9A 5C      call $5C9A
-0112: 3A 00 B8      ld   a,(io_read_shit_B800)
+0112: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0115: CD F4 03      call $03F4
 0118: CD 96 2C      call $2C96
 011B: CD 4E 34      call $344E
 011E: CD D4 3C      call $3CD4
-0121: 3A 00 B8      ld   a,(io_read_shit_B800)
+0121: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0124: 3A 71 62      ld   a,(unknown_6271)
 0127: 32 72 62      ld   (unknown_6272),a
 012A: 3A 0C 57      ld   a,($570C) ; ALADON AUTOMATION !!!!
@@ -257,7 +257,7 @@
 0136: FE 01         cp   $01
 0138: 28 06         jr   z,$0140
 013A: CD 84 07      call player_grip_handle_test_0784
-013D: 3A 00 B8      ld   a,(io_read_shit_B800)
+013D: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0140: CD D5 07      call $07D5
 0143: AF            xor  a
 0144: 32 2C 60      ld   (unknown_602C),a
@@ -293,25 +293,25 @@
 019C: FE 00         cp   $00
 019E: C4 0E 35      call nz,$350E
 01A1: CD B1 03      call $03B1
-01A4: 3A 00 B8      ld   a,(io_read_shit_B800)
+01A4: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 01A7: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 01AA: FE 00         cp   $00
 01AC: CC 83 16      call z,$1683
-01AF: CD 9D 10      call $109D
-01B2: 3A 00 B8      ld   a,(io_read_shit_B800)
+01AF: CD 9D 10      call handle_player_object_pickup_109d
+01B2: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 01B5: CD 84 1D      call wagon_player_collision_1D84
 01B8: CD 84 06      call handle_player_walk_0684
 01BB: CD F4 31      call $31F4
 01BE: CD D5 06      call $06D5
-01C1: 3A 00 B8      ld   a,(io_read_shit_B800)
+01C1: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 01C4: CD B0 08      call compute_wagon_start_values_08b0
 01C7: CD 30 08      call $0830
-01CA: 3A 00 B8      ld   a,(io_read_shit_B800)
+01CA: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 01CD: CD FF 10      call $10FF
 01D0: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 01D3: FE 00         cp   $00
-01D5: CC F4 08      call z,$08F4
-01D8: 3A 00 B8      ld   a,(io_read_shit_B800)
+01D5: CC F4 08      call z,move_wagons_08f4
+01D8: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 01DB: CD 3C 11      call handle_pick_hold_timer_113c
 01DE: 3A 83 65      ld   a,(player_y_6583)
 01E1: F5            push af
@@ -337,7 +337,7 @@
 0210: FD 21 47 60   ld   iy,unknown_6047
 0214: DD 21 80 65   ld   ix,player_struct_6580
 0218: CD 6D 0B      call player_movement_0B6D
-021B: 3A 00 B8      ld   a,(io_read_shit_B800)
+021B: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 021E: CD 10 10      call $1010
 0221: CD 4B 10      call $104B
 0224: 3E 01         ld   a,$01
@@ -347,7 +347,7 @@
 022F: 21 14 60      ld   hl,unknown_6014
 0232: DD 21 80 65   ld   ix,player_struct_6580
 0236: CD 27 0A      call $0A27
-0239: 3A 00 B8      ld   a,(io_read_shit_B800)
+0239: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 023C: 3A F2 61      ld   a,(unknown_61F2)
 023F: FE 00         cp   $00
 0241: 20 20         jr   nz,$0263
@@ -361,7 +361,7 @@
 0258: 3A 13 60      ld   a,(unknown_6013)
 025B: 06 19         ld   b,$19
 025D: CD 2E 0B      call $0B2E
-0260: 3A 00 B8      ld   a,(io_read_shit_B800)
+0260: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0263: 3A 0D 60      ld   a,(player_screen_600D)
 0266: 32 98 60      ld   (screen_index_param_6098),a
 0269: DD 21 80 65   ld   ix,player_struct_6580
@@ -426,7 +426,7 @@
 0302: 21 7B 60      ld   hl,guard_2_in_elevator_607B
 0305: DD 21 98 65   ld   ix,guard_2_struct_6598
 0309: CD 27 0A      call $0A27
-030C: 3A 00 B8      ld   a,(io_read_shit_B800)
+030C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 030F: 3A 97 60      ld   a,(unknown_6097)
 0312: 3C            inc  a
 0313: 32 97 60      ld   (unknown_6097),a
@@ -467,16 +467,16 @@
 0375: 3E 01         ld   a,$01
 0377: 32 7F 62      ld   (unknown_627F),a
 037A: CD C7 18      call $18C7
-037D: 3A 00 B8      ld   a,(io_read_shit_B800)
-0380: CD F9 3D      call $3DF9
+037D: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
+0380: CD F9 3D      call update_all_sprites_3df9
 0383: 3A F1 61      ld   a,(unknown_61F1)
 0386: FE 00         cp   $00
-0388: CC BC 0E      call z,$0EBC
+0388: CC BC 0E      call z,start_a_game_0ebc
 038B: CD BE 39      call write_credits_and_lives_39be
 038E: CD 0F 56      call write_scores_and_time_560f
 0391: CD FD 39      call read_player_controls_39fd
 0394: CD 66 3C      call $3C66
-0397: 3A 00 B8      ld   a,(io_read_shit_B800)
+0397: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 039A: 3E 01         ld   a,$01
 039C: 32 00 A0      ld   (interrupt_control_A000),a
 039F: ED 56         im   1
@@ -510,14 +510,14 @@
 03CB: 3A 9E 65      ld   a,(unknown_659E)
 03CE: 3C            inc  a
 03CF: 32 9E 65      ld   (unknown_659E),a
-03D2: DD 21 9C 65   ld   ix,unknown_659C
+03D2: DD 21 9C 65   ld   ix,object_held_struct_659C
 03D6: DD 35 03      dec  (ix+$03)
 03D9: FD 21 5A 61   ld   iy,unknown_615A
 03DD: 3A 0D 60      ld   a,(player_screen_600D)
 03E0: 32 98 60      ld   (screen_index_param_6098),a
 03E3: CD 8C 55      call compute_logical_address_from_xy_558c
 03E6: 2A 5A 61      ld   hl,(unknown_615A)
-03E9: DD 21 9C 65   ld   ix,unknown_659C
+03E9: DD 21 9C 65   ld   ix,object_held_struct_659C
 03ED: DD 34 03      inc  (ix+$03)
 03F0: CD 0E 25      call $250E
 03F3: C9            ret
@@ -688,7 +688,7 @@ guard_ladder_movement_04AD:
 054F: AF            xor  a
 0550: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0554: FD 77 00      ld   (iy+$00),a
-0557: CD 72 0F      call $0F72
+0557: CD 72 0F      call align_character_x_0f72
 055A: F1            pop  af
 055B: C9            ret
 055C: DD 7E 03      ld   a,(ix+$03)
@@ -697,7 +697,7 @@ guard_ladder_movement_04AD:
 0563: AF            xor  a
 0564: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
 0568: FD 77 00      ld   (iy+$00),a
-056B: CD 72 0F      call $0F72
+056B: CD 72 0F      call align_character_x_0f72
 056E: F1            pop  af
 056F: C9            ret
 
@@ -868,13 +868,13 @@ guard_unconditional_move_0614:
 0677: F1            pop  af
 0678: C9            ret
 0679: AF            xor  a
-067A: 32 1C 60      ld   (unknown_601C),a
-067D: 32 1D 60      ld   (unknown_601D),a
-0680: 32 1E 60      ld   (unknown_601E),a
+067A: 32 1C 60      ld   (player_in_wagon_1_601C),a
+067D: 32 1D 60      ld   (player_in_wagon_2_601D),a
+0680: 32 1E 60      ld   (player_in_wagon_3_601E),a
 0683: C9            ret
 
 handle_player_walk_0684:
-0684: 21 1C 60      ld   hl,unknown_601C
+0684: 21 1C 60      ld   hl,player_in_wagon_1_601C
 0687: DD 21 8A 65   ld   ix,wagon_data_658A
 068B: FD 21 82 65   ld   iy,player_x_6582
 068F: 11 04 00      ld   de,$0004
@@ -1018,7 +1018,7 @@ player_grip_handle_test_0784:
 0798: FE 01         cp   $01
 079A: C8            ret  z
 079B: 3E 01         ld   a,$01
-079D: 21 1E 60      ld   hl,unknown_601E
+079D: 21 1E 60      ld   hl,player_in_wagon_3_601E
 07A0: 01 03 00      ld   bc,$0003
 07A3: ED B9         cpdr
 07A5: C8            ret  z
@@ -1103,7 +1103,7 @@ l_07F6:
 083C: 3A 83 65      ld   a,(player_y_6583)
 083F: 3C            inc  a
 0840: DD 21 8A 65   ld   ix,wagon_data_658A
-0844: FD 21 1C 60   ld   iy,unknown_601C
+0844: FD 21 1C 60   ld   iy,player_in_wagon_1_601C
 0848: 11 04 00      ld   de,$0004
 084B: CD 5D 08      call $085D
 084E: DD 19         add  ix,de
@@ -1131,6 +1131,7 @@ l_07F6:
 087B: 20 17         jr   nz,$0894
 087D: E5            push hl
 087E: DD E5         push ix
+; add 100 points when player lands in wagon
 0880: 21 00 01      ld   hl,$0100
 0883: CD 90 5C      call add_to_score_5C90
 0886: 21 03 3F      ld   hl,$3F03
@@ -1191,11 +1192,12 @@ compute_wagon_start_values_08b0:
 08EE: 3E FF         ld   a,$FF
 08F0: FD 77 00      ld   (iy+$00),a
 08F3: C9            ret
-	;; move wagons
-08F4: DD 21 16 60   ld   ix,unknown_6016
+
+move_wagons_08f4:
+08F4: DD 21 16 60   ld   ix,wagon_direction_array_6016
 08F8: FD 21 94 09   ld   iy,$0994
 08FC: 21 8A 65      ld   hl,wagon_data_658A
-08FF: CD 25 09      call $0925
+08FF: CD 25 09      call move_a_wagon_0925
 0902: DD 23         inc  ix
 0904: FD 23         inc  iy
 0906: FD 23         inc  iy
@@ -1205,7 +1207,7 @@ compute_wagon_start_values_08b0:
 090D: 23            inc  hl
 090E: 23            inc  hl
 090F: 23            inc  hl
-0910: CD 25 09      call $0925
+0910: CD 25 09      call move_a_wagon_0925
 0913: DD 23         inc  ix
 0915: FD 23         inc  iy
 0917: FD 23         inc  iy
@@ -1215,11 +1217,15 @@ compute_wagon_start_values_08b0:
 091E: 23            inc  hl
 091F: 23            inc  hl
 0920: 23            inc  hl
-0921: CD 25 09      call $0925
+0921: CD 25 09      call move_a_wagon_0925
 0924: C9            ret
+
+move_a_wagon_0925:
+; direction test
 0925: DD 7E 00      ld   a,(ix+$00)
 0928: FE 00         cp   $00
 092A: C2 61 09      jp   nz,$0961
+; to the left
 092D: 7E            ld   a,(hl)
 092E: 3D            dec  a
 092F: 77            ld   (hl),a
@@ -1868,15 +1874,15 @@ check_against_space_tiles_0da2:
 0E70: FE 00         cp   $00
 0E72: C8            ret  z
 0E73: 3E 3F         ld   a,$3F
-0E75: 32 9C 65      ld   (unknown_659C),a
+0E75: 32 9C 65      ld   (object_held_struct_659C),a
 0E78: 3A 82 65      ld   a,(player_x_6582)
 0E7B: 32 9E 65      ld   (unknown_659E),a
 0E7E: C9            ret
 0E7F: F5            push af
 0E80: AF            xor  a
-0E81: 32 1C 60      ld   (unknown_601C),a
-0E84: 32 1D 60      ld   (unknown_601D),a
-0E87: 32 1E 60      ld   (unknown_601E),a
+0E81: 32 1C 60      ld   (player_in_wagon_1_601C),a
+0E84: 32 1D 60      ld   (player_in_wagon_2_601D),a
+0E87: 32 1E 60      ld   (player_in_wagon_3_601E),a
 0E8A: 78            ld   a,b
 0E8B: FE 80         cp   $80
 0E8D: 20 13         jr   nz,$0EA2
@@ -1884,7 +1890,7 @@ check_against_space_tiles_0da2:
 0E92: 3D            dec  a
 0E93: 32 83 65      ld   (player_y_6583),a
 0E96: DD 21 80 65   ld   ix,player_struct_6580
-0E9A: CD 72 0F      call $0F72
+0E9A: CD 72 0F      call align_character_x_0f72
 0E9D: CD 60 0E      call $0E60
 0EA0: F1            pop  af
 0EA1: C9            ret
@@ -1892,14 +1898,12 @@ check_against_space_tiles_0da2:
 0EA5: 3C            inc  a
 0EA6: 32 83 65      ld   (player_y_6583),a
 0EA9: DD 21 80 65   ld   ix,player_struct_6580
-0EAD: CD 72 0F      call $0F72
+0EAD: CD 72 0F      call align_character_x_0f72
 0EB0: CD 60 0E      call $0E60
 0EB3: F1            pop  af
 0EB4: C9            ret
-0EB5: F1            pop  af
-0EB6: F2 F3 F4      jp   p,$F4F3
-0EB9: F5            push af
-0EBA: F6 F7         or   $F7
+
+start_a_game_0ebc:
 0EBC: 3A 0F 91      ld   a,($910F)
 0EBF: FE 1E         cp   $1E
 0EC1: 28 06         jr   z,$0EC9
@@ -1979,12 +1983,13 @@ check_against_space_tiles_0da2:
 0F5C: 32 C7 61      ld   (holds_barrow_61C7),a
 0F5F: 32 CF 61      ld   (has_pick_61CF),a
 0F62: 32 14 60      ld   (unknown_6014),a
-0F65: 32 1C 60      ld   (unknown_601C),a
+0F65: 32 1C 60      ld   (player_in_wagon_1_601C),a
 0F68: 32 58 61      ld   (has_bag_6158),a
 0F6B: CD 5B 35      call set_bags_coordinates_355b
 0F6E: CD 67 35      call set_bags_coordinates_3567
 0F71: C9            ret
 
+align_character_x_0f72:
 0F72: DD 7E 02      ld   a,(ix+$02)
 0F75: D6 01         sub  $01
 0F77: E6 F8         and  $F8
@@ -2069,7 +2074,7 @@ handle_ay_sound_0f7f:
 0FFD: 3A 43 61      ld   a,(unknown_6143)
 1000: C9            ret
 
-copy_4_bytes_ix_iy_1001:
+update_sprite_data_1001:
 1001: 06 04         ld   b,$04
 1003: DD 7E 00      ld   a,(ix+$00)
 1006: FD 77 00      ld   (iy+$00),a
@@ -2096,13 +2101,13 @@ copy_4_bytes_ix_iy_1001:
 1032: C6 08         add  a,$08
 1034: 32 9E 65      ld   (unknown_659E),a
 1037: 3E BF         ld   a,$BF
-1039: 32 9C 65      ld   (unknown_659C),a
+1039: 32 9C 65      ld   (object_held_struct_659C),a
 103C: C9            ret
 103D: 3A 82 65      ld   a,(player_x_6582)
 1040: D6 08         sub  $08
 1042: 32 9E 65      ld   (unknown_659E),a
 1045: 3E 3F         ld   a,$3F
-1047: 32 9C 65      ld   (unknown_659C),a
+1047: 32 9C 65      ld   (object_held_struct_659C),a
 104A: C9            ret
 104B: 3A CF 61      ld   a,(has_pick_61CF)
 104E: FE 00         cp   $00
@@ -2132,16 +2137,17 @@ copy_4_bytes_ix_iy_1001:
 1084: C6 0C         add  a,$0C
 1086: 32 9E 65      ld   (unknown_659E),a
 1089: 78            ld   a,b
-108A: 32 9C 65      ld   (unknown_659C),a
+108A: 32 9C 65      ld   (object_held_struct_659C),a
 108D: C9            ret
 108E: 3A 82 65      ld   a,(player_x_6582)
 1091: D6 0C         sub  $0C
 1093: 32 9E 65      ld   (unknown_659E),a
 1096: 78            ld   a,b
 1097: F6 80         or   $80
-1099: 32 9C 65      ld   (unknown_659C),a
+1099: 32 9C 65      ld   (object_held_struct_659C),a
 109C: C9            ret
 
+handle_player_object_pickup_109d:
 109D: 3A 54 60      ld   a,(gameplay_allowed_6054)
 10A0: FE 01         cp   $01
 10A2: 28 0A         jr   z,object_pickup_test_10AE
@@ -2262,7 +2268,7 @@ guard_1_movement_116F:
 1187: 21 34 60      ld   hl,unknown_6034
 118A: FD 21 27 60   ld   iy,guard_1_direction_6027
 118E: CD 70 05      call guard_walk_movement_0570
-1191: 3A 00 B8      ld   a,(io_read_shit_B800)
+1191: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 1194: 3A 98 60      ld   a,(screen_index_param_6098)
 1197: 32 99 60      ld   (guard_1_screen_6099),a
 119A: C9            ret
@@ -2277,7 +2283,7 @@ guard_2_movement_119B:
 11B3: 21 74 60      ld   hl,unknown_6074
 11B6: FD 21 67 60   ld   iy,guard_2_direction_6067
 11BA: CD 70 05      call guard_walk_movement_0570
-11BD: 3A 00 B8      ld   a,(io_read_shit_B800)
+11BD: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 11C0: 3A 98 60      ld   a,(screen_index_param_6098)
 11C3: 32 9A 60      ld   (guard_2_screen_609A),a
 11C6: C9            ret
@@ -2306,7 +2312,7 @@ guard_2_movement_119B:
 1228: 22 40 61      ld   (unknown_pointer_6140),hl
 	;; reset guards and player
 122B: F3            di
-122C: 3A 00 B8      ld   a,(io_read_shit_B800)
+122C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 122F: CD 94 1E      call init_new_game_1E94
 1232: CD 57 29      call $2957
 1235: AF            xor  a
@@ -2390,7 +2396,7 @@ mainloop_1242:
 12C4: 3A 55 60      ld   a,(unknown_6055)
 12C7: FE 01         cp   $01
 12C9: 28 1F         jr   z,$12EA
-12CB: 3A 00 B8      ld   a,(io_read_shit_B800)
+12CB: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 12CE: CD 2C 2A      call $2A2C	;  ???
 12D1: CD EC 1D      call display_player_ids_and_credit_1dec
 12D4: CD BE 39      call write_credits_and_lives_39be	;  ???
@@ -2430,7 +2436,7 @@ mainloop_1242:
 132D: CD 30 1C      call $1C30	;  ????
 1330: 3A A3 58      ld   a,($58A3)
 1333: 32 73 62      ld   (unknown_6273),a
-1336: 3A 00 B8      ld   a,(io_read_shit_B800)
+1336: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 1339: 3A 0D 60      ld   a,(player_screen_600D)
 133C: 47            ld   b,a
 133D: 3A 99 60      ld   a,(guard_1_screen_6099)
@@ -2440,15 +2446,15 @@ mainloop_1242:
 1345: CD C9 1C      call $1CC9	;  ???
 1348: 3A 0F 57      ld   a,($570F)
 134B: 32 70 62      ld   (unknown_6270),a
-134E: 3A 00 B8      ld   a,(io_read_shit_B800)
-1351: 3A 00 B8      ld   a,(io_read_shit_B800)
+134E: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
+1351: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 1354: 3A 0D 60      ld   a,(player_screen_600D)
 1357: 47            ld   b,a
 1358: 3A 9A 60      ld   a,(guard_2_screen_609A)
 135B: B8            cp   b
 135C: CC 94 1C      call z,$1C94
 135F: FB            ei
-1360: CD B3 25      call $25B3
+1360: CD B3 25      call protection_check_screen_2_25B3
 1363: 32 00 B0      ld   (dip_switch_B000),a
 1366: 3A 99 60      ld   a,(guard_1_screen_6099)
 1369: 32 98 60      ld   (screen_index_param_6098),a
@@ -2460,7 +2466,7 @@ mainloop_1242:
 1380: FD 21 94 65   ld   iy,guard_1_struct_6594
 1384: ED 5B 38 60   ld   de,(guard_1_logical_address_6038)
 1388: ED 53 91 60   ld   (guard_logical_address_6091),de
-138C: 3A 00 B8      ld   a,(io_read_shit_B800)
+138C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 138F: CD D1 19      call analyse_guard_direction_change_19D1
 1392: DD 21 3B 60   ld   ix,guard_1_in_elevator_603B
 1396: 21 57 60      ld   hl,unknown_6057
@@ -2492,7 +2498,7 @@ mainloop_1242:
 13ED: FD 21 98 65   ld   iy,guard_2_struct_6598
 13F1: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
 13F5: ED 53 91 60   ld   (guard_logical_address_6091),de
-13F9: 3A 00 B8      ld   a,(io_read_shit_B800)
+13F9: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 13FC: 3A 0C 57      ld   a,($570C)
 13FF: 32 71 62      ld   (unknown_6271),a
 1402: CD D1 19      call analyse_guard_direction_change_19D1
@@ -2546,7 +2552,7 @@ mainloop_1242:
 148F: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 1492: DD 21 98 65   ld   ix,guard_2_struct_6598
 1496: CD 0E 25      call $250E
-1499: 3A 00 B8      ld   a,(io_read_shit_B800)
+1499: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 149C: CD 5E 55      call update_player_screen_address_from_xy_555E
 149F: FB            ei
 14A0: 7E            ld   a,(hl)
@@ -2569,7 +2575,7 @@ mainloop_1242:
 14CD: CD 0E 25      call $250E
 14D0: 3E 01         ld   a,$01
 14D2: 32 6F 62      ld   (unknown_626F),a
-14D5: 3A 00 B8      ld   a,(io_read_shit_B800)
+14D5: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 14D8: CD 28 2C      call nasty_protection_2c28
 14DB: CD 19 32      call $3219
 14DE: 3E 00         ld   a,$00
@@ -2662,7 +2668,7 @@ guard_1_sees_player_1560:
 15AE: FD 77 04      ld   (iy+$04),a
 15B1: 3E 20         ld   a,$20
 15B3: FD 77 05      ld   (iy+$05),a
-15B6: 3A 00 B8      ld   a,(io_read_shit_B800)
+15B6: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 15B9: 3E E4         ld   a,$E4
 15BB: 32 D2 61      ld   (unknown_61D2),a
 15BE: CD 37 21      call $2137
@@ -2686,7 +2692,7 @@ guard_1_sees_player_1560:
 15E2: B8            cp   b
 15E3: 20 19         jr   nz,$15FE
 15E5: DD 21 94 65   ld   ix,guard_1_struct_6594
-15E9: FD 21 9C 65   ld   iy,unknown_659C
+15E9: FD 21 9C 65   ld   iy,object_held_struct_659C
 15ED: 0E 00         ld   c,$00
 15EF: 06 06         ld   b,$06
 15F1: CD D5 2A      call $2AD5
@@ -2695,7 +2701,7 @@ guard_1_sees_player_1560:
 15F8: CD 41 22      call $2241
 15FB: CD 3D 31      call $313D
 15FE: DD 21 98 65   ld   ix,guard_2_struct_6598
-1602: FD 21 9C 65   ld   iy,unknown_659C
+1602: FD 21 9C 65   ld   iy,object_held_struct_659C
 1606: 3A 9A 60      ld   a,(guard_2_screen_609A)
 1609: 47            ld   b,a
 160A: 3A 0D 60      ld   a,(player_screen_600D)
@@ -2709,7 +2715,7 @@ guard_1_sees_player_1560:
 161B: CD 7C 22      call $227C
 161E: CD 3D 31      call $313D
 1621: DD 21 80 65   ld   ix,player_struct_6580
-1625: FD 21 84 65   ld   iy,unknown_6584
+1625: FD 21 84 65   ld   iy,elevator_struct_6584
 1629: CD D1 2A      call guard_collision_with_pick_2AD1
 162C: FE 01         cp   $01
 162E: 20 11         jr   nz,$1641
@@ -2759,14 +2765,14 @@ guard_1_sees_player_1560:
 168A: 3A 59 61      ld   a,(unknown_6159)
 168D: FE 00         cp   $00
 168F: C8            ret  z
-1690: DD 21 9C 65   ld   ix,unknown_659C
+1690: DD 21 9C 65   ld   ix,object_held_struct_659C
 1694: FD 21 5A 61   ld   iy,unknown_615A
 1698: 3A 0D 60      ld   a,(player_screen_600D)
 169B: 32 98 60      ld   (screen_index_param_6098),a
 169E: DD 35 03      dec  (ix+$03)
 16A1: CD 8C 55      call compute_logical_address_from_xy_558c
 16A4: FB            ei
-16A5: DD 21 9C 65   ld   ix,unknown_659C
+16A5: DD 21 9C 65   ld   ix,object_held_struct_659C
 16A9: DD 34 03      inc  (ix+$03)
 16AC: FB            ei
 16AD: 7E            ld   a,(hl)
@@ -2785,7 +2791,7 @@ guard_1_sees_player_1560:
 16C6: 32 5E 61      ld   (unknown_615E),a
 16C9: 3C            inc  a
 16CA: 32 59 61      ld   (unknown_6159),a
-16CD: DD 21 9C 65   ld   ix,unknown_659C
+16CD: DD 21 9C 65   ld   ix,object_held_struct_659C
 16D1: FD 21 5A 61   ld   iy,unknown_615A
 16D5: 3A 0D 60      ld   a,(player_screen_600D)
 16D8: 32 98 60      ld   (screen_index_param_6098),a
@@ -2889,7 +2895,7 @@ guard_1_sees_player_1560:
 179A: 32 E8 61      ld   (time_61E8),a
 179D: CD 00 3B      call $3B00
 17A0: AF            xor  a
-17A1: DD 21 9C 65   ld   ix,unknown_659C
+17A1: DD 21 9C 65   ld   ix,object_held_struct_659C
 17A5: DD 77 02      ld   (ix+$02),a
 17A8: 3E FF         ld   a,$FF
 17AA: DD 77 03      ld   (ix+$03),a
@@ -3108,7 +3114,7 @@ compute_backbuffer_tile_address_1945:
 196B: 78            ld   a,b
 196C: FE 00         cp   $00
 196E: C8            ret  z
-196F: DD 21 9C 65   ld   ix,unknown_659C
+196F: DD 21 9C 65   ld   ix,object_held_struct_659C
 1973: FD 21 5A 61   ld   iy,unknown_615A
 1977: 3A 0D 60      ld   a,(player_screen_600D)
 197A: 32 98 60      ld   (screen_index_param_6098),a
@@ -3184,7 +3190,7 @@ analyse_guard_direction_change_19D1:
 19E4: FD 23         inc  iy
 19E6: FD 23         inc  iy
 19E8: FD 23         inc  iy
-19EA: 3A 00 B8      ld   a,(io_read_shit_B800)
+19EA: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 19ED: FD 7E 02      ld   a,(iy+$02)
 19F0: FE FF         cp   $FF
 19F2: 20 E3         jr   nz,$19D7
@@ -3250,7 +3256,7 @@ analyse_guard_direction_change_19D1:
 1A67: 7C            ld   a,h
 1A68: CE 00         adc  a,$00
 1A6A: 67            ld   h,a
-1A6B: 3A 00 B8      ld   a,(io_read_shit_B800)
+1A6B: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 1A6E: 7E            ld   a,(hl)	; turns to random 8 4 2 1 thanks to table @1B34
 1A6F: C5            push bc
 1A70: DD E5         push ix
@@ -3817,7 +3823,7 @@ init_new_game_1E94:
 1EAB: 32 03 A0      ld   ($A003),a
 1EAE: CD 4C 28      call display_maze_284c
 1EB1: 3E 01         ld   a,$01
-1EB3: 32 16 60      ld   (unknown_6016),a
+1EB3: 32 16 60      ld   (wagon_direction_array_6016),a
 1EB6: CD EC 1D      call display_player_ids_and_credit_1dec
 
 	;; init player coordinates
@@ -3908,7 +3914,7 @@ init_new_game_1E94:
 1F98: FE 01         cp   $01
 1F9A: 20 F9         jr   nz,$1F95
 1F9C: CD 26 20      call start_new_life_2026
-1F9F: DD 21 9C 65   ld   ix,unknown_659C
+1F9F: DD 21 9C 65   ld   ix,object_held_struct_659C
 1FA3: DD 77 00      ld   (ix+$00),a
 1FA6: DD 77 01      ld   (ix+$01),a
 1FA9: DD 77 02      ld   (ix+$02),a
@@ -4147,7 +4153,7 @@ choose_guard_random_direction_2123:
 21B7: FE 00         cp   $00
 21B9: C8            ret  z
 
-21BA: DD 21 9C 65   ld   ix,unknown_659C
+21BA: DD 21 9C 65   ld   ix,object_held_struct_659C
 21BE: 3A 0D 60      ld   a,(player_screen_600D)
 21C1: 32 98 60      ld   (screen_index_param_6098),a
 21C4: CD 8C 55      call compute_logical_address_from_xy_558c
@@ -4471,7 +4477,7 @@ handle_player_destroying_wall_2517:
 2529: 3A CF 61      ld   a,(has_pick_61CF)
 252C: FE 00         cp   $00
 252E: C8            ret  z
-252F: 3A 9C 65      ld   a,(unknown_659C)
+252F: 3A 9C 65      ld   a,(object_held_struct_659C)
 2532: FE B8         cp   $B8
 2534: 28 03         jr   z,$2539
 2536: FE B7         cp   $B7
@@ -4550,17 +4556,19 @@ check_breakable_wall_present_25a1:
 25AB: ED B1         cpir
 25AD: C9            ret
 
-25AE: 0A            ld   a,(bc)
-25AF: 08            ex   af,af'
-25B0: 06 04         ld   b,$04
-25B2: 02            ld   (bc),a
+
+protection_check_screen_2_25B3:
 25B3: 3A 0D 60      ld   a,(player_screen_600D)
 25B6: FE 02         cp   $02
 25B8: C0            ret  nz
+* check time = 2000 on screen 2
 25B9: 3A E8 61      ld   a,(time_61E8)
 25BC: FE 20         cp   $20
 25BE: C0            ret  nz
 25BF: E5            push hl
+* check that noone tampered with "VALADON" string
+* else it continues in the next routine, doing strange
+* stuff probably & subtle bugs
 25C0: 21 0F 57      ld   hl,$570F
 25C3: 7E            ld   a,(hl)
 25C4: FE 44         cp   $44
@@ -4640,7 +4648,7 @@ display_screen_3_265f:
 265F: CD 16 2A      call $2A16
 2662: 3E 3F         ld   a,$3F
 2664: CD EC 29      call change_attribute_everywhere_29ec
-2667: 3A 00 B8      ld   a,(io_read_shit_B800)
+2667: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 266A: 21 00 48      ld   hl,$4800
 266D: 11 00 90      ld   de,$9000
 2670: 01 00 04      ld   bc,$0400
@@ -4713,7 +4721,7 @@ display_screen_3_265f:
 2729: 11 05 57      ld   de,$5705
 272C: 21 40 92      ld   hl,$9240
 272F: CD F9 30      call display_text_30F9
-2732: 21 84 65      ld   hl,unknown_6584
+2732: 21 84 65      ld   hl,elevator_struct_6584
 2735: 3E 33         ld   a,$33
 2737: 77            ld   (hl),a
 2738: 23            inc  hl
@@ -4723,7 +4731,7 @@ display_screen_3_265f:
 273D: 3E 2F         ld   a,$2F
 273F: 77            ld   (hl),a
 2740: 23            inc  hl
-2741: 3A 00 B8      ld   a,(io_read_shit_B800)
+2741: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2744: 3A 66 61      ld   a,(unknown_6166)
 2747: 77            ld   (hl),a
 2748: CD 26 1E      call $1E26
@@ -4739,7 +4747,7 @@ display_screen_2_275d:
 275D: CD 16 2A      call $2A16
 2760: 3E 3F         ld   a,$3F
 2762: CD EC 29      call change_attribute_everywhere_29ec
-2765: 3A 00 B8      ld   a,(io_read_shit_B800)
+2765: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2768: 21 00 44      ld   hl,$4400
 276B: 11 00 90      ld   de,$9000
 276E: 01 00 04      ld   bc,$0400
@@ -4810,11 +4818,11 @@ display_screen_2_275d:
 281E: 77            ld   (hl),a
 281F: 21 98 98      ld   hl,$9898
 2822: 77            ld   (hl),a
-2823: 3A 00 B8      ld   a,(io_read_shit_B800)
+2823: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2826: 11 05 57      ld   de,$5705
 2829: 21 40 92      ld   hl,$9240
 282C: CD F9 30      call display_text_30F9
-282F: 21 84 65      ld   hl,unknown_6584
+282F: 21 84 65      ld   hl,elevator_struct_6584
 2832: 3E 33         ld   a,$33
 2834: 77            ld   (hl),a
 2835: 3E 04         ld   a,$04
@@ -4826,7 +4834,7 @@ display_screen_2_275d:
 283D: 3A 65 61      ld   a,(unknown_6165)
 2840: 23            inc  hl
 2841: 77            ld   (hl),a
-2842: 3A 00 B8      ld   a,(io_read_shit_B800)
+2842: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2845: CD 26 1E      call $1E26
 2848: CD 10 31      call $3110
 284B: C9            ret
@@ -4835,7 +4843,7 @@ display_maze_284c:
 284C: CD 16 2A      call $2A16
 284F: 3E 3F         ld   a,$3F
 2851: CD EC 29      call change_attribute_everywhere_29ec
-2854: 3A 00 B8      ld   a,(io_read_shit_B800)
+2854: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2857: 21 00 40      ld   hl,$4000
 285A: 11 00 90      ld   de,$9000
 285D: 01 00 04      ld   bc,$0400
@@ -4898,7 +4906,7 @@ display_maze_284c:
 28F6: 21 67 98      ld   hl,$9867
 28F9: 77            ld   (hl),a
 28FA: AF            xor  a
-28FB: 21 84 65      ld   hl,unknown_6584
+28FB: 21 84 65      ld   hl,elevator_struct_6584
 28FE: 77            ld   (hl),a
 28FF: 23            inc  hl
 2900: 77            ld   (hl),a
@@ -4906,7 +4914,7 @@ display_maze_284c:
 2902: 77            ld   (hl),a
 2903: 23            inc  hl
 2904: 77            ld   (hl),a
-2905: 3A 00 B8      ld   a,(io_read_shit_B800)
+2905: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2908: CD 26 1E      call $1E26
 290B: CD 10 31      call $3110
 290E: 3A 10 62      ld   a,(unknown_6210)
@@ -4956,8 +4964,8 @@ display_maze_284c:
 2964: 3E 40         ld   a,$40
 2966: 32 67 60      ld   (guard_2_direction_6067),a ;  $40:	to left, $80:	 to right, $10:	 up, $20:	down
 2969: 21 95 29      ld   hl,$2995
-296C: 3A 00 B8      ld   a,(io_read_shit_B800)
-296F: 11 88 65      ld   de,unknown_6588
+296C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
+296F: 11 88 65      ld   de,wagon_1_struct_6588
 2972: 01 14 00      ld   bc,$0014
 2975: ED B0         ldir
 2977: CD E0 1E      call $1EE0
@@ -5014,13 +5022,13 @@ write_3_attributes_2989:
 29B9: 1F            rra
 29BA: 1E 3F         ld   e,$3F
 
-write_text_29bc:
+draw_repeated_char_29bc:
 29BC: C5            push bc
 29BD: 01 E0 FF      ld   bc,$FFE0
 29C0: 77            ld   (hl),a
 29C1: 09            add  hl,bc
 29C2: C1            pop  bc
-29C3: 10 F7         djnz write_text_29bc
+29C3: 10 F7         djnz draw_repeated_char_29bc
 29C5: C9            ret
 29C6: 77            ld   (hl),a
 29C7: 23            inc  hl
@@ -5054,7 +5062,7 @@ change_attribute_everywhere_29ec:
 29F3: 77            ld   (hl),a
 29F4: 23            inc  hl
 29F5: F5            push af
-29F6: 3A 00 B8      ld   a,(io_read_shit_B800)
+29F6: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 29F9: F1            pop  af
 29FA: 0D            dec  c
 29FB: 20 F6         jr   nz,$29F3
@@ -5070,7 +5078,7 @@ clear_screen_2a00:
 2A09: 77            ld   (hl),a
 2A0A: 23            inc  hl
 2A0B: F5            push af
-2A0C: 3A 00 B8      ld   a,(io_read_shit_B800)
+2A0C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2A0F: F1            pop  af
 2A10: 0D            dec  c
 2A11: 20 F6         jr   nz,$2A09
@@ -5083,7 +5091,7 @@ clear_screen_2a00:
 2A1F: E5            push hl
 2A20: C5            push bc
 2A21: 06 20         ld   b,$20
-2A23: CD BC 29      call write_text_29bc
+2A23: CD BC 29      call draw_repeated_char_29bc
 2A26: C1            pop  bc
 2A27: E1            pop  hl
 2A28: 23            inc  hl
@@ -5396,7 +5404,7 @@ nasty_protection_2c28:
 2C3D: FE 00         cp   $00
 2C3F: C0            ret  nz
 	;; random huge slowdown when 0 credits remaining
-2C40: 3A 00 B8      ld   a,(io_read_shit_B800)
+2C40: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2C43: FB            ei
 2C44: 10 F4         djnz $2C3A
 2C46: 2B            dec  hl
@@ -5463,7 +5471,7 @@ compute_guard_speed_2C7C:
 2C95: C9            ret
 
 2C96: DD 21 94 65   ld   ix,guard_1_struct_6594
-2C9A: FD 21 9C 65   ld   iy,unknown_659C
+2C9A: FD 21 9C 65   ld   iy,object_held_struct_659C
 2C9E: CD D1 2A      call guard_collision_with_pick_2AD1
 2CA1: FE 01         cp   $01
 2CA3: 20 0F         jr   nz,$2CB4
@@ -5474,7 +5482,7 @@ compute_guard_speed_2C7C:
 2CAE: 32 37 60      ld   (unknown_6037),a
 2CB1: 32 08 62      ld   (unknown_6208),a
 2CB4: DD 21 98 65   ld   ix,guard_2_struct_6598
-2CB8: FD 21 9C 65   ld   iy,unknown_659C
+2CB8: FD 21 9C 65   ld   iy,object_held_struct_659C
 2CBC: CD D1 2A      call guard_collision_with_pick_2AD1
 2CBF: FE 01         cp   $01
 2CC1: 20 0F         jr   nz,$2CD2
@@ -6227,34 +6235,34 @@ reset_guard_position_31DF:
 331A: FE 10         cp   $10
 331C: 30 03         jr   nc,$3321
 331E: CD 58 36      call $3658
-3321: 3A 1C 60      ld   a,(unknown_601C)
+3321: 3A 1C 60      ld   a,(player_in_wagon_1_601C)
 3324: FE 01         cp   $01
 3326: C8            ret  z
-3327: 3A 1D 60      ld   a,(unknown_601D)
+3327: 3A 1D 60      ld   a,(player_in_wagon_2_601D)
 332A: FE 01         cp   $01
 332C: C8            ret  z
-332D: 3A 1E 60      ld   a,(unknown_601E)
+332D: 3A 1E 60      ld   a,(player_in_wagon_3_601E)
 3330: FE 01         cp   $01
 3332: C8            ret  z
 3333: 21 83 65      ld   hl,player_y_6583
-3336: DD 21 8C 65   ld   ix,unknown_658C
+3336: DD 21 8C 65   ld   ix,wagon_2_shadow_sprite_658C
 333A: 7E            ld   a,(hl)
 333B: FE 40         cp   $40
 333D: 20 05         jr   nz,$3344
 333F: CD 69 33      call $3369
 3342: 18 17         jr   $335B
-3344: DD 21 88 65   ld   ix,unknown_6588
+3344: DD 21 88 65   ld   ix,wagon_1_struct_6588
 3348: FE E0         cp   $E0
 334A: 20 05         jr   nz,$3351
 334C: CD 69 33      call $3369
 334F: 18 0A         jr   $335B
-3351: DD 21 90 65   ld   ix,unknown_6590
+3351: DD 21 90 65   ld   ix,wagon_3_shadow_sprite_6590
 3355: FE C8         cp   $C8
 3357: C0            ret  nz
 3358: CD 69 33      call $3369
 335B: 06 30         ld   b,$30
 335D: C5            push bc
-335E: CD F4 08      call $08F4
+335E: CD F4 08      call move_wagons_08f4
 3361: C1            pop  bc
 3362: 10 F9         djnz $335D
 3364: AF            xor  a
@@ -6406,7 +6414,7 @@ draw_object_tiles_3417:
 3467: FE 01         cp   $01
 3469: CC 7C 22      call z,$227C
 346C: C9            ret
-346D: FD 21 9C 65   ld   iy,unknown_659C
+346D: FD 21 9C 65   ld   iy,object_held_struct_659C
 3471: FD 7E 02      ld   a,(iy+$02)
 3474: DD BE 02      cp   (ix+$02)
 3477: 28 06         jr   z,$347F
@@ -6637,7 +6645,7 @@ is_background_tile_3573:
 361F: 06 06         ld   b,$06
 3621: 21 00 00      ld   hl,$0000
 3624: 2B            dec  hl
-3625: 3A 00 B8      ld   a,(io_read_shit_B800)
+3625: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 3628: 7C            ld   a,h
 3629: FE 00         cp   $00
 362B: 20 F7         jr   nz,$3624
@@ -6716,7 +6724,7 @@ play_intro_3700:
 376F: 21 EE 38      ld   hl,$38EE
 3772: 01 04 00      ld   bc,$0004
 3775: ED B0         ldir
-3777: 11 9C 65      ld   de,unknown_659C
+3777: 11 9C 65      ld   de,object_held_struct_659C
 377A: 21 F2 38      ld   hl,$38F2
 377D: 01 04 00      ld   bc,$0004
 3780: ED B0         ldir
@@ -6821,7 +6829,7 @@ play_intro_3700:
 386A: 3E 01         ld   a,$01
 386C: 32 CF 61      ld   (has_pick_61CF),a
 386F: 3E 37         ld   a,$37
-3871: 32 9C 65      ld   (unknown_659C),a
+3871: 32 9C 65      ld   (object_held_struct_659C),a
 3874: 3A 26 60      ld   a,(player_input_6026)
 3877: F6 08         or   $08
 3879: 32 26 60      ld   (player_input_6026),a
@@ -6840,7 +6848,7 @@ play_intro_3700:
 3899: 3A 82 65      ld   a,(player_x_6582)
 389C: FE 03         cp   $03
 389E: DD 21 94 65   ld   ix,guard_1_struct_6594
-38A2: FD 21 9C 65   ld   iy,unknown_659C
+38A2: FD 21 9C 65   ld   iy,object_held_struct_659C
 38A6: 0E 00         ld   c,$00
 38A8: 06 06         ld   b,$06
 38AA: CD D5 2A      call $2AD5
@@ -6875,7 +6883,7 @@ check_if_credit_inserted_38d7:
 ; but if we're displaying intro, then exit intro
 38E3: 3E 00         ld   a,$00
 38E5: 32 ED 61      ld   (check_scenery_disabled_61ED),a
-38E8: 3A 00 B8      ld   a,(io_read_shit_B800)
+38E8: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 38EB: E1            pop  hl
 38EC: 18 D6         jr   $38C4
 38EE: 20 08         jr   nz,$38F8
@@ -7000,14 +7008,14 @@ write_credits_and_lives_39be:
 39D6: 3E E0         ld   a,$E0
 39D8: 06 07         ld   b,$07
 39DA: 21 9F 93      ld   hl,$939F
-39DD: CD BC 29      call write_text_29bc
+39DD: CD BC 29      call draw_repeated_char_29bc
 39E0: 3A 56 60      ld   a,(lives_6056)
 39E3: FE 00         cp   $00
 39E5: C8            ret  z
 39E6: 21 9F 93      ld   hl,$939F
 39E9: 47            ld   b,a
 39EA: 3E CA         ld   a,$CA
-39EC: CD BC 29      call write_text_29bc
+39EC: CD BC 29      call draw_repeated_char_29bc
 39EF: C9            ret
 
 39F6: 79            ld   a,c                                            
@@ -7171,7 +7179,7 @@ check_remaining_bags_3BBC:
 3BBC: 3A 0D 60      ld   a,(player_screen_600D)
 3BBF: 32 98 60      ld   (screen_index_param_6098),a
 3BC2: FD 21 61 61   ld   iy,unknown_6161
-3BC6: DD 21 84 65   ld   ix,unknown_6584
+3BC6: DD 21 84 65   ld   ix,elevator_struct_6584
 3BCA: CD 8C 55      call compute_logical_address_from_xy_558c
 3BCD: 3A 0D 60      ld   a,(player_screen_600D)
 3BD0: FE 01         cp   $01
@@ -7431,25 +7439,26 @@ can_pick_bag_3DEB:
 3DF6: FE FF         cp   $FF
 3DF8: C9            ret
 
-3DF9: 3A 00 B8      ld   a,(io_read_shit_B800)
+update_all_sprites_3df9:
+3DF9: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 3DFC: DD 21 80 65   ld   ix,player_struct_6580
-3E00: FD 21 A8 65   ld   iy,unknown_65A8
-3E04: CD 01 10      call copy_4_bytes_ix_iy_1001
-3E07: DD 21 84 65   ld   ix,unknown_6584
-3E0B: FD 21 A4 65   ld   iy,unknown_65A4
-3E0F: CD 01 10      call copy_4_bytes_ix_iy_1001
-3E12: DD 21 88 65   ld   ix,unknown_6588
-3E16: FD 21 AC 65   ld   iy,unknown_65AC
-3E1A: CD 01 10      call copy_4_bytes_ix_iy_1001
-3E1D: DD 21 8C 65   ld   ix,unknown_658C
+3E00: FD 21 A8 65   ld   iy,player_shadow_sprite_65A8
+3E04: CD 01 10      call update_sprite_data_1001
+3E07: DD 21 84 65   ld   ix,elevator_struct_6584
+3E0B: FD 21 A4 65   ld   iy,elevator_shadow_sprite_65A4
+3E0F: CD 01 10      call update_sprite_data_1001
+3E12: DD 21 88 65   ld   ix,wagon_1_struct_6588
+3E16: FD 21 AC 65   ld   iy,wagon_1_shadow_sprite_65AC
+3E1A: CD 01 10      call update_sprite_data_1001
+3E1D: DD 21 8C 65   ld   ix,wagon_2_shadow_sprite_658C
 3E21: FD 21 B0 65   ld   iy,unknown_65B0
-3E25: CD 01 10      call copy_4_bytes_ix_iy_1001
-3E28: DD 21 90 65   ld   ix,unknown_6590
+3E25: CD 01 10      call update_sprite_data_1001
+3E28: DD 21 90 65   ld   ix,wagon_3_shadow_sprite_6590
 3E2C: FD 21 B4 65   ld   iy,unknown_65B4
-3E30: CD 01 10      call copy_4_bytes_ix_iy_1001
-3E33: DD 21 9C 65   ld   ix,unknown_659C
+3E30: CD 01 10      call update_sprite_data_1001
+3E33: DD 21 9C 65   ld   ix,object_held_struct_659C
 3E37: FD 21 A0 65   ld   iy,sprite_shadow_ram_65A0
-3E3B: CD 01 10      call copy_4_bytes_ix_iy_1001
+3E3B: CD 01 10      call update_sprite_data_1001
 3E3E: AF            xor  a
 3E3F: 32 5F 98      ld   ($985F),a
 3E42: 3A 00 B0      ld   a,(dip_switch_B000)
