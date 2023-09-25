@@ -1,4 +1,4 @@
-- guards frozen / not shown
+- guards frozen / not shown / move/follow player but no random move
 - wagon moves off screen: direction change doesn't work??
 - can't pickup objects (debug around 214a)
 
@@ -7,11 +7,8 @@
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow
   - 2 for others
-
-- level 2 right part off / player blocked
-- level 3 not reachable
   
-- add elevator missing wire tiles (unknown clut atm)
+- add elevator missing wire tiles
 
 - sprite/tiles conflict.
 

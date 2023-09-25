@@ -1390,7 +1390,7 @@ osd_w_videoram:
 	
 	
 	sub.w	#SCREEN_ADDRESS,d6
-	bmi.b	0f
+	bcs.b	0f
 	cmp.w	#0x400,d6
 	bcs.b	1f
 0:
@@ -1427,7 +1427,7 @@ osd_w_colorram:
     .ifeq OPT_DISABLE_BG_LAYER
 	movem.l	d0-d3/d6/a0-a2,-(a7)
 	sub.w	#SCREEN_ADDRESS+0x800,d6
-	bmi.b	0f
+	bcs.b	0f
 	cmp.w	#0x400,d6
 	bcs.b	1f
 0:

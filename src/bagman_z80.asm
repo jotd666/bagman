@@ -495,7 +495,7 @@
 03AF: FB            ei
 03B0: C9            ret
 
-03B1: 3A 5E 61      ld   a,(unknown_615E)
+03B1: 3A 5E 61      ld   a,(bag_sliding_615E)
 03B4: FE 00         cp   $00
 03B6: C8            ret  z
 03B7: 3A 0D 60      ld   a,(player_screen_600D)
@@ -521,7 +521,7 @@
 03ED: DD 34 03      inc  (ix+$03)
 03F0: CD 0E 25      call $250E
 03F3: C9            ret
-03F4: 3A 59 61      ld   a,(unknown_6159)
+03F4: 3A 59 61      ld   a,(bag_falling_6159)
 03F7: FE 00         cp   $00
 03F9: C8            ret  z
 03FA: 3A 9F 65      ld   a,(unknown_659F)
@@ -1974,10 +1974,10 @@ start_a_game_0ebc:
 0F46: 3C            inc  a
 0F47: 32 7E 61      ld   (unknown_617E),a
 0F4A: 21 C2 91      ld   hl,$91C2
-0F4D: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
+0F4D: 22 C4 61      ld   (barrow_screen_params_61C4),hl
 0F50: 22 FA 61      ld   (unknown_screen_address_61FA),hl
 0F53: 3E 01         ld   a,$01
-0F55: 32 C6 61      ld   (unknown_61C6),a
+0F55: 32 C6 61      ld   (barrow_screen_61C6),a
 0F58: 32 FC 61      ld   (unknown_61FC),a
 0F5B: AF            xor  a
 0F5C: 32 C7 61      ld   (holds_barrow_61C7),a
@@ -2222,7 +2222,7 @@ speech_management_10D1:
 1125: C8            ret  z
 1126: 01 C7 61      ld   bc,holds_barrow_61C7
 1129: D9            exx
-112A: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
+112A: FD 21 C4 61   ld   iy,barrow_screen_params_61C4
 112E: 3E 28         ld   a,$28
 1130: FD 77 05      ld   (iy+$05),a
 1133: 3E EC         ld   a,$EC
@@ -2251,7 +2251,7 @@ handle_pick_hold_timer_113c:
 115A: 21 00 00      ld   hl,$0000
 115D: 22 E0 61      ld   (pickaxe_timer_duration_61E0),hl
 1160: 3E 00         ld   a,$00
-1162: DD 21 CC 61   ld   ix,unknown_61CC
+1162: DD 21 CC 61   ld   ix,current_pickaxe_screen_params_61CC
 1166: DD 77 03      ld   (ix+$03),a
 1169: 3E FF         ld   a,$FF
 116B: 32 9F 65      ld   (unknown_659F),a
@@ -2645,7 +2645,7 @@ guard_1_sees_player_1560:
 1575: FE 01         cp   $01
 1577: 28 1A         jr   z,$1593
 1579: 01 C7 61      ld   bc,holds_barrow_61C7
-157C: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
+157C: FD 21 C4 61   ld   iy,barrow_screen_params_61C4
 1580: 3E 3A         ld   a,$3A
 1582: FD 77 04      ld   (iy+$04),a
 1585: 3E 28         ld   a,$28
@@ -2653,7 +2653,7 @@ guard_1_sees_player_1560:
 158A: 3E EC         ld   a,$EC
 158C: 32 CA 61      ld   (unknown_61CA),a
 158F: F3            di
-1590: CD 37 21      call $2137
+1590: CD 37 21      call check_object_pickup_2137
 1593: F3            di
 1594: 06 04         ld   b,$04
 1596: FD 21 D0 61   ld   iy,unknown_61D0
@@ -2663,7 +2663,7 @@ guard_1_sees_player_1560:
 15A2: C5            push bc
 15A3: FD E5         push iy
 15A5: 01 CF 61      ld   bc,has_pick_61CF
-15A8: FD 21 CC 61   ld   iy,unknown_61CC
+15A8: FD 21 CC 61   ld   iy,current_pickaxe_screen_params_61CC
 15AC: 3E 37         ld   a,$37
 15AE: FD 77 04      ld   (iy+$04),a
 15B1: 3E 20         ld   a,$20
@@ -2671,12 +2671,12 @@ guard_1_sees_player_1560:
 15B6: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 15B9: 3E E4         ld   a,$E4
 15BB: 32 D2 61      ld   (unknown_61D2),a
-15BE: CD 37 21      call $2137
+15BE: CD 37 21      call check_object_pickup_2137
 15C1: FD E1         pop  iy
 15C3: FD 23         inc  iy
 15C5: FD 23         inc  iy
 15C7: FD 23         inc  iy
-15C9: CD B7 22      call $22B7
+15C9: CD B7 22      call swap_3_bytes_22b7
 15CC: C1            pop  bc
 15CD: 10 D3         djnz $15A2
 15CF: FB            ei
@@ -2731,7 +2731,7 @@ guard_1_sees_player_1560:
 1645: CD A1 3B      call $3BA1
 1648: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 164B: FE 00         cp   $00
-164D: CC DC 22      call z,draw_bag_tiles_22dc
+164D: CC DC 22      call z,draw_object_tiles_22dc
 1650: C3 42 12      jp   mainloop_1242
 1653: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 1656: FE 00         cp   $00
@@ -2759,10 +2759,10 @@ guard_1_sees_player_1560:
 1680: D1            pop  de
 1681: E1            pop  hl
 1682: C9            ret
-1683: 3A 5E 61      ld   a,(unknown_615E)
+1683: 3A 5E 61      ld   a,(bag_sliding_615E)
 1686: FE 00         cp   $00
 1688: 20 06         jr   nz,$1690
-168A: 3A 59 61      ld   a,(unknown_6159)
+168A: 3A 59 61      ld   a,(bag_falling_6159)
 168D: FE 00         cp   $00
 168F: C8            ret  z
 1690: DD 21 9C 65   ld   ix,object_held_struct_659C
@@ -2783,14 +2783,14 @@ guard_1_sees_player_1560:
 16B7: E1            pop  hl
 16B8: C2 C5 16      jp   nz,$16C5
 16BB: 3E 01         ld   a,$01
-16BD: 32 5E 61      ld   (unknown_615E),a
+16BD: 32 5E 61      ld   (bag_sliding_615E),a
 16C0: AF            xor  a
-16C1: 32 59 61      ld   (unknown_6159),a
+16C1: 32 59 61      ld   (bag_falling_6159),a
 16C4: C9            ret
 16C5: AF            xor  a
-16C6: 32 5E 61      ld   (unknown_615E),a
+16C6: 32 5E 61      ld   (bag_sliding_615E),a
 16C9: 3C            inc  a
-16CA: 32 59 61      ld   (unknown_6159),a
+16CA: 32 59 61      ld   (bag_falling_6159),a
 16CD: DD 21 9C 65   ld   ix,object_held_struct_659C
 16D1: FD 21 5A 61   ld   iy,unknown_615A
 16D5: 3A 0D 60      ld   a,(player_screen_600D)
@@ -2805,8 +2805,8 @@ guard_1_sees_player_1560:
 16E9: E1            pop  hl
 16EA: C8            ret  z
 16EB: AF            xor  a
-16EC: 32 5E 61      ld   (unknown_615E),a
-16EF: 32 59 61      ld   (unknown_6159),a
+16EC: 32 5E 61      ld   (bag_sliding_615E),a
+16EF: 32 59 61      ld   (bag_falling_6159),a
 16F2: FD 2A 5C 61   ld   iy,(unknown_615C)
 16F6: 3A 0D 60      ld   a,(player_screen_600D)
 16F9: FD 77 02      ld   (iy+$02),a
@@ -2914,10 +2914,10 @@ guard_1_sees_player_1560:
 17EC: 3A C7 61      ld   a,(holds_barrow_61C7)
 17EF: FE 01         cp   $01
 17F1: C8            ret  z
-17F2: 3A 59 61      ld   a,(unknown_6159)
+17F2: 3A 59 61      ld   a,(bag_falling_6159)
 17F5: FE 01         cp   $01
 17F7: C8            ret  z
-17F8: 3A 5E 61      ld   a,(unknown_615E)
+17F8: 3A 5E 61      ld   a,(bag_sliding_615E)
 17FB: FE 01         cp   $01
 17FD: C8            ret  z
 17FE: FD 21 9C 60   ld   iy,bags_coordinates_609C
@@ -2961,7 +2961,7 @@ guard_1_sees_player_1560:
 184C: FD E5         push iy
 184E: E5            push hl
 184F: 01 CF 61      ld   bc,has_pick_61CF
-1852: FD 21 CC 61   ld   iy,unknown_61CC
+1852: FD 21 CC 61   ld   iy,current_pickaxe_screen_params_61CC
 1856: 3E 38         ld   a,$38
 1858: FD 77 04      ld   (iy+$04),a
 185B: 3E 28         ld   a,$28
@@ -3019,17 +3019,17 @@ guard_1_sees_player_1560:
 18D5: E6 0F         and  $0F
 18D7: FE 00         cp   $00
 18D9: C8            ret  z
-18DA: CD 2F 19      call $192F
+18DA: CD 2F 19      call restore_background_tile_192f
 18DD: CD 15 19      call $1915
 18E0: 23            inc  hl
-18E1: CD 2F 19      call $192F
+18E1: CD 2F 19      call restore_background_tile_192f
 18E4: CD 15 19      call $1915
 18E7: 11 20 00      ld   de,$0020
 18EA: 19            add  hl,de
-18EB: CD 2F 19      call $192F
+18EB: CD 2F 19      call restore_background_tile_192f
 18EE: CD 15 19      call $1915
 18F1: 2B            dec  hl
-18F2: CD 2F 19      call $192F
+18F2: CD 2F 19      call restore_background_tile_192f
 18F5: CD 15 19      call $1915
 18F8: 3A 7E 62      ld   a,(unknown_627E)
 18FB: 3C            inc  a
@@ -3064,6 +3064,8 @@ guard_1_sees_player_1560:
 192C: 77            ld   (hl),a
 192D: E1            pop  hl
 192E: C9            ret
+
+restore_background_tile_192f:
 192F: 7C            ld   a,h
 1930: 57            ld   d,a
 1931: 7D            ld   a,l
@@ -3139,7 +3141,7 @@ compute_backbuffer_tile_address_1945:
 1999: 32 58 61      ld   (has_bag_6158),a
 199C: 32 7C 62      ld   (player_has_blue_bag_flag_627C),a
 199F: 3C            inc  a
-19A0: 32 59 61      ld   (unknown_6159),a
+19A0: 32 59 61      ld   (bag_falling_6159),a
 19A3: C9            ret
 
 test_pickup_flag_19A4:
@@ -3873,14 +3875,14 @@ init_new_game_1E94:
 1F1C: 32 E1 61      ld   (unknown_61E1),a
 1F1F: 32 14 60      ld   (unknown_6014),a
 1F22: 32 13 60      ld   (unknown_6013),a
-1F25: 3A C4 61      ld   a,(barrow_start_screen_address_61C4)
+1F25: 3A C4 61      ld   a,(barrow_screen_params_61C4)
 1F28: FE 00         cp   $00
 1F2A: 28 05         jr   z,$1F31
 1F2C: E6 02         and  $02
 1F2E: FE 02         cp   $02
 1F30: C8            ret  z
 1F31: 21 C2 91      ld   hl,$91C2
-1F34: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
+1F34: 22 C4 61      ld   (barrow_screen_params_61C4),hl
 1F37: C9            ret
 
 
@@ -3988,8 +3990,8 @@ start_new_life_2026:
 2041: 32 29 60      ld   (player_in_wagon_flag_6029),a
 2044: 32 13 60      ld   (unknown_6013),a
 2047: 32 4D 60      ld   (fall_height_604D),a
-204A: 32 59 61      ld   (unknown_6159),a
-204D: 32 5E 61      ld   (unknown_615E),a
+204A: 32 59 61      ld   (bag_falling_6159),a
+204D: 32 5E 61      ld   (bag_sliding_615E),a
 2050: 32 C7 61      ld   (holds_barrow_61C7),a
 2053: C9            ret
 
@@ -4086,10 +4088,11 @@ choose_guard_random_direction_2123:
 2135: 77            ld   (hl),a
 2136: C9            ret
 
-2137: 3A 59 61      ld   a,(unknown_6159)
+check_object_pickup_2137:
+2137: 3A 59 61      ld   a,(bag_falling_6159)
 213A: FE 01         cp   $01
 213C: C8            ret  z
-213D: 3A 5E 61      ld   a,(unknown_615E)
+213D: 3A 5E 61      ld   a,(bag_sliding_615E)
 2140: FE 01         cp   $01
 2142: C8            ret  z
 2143: 0A            ld   a,(bc)
@@ -4272,11 +4275,13 @@ convert_logical_to_screen_address_222d:
 22AF: DD 21 98 65   ld   ix,guard_2_struct_6598
 22B3: CD 05 26      call $2605
 22B6: C9            ret
+
+swap_3_bytes_22b7:
 22B7: C5            push bc
 22B8: FD E5         push iy
 22BA: DD E5         push ix
 22BC: 06 03         ld   b,$03
-22BE: DD 21 CC 61   ld   ix,unknown_61CC
+22BE: DD 21 CC 61   ld   ix,current_pickaxe_screen_params_61CC
 22C2: DD 7E 00      ld   a,(ix+$00)
 22C5: 08            ex   af,af'
 22C6: FD 7E 00      ld   a,(iy+$00)
@@ -4290,7 +4295,7 @@ convert_logical_to_screen_address_222d:
 22D8: FD E1         pop  iy
 22DA: C1            pop  bc
 22DB: C9            ret
-draw_bag_tiles_22dc:
+draw_object_tiles_22dc:
 22DC: DD 21 9C 60   ld   ix,bags_coordinates_609C
 22E0: 3E 04         ld   a,$04
 22E2: 32 7A 62      ld   (bag_color_color_attribute_627A),a
@@ -4311,7 +4316,7 @@ draw_bag_tiles_22dc:
 2302: 28 1C         jr   z,$2320
 2304: 3A 0D 60      ld   a,(player_screen_600D)
 2307: 47            ld   b,a
-2308: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
+2308: FD 21 C4 61   ld   iy,barrow_screen_params_61C4
 230C: FD 7E 02      ld   a,(iy+$02)
 230F: B8            cp   b
 2310: 20 0E         jr   nz,$2320
@@ -4323,21 +4328,21 @@ draw_bag_tiles_22dc:
 231D: CD 17 34      call draw_object_tiles_3417
 2320: 3A 0D 60      ld   a,(player_screen_600D)
 2323: 47            ld   b,a
-2324: FD 21 CC 61   ld   iy,unknown_61CC
+2324: FD 21 CC 61   ld   iy,current_pickaxe_screen_params_61CC
 2328: FD 7E 02      ld   a,(iy+$02)
 232B: B8            cp   b
 232C: 20 22         jr   nz,$2350
 232E: FD 6E 00      ld   l,(iy+$00)
 2331: FD 66 01      ld   h,(iy+$01)
 2334: 7E            ld   a,(hl)
-2335: CD 73 35      call is_background_tile_3573
+2335: CD 73 35      call is_background_tile_for_object_drop_3573
 2338: 20 16         jr   nz,$2350
 233A: E5            push hl
 233B: D5            push de
 233C: 11 20 00      ld   de,$0020
 233F: 19            add  hl,de
 2340: 7E            ld   a,(hl)
-2341: CD 73 35      call is_background_tile_3573
+2341: CD 73 35      call is_background_tile_for_object_drop_3573
 2344: D1            pop  de
 2345: E1            pop  hl
 2346: 20 08         jr   nz,$2350
@@ -4347,11 +4352,11 @@ draw_bag_tiles_22dc:
 234D: CD 17 34      call draw_object_tiles_3417
 2350: 06 04         ld   b,$04
 2352: FD 21 D3 61   ld   iy,unknown_61D3
-2356: 11 CC 61      ld   de,unknown_61CC
+2356: 11 CC 61      ld   de,current_pickaxe_screen_params_61CC
 2359: C5            push bc
 235A: FD E5         push iy
 235C: D5            push de
-235D: CD B7 22      call $22B7
+235D: CD B7 22      call swap_3_bytes_22b7
 2360: 1A            ld   a,(de)
 2361: 6F            ld   l,a
 2362: 13            inc  de
@@ -4365,7 +4370,7 @@ draw_bag_tiles_22dc:
 2370: 20 1C         jr   nz,$238E
 * read screen tile
 2372: 7E            ld   a,(hl)
-2373: CD 73 35      call is_background_tile_3573
+2373: CD 73 35      call is_background_tile_for_object_drop_3573
 2376: 20 16         jr   nz,$238E
 2378: E5            push hl
 2379: D5            push de
@@ -4373,7 +4378,7 @@ draw_bag_tiles_22dc:
 237D: 19            add  hl,de
 * read screen tile
 237E: 7E            ld   a,(hl)
-237F: CD 73 35      call is_background_tile_3573
+237F: CD 73 35      call is_background_tile_for_object_drop_3573
 2382: D1            pop  de
 2383: E1            pop  hl
 2384: 20 08         jr   nz,$238E
@@ -5139,7 +5144,7 @@ clear_screen_2a00:
 2A89: FD 21 7F 61   ld   iy,bags_coordinates_617F
 2A8D: 06 36         ld   b,$36
 2A8F: CD BC 2A      call $2ABC
-2A92: DD 21 C4 61   ld   ix,barrow_start_screen_address_61C4
+2A92: DD 21 C4 61   ld   ix,barrow_screen_params_61C4
 2A96: FD 21 FA 61   ld   iy,unknown_screen_address_61FA
 2A9A: 06 03         ld   b,$03
 2A9C: CD BC 2A      call $2ABC
@@ -6009,7 +6014,7 @@ display_text_30F9:
 3135: 21 A3 93      ld   hl,$93A3
 3138: CD F0 55      call write_text_55f0
 313B: 18 E6         jr   $3123
-313D: DD 21 CC 61   ld   ix,unknown_61CC
+313D: DD 21 CC 61   ld   ix,current_pickaxe_screen_params_61CC
 3141: AF            xor  a
 3142: DD 77 03      ld   (ix+$03),a
 3145: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
@@ -6160,7 +6165,7 @@ reset_guard_position_31DF:
 3250: 3E 11         ld   a,$11
 3252: 32 82 65      ld   (player_x_6582),a
 3255: CD E3 33      call switch_to_screen_2_33e3
-3258: CD DC 22      call draw_bag_tiles_22dc
+3258: CD DC 22      call draw_object_tiles_22dc
 325B: CD B1 33      call reposition_wagons_33b1
 325E: C3 CE 32      jp   $32CE
 3261: 3A 0D 60      ld   a,(player_screen_600D)
@@ -6171,7 +6176,7 @@ reset_guard_position_31DF:
 326E: CD 5F 26      call display_screen_3_265f
 3271: 3E 03         ld   a,$03
 3273: 32 0D 60      ld   (player_screen_600D),a
-3276: CD DC 22      call draw_bag_tiles_22dc
+3276: CD DC 22      call draw_object_tiles_22dc
 3279: 3E 11         ld   a,$11
 327B: 32 82 65      ld   (player_x_6582),a
 327E: CD B1 33      call reposition_wagons_33b1
@@ -6187,7 +6192,7 @@ reset_guard_position_31DF:
 3296: CD 4C 28      call display_maze_284c
 3299: 3E 01         ld   a,$01
 329B: 32 0D 60      ld   (player_screen_600D),a
-329E: CD DC 22      call draw_bag_tiles_22dc
+329E: CD DC 22      call draw_object_tiles_22dc
 32A1: 3E E3         ld   a,$E3
 32A3: 32 82 65      ld   (player_x_6582),a
 32A6: CD B1 33      call reposition_wagons_33b1
@@ -6203,7 +6208,7 @@ reset_guard_position_31DF:
 32C0: 3E E3         ld   a,$E3
 32C2: 32 82 65      ld   (player_x_6582),a
 32C5: CD E3 33      call switch_to_screen_2_33e3
-32C8: CD DC 22      call draw_bag_tiles_22dc
+32C8: CD DC 22      call draw_object_tiles_22dc
 32CB: CD B1 33      call reposition_wagons_33b1
 32CE: 3E 01         ld   a,$01
 32D0: 32 03 A0      ld   ($A003),a
@@ -6282,7 +6287,7 @@ reset_guard_position_31DF:
 3378: 3A C7 61      ld   a,(holds_barrow_61C7)
 337B: FE 00         cp   $00
 337D: CC 25 1F      call z,$1F25
-3380: 3A 59 61      ld   a,(unknown_6159)
+3380: 3A 59 61      ld   a,(bag_falling_6159)
 3383: FE 00         cp   $00
 3385: 28 0C         jr   z,$3393
 3387: 3A 9F 65      ld   a,(unknown_659F)
@@ -6402,7 +6407,7 @@ draw_object_tiles_3417:
 344B: F1            pop  af
 344C: E1            pop  hl
 344D: C9            ret
-344E: 3A 5E 61      ld   a,(unknown_615E)
+344E: 3A 5E 61      ld   a,(bag_sliding_615E)
 3451: FE 01         cp   $01
 3453: C0            ret  nz
 3454: DD 21 94 65   ld   ix,guard_1_struct_6594
@@ -6566,7 +6571,7 @@ set_bags_coordinates_3567:
 3572: C9            ret
 
 * check if tile can be walked into
-is_background_tile_3573:
+is_background_tile_for_object_drop_3573:
 3573: FE E0         cp   $E0	| blank
 3575: C8            ret  z
 3576: FE 4B         cp   $4B	| pillar, etc...
@@ -6694,7 +6699,7 @@ play_intro_3700:
 372E: 32 87 65      ld   (elevator_y_current_screen_6587),a
 3731: 32 9A 65      ld   (guard_2_x_659A),a
 3734: 32 9B 65      ld   (guard_2_y_659B),a
-3737: 32 59 61      ld   (unknown_6159),a
+3737: 32 59 61      ld   (bag_falling_6159),a
 373A: 32 CF 61      ld   (has_pick_61CF),a
 373D: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
 3740: 32 E1 61      ld   (unknown_61E1),a
@@ -7095,7 +7100,7 @@ read_player_controls_39fd:
 ; level completed
 3B07: 01 C7 61      ld   bc,holds_barrow_61C7
 3B0A: D9            exx
-3B0B: FD 21 C4 61   ld   iy,barrow_start_screen_address_61C4
+3B0B: FD 21 C4 61   ld   iy,barrow_screen_params_61C4
 3B0F: 3E 3A         ld   a,$3A
 3B11: FD 77 04      ld   (iy+$04),a
 3B14: 3E 28         ld   a,$28
@@ -7311,7 +7316,7 @@ check_remaining_bags_3BBC:
 3CBB: FD 77 01      ld   (iy+$01),a
 3CBE: E1            pop  hl
 3CBF: C9            ret
-3CC0: DD 21 CC 61   ld   ix,unknown_61CC
+3CC0: DD 21 CC 61   ld   ix,current_pickaxe_screen_params_61CC
 3CC4: AF            xor  a
 3CC5: DD 77 00      ld   (ix+$00),a
 3CC8: DD 77 01      ld   (ix+$01),a
@@ -7830,10 +7835,10 @@ add_to_score_5C90:
 5D27: C0            ret  nz
 5D28: 18 C0         jr   $5CEA
 5D2A: 21 C2 91      ld   hl,$91C2
-5D2D: 22 C4 61      ld   (barrow_start_screen_address_61C4),hl
+5D2D: 22 C4 61      ld   (barrow_screen_params_61C4),hl
 5D30: 22 FA 61      ld   (unknown_screen_address_61FA),hl
 5D33: 3E 01         ld   a,$01
-5D35: 32 C6 61      ld   (unknown_61C6),a
+5D35: 32 C6 61      ld   (barrow_screen_61C6),a
 5D38: 32 FC 61      ld   (unknown_61FC),a
 5D3B: 3E 03         ld   a,$03
 5D3D: 32 99 60      ld   (guard_1_screen_6099),a

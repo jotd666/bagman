@@ -69,9 +69,12 @@ for sf in glob.glob(os.path.join(screens_dir,"*.bin")):
 
 used_cluts.update({k:range(0,16) for k in range(0,64)})
 
-# elevator wire 1F4 -> 1FB clut??
+# elevator wire 1F4 -> 1FB clut F
 
-dump_tiles = False
+used_cluts.update({k:[0] for k in range(0x1F4,0x1FC)})
+
+
+dump_tiles = True
 dump_sprites = True
 if dump_tiles:
     if not os.path.exists(dump_dir):
@@ -230,7 +233,7 @@ for k,chardat in enumerate(block_dict["tile"]["data"]):
             character_codes.append(bitplanelib.palette_image2raw(img,None,local_palette))
             if dump_tiles:
                 scaled = ImageOps.scale(img,5,0)
-                scaled.save(os.path.join(tiles_dump_dir,f"char_{k:02x}_{cidx:02x}.png"))
+                scaled.save(os.path.join(tiles_dump_dir,f"char_{k:03x}_{cidx:02x}.png"))
         else:
             character_codes.append(None)
     character_codes_list.append(character_codes)

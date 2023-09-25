@@ -115,10 +115,10 @@
 	.global	unknown_6154
 	.global	unknown_6156
 	.global	unknown_6157
-	.global	unknown_6159
+	.global	bag_falling_6159
 	.global	unknown_615A
 	.global	unknown_pointer_615C
-	.global	unknown_615E
+	.global	bag_sliding_615E
 	.global	unknown_615F
 	.global	unknown_6161
 	.global	flipped_dip_switches_copy_6163
@@ -132,11 +132,11 @@
 	.global	bags_coordinates_617F
 	.global	unknown_61BD
 	.global	unknown_61C0
-	.global	barrow_start_screen_address_61C4
-	.global	unknown_61C6
+	.global	barrow_screen_params_61C4
+	.global	barrow_screen_61C6
 	.global	holds_barrow_61C7
 	.global	unknown_61CA
-	.global	unknown_61CC
+	.global	current_pickaxe_screen_params_61CC
 	.global	unknown_61D0
 	.global	unknown_61D2
 	.global	unknown_61D3
@@ -415,14 +415,14 @@ unknown_6157:
 	ds.b	1
 has_bag_6158:
 	ds.b	1
-unknown_6159:
+bag_falling_6159:
 	ds.b	1
 unknown_615A:
 	ds.b	2
 	.align	2
 unknown_pointer_615C:
 	ds.l	1
-unknown_615E:
+bag_sliding_615E:
 	ds.b	1
 unknown_615F:
 	ds.b	1
@@ -458,15 +458,16 @@ unknown_61BD:
 	ds.b	3
 unknown_61C0:
 	ds.b	4
-barrow_start_screen_address_61C4:
+	* screen address + current screen index
+barrow_screen_params_61C4:
 	ds.b	2
-unknown_61C6:
+barrow_screen_61C6:
 	ds.b	1
 holds_barrow_61C7:
 	ds.b	3
 unknown_61CA:
 	ds.b	2
-unknown_61CC:
+current_pickaxe_screen_params_61CC:
 	ds.b	3
 has_pick_61CF:
 	ds.b	1
