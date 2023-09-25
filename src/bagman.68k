@@ -8618,24 +8618,27 @@ l_3c18:
 	subq.b	#1,d1                           	| [...]
 	jne	l_3c18                             	| [$3c29: djnz $3C18]
 	rts                                    	| [$3c2b: ret]
+
 l_3c2c:
 	jbsr	osd_w_videoram                         	| [$3c2c: ld   (de),a]
 	movem.w	d1/d2,-(sp)                    	| [$3c2d: push bc]
 	move.b	d0,d1                           	| [$3c2e: ld   b,a]
 	jbsr	osd_r_videoram                         	| [$3c2f: ld   a,(de)]
-	cmp.b	d1,d0                            	| [$3c30: cp   b]
+	move.b	d0,d2
 	move.b	d1,d0                           	| [$3c31: ld   a,b]
+	* swap cmp and move to preserve cmp flag
+	cmp.b	d1,d2                            	| [$3c30: cp   b]
 
 	movem.w	(sp)+,d1/d2                    	| [$3c32: pop  bc]
 	jne	l_3c2c                             	| [$3c33: jr   nz,$3C2C]
 	                        	| [$3c35: push de]
 												| [$3c36: ld   a,d]
 												| [$3c37: add  a,$08]
-												| [$3c39: ld   d,a]
+	move.w	d6,-(sp)											| [$3c39: ld   d,a]
 	move.b	#0x20,d0                        	| [$3c3a: ld   a,$20]
 	add.w	#0x800,d6
 	jbsr	osd_w_colorram                         	| [$3c3c: ld   (de),a]
-	
+	move.w	(sp)+,d6
 	                        	| [$3c3d: pop  de]
 	rts                                    	| [$3c3e: ret]
 
