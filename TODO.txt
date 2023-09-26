@@ -1,6 +1,10 @@
 - guards frozen / not shown / move/follow player but no random move
 - wagon moves off screen: direction change doesn't work??
-- can't pickup objects (debug around 214a)
+- pickup barrow: turns to pick..., dropping is buggy
+- pickup pickake level 1: works but dropping it is buggy
+- pickup pickaxes level 2: disappears immediately!
+- ghost player sprites
+- grabbing wagon handle doesn't work
 
 - debug 2640 with values not 10 or E0 (not at start)
 

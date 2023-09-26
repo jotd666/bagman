@@ -3444,6 +3444,7 @@ l_180c:
 	movem.w	(sp)+,d1/d2                    	| [$1815: pop  bc]
 	jne	l_1830                             	| [$1816: jp   nz,$1830]
 	LOAD_AX_BE_WORD_DY	a3,d3
+
 										| [$1819: ld   d,(iy+$01)]
 								
 										| [$181c: ld   e,(iy+$00)]
@@ -3652,16 +3653,9 @@ compute_backbuffer_tile_address_1945:
 	cmp.w	#0x9400,d3
 	bcs.b	1f
 0:
-	ror.w	#8,d3
-
-	cmp.w	#0x9000,d3
-	bcs.b	0f
-	cmp.w	#0x9400,d3
-	bcs.b	1f
-0:
-	
 	jbsr	osd_break
-	illegal
+	moveq	#0,d3
+	rts
 1:
 	.endif
 	move.b	player_screen_600D,d0           	| [$1945: ld   a,(player_screen_600D)]
@@ -4610,7 +4604,7 @@ l_1f31:
 table_1F38:
 	.byte	0x00,0x00,0x00,0x00,0x00,0x92,0x55,0x03
 	.byte	0x00,0x00,0x00,0x00,0x91,0x58,0x01,0x92
-	.byte	0xD1,0x02,0x91,0x28,0x01,0xA2,0x90,0x02 
+	.byte	0xD1,0x02,0x91,0x28,0x01,0x90,0xA2,0x02 
 
 * original table contains little endian screen addresses	
 *	.byte	0x00,0x00,0x00,0x00,0x00,0x55,0x92,0x03
@@ -4886,7 +4880,7 @@ check_object_pickup_2137:
 	LOAD_AX_BE_WORD_DY	a3,d3
 	                   	| [$2154: ld   d,(iy+$01)]
 	                   	| [$2157: ld   e,(iy+$00)]
-	movem.w	d3/d4,-(sp)                    	| [$215a: push de]
+	movem.w	d3,-(sp)                    	| [$215a: push de]
 	addq.w	#2,d3                           	| [$215b: inc  de] * 2
 	jbsr	compute_backbuffer_tile_address_1945	| [$215d: call compute_backbuffer_tile_address_1945]
 
@@ -4897,22 +4891,21 @@ check_object_pickup_2137:
 	jeq	l_216e                             	| [$2165: jr   z,$216E]
 	jbsr	l_3585                            	| [$2167: call $3585]
 	jeq	l_216e                             	| [$216a: jr   z,$216E]
-	movem.w	(sp)+,d3/d4                    	| [$216c: pop  de]
+	movem.w	(sp)+,d3                    	| [$216c: pop  de]
 	rts                                    	| [$216d: ret]
 l_216e:
-    movem.w	(sp)+,d3/d4               	| [$216e: pop  de]
+    movem.w	(sp)+,d3               	| [$216e: pop  de]
 	jbsr	test_pickup_flag_19A4             	| [$216f: call test_pickup_flag_19A4]
 	tst.b	d1                           	| [$2172: ld   a,b]
 	                       	| [$2173: cp   $00]
-	bne.b	0f                               	| [$2175: ret  z] [...]
+	bne.b	l_2176                               	| [$2175: ret  z] [...]
 	rts                                    	| [$2175: ret  z]
-0:
 * pickup flag was set
 l_2176:
-	move.b	d3,d5                           	| [$2176: ld   h,d]
-	move.b	d4,d6                           	| [$2177: ld   l,e]
-	move.b	d3,dropped_bag_screen_address_61F6	| [$2178: ld   (dropped_bag_screen_address_61F6),hl]
-	move.b	d4,dropped_bag_screen_address_61F6+1	| [$2178: ld   (dropped_bag_screen_address_61F6),hl]
+	move.w	d3,d6
+												| [$2176: ld   h,d]
+												| [$2177: ld   l,e]
+	move.w	d3,dropped_bag_screen_address_61F6	| [$2178: ld   (dropped_bag_screen_address_61F6),hl]
 	clr.b	d0                               	| [$217b: xor  a]
 	move.b	d0,unknown_627E                 	| [$217c: ld   (unknown_627E),a]
 	lea	player_struct_6580,a2          	| [$217f: ld   ix,player_struct_6580]
@@ -5182,6 +5175,11 @@ l_2320:
 	jne	l_2350                             	| [$232c: jr   nz,$2350]
 							
 	LOAD_AX_BE_WORD_DY	a3,d6                  	| [$232e: ld   l,(iy+$00)]
+	* jotd: added this test because when one pickaxe is taken,
+	* current_pickaxe_screen_params_61CC can be 0 and next videoram read
+	* reads in zero (also in the original game)
+	tst.w	d6
+	jeq		l_2392
 												| [$2331: ld   h,(iy+$01)]
 	jbsr	osd_r_videoram                         	| [$2334: ld   a,(hl)]
 	jbsr	is_background_tile_for_object_drop_3573                            	| [$2335: call $3573]
@@ -5221,14 +5219,7 @@ l_235c:
 	lsl.w	#8,d6
 	move.b	(a1),d6    	| screen address, can be 0 when holding pick
 	subq.w	#1,a1                           	| [$2365: dec  de]
-	* fuck this, fix endian issue
-	cmp.w	#0x9000,d6
-	bcs.b	0f
-	cmp.w	#0x9400,d6
-	bcs.b	1f
-0:
-	ror.w	#8,d6
-1:
+
 	move.b	player_screen_600D,d0           	| [$2366: ld   a,(player_screen_600D)]
 	move.l	(sp),a3                        	| [$2369: pop  iy]
 	cmp.b	(0x02,a3),d0                     	| [$236b: cp   (iy+$02)]
@@ -5263,6 +5254,7 @@ l_238e:
 	move.l	(sp)+,a3                        	| [$238f: pop  iy]
 
 	movem.w	(sp)+,d1/d2                    	| [$2391: pop  bc]
+l_2392:
 	addq.w	#3,a3                           	| [$2392: inc  iy] * 3
 l_2398:
 	subq.b	#1,d1                           	| [...]
@@ -7782,21 +7774,21 @@ set_bags_coordinates_355b:
 	bsr		correct_bags_endian
  	rts                                    	| [$3566: ret]
 
-correct_bags_endian:
-	move.w	#0x3A/3-1,d1
-0:
-	move.b	(a1)+,d0
-	move.b	(a1)+,d1
-	move.b	d1,(-2,a1)
-	move.b	d0,(-1,a1)
-	addq.w	#1,a1
-	dbf	d1,0b
-	rts
 	
 set_bags_coordinates_3567:
 	lea	bags_coordinates_617F,a1                	| [$3567: ld   de,bags_coordinates_617F]
 	bra.b	0b
 
+correct_bags_endian:
+	move.w	#0x3A/3-1,d2
+1:
+	move.b	(a1)+,d0
+	move.b	(a1)+,d1
+	move.b	d1,(-2,a1)
+	move.b	d0,(-1,a1)
+	addq.w	#1,a1
+	dbf	d2,1b
+	rts
 
 * check if tile can be walked into (ground level only, used to drop objects)
 is_background_tile_for_object_drop_3573:
@@ -8354,8 +8346,8 @@ l_3b00:
 	move.b	d0,(0x05,a3)                    	| [$3b16: ld   (iy+$05),a]
 	move.b	#0xEC,d0                        	| [$3b19: ld   a,$EC]
 	move.b	d0,unknown_61CA                 	| [$3b1b: ld   (unknown_61CA),a]
-	move.b	(0x01,a3),d4                    	| [$3b1e: ld   d,(iy+$01)]
-	move.b	(A3),d3                    	| [$3b21: ld   e,(iy+$00)]
+	                    	| [$3b1e: ld   d,(iy+$01)]
+	move.w	(A3),d3                    	| [$3b21: ld   e,(iy+$00)]
 	jbsr	l_2176                            	| [$3b24: call $2176]
 	lea	game_mem+0x3F1B,a0                      	| [$3b27: ld   hl,$3F1B]
 	jbsr	copy_to_61bd_2018                            	| [$3b2a: call $2018]
@@ -8733,6 +8725,7 @@ test_non_blocking_tiles_3c85:
 
 	move.w	d6,-(sp)                        	| [$3c87: push hl]
 	
+
 	clr.b	d1                               	| [$3c88: ld   b,$00]
 	jbsr	l_3caa                            	| [$3c8a: call $3CAA]
 	jne	l_3ca6                             	| [$3c8d: jr   nz,$3CA6]
@@ -8754,7 +8747,7 @@ l_3ca6:
 	rts                                    	| [$3ca9: ret]
 
 l_3caa:
-	bsr		read_rom                         	| [$3caa: ld   a,(hl)]
+	bsr		osd_r_videoram                         	| [$3caa: ld   a,(hl)]
 	cmp.b	#0xE0,d0                         	| [$3cab: cp   $E0]
 	bne.b	0f
 	rts                                    	| [$3cad: ret  z]

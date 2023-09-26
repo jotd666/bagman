@@ -166,8 +166,8 @@ add_sprite(0x33,4,"elevator",False)
 add_sprite(0x33,8,"elevator",False)
 #add_sprites(0x10,xx,"elevator",False)  # from Super Bagman ?
 # bag
-add_sprite(0x7F,0x9,"bag",False)  # yellow
-add_sprite(0x7F,0x4,"bag",False)  # blue
+add_sprite(0x7F,0x9,"bag",True)  # yellow
+add_sprite(0x7F,0x4,"bag",True)  # blue
 
 # some sprite frames aren't used until super bagman. They're already in the sprite sheet, interesting!!!
 
