@@ -1,15 +1,19 @@
-- guards frozen / not shown / move/follow player but no random move
+- guards frozen / not shown / not moving at start
+- after losing a life, they move/follow player but no random move, as soon as
+  player is not in sight they reverse direction (on ladder)
 - pickup barrow: turns to pick..., dropping is buggy
-- pickup pickake level 1: works but dropping it is buggy
+- pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
 - pickup pickaxes level 2: disappears immediately!
-- ghost player sprites
-- grabbing wagon handle doesn't work
+- ghost player sprites: rip sprite structure when it happens, reproduce it!
 
+
+- remove symmetry for player in wagon/gripping handle
 - debug 2640 with values not 10 or E0 (not at start)
 
 - memory optim: fixed number of bitmap repeats for sprites:
-  - 1 for player, barrow
-  - 2 for others
+  - 1 for player, barrow, falling bag, pick, elevator
+  - 2 for guards
+  - 3 for wagons
   
 - add elevator missing wire tiles
 

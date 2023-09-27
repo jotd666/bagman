@@ -1259,7 +1259,7 @@ player_grip_handle_test_0784:
 	beq.b	0f
 	rts                                    	| [$0794: ret  nz]
 0:
- * handle detected ($DC or $OB)
+ * handle detected ($DC or $0B)
 l_0795:
 	move.b	player_gripping_handle_602A,d0  	| [$0795: ld   a,(player_gripping_handle_602A)]
 	cmp.b	#0x01,d0                         	| [$0798: cp   $01]
@@ -1268,8 +1268,7 @@ l_0795:
 0:
 	move.b	#0x01,d0                        	| [$079b: ld   a,$01]
 	lea	player_in_wagon_3_601E,a0                	| [$079d: ld   hl,player_in_wagon_3_601E]
-	move.b	#0x00,d1                        	| [$07a0: ld   bc,$0003] 3
-	move.b	#0x03,d2                        	| [$07a0: ld   bc,$0003] 3
+	move.w	#0x03,d1                        	| [$07a0: ld   bc,$0003] 3
 	jbsr	cpdr                              	| [$07a3: cpdr]
 	bne.b	0f
 	rts                                    	| [$07a5: ret  z]
@@ -1281,7 +1280,7 @@ l_0795:
 	rts                                    	| [$07ad: ret  nz]
 0:
  * "fire" pressed while below the handle
-	move.b	gameplay_allowed_6054,d0        	| [$07ae: ld   a,(gameplay_allowed_6054)]
+	tst.b	gameplay_allowed_6054        	| [$07ae: ld   a,(gameplay_allowed_6054)]
 									| [$07b1: cp   $00]
 	jeq	player_grips_handle_07BD           	| [$07b3: jr   z,player_grips_handle_07BD]
 	move.b	player_previous_input_6050,d0   	| [$07b5: ld   a,(player_previous_input_6050)]
@@ -4581,34 +4580,38 @@ l_1ee0:
 	move.b	d0,unknown_6019                 	| [$1ef5: ld   (unknown_6019),a]
 	move.b	#0xB0,d0                        	| [$1ef8: ld   a,$B0]
 	move.b	d0,guard_2_x_659A               	| [$1efa: ld   (guard_2_x_659A),a]
-	clr.w	d0                               	| [$1efd: xor  a]
-	move.b	d0,unknown_6097                 	| [$1efe: ld   (unknown_6097),a]
-	move.b	d0,unknown_6288                 	| [$1f01: ld   (unknown_6288),a]
-	move.b	d0,unknown_6008                 	| [$1f04: ld   (unknown_6008),a]
-	move.b	d0,unknown_6013                 	| [$1f07: ld   (unknown_6013),a]
-	move.b	d0,player_in_wagon_flag_6029    	| [$1f0a: ld   (player_in_wagon_flag_6029),a]
-	move.b	d0,player_gripping_handle_602A  	| [$1f0d: ld   (player_gripping_handle_602A),a]
-	move.b	d0,fatal_fall_height_reached_604E	| [$1f10: ld   (fatal_fall_height_reached_604E),a]
-	move.b	d0,unknown_6077                 	| [$1f13: ld   (unknown_6077),a]
-	move.b	d0,player_controls_frozen_6028  	| [$1f16: ld   (player_controls_frozen_6028),a]
-	move.w	d0,pickaxe_timer_duration_61E0  	| [$1f19: ld   (pickaxe_timer_duration_61E0),a]
+											| [$1efd: xor  a]
+	clr.b	unknown_6097                 	| [$1efe: ld   (unknown_6097),a]
+	clr.b	unknown_6288                 	| [$1f01: ld   (unknown_6288),a]
+	clr.b	unknown_6008                 	| [$1f04: ld   (unknown_6008),a]
+	clr.b	unknown_6013                 	| [$1f07: ld   (unknown_6013),a]
+	clr.b	player_in_wagon_flag_6029    	| [$1f0a: ld   (player_in_wagon_flag_6029),a]
+	clr.b	player_gripping_handle_602A  	| [$1f0d: ld   (player_gripping_handle_602A),a]
+	clr.b	fatal_fall_height_reached_604E	| [$1f10: ld   (fatal_fall_height_reached_604E),a]
+	clr.b	unknown_6077                 	| [$1f13: ld   (unknown_6077),a]
+	clr.b	player_controls_frozen_6028  	| [$1f16: ld   (player_controls_frozen_6028),a]
+	clr.w	pickaxe_timer_duration_61E0  	| [$1f19: ld   (pickaxe_timer_duration_61E0),a]
 	                 	| [$1f1c: ld   (unknown_61E1),a]
-	move.b	d0,unknown_6014                 	| [$1f1f: ld   (unknown_6014),a]
-	move.b	d0,unknown_6013                 	| [$1f22: ld   (unknown_6013),a]
-l_1f25:
-	move.w	barrow_screen_params_61C4,d0                 	| [$1f25: ld   a,(barrow_screen_params_61C4)]
+	clr.b	unknown_6014                 	| [$1f1f: ld   (unknown_6014),a]
+	clr.b	unknown_6013                 	| [$1f22: ld   (unknown_6013),a]
+reset_barrow_position_1f25:
+	* set barrow screen params only if not already set
+	move.b	barrow_screen_params_61C4+1,d0                 	| [$1f25: ld   a,(barrow_screen_params_61C4)]
 	                         	| [$1f28: cp   $00]
 	jeq	l_1f31                             	| [$1f2a: jr   z,$1F31]
+	* reset it once out of 4 (depending on position on screen)
 	and.b	#0x02,d0                         	| [$1f2c: and  $02]
 	cmp.b	#0x02,d0                         	| [$1f2e: cp   $02]
 	bne.b	0f
 	rts                                    	| [$1f30: ret  z]
 0:
 l_1f31:
-	move.w   #0x91C2,d6                      	| [$1f31: ld   hl,$91C2]
-	move.w	d6,barrow_screen_params_61C4                 	| [$1f34: ld   (barrow_screen_params_61C4),hl]
+	move.w   #0x91C2,barrow_screen_params_61C4                      	| [$1f31: ld   hl,$91C2]
+	                	| [$1f34: ld   (barrow_screen_params_61C4),hl]
 	rts                                    	| [$1f37: ret]
 
+* table containing data but also screen addresses, converted
+* in big endian
 table_1F38:
 	.byte	0x00,0x00,0x00,0x00,0x00,0x92,0x55,0x03
 	.byte	0x00,0x00,0x00,0x00,0x91,0x58,0x01,0x92
@@ -7456,7 +7459,7 @@ l_3374:
 	move.b	holds_barrow_61C7,d0            	| [$3378: ld   a,(holds_barrow_61C7)]
 	                         	| [$337b: cp   $00]
 	bne.b	0f
-	jbsr	l_1f25                            	| [$337d: call z,$1F25]
+	jbsr	reset_barrow_position_1f25                            	| [$337d: call z,$1F25]
 0:
 	move.b	bag_falling_6159,d0                 	| [$3380: ld   a,(bag_falling_6159)]
 	                         	| [$3383: cp   $00]
@@ -7498,7 +7501,7 @@ reposition_wagons_33b1:
 	jbsr	l_33d1                            	| [$33cd: call $33D1]
 	rts                                    	| [$33d0: ret]
 l_33d1:
-	move.b	(0x03,a2),d0                    	| [$33d1: ld   a,(ix+$03)]
+	tst.b	(0x03,a2)                    	| [$33d1: ld   a,(ix+$03)]
 												| [$33d4: cp   $00]
 	bne.b	0f
 	rts                                    	| [$33d6: ret  z]

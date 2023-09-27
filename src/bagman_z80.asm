@@ -3875,6 +3875,7 @@ init_new_game_1E94:
 1F1C: 32 E1 61      ld   (unknown_61E1),a
 1F1F: 32 14 60      ld   (unknown_6014),a
 1F22: 32 13 60      ld   (unknown_6013),a
+reset_barrow_position_1f25:
 1F25: 3A C4 61      ld   a,(barrow_screen_params_61C4)
 1F28: FE 00         cp   $00
 1F2A: 28 05         jr   z,$1F31
@@ -6286,7 +6287,7 @@ reset_guard_position_31DF:
 3375: 32 03 A0      ld   ($A003),a
 3378: 3A C7 61      ld   a,(holds_barrow_61C7)
 337B: FE 00         cp   $00
-337D: CC 25 1F      call z,$1F25
+337D: CC 25 1F      call z,reset_barrow_position_1f25
 3380: 3A 59 61      ld   a,(bag_falling_6159)
 3383: FE 00         cp   $00
 3385: 28 0C         jr   z,$3393

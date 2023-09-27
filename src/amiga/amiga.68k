@@ -802,19 +802,34 @@ osd_update_sprites:
 	move.w	d2,d4
 	add.w	d4,d4
 	add.w	d4,d4
-	move.l	(a4,d4.w),a5	| get pointer
+	move.l	(a4,d4.w),d4	| get pointer
+	.ifndef	RELEASE
+	bne.b	21f
+	* sprite doesn't exist: blitz and bail out
+	blitz
+	move.b	d1,d1
+	move.b	d2,d2
+	jra		30f
+21:
+	.endif
+	
+	move.l	d4,a5
 	move.w	d6,d4
 	add.w	d4,d4
 	add.w	d4,d4
 	move.l	(a5,d4.W),a5			| get buffer for this sprite index
+
 	tst.b	d5			| x flip bit
 	bpl.b	21f
 	addq.w	#4,a5
 21:
 	move.l	(a5),d4
+	.ifndef	RELEASE
 	bne.b	22f
 	blitz		| should not happen
+	jra		30f
 22:
+	.endif
 	move.l	d4,a5	| sprite pointer
 
 	* add 16 to both X & Y
