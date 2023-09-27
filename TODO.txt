@@ -1,5 +1,4 @@
 - guards frozen / not shown / move/follow player but no random move
-- wagon moves off screen: direction change doesn't work??
 - pickup barrow: turns to pick..., dropping is buggy
 - pickup pickake level 1: works but dropping it is buggy
 - pickup pickaxes level 2: disappears immediately!
