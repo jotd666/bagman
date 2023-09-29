@@ -1691,8 +1691,20 @@ osd_debug_hook:
 	rts
 	
 osd_get_random:
-	move.b	_custom+vposr,d0
+* < D0: pseudo random value (32 bits)
+	movem.l	a0,-(a7)
+	lea	seed(pc),a0
+	move.l	(a0),d0
+	* thanks meynaf
+	mulu #0xa57b,d0
+	addi.l #0xbb40e62d,d0
+	rol.l #6,d0	
+	move.l	d0,(a0) 
+	movem.l	(a7)+,a0
 	rts
+seed:
+	dc.l	0x12345678
+
 	
 * d6=screen address
 osd_r_videoram:

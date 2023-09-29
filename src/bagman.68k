@@ -451,7 +451,7 @@ l_0210:
 	jbsr	player_movement_0B6D              	| [$0218: call player_movement_0B6D]
 	           	| [$021b: ld   a,(watchdog_reset_B800)]
 l_021e:
-	jbsr	l_1010                            	| [$021e: call $1010]
+	jbsr	handle_player_object_carry_1010                            	| [$021e: call $1010]
 	jbsr	l_104b                            	| [$0221: call $104B]
 	move.b	#0x01,d0                        	| [$0224: ld   a,$01]
 	move.b	d0,unknown_628A                 	| [$0226: ld   (unknown_628A),a]
@@ -504,13 +504,13 @@ l_0263:
 l_029a:
 	jbsr	guard_1_movement_116F             	| [$029a: call guard_1_movement_116F]
 l_029d:
-	lea		unknown_6057,a3    		           	| [$029d: ld   iy,unknown_6057]
+	lea		guard_1_not_moving_timeout_counter_6057,a3    		           	| [$029d: ld   iy,guard_1_not_moving_timeout_counter_6057]
 	move.l	a3,guard_struct_pointer_6093                 	| [$02a1: ld   (guard_struct_pointer_6093),iy]
 	move.w	guard_1_logical_address_6038,stored_logical_address_6044	| [$02a5: ld   hl,(guard_1_logical_address_6038)]
 	              	| [$02a8: ld   (stored_logical_address_6044),hl]
 	lea	guard_1_ladder_frame_6035,a0   	| [$02ab: ld   hl,guard_1_ladder_frame_6035]
 	lea	guard_1_direction_6027,a3      	| [$02ae: ld   iy,guard_1_direction_6027]
-	move.b	unknown_6037,d0                 	| [$02b2: ld   a,(unknown_6037)]
+	move.b	guard_1_in_elevator_6037,d0                 	| [$02b2: ld   a,(guard_1_in_elevator_6037)]
 	cmp.b	#0x01,d0                         	| [$02b5: cp   $01]
 	beq.b	0f
 	jbsr	guard_ladder_movement_04AD        	| [$02b7: call nz,guard_ladder_movement_04AD]
@@ -533,13 +533,13 @@ l_02d6:
 l_02d9:
 	move.w	guard_2_logical_address_6078,stored_logical_address_6044	| [$02d9: ld   hl,(guard_2_logical_address_6078)]
 	                 	| [$02dc: ld   (stored_logical_address_6044),hl]
-	lea	unknown_6097,a3                	| [$02df: ld   iy,unknown_6097]
+	lea	guard_2_not_moving_timeout_counter_6097,a3                	| [$02df: ld   iy,guard_2_not_moving_timeout_counter_6097]
 	move.l	a3,guard_struct_pointer_6093                 	| [$02e3: ld   (guard_struct_pointer_6093),iy]
 	move.w	guard_2_logical_address_6078,stored_logical_address_6044	| [$02e7: ld   hl,(guard_2_logical_address_6078)]
 	                 	| [$02ea: ld   (stored_logical_address_6044),hl]
 	lea	guard_2_ladder_frame_6075,a0   	| [$02ed: ld   hl,guard_2_ladder_frame_6075]
 	lea	guard_2_direction_6067,a3      	| [$02f0: ld   iy,guard_2_direction_6067]
-	move.b	unknown_6077,d0                 	| [$02f4: ld   a,(unknown_6077)]
+	move.b	guard_2_in_elevator_6077,d0                 	| [$02f4: ld   a,(guard_2_in_elevator_6077)]
 	cmp.b	#0x01,d0                         	| [$02f7: cp   $01]
 	beq.b	0f
 	jbsr	guard_ladder_movement_04AD        	| [$02f9: call nz,guard_ladder_movement_04AD]
@@ -551,11 +551,11 @@ l_02fc:
 	lea	guard_2_struct_6598,a2         	| [$0305: ld   ix,guard_2_struct_6598]
 	jbsr	l_0a27                            	| [$0309: call $0A27]
 	           	| [$030c: ld   a,(watchdog_reset_B800)]
-	move.b	unknown_6097,d0                 	| [$030f: ld   a,(unknown_6097)]
+	move.b	guard_2_not_moving_timeout_counter_6097,d0                 	| [$030f: ld   a,(guard_2_not_moving_timeout_counter_6097)]
 	addq.b	#1,d0                           	| [$0312: inc  a]
-	move.b	d0,unknown_6097                 	| [$0313: ld   (unknown_6097),a]
+	move.b	d0,guard_2_not_moving_timeout_counter_6097                 	| [$0313: ld   (guard_2_not_moving_timeout_counter_6097),a]
 	lea	unknown_608F,a3                	| [$0316: ld   iy,unknown_608F]
-	lea	unknown_6077,a0                	| [$031a: ld   hl,unknown_6077]
+	lea	guard_2_in_elevator_6077,a0                	| [$031a: ld   hl,guard_2_in_elevator_6077]
 	lea	guard_2_struct_6598,a2         	| [$031d: ld   ix,guard_2_struct_6598]
 	move.b	unknown_61EC,d0                 	| [$0321: ld   a,(unknown_61EC)]
 	cmp.b	#0x01,d0                         	| [$0324: cp   $01]
@@ -573,11 +573,11 @@ l_033a:
 	lea	guard_1_in_elevator_603B,a0    	| [$0340: ld   hl,guard_1_in_elevator_603B]
 	lea	guard_1_struct_6594,a2         	| [$0343: ld   ix,guard_1_struct_6594]
 	jbsr	l_0a27                            	| [$0347: call $0A27]
-	move.b	unknown_6057,d0                 	| [$034a: ld   a,(unknown_6057)]
+	move.b	guard_1_not_moving_timeout_counter_6057,d0                 	| [$034a: ld   a,(guard_1_not_moving_timeout_counter_6057)]
 	addq.b	#1,d0                           	| [$034d: inc  a]
-	move.b	d0,unknown_6057                 	| [$034e: ld   (unknown_6057),a]
+	move.b	d0,guard_1_not_moving_timeout_counter_6057                 	| [$034e: ld   (guard_1_not_moving_timeout_counter_6057),a]
 	lea	unknown_604F,a3                	| [$0351: ld   iy,unknown_604F]
-	lea	unknown_6037,a0                	| [$0355: ld   hl,unknown_6037]
+	lea	guard_1_in_elevator_6037,a0                	| [$0355: ld   hl,guard_1_in_elevator_6037]
 	lea	guard_1_struct_6594,a2         	| [$0358: ld   ix,guard_1_struct_6594]
 	move.b	unknown_61EB,d0                 	| [$035c: ld   a,(unknown_61EB)]
 	cmp.b	#0x01,d0                         	| [$035f: cp   $01]
@@ -902,7 +902,7 @@ guard_walk_movement_0570:
 	and.b	#0x80,d0                         	| [$0573: and  $80]
 	cmp.b	#0x80,d0                         	| [$0575: cp   $80]  to right?
 	jne	l_0588                             	| [$0577: jr   nz,$0588]
- * guard faces right
+ * guard walks right
 	
 	move.w	d6,-(sp)                        	| [$0579: push hl]
 	move.w	stored_logical_address_6044,d6             	| [$057a: ld   hl,(stored_logical_address_6044)]
@@ -916,7 +916,7 @@ guard_walk_movement_0570:
 l_0588:
 	move.b	(a3),d0                    	| [$0588: ld   a,(iy+$00)]
 	and.b	#0x40,d0                         	| [$058b: and  $40]
-	cmp.b	#0x40,d0                         	| [$058d: cp   $40]  faces left?
+	cmp.b	#0x40,d0                         	| [$058d: cp   $40]  walks left?
 	beq.b	0f
 	rts                                    	| [$058f: ret  nz] neither right or left: on ladder? quit
 0:
@@ -2195,7 +2195,6 @@ check_against_space_tiles_0da2:
 	                           	| [$0da2: ld   c,a]
 	* check against possible space tiles
 	lea	game_mem+0x0DB1,a1                      	| [$0da3: ld   de,$0DB1]
-	move.l	A1,0x204
 	
 	move.w	#0x16-1,d1                        	| [$0da6: ld   b,$16]
 l_0da8:
@@ -2428,7 +2427,7 @@ l_0f00:
 	move.b	#0x01,d0                        	| [$0f17: ld   a,$01]
 	move.b	d0,unknown_6210                 	| [$0f19: ld   (unknown_6210),a]
 	jbsr	init_new_game_1E94                 	| [$0f1c: call init_new_game_1E94]
-	jbsr	l_2957                            	| [$0f1f: call $2957]
+	jbsr	init_guard_directions_and_wagons_2957                            	| [$0f1f: call $2957]
 
 * put one guard on screen 1
 	move.b	#0x01,d0                        	| [$0f22: ld   a,$01]
@@ -2496,7 +2495,7 @@ l_1003:
 	rts                                    	| [$100f: ret]
 
 
-l_1010:
+handle_player_object_carry_1010:
 	move.b	has_bag_6158,d0                 	| [$1010: ld   a,(has_bag_6158)]
 	                         	| [$1013: cp   $00]
 	bne.b	0f
@@ -2685,8 +2684,8 @@ guard_1_movement_116F:
 	move.b	d0,screen_index_param_6098      	| [$1172: ld   (screen_index_param_6098),a]
 	move.w	guard_1_logical_address_6038,stored_logical_address_6044	| [$1175: ld   hl,(guard_1_logical_address_6038)]
 	              	| [$1178: ld   (stored_logical_address_6044),hl]
-	lea	unknown_6057,a3                	| [$117b: ld   iy,unknown_6057]
-	move.l	a3,guard_struct_pointer_6093                 	| [$117f: ld   (guard_struct_pointer_6093),iy]
+	move.l	#guard_1_not_moving_timeout_counter_6057,guard_struct_pointer_6093                	| [$117b: ld   iy,guard_1_not_moving_timeout_counter_6057]
+	                 	| [$117f: ld   (guard_struct_pointer_6093),iy]
 	* reads ROM to set address of guard 1 struct ($6594)
 	lea	guard_1_struct_6594,a2                   	| [$1183: ld   ix,($04A9)]
 	lea	unknown_6034,a0                	| [$1187: ld   hl,unknown_6034]
@@ -2696,13 +2695,14 @@ guard_1_movement_116F:
 	move.b	screen_index_param_6098,d0      	| [$1194: ld   a,(screen_index_param_6098)]
 	move.b	d0,guard_1_screen_6099          	| [$1197: ld   (guard_1_screen_6099),a]
 	rts                                    	| [$119a: ret]
+	
 guard_2_movement_119B:
 	move.b	guard_2_screen_609A,d0          	| [$119b: ld   a,(guard_2_screen_609A)]
 	move.b	d0,screen_index_param_6098      	| [$119e: ld   (screen_index_param_6098),a]
 	move.w	guard_2_logical_address_6078,stored_logical_address_6044	| [$11a1: ld   hl,(guard_2_logical_address_6078)]
 	                	| [$11a4: ld   (stored_logical_address_6044),hl]
-	lea	unknown_6097,a3                	| [$11a7: ld   iy,unknown_6097]
-	move.l	a3,guard_struct_pointer_6093                 	| [$11ab: ld   (guard_struct_pointer_6093),iy]
+	move.l	#guard_2_not_moving_timeout_counter_6097,guard_struct_pointer_6093                	| [$11a7: ld   iy,guard_2_not_moving_timeout_counter_6097]
+	                 	| [$11ab: ld   (guard_struct_pointer_6093),iy]
 	* reads ROM to set address of guard 2 struct ($6598)
 	lea	guard_2_struct_6598,a2                   	| [$11af: ld   ix,($04AB)]
 	lea	unknown_6074,a0                	| [$11b3: ld   hl,unknown_6074]
@@ -2736,7 +2736,7 @@ l_122b:
 									| [$122c: ld   a,(io_read_shit_B800)]
 	            	| [$122c: ld   a,(io_read_shit_B800)]
 	jbsr	init_new_game_1E94                 	| [$122f: call init_new_game_1E94]
-	jbsr	l_2957                            	| [$1232: call $2957]
+	jbsr	init_guard_directions_and_wagons_2957                            	| [$1232: call $2957]
 	clr.b	d0                               	| [$1235: xor  a]
 	move.b	d0,player_death_flag_6025       	| [$1236: ld   (player_death_flag_6025),a]
 	addq.b	#1,d0                           	| [$1239: inc  a]
@@ -2904,16 +2904,16 @@ l_1327:
 	            	| [$138c: ld   a,(io_read_shit_B800)]
 	jbsr	analyse_guard_direction_change_19D1	| [$138f: call analyse_guard_direction_change_19D1]
 	lea	guard_1_in_elevator_603B,a2    	| [$1392: ld   ix,guard_1_in_elevator_603B]
-	lea	unknown_6057,a0                	| [$1396: ld   hl,unknown_6057]
+	lea	guard_1_not_moving_timeout_counter_6057,a0                	| [$1396: ld   hl,guard_1_not_moving_timeout_counter_6057]
 	lea	unknown_6148,a1                	| [$1399: ld   de,unknown_6148]
 	jbsr	l_1908                            	| [$139c: call $1908]
 	move.b	unknown_6148,d0                 	| [$139f: ld   a,(unknown_6148)]
 	                         	| [$13a2: cp   $00]
 	jne	l_13d3                             	| [$13a4: jr   nz,$13D3]
-	move.b	unknown_6057,d0                 	| [$13a6: ld   a,(unknown_6057)]
+	move.b	guard_1_not_moving_timeout_counter_6057,d0                 	| [$13a6: ld   a,(guard_1_not_moving_timeout_counter_6057)]
 	cmp.b	#0xF0,d0                         	| [$13a9: cp   $F0]
 	bcs.b	0f
-	jbsr	l_31a3                            	| [$13ab: call nc,$31A3]
+	jbsr	maybe_guard_1_is_stuck_31a3                            	| [$13ab: call nc,$31A3]
 0:
 	move.l	#guard_1_struct_6594,guard_struct_pointer_6093         	| [$13b0: ld   iy,guard_1_struct_6594]
 						| [$13b4: ld   (guard_struct_pointer_6093),iy]
@@ -2944,17 +2944,17 @@ l_13d3:
 	move.b	d0,unknown_6271                 	| [$13ff: ld   (unknown_6271),a]
 	jbsr	analyse_guard_direction_change_19D1	| [$1402: call analyse_guard_direction_change_19D1]
 	lea	guard_2_in_elevator_607B,a2    	| [$1405: ld   ix,guard_2_in_elevator_607B]
-	lea	unknown_6097,a0                	| [$1409: ld   hl,unknown_6097]
+	lea	guard_2_not_moving_timeout_counter_6097,a0                	| [$1409: ld   hl,guard_2_not_moving_timeout_counter_6097]
 	lea	unknown_6149,a1                	| [$140c: ld   de,unknown_6149]
 	jbsr	l_1908                            	| [$140f: call $1908]
 	jbsr	l_1653                            	| [$1412: call $1653]
 	move.b	unknown_6149,d0                 	| [$1415: ld   a,(unknown_6149)]
 										| [$1418: cp   $00]
 	jne	l_1449                             	| [$141a: jr   nz,$1449]
-	move.b	unknown_6097,d0                 	| [$141c: ld   a,(unknown_6097)]
+	move.b	guard_2_not_moving_timeout_counter_6097,d0                 	| [$141c: ld   a,(guard_2_not_moving_timeout_counter_6097)]
 	cmp.b	#0xF0,d0                         	| [$141f: cp   $F0]
 	bcs.b	0f
-	jbsr	l_31c1                            	| [$1421: call nc,$31C1]
+	jbsr	maybe_guard_2_is_stuck_31c1                            	| [$1421: call nc,$31C1]
 0:
 	move.l	#guard_2_struct_6598,guard_struct_pointer_6093         	| [$1426: ld   iy,guard_2_struct_6598]
 	         	| [$142a: ld   (guard_struct_pointer_6093),iy]
@@ -2977,7 +2977,7 @@ l_1449:
 	jne	l_145a                             	| [$1453: jr   $145A]
 *l_1455:
 	move.b	#0x01,d0                        	| [$1455: ld   a,$01]
-	move.b	d0,unknown_6077                 	| [$1457: ld   (unknown_6077),a]
+	move.b	d0,guard_2_in_elevator_6077                 	| [$1457: ld   (guard_2_in_elevator_6077),a]
 l_145a:
 	jbsr	update_guard_1_screen_address_from_xy_5568	| [$145a: call update_guard_1_screen_address_from_xy_5568]
 	bsr		read_rom                         	| [$145d: ld   a,(hl)]
@@ -2986,17 +2986,17 @@ l_145a:
 	jne	l_1469                             	| [$1462: jr   $1469]
 *l_1464:
 	move.b	#0x01,d0                        	| [$1464: ld   a,$01]
-	move.b	d0,unknown_6037                 	| [$1466: ld   (unknown_6037),a]
+	move.b	d0,guard_1_in_elevator_6037                 	| [$1466: ld   (guard_1_in_elevator_6037),a]
 l_1469:
 	move.w	guard_1_logical_address_6038,d6	| [$1469: ld   hl,(guard_1_logical_address_6038)]
-	lea	unknown_6037,a3                	| [$146c: ld   iy,unknown_6037]
+	lea	guard_1_in_elevator_6037,a3                	| [$146c: ld   iy,guard_1_in_elevator_6037]
 	lea	guard_1_struct_6594,a2         	| [$1470: ld   ix,guard_1_struct_6594]
 	jbsr	l_2605                            	| [$1474: call $2605]
 	move.w	guard_1_logical_address_6038,d6	| [$1477: ld   hl,(guard_1_logical_address_6038)]
 	lea	guard_1_struct_6594,a2         	| [$147a: ld   ix,guard_1_struct_6594]
 	jbsr	l_250e                            	| [$147e: call $250E]
 	move.w	guard_2_logical_address_6078,d6	| [$1481: ld   hl,(guard_2_logical_address_6078)]
-	lea	unknown_6077,a3                	| [$1484: ld   iy,unknown_6077]
+	lea	guard_2_in_elevator_6077,a3                	| [$1484: ld   iy,guard_2_in_elevator_6077]
 	lea	guard_2_struct_6598,a2         	| [$1488: ld   ix,guard_2_struct_6598]
 	jbsr	l_2605                            	| [$148c: call $2605]
 	move.w	guard_2_logical_address_6078,d6	| [$148f: ld   hl,(guard_2_logical_address_6078)]
@@ -3802,7 +3802,7 @@ l_19fb:
 	cmp.b	d1,d0                            	| [$1a08: cp   b]
 	jeq	l_1a0e                             	| [$1a09: jr   z,$1A0E]
  * not same screen as player
-	jbsr	l_1bbd                            	| [$1a0b: call $1BBD]
+	jbsr	guide_guard_on_hidden_screen_1bbd                            	| [$1a0b: call $1BBD]
  * same screen as the player
 l_1a0e:
 	move.b	#0x08,d1                        	| [$1a0e: ld   b,$08]
@@ -4072,9 +4072,9 @@ set_guard_direction_up_1BB3:
 	rts                                    	| [$1bbc: ret]
 	
  * not the same screen as player:	 decide something?
- * < b:	guard screen
+ * < D1:	guard screen
  * < D3: guard screen address
-l_1bbd:
+guide_guard_on_hidden_screen_1bbd:
 
 	move.l	a2,-(sp)                        	| [$1bbd: push ix]
 
@@ -4111,7 +4111,7 @@ l_1be6:
 l_1bea:
 	movem.w	(sp)+,d3/d4                    	| [$1bea: pop  de]
 l_1beb:
-	* read address (big endian)
+	* read address (big endian, even in original ROM!!)
 	LOAD_AX_BE_WORD_DY	a3,d6
 									| [$1beb: ld   a,(iy+$00)]
 										| [$1bee: ld   h,a]
@@ -4182,7 +4182,7 @@ l_1c6f:
 	exg	d0,d7                              	| [$1c6f: ex   af,af']
 	jbsr	is_way_clear_to_player_1D33       	| [$1c70: call is_way_clear_to_player_1D33]
 	move.w	guard_1_logical_address_6038,d6	| [$1c73: ld   hl,(guard_1_logical_address_6038)]
-	move.w	#0xffff,d1                        	| [$1c76: ld   bc,$FFFF] 65535
+	move.w	#-1,d1                        	| [$1c76: ld   bc,$FFFF] 65535
 	move.b	#0x10,d0                        	| [$1c79: ld   a,$10]
 	exg	d0,d7                              	| [$1c7b: ex   af,af']
 	lea	guard_2_sees_player_up_603E,a2 	| [$1c7c: ld   ix,guard_2_sees_player_up_603E]
@@ -4292,16 +4292,16 @@ l_1d0e:
 * works for all directions (up,down,left,right)
 *
 * params:
-* d0:	direction value to set if test works ($40:to left, $80:to right, $10:up, $20:down)
+* d7:	direction value to set if test works ($40:to left, $80:to right, $10:up, $20:down)
 * a2: store a or 0 in (ix)
 * d6: logical address
 * d1: direction increment (1:	down, -1: up, 32: right, -32: left)
 
 is_way_clear_to_player_1D33:
-	subq.w	#2,a0                           	| [$1d33: dec  hl] * 2
+	subq.w	#2,d6                           	| [$1d33: dec  hl] * 2
 l_1d35:
-	clr.b	d0                               	| [$1d35: xor  a]
-	move.b	d0,(a2)                    	| [$1d36: ld   (ix+$00),a] set "visible" flag to 0
+	                               	| [$1d35: xor  a]
+	clr.b	(a2)                    	| [$1d36: ld   (ix+$00),a] set "visible" flag to 0
 	add.w	d1,d6					| [adc  hl,bc]
 	bsr		read_rom                         	| [$1d3b: ld   a,(hl)]
 	movem.w	d1/d2,-(sp)                    	| [$1d3c: push bc]
@@ -4309,12 +4309,12 @@ l_1d35:
  * 8 tests
 	lea	game_mem+0x1D6B,a3                      	| [$1d3f: ld   iy,$1D6B]
 l_1d43:
-	cmp.b	(a3),d0                     	| [$1d43: cp   (iy+$00)]
+	cmp.b	(a3)+,d0                     	| [$1d43: cp   (iy+$00)]
 	jeq	l_1d4e                             	| [$1d46: jr   z,$1D4E]
-	addq.w	#1,a3                           	| [$1d48: inc  iy]
+	                           	| [$1d48: inc  iy]
 	subq.b	#1,d1                           	| [...]
 	jne	l_1d43                             	| [$1d4a: djnz $1D43]
-
+	* there's an obstacle between player and guard: forget it
 
 	movem.w	(sp)+,d1/d2                    	| [$1d4c: pop  bc]
 	rts                                    	| [$1d4d: ret]
@@ -4581,14 +4581,14 @@ l_1ee0:
 	move.b	#0xB0,d0                        	| [$1ef8: ld   a,$B0]
 	move.b	d0,guard_2_x_659A               	| [$1efa: ld   (guard_2_x_659A),a]
 											| [$1efd: xor  a]
-	clr.b	unknown_6097                 	| [$1efe: ld   (unknown_6097),a]
+	clr.b	guard_2_not_moving_timeout_counter_6097                 	| [$1efe: ld   (guard_2_not_moving_timeout_counter_6097),a]
 	clr.b	unknown_6288                 	| [$1f01: ld   (unknown_6288),a]
 	clr.b	unknown_6008                 	| [$1f04: ld   (unknown_6008),a]
 	clr.b	unknown_6013                 	| [$1f07: ld   (unknown_6013),a]
 	clr.b	player_in_wagon_flag_6029    	| [$1f0a: ld   (player_in_wagon_flag_6029),a]
 	clr.b	player_gripping_handle_602A  	| [$1f0d: ld   (player_gripping_handle_602A),a]
 	clr.b	fatal_fall_height_reached_604E	| [$1f10: ld   (fatal_fall_height_reached_604E),a]
-	clr.b	unknown_6077                 	| [$1f13: ld   (unknown_6077),a]
+	clr.b	guard_2_in_elevator_6077                 	| [$1f13: ld   (guard_2_in_elevator_6077),a]
 	clr.b	player_controls_frozen_6028  	| [$1f16: ld   (player_controls_frozen_6028),a]
 	clr.w	pickaxe_timer_duration_61E0  	| [$1f19: ld   (pickaxe_timer_duration_61E0),a]
 	                 	| [$1f1c: ld   (unknown_61E1),a]
@@ -4708,10 +4708,10 @@ l_1ff5:
 	move.b	d0,fatal_fall_height_reached_604E	| [$2000: ld   (fatal_fall_height_reached_604E),a]
 	move.b	d0,fall_height_604D             	| [$2003: ld   (fall_height_604D),a]
 	move.b	d0,unknown_608F                 	| [$2006: ld   (unknown_608F),a]
-	move.b	d0,unknown_6077                 	| [$2009: ld   (unknown_6077),a]
-	move.b	d0,unknown_6037                 	| [$200c: ld   (unknown_6037),a]
+	move.b	d0,guard_2_in_elevator_6077                 	| [$2009: ld   (guard_2_in_elevator_6077),a]
+	move.b	d0,guard_1_in_elevator_6037                 	| [$200c: ld   (guard_1_in_elevator_6037),a]
 	move.b	d0,unknown_604F                 	| [$200f: ld   (unknown_604F),a]
-	jbsr	l_2957                            	| [$2012: call $2957]
+	jbsr	init_guard_directions_and_wagons_2957                            	| [$2012: call $2957]
 	move.b	#0x01,d0                        	| [$2015: ld   a,$01]
 	rts                                    	| [$2017: ret]
 copy_to_61bd_2018:
@@ -4846,7 +4846,7 @@ l_2103:
 choose_guard_random_direction_2123:
 	moveq	#0,d0
 	jbsr	osd_get_random       	| [$2123: ld   a,(vertical_beam_pos_A000)] random 0-3 direction
-	lea	game_mem+0x5970,a0        	| [$2126: ld   hl,direction_table_5970]
+	lea	direction_table_5970(pc),a0        	| [$2126: ld   hl,direction_table_5970]
 	and.b	#0x03,d0                         	| [$2129: and  $03]
                        	| [$212b: add  a,l]
                          	| [$212c: ld   l,a]
@@ -4854,9 +4854,9 @@ choose_guard_random_direction_2123:
 
                           	| [$2130: ld   h,a]
 	move.b	(a0,d0.w),d0                         	| [$2131: ld   a,(hl)]
-	move.l	guard_direction_pointer_6095,a0	| [$2132: ld   hl,(guard_direction_pointer_6095)]
-l_2135:
-	move.b	d0,(a0)                         	| [$2135: ld   (hl),a]
+		| [$2132: ld   hl,(guard_direction_pointer_6095)]
+
+	move.b	d0,guard_direction_pointer_6095                         	| [$2135: ld   (hl),a]
 	rts                                    	| [$2136: ret]
 
 * < A4 points on holds barrow or has pick flag
@@ -4887,7 +4887,6 @@ check_object_pickup_2137:
 	beq.b	0f                               	| [$2153: ret  nz] [...]
 	rts                                    	| [$2153: ret  nz]
 0:
-	move.b	#0x1,0x200
 	LOAD_AX_BE_WORD_DY	a3,d3
 	                   	| [$2154: ld   d,(iy+$01)]
 	                   	| [$2157: ld   e,(iy+$00)]
@@ -5078,11 +5077,11 @@ l_2241:
 	sub.l	a4,a4		| added to avoid issues
 	jbsr	l_3dbe                            	| [$2261: call $3DBE]
 	clr.b	d0                               	| [$2264: xor  a]
-	move.b	d0,unknown_6057                 	| [$2265: ld   (unknown_6057),a]
+	move.b	d0,guard_1_not_moving_timeout_counter_6057                 	| [$2265: ld   (guard_1_not_moving_timeout_counter_6057),a]
 	move.b	#0x21,d0                        	| [$2268: ld   a,$21]
 	move.b	d0,guard_1_struct_6594          	| [$226a: ld   (guard_1_struct_6594),a]
 	move.w	guard_1_logical_address_6038,d6	| [$226d: ld   hl,(guard_1_logical_address_6038)]
-	lea	unknown_6037,a3                	| [$2270: ld   iy,unknown_6037]
+	lea	guard_1_in_elevator_6037,a3                	| [$2270: ld   iy,guard_1_in_elevator_6037]
 	lea	guard_1_struct_6594,a2         	| [$2274: ld   ix,guard_1_struct_6594]
 	jbra	l_2605                            	| [$2278: call $2605]
 	rts                                    	| [$227b: ret]
@@ -5105,11 +5104,11 @@ l_227c:
 	move.l	(sp)+,a2                        	| [$229a: pop  ix]
 	jbsr	l_3dbe                            	| [$229c: call $3DBE]
 	clr.b	d0                               	| [$229f: xor  a]
-	move.b	d0,unknown_6097                 	| [$22a0: ld   (unknown_6097),a]
+	move.b	d0,guard_2_not_moving_timeout_counter_6097                 	| [$22a0: ld   (guard_2_not_moving_timeout_counter_6097),a]
 	move.b	#0x21,d0                        	| [$22a3: ld   a,$21]
 	move.b	d0,guard_2_struct_6598          	| [$22a5: ld   (guard_2_struct_6598),a]
 	move.w	guard_2_logical_address_6078,d6	| [$22a8: ld   hl,(guard_2_logical_address_6078)]
-	lea	unknown_6077,a3                	| [$22ab: ld   iy,unknown_6077]
+	lea	guard_2_in_elevator_6077,a3                	| [$22ab: ld   iy,guard_2_in_elevator_6077]
 	lea	guard_2_struct_6598,a2         	| [$22af: ld   ix,guard_2_struct_6598]
 	jbsr	l_2605                            	| [$22b3: call $2605]
 	rts                                    	| [$22b6: ret]
@@ -5570,6 +5569,7 @@ l_2632:
 	add.b	d1,d0                            	| [$263b: add  a,b]
 	move.b	d0,(0x03,a2)                    	| [$263c: ld   (ix+$03),a]
 	rts                                    	| [$263f: ret]
+	
 l_2640:
 	move.b	(0x03,a2),d0                    	| [$2640: ld   a,(ix+$03)]
 	rol.b	#5,d0                            	| [$2643: rlc  a] * 5
@@ -5938,7 +5938,7 @@ l_2946:
 	rts                                    	| [$2956: ret]
 
 
-l_2957:
+init_guard_directions_and_wagons_2957:
 	move.b	#0x01,d0                        	| [$2957: ld   a,$01]
 	move.b	d0,unknown_601A                 	| [$2959: ld   (unknown_601A),a]
 	move.b	d0,unknown_601B                 	| [$295c: ld   (unknown_601B),a] third wagon screen index (0,1,2)
@@ -6503,7 +6503,7 @@ l_2c96:
 	cmp.b	#0x01,d0                         	| [$2ca8: cp   $01]
 	jeq	l_2cb4                             	| [$2caa: jr   z,$2CB4]
 	move.b	#0x01,d0                        	| [$2cac: ld   a,$01]
-	move.b	d0,unknown_6037                 	| [$2cae: ld   (unknown_6037),a]
+	move.b	d0,guard_1_in_elevator_6037                 	| [$2cae: ld   (guard_1_in_elevator_6037),a]
 	move.b	d0,unknown_6208                 	| [$2cb1: ld   (unknown_6208),a]
 l_2cb4:
 	lea	guard_2_struct_6598,a2         	| [$2cb4: ld   ix,guard_2_struct_6598]
@@ -6515,7 +6515,7 @@ l_2cb4:
 	cmp.b	#0x01,d0                         	| [$2cc6: cp   $01]
 	jeq	l_2cd2                             	| [$2cc8: jr   z,$2CD2]
 	move.b	#0x01,d0                        	| [$2cca: ld   a,$01]
-	move.b	d0,unknown_6077                 	| [$2ccc: ld   (unknown_6077),a]
+	move.b	d0,guard_2_in_elevator_6077                 	| [$2ccc: ld   (guard_2_in_elevator_6077),a]
 	move.b	d0,unknown_6209                 	| [$2ccf: ld   (unknown_6209),a]
 l_2cd2:
 	rts                                    	| [$2cd2: ret]
@@ -7188,7 +7188,8 @@ set_bag_color_attribute_3197:
 	move.b	bag_color_color_attribute_627A,d0                 	| [$319e: ld   a,(bag_color_color_attribute_627A)]
 	jbsr	osd_w_colorram                         	| [$31a1: ld   (hl),a]
 	rts                                    	| [$31a2: ret]
-l_31a3:
+
+maybe_guard_1_is_stuck_31a3:
 	lea	guard_1_struct_6594,a2         	| [$31a3: ld   ix,guard_1_struct_6594]
 	move.b	guard_1_in_elevator_603B,d0     	| [$31a7: ld   a,(guard_1_in_elevator_603B)]
 	cmp.b	#0x01,d0                         	| [$31aa: cp   $01]
@@ -7206,10 +7207,11 @@ l_31a3:
 	rts                                    	| [$31b8: ret  z]
 0:
 	jbsr	reset_guard_position_31DF         	| [$31b9: call reset_guard_position_31DF]
-	move.b	d1,d0                           	| [$31bc: ld   a,b]
-	move.b	d0,guard_1_screen_6099          	| [$31bd: ld   (guard_1_screen_6099),a]
+	move.b	d1,guard_1_screen_6099                           	| [$31bc: ld   a,b]
+	          	| [$31bd: ld   (guard_1_screen_6099),a]
 	rts                                    	| [$31c0: ret]
-l_31c1:
+
+maybe_guard_2_is_stuck_31c1:
 	lea	guard_2_struct_6598,a2         	| [$31c1: ld   ix,guard_2_struct_6598]
 	move.b	guard_2_in_elevator_607B,d0     	| [$31c5: ld   a,(guard_2_in_elevator_607B)]
 	cmp.b	#0x01,d0                         	| [$31c8: cp   $01]
@@ -7227,8 +7229,8 @@ l_31c1:
 	rts                                    	| [$31d6: ret  z]
 0:
 	jbsr	reset_guard_position_31DF         	| [$31d7: call reset_guard_position_31DF]
-	move.b	d1,d0                           	| [$31da: ld   a,b]
-	move.b	d0,guard_2_screen_609A          	| [$31db: ld   (guard_2_screen_609A),a]
+	move.b	d1,guard_2_screen_609A                           	| [$31da: ld   a,b]
+											| [$31db: ld   (guard_2_screen_609A),a]
 	rts                                    	| [$31de: ret]
 
 reset_guard_position_31DF:
@@ -7369,13 +7371,13 @@ l_32ce:
 	move.b	(0x02,a2),d0                    	| [$32e4: ld   a,(ix+$02)]
 	cmp.b	#0xCD,d0                         	| [$32e7: cp   $CD]
 	jcs	l_32f0                             	| [$32e9: jr   c,$32F0]
-	jbsr	l_364e                            	| [$32eb: call $364E]
+	jbsr	move_guard_1_60_times_364e                            	| [$32eb: call $364E]
 	jra	l_32fa                             	| [$32ee: jr   $32FA]
 l_32f0:
 	move.b	(0x02,a2),d0                    	| [$32f0: ld   a,(ix+$02)]
 	cmp.b	#0x26,d0                         	| [$32f3: cp   $26]
 	jcc	l_32fa                             	| [$32f5: jr   nc,$32FA]
-	jbsr	l_364e                            	| [$32f7: call $364E]
+	jbsr	move_guard_1_60_times_364e                            	| [$32f7: call $364E]
 l_32fa:
 	lea	guard_2_struct_6598,a2         	| [$32fa: ld   ix,guard_2_struct_6598]
 	lea	player_struct_6580,a3          	| [$32fe: ld   iy,player_struct_6580]
@@ -7385,13 +7387,13 @@ l_32fa:
 	move.b	(0x02,a2),d0                    	| [$330b: ld   a,(ix+$02)]
 	cmp.b	#0xE0,d0                         	| [$330e: cp   $E0]
 	jcs	l_3317                             	| [$3310: jr   c,$3317]
-	jbsr	l_3658                            	| [$3312: call $3658]
+	jbsr	move_guard_2_60_times_3658                            	| [$3312: call $3658]
 	jra	l_3321                             	| [$3315: jr   $3321]
 l_3317:
 	move.b	(0x02,a2),d0                    	| [$3317: ld   a,(ix+$02)]
 	cmp.b	#0x10,d0                         	| [$331a: cp   $10]
 	jcc	l_3321                             	| [$331c: jr   nc,$3321]
-	jbsr	l_3658                            	| [$331e: call $3658]
+	jbsr	move_guard_2_60_times_3658                            	| [$331e: call $3658]
 l_3321:
 	move.b	player_in_wagon_1_601C,d0                 	| [$3321: ld   a,(player_in_wagon_1_601C)]
 	cmp.b	#0x01,d0                         	| [$3324: cp   $01]
@@ -7931,7 +7933,7 @@ l_3591:
 
  * routine to perform several guard moves, sometimes at screen boundary
  * no more info
-l_364e:
+move_guard_1_60_times_364e:
 	move.b	#0x60,d1                        	| [$364e: ld   b,$60]
 l_3650:
 	movem.w	d1/d2,-(sp)                    	| [$3650: push bc]
@@ -7941,7 +7943,9 @@ l_3650:
 	subq.b	#1,d1                           	| [...]
 	jne	l_3650                             	| [$3655: djnz $3650]
 	rts                                    	| [$3657: ret]
-l_3658:
+	
+	
+move_guard_2_60_times_3658:
 	move.b	#0x60,d1                        	| [$3658: ld   b,$60]
 l_365a:
 	movem.w	d1/d2,-(sp)                    	| [$365a: push bc]
@@ -7968,9 +7972,9 @@ play_intro_3700:
 	move.b	d0,guard_2_screen_609A          	| [$371e: ld   (guard_2_screen_609A),a]
 	clr.b	d0                               	| [$3721: xor  a]
 	move.b	d0,unknown_6008                 	| [$3722: ld   (unknown_6008),a]
-	move.b	d0,unknown_6037                 	| [$3725: ld   (unknown_6037),a]
+	move.b	d0,guard_1_in_elevator_6037                 	| [$3725: ld   (guard_1_in_elevator_6037),a]
 	move.b	d0,fatal_fall_height_reached_604E                 	| [$3728: ld   (unknown_604E),a]
-	move.b	d0,unknown_6077                 	| [$372b: ld   (unknown_6077),a]
+	move.b	d0,guard_2_in_elevator_6077                 	| [$372b: ld   (guard_2_in_elevator_6077),a]
 	move.b	d0,elevator_y_current_screen_6587	| [$372e: ld   (elevator_y_current_screen_6587),a]
 	move.b	d0,guard_2_x_659A               	| [$3731: ld   (guard_2_x_659A),a]
 	move.b	d0,guard_2_y_659B               	| [$3734: ld   (guard_2_y_659B),a]
@@ -8786,7 +8790,7 @@ l_3cd4:
 	jbsr	l_3d7a                            	| [$3cd7: call $3D7A]
 	jeq	l_3cee                             	| [$3cda: jr   z,$3CEE]
 	clr.b	d0                               	| [$3cdc: xor  a]
-	move.b	d0,unknown_6077                 	| [$3cdd: ld   (unknown_6077),a]
+	move.b	d0,guard_2_in_elevator_6077                 	| [$3cdd: ld   (guard_2_in_elevator_6077),a]
 	move.b	unknown_6209,d0                 	| [$3ce0: ld   a,(unknown_6209)]
 	cmp.b	#0x01,d0                         	| [$3ce3: cp   $01]
 	jne	l_3cee                             	| [$3ce5: jr   nz,$3CEE]
@@ -8808,7 +8812,7 @@ l_3cee:
 	jbsr	l_3d7a                            	| [$3d11: call $3D7A]
 	jeq	l_3d28                             	| [$3d14: jr   z,$3D28]
 	clr.b	d0                               	| [$3d16: xor  a]
-	move.b	d0,unknown_6037                 	| [$3d17: ld   (unknown_6037),a]
+	move.b	d0,guard_1_in_elevator_6037                 	| [$3d17: ld   (guard_1_in_elevator_6037),a]
 	move.b	unknown_6208,d0                 	| [$3d1a: ld   a,(unknown_6208)]
 	cmp.b	#0x01,d0                         	| [$3d1d: cp   $01]
 	jne	l_3d28                             	| [$3d1f: jr   nz,$3D28]
@@ -8818,8 +8822,8 @@ l_3cee:
 l_3d28:
 	lea	unknown_604F,a2                	| [$3d28: ld   ix,unknown_604F]
 	lea	unknown_6156,a3                	| [$3d2c: ld   iy,unknown_6156]
-	lea	guard_1_struct_6594,a0         	| [$3d30: ld   hl,guard_1_struct_6594]
-	move.l	a0,guard_struct_pointer_6215                 	| [$3d33: ld   (guard_struct_pointer_6215),hl]
+	move.l	#guard_1_struct_6594,guard_struct_pointer_6215         	| [$3d30: ld   hl,guard_1_struct_6594]
+	                 	| [$3d33: ld   (guard_struct_pointer_6215),hl]
 	move.w	guard_1_logical_address_6038,d6	| [$3d36: ld   hl,(guard_1_logical_address_6038)]
 	lea	guard_1_in_elevator_603B,a1    	| [$3d39: ld   de,guard_1_in_elevator_603B]
 	move.b	guard_1_screen_6099,d0          	| [$3d3c: ld   a,(guard_1_screen_6099)]
