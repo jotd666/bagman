@@ -3237,9 +3237,9 @@ analyse_guard_direction_change_19D1:
 1A3B: FD E5         push iy
 1A3D: B8            cp   b
 1A3E: F5            push af
-1A3F: D4 10 1B      call nc,$1B10 ;  guard x < player x ?
+1A3F: D4 10 1B      call nc,guard_goes_left_1b10 ;  guard x < player x ?
 1A42: F1            pop  af
-1A43: DC 19 1B      call c,$1B19
+1A43: DC 19 1B      call c,guard_goes_left_1b19
 1A46: 3A 83 65      ld   a,(player_y_6583)
 1A49: 47            ld   b,a
 1A4A: FD E1         pop  iy
@@ -3247,9 +3247,9 @@ analyse_guard_direction_change_19D1:
 1A4F: FD E5         push iy
 1A51: B8            cp   b
 1A52: F5            push af
-1A53: DC 2B 1B      call c,$1B2B
+1A53: DC 2B 1B      call c,guard_goes_down_1b2b
 1A56: F1            pop  af
-1A57: D4 22 1B      call nc,$1B22
+1A57: D4 22 1B      call nc,guard_goes_up_1b22
 1A5A: 18 58         jr   $1AB4
 1A5C: 3A 00 A0      ld   a,(vertical_beam_pos_A000)
 1A5F: E5            push hl
@@ -3342,18 +3342,22 @@ analyse_guard_direction_change_19D1:
 1B0B: DD E1         pop  ix
 1B0D: FD E1         pop  iy
 1B0F: C9            ret
+guard_goes_left_1b10:
 1B10: DD 7E 15      ld   a,(ix+$15)
 1B13: F6 04         or   $04
 1B15: DD 77 15      ld   (ix+$15),a
 1B18: C9            ret
+guard_goes_left_1b19:
 1B19: DD 7E 15      ld   a,(ix+$15)
 1B1C: F6 08         or   $08
 1B1E: DD 77 15      ld   (ix+$15),a
 1B21: C9            ret
+guard_goes_up_1b22:
 1B22: DD 7E 15      ld   a,(ix+$15)
 1B25: F6 01         or   $01
 1B27: DD 77 15      ld   (ix+$15),a
 1B2A: C9            ret
+guard_goes_down_1b2b:
 1B2B: DD 7E 15      ld   a,(ix+$15)
 1B2E: F6 02         or   $02
 1B30: DD 77 15      ld   (ix+$15),a

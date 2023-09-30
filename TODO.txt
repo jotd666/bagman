@@ -7,7 +7,6 @@
 - ghost player sprites: rip sprite structure when it happens, reproduce it!
 
 
-- remove symmetry for player in wagon/gripping handle
 - debug 2640 with values not 10 or E0 (not at start)
 
 - memory optim: fixed number of bitmap repeats for sprites:

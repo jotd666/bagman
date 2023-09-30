@@ -3764,7 +3764,6 @@ l_19b3:
  * < a3:	guard struct
 
 analyse_guard_direction_change_19D1:
-
 	move.l	a3,-(sp)                        	| [$19d1: push iy]
 	lea	game_mem+0x5974,a3                      	| [$19d3: ld   iy,$5974] path "branch" address table
 	* 2 bytes: address (big endian) then 1 byte for branch flag
@@ -3778,16 +3777,16 @@ l_19d7:
 								| [$19db: ld   a,(iy+$01)]
 	                           	| [$19de: ld   l,a]
 								| [$19df: xor  a]
-	cmp.w	d3,d6  						| [sbc  hl,de]	; get address distance between guard and
+	cmp.w	d3,d6  						| [sbc  hl,de]	; compare guard & intersection position
 	jeq	l_19fb                             	| [$19e2: jr   z,$19FB]
 	addq.w	#3,a3                           	| [$19e4: inc  iy] * 3
 	            	| [$19ea: ld   a,(io_read_shit_B800)]
 	* branch (direction change) flag (just test end of path!)
-	move.b	(0x02,a3),d0                    	| [$19ed: ld   a,(iy+$02)]
-	cmp.b	#0xFF,d0                         	| [$19f0: cp   $FF]
+	cmp.b	#0xFF,(0x02,a3)                    	| [$19ed: ld   a,(iy+$02)]
+	                         	| [$19f0: cp   $FF]
 	jne	l_19d7                             	| [$19f2: jr   nz,$19D7]
-	clr.b	d0                               	| [$19f4: xor  a]
-	move.b	d0,(0x11,a2)                    	| [$19f5: ld   (ix+$11),a]
+											| [$19f4: xor  a]
+	clr.b	(0x11,a2)                    	| [$19f5: ld   (ix+$11),a]
 	move.l	(sp)+,a3                        	| [$19f8: pop  iy]
 	rts                                    	| [$19fa: ret]
 
@@ -3805,6 +3804,7 @@ l_19fb:
 	jbsr	guide_guard_on_hidden_screen_1bbd                            	| [$1a0b: call $1BBD]
  * same screen as the player
 l_1a0e:
+	move.b	#1,0x200
 	move.b	#0x08,d1                        	| [$1a0e: ld   b,$08]
 	move.b	(0x11,a2),d0                    	| [$1a10: ld   a,(ix+$11)]
 	cmp.b	#0x01,d0                         	| [$1a13: cp   $01]
@@ -3830,14 +3830,15 @@ l_1a18:
 
 	move.l	a3,-(sp)                        	| [$1a3b: push iy]
 	cmp.b	d1,d0                            	| [$1a3d: cp   b]
-	move.w	d0,-(sp)                        	| [$1a3e: push af]
+												| [$1a3e: push af]
 	bcs.b	0f
-	jbsr	l_1b10                            	| [$1a3f: call nc,$1B10]  guard x < player x ?
+	jbsr	guard_goes_left_1b10                            	| [$1a3f: call nc,$1B10]  guard x < player x ?
+	bra.b	1f
 0:
-	move.w	(sp)+,d0                        	| [$1a42: pop  af]
-	bcc.b	0f
-	jbsr	l_1b19                            	| [$1a43: call c,$1B19]
-0:
+								| [$1a42: pop  af]
+		
+	jbsr	guard_goes_left_1b19                            	| [$1a43: call c,$1B19]
+1:
 	move.b	player_y_6583,d0                	| [$1a46: ld   a,(player_y_6583)]
 	move.b	d0,d1                           	| [$1a49: ld   b,a]
 	move.l	(sp)+,a3                        	| [$1a4a: pop  iy]
@@ -3845,14 +3846,15 @@ l_1a18:
 
 	move.l	a3,-(sp)                        	| [$1a4f: push iy]
 	cmp.b	d1,d0                            	| [$1a51: cp   b]
-	move.w	d0,-(sp)                        	| [$1a52: push af]
+	                        	| [$1a52: push af]
 	bcc.b	0f
-	jbsr	l_1b2b                            	| [$1a53: call c,$1B2B]
+	jbsr	guard_goes_down_1b2b                            	| [$1a53: call c,$1B2B]
+	bra.b	1f
 0:
-	move.w	(sp)+,d0                        	| [$1a56: pop  af]
-	bcs.b	0f
-	jbsr	l_1b22                            	| [$1a57: call nc,$1B22]
-0:
+											| [$1a56: pop  af]
+					
+	jbsr	guard_goes_up_1b22                            	| [$1a57: call nc,$1B22]
+1:
 	jra	l_1ab4                             	| [$1a5a: jr   $1AB4]
 l_1a5c:
 	* random!
@@ -3959,25 +3961,26 @@ l_1b0b:
 	move.l	(sp)+,a2                        	| [$1b0b: pop  ix]
 	move.l	(sp)+,a3                        	| [$1b0d: pop  iy]
 	rts                                    	| [$1b0f: ret]
-l_1b10:
-	move.b	(0x15,a2),d0                    	| [$1b10: ld   a,(ix+$15)]
-	or.b	#0x04,d0                          	| [$1b13: or   $04]
-	move.b	d0,(0x15,a2)                    	| [$1b15: ld   (ix+$15),a]
+	
+guard_goes_left_1b10:
+	                    	| [$1b10: ld   a,(ix+$15)]
+	or.b	#0x04,(0x15,a2)                          	| [$1b13: or   $04]
+	                    	| [$1b15: ld   (ix+$15),a]
 	rts                                    	| [$1b18: ret]
-l_1b19:
-	move.b	(0x15,a2),d0                    	| [$1b19: ld   a,(ix+$15)]
-	or.b	#0x08,d0                          	| [$1b1c: or   $08]
-	move.b	d0,(0x15,a2)                    	| [$1b1e: ld   (ix+$15),a]
+guard_goes_left_1b19:
+	or.b	#0x08,(0x15,a2)                    	| [$1b19: ld   a,(ix+$15)]
+									| [$1b1c: or   $08]
+										| [$1b1e: ld   (ix+$15),a]
 	rts                                    	| [$1b21: ret]
-l_1b22:
-	move.b	(0x15,a2),d0                    	| [$1b22: ld   a,(ix+$15)]
-	or.b	#0x01,d0                          	| [$1b25: or   $01]
-	move.b	d0,(0x15,a2)                    	| [$1b27: ld   (ix+$15),a]
+guard_goes_up_1b22:
+	or.b	#1,(0x15,a2)                    	| [$1b22: ld   a,(ix+$15)]
+											| [$1b25: or   $01]
+										| [$1b27: ld   (ix+$15),a]
 	rts                                    	| [$1b2a: ret]
-l_1b2b:
-	move.b	(0x15,a2),d0                    	| [$1b2b: ld   a,(ix+$15)]
-	or.b	#0x02,d0                          	| [$1b2e: or   $02]
-	move.b	d0,(0x15,a2)                    	| [$1b30: ld   (ix+$15),a]
+guard_goes_down_1b2b:
+	                    	| [$1b2b: ld   a,(ix+$15)]
+	or.b	#0x02,(0x15,a2)                          	| [$1b2e: or   $02]
+	                   	| [$1b30: ld   (ix+$15),a]
 	rts                                    	| [$1b33: ret]
 l_1b38:
 	move.w	guard_1_logical_address_6038,guard_logical_address_6091                   	| [$1b38: ld   hl,($6038)]
@@ -4677,10 +4680,11 @@ l_1f95:
 	move.b	unknown_617D,d0                 	| [$1fc9: ld   a,(unknown_617D)]
 	move.b	d0,d1                           	| [$1fcc: ld   b,a]
 	cmp.b	#0x02,d0                         	| [$1fcd: cp   $02]
-	move.b	d1,d0                           	| [$1fcf: ld   a,b]
 	bne.b	0f
+	move.b	d1,d0                           	| [$1fcf: ld   a,b]
 	jbsr	l_2a70                            	| [$1fd0: call z,$2A70]
 0:
+
 l_1fd3:
 	move.b	lives_6056,d0                   	| [$1fd3: ld   a,(lives_6056)]
 	                         	| [$1fd6: cp   $00]
@@ -4692,8 +4696,8 @@ l_1fd3:
 	move.b	unknown_617D,d0                 	| [$1fe4: ld   a,(unknown_617D)]
 	move.b	d0,d1                           	| [$1fe7: ld   b,a]
 	cmp.b	#0x02,d0                         	| [$1fe8: cp   $02]
-	move.b	d1,d0                           	| [$1fea: ld   a,b]
 	bne.b	0f
+	move.b	d1,d0                           	| [$1fea: ld   a,b]
 	jbsr	l_2a70                            	| [$1feb: call z,$2A70]
 0:
 	move.b	lives_6056,d0                   	| [$1fee: ld   a,(lives_6056)]
@@ -8675,7 +8679,6 @@ l_3c18:
 	move.b	#0xF3,d0                        	| [$3c23: ld   a,$F3]
 	jbsr	l_3c2c                            	| [$3c25: call z,$3C2C]
 0:
-	move.b	#0xF3,d0                        	| [$3c23: ld   a,$F3]
 
 	movem.w	(sp)+,d1/d2                    	| [$3c28: pop  bc]
 	subq.b	#1,d1                           	| [...]
@@ -8826,8 +8829,8 @@ l_3d28:
 	                 	| [$3d33: ld   (guard_struct_pointer_6215),hl]
 	move.w	guard_1_logical_address_6038,d6	| [$3d36: ld   hl,(guard_1_logical_address_6038)]
 	lea	guard_1_in_elevator_603B,a1    	| [$3d39: ld   de,guard_1_in_elevator_603B]
-	move.b	guard_1_screen_6099,d0          	| [$3d3c: ld   a,(guard_1_screen_6099)]
-	move.b	d0,screen_index_param_6098      	| [$3d3f: ld   (screen_index_param_6098),a]
+	move.b	guard_1_screen_6099,screen_index_param_6098          	| [$3d3c: ld   a,(guard_1_screen_6099)]
+	    	| [$3d3f: ld   (screen_index_param_6098),a]
 	lea		unknown_6211,a4            	| [$3d42: ld   bc,unknown_6211] None
 	jbsr	l_3d49                            	| [$3d45: call $3D49]
 	rts                                    	| [$3d48: ret]
@@ -8864,8 +8867,8 @@ l_3d65:
 	bne.b	0f
 	rts                                    	| [$3d72: ret  z]
 0:
-	clr.b	d0                               	| [$3d73: xor  a]
-	move.b	d0,unknown_6008                 	| [$3d74: ld   (unknown_6008),a]
+	clr.b	unknown_6008                               	| [$3d73: xor  a]
+	               	| [$3d74: ld   (unknown_6008),a]
 	rts                                    	| [$3d77: ret]
 
 l_3d7a:
