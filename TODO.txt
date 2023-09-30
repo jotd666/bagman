@@ -1,10 +1,8 @@
-- guards frozen / not shown / not moving at start
-- after losing a life, they move/follow player but no random move, as soon as
-  player is not in sight they reverse direction (on ladder)
+- guards frozen in some places => reset guard
+- guard at level 3 probably doesn't follow guide (debug with MAME & addresses)
 - pickup barrow: turns to pick..., dropping is buggy
 - pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
 - pickup pickaxes level 2: disappears immediately!
-- ghost player sprites: rip sprite structure when it happens, reproduce it!
 
 
 - debug 2640 with values not 10 or E0 (not at start)

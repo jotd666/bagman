@@ -121,9 +121,14 @@ with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
         block_dict[block_name] = {"size":size,"data":ast.literal_eval(txt)}
 
 
+def put_last(palette,color):
+    index = palette.index(color)
+    del palette[index]
+    palette.append(color)
 
 # 26 colors total, we're going 32 colors total
 palette = block_dict["palette"]["data"]
+
 
 # TODO: reorder so sprites can use upper palette 16-31
 
@@ -131,9 +136,6 @@ palette = [tuple(x) for x in palette]
 
 
 
-
-with open(os.path.join(src_dir,"palette.68k"),"w") as f:
-    bitplanelib.palette_dump(palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
 
 # for some reason, colors 1 and 2 of the cluts must be swapped to match
 # the palette! invert the colors back for perfect coloring of sprites & tiles!!
@@ -145,6 +147,12 @@ character_codes_list = list()
 
 
 rgb_cluts = [[tuple(palette[pidx]) for pidx in clut] for clut in bg_cluts]
+
+#for color in ((0, 255, 0),(255,0,247),(184,255,0),(225,222,247),(71,184,247)):
+#    put_last(palette,color)
+
+with open(os.path.join(src_dir,"palette.68k"),"w") as f:
+    bitplanelib.palette_dump(palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
 
 # this game is so simple sprite-wise that it's possible to manually enter the clut/code
 # combination instead of ripping them from running game. Besides, the game has a tendency
@@ -288,9 +296,9 @@ for k,data in used_sprites.items():
         if "left" not in data:
             # all bitmaps are the same, only the colors change
             # the loop on the cluts is only useful for sprite dump
-            left = bitplanelib.palette_image2sprite(img,None,spritepal) + bytes(4)
+            left = bitplanelib.palette_image2sprite(img,None,spritepal)
             if data["mirror"]:
-                data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal) + bytes(4)
+                data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal)
             data["left"] = left
 
 
