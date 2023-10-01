@@ -50,7 +50,7 @@
 	.global	previous_guard_1_struct_65B8
 	.global	previous_guard_2_struct_65BC
 	.global	score_ten_thousands_player_1_6178
-	.global	screen_index_param_6098
+	.global	current_guard_screen_index_6098
 	.global	time_61E8
 	.global	is_intermission_6274
 	.global	extra_life_awarded_6286
@@ -82,7 +82,7 @@
 	.global	guard_1_in_elevator_6037
 	.global	unknown_603A
 	.global	stored_logical_address_6044
-	.global	unknown_6047
+	.global	player_just_moved_flag_6047
 	.global	unknown_pointer_604B
 	.global	fall_height_604D
 	.global	fatal_fall_height_reached_604E
@@ -312,7 +312,7 @@ guard_2_sees_player_down_603F:
 	.align	2
 stored_logical_address_6044:
 	ds.w	1
-unknown_6047:
+player_just_moved_flag_6047:
 	ds.b	4
 	.align	2
 unknown_pointer_604B:
@@ -373,7 +373,7 @@ guard_direction_pointer_6095:
 	ds.l	1
 guard_2_not_moving_timeout_counter_6097:
 	ds.b	1
-screen_index_param_6098:
+current_guard_screen_index_6098:
 	ds.b	1
 guard_1_screen_6099:
 	ds.b	1

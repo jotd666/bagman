@@ -126,6 +126,9 @@ def put_last(palette,color):
     del palette[index]
     palette.append(color)
 
+def put_first(palette,color):
+    palette.insert(1,color)
+
 # 26 colors total, we're going 32 colors total
 palette = block_dict["palette"]["data"]
 
@@ -148,8 +151,18 @@ character_codes_list = list()
 
 rgb_cluts = [[tuple(palette[pidx]) for pidx in clut] for clut in bg_cluts]
 
-#for color in ((0, 255, 0),(255,0,247),(184,255,0),(225,222,247),(71,184,247)):
-#    put_last(palette,color)
+# now time to reorder the palette. Hardware sprites set palette dynamically for the 16-31 range
+# so we can get away with some hacks in title screen but a lot less during game
+
+# send some colors far in the palette (the ones only used for sprites or barrow, as we can copper hack
+# the first line where the barrow is)
+for color in ((0, 255, 0),(255,255,247), (255,33,79),(255,0,247),(184,255,0)):
+    put_last(palette,color)
+
+# make sure that those colors come first (ideally 0-15 which isn't too hard in-game)
+for color in ((255,255,0),(255,0,0),(255, 151, 0),(71,184,247),(184,104,0),(222,151,0),(151,255,247)):
+    put_first(palette,color)
+
 
 with open(os.path.join(src_dir,"palette.68k"),"w") as f:
     bitplanelib.palette_dump(palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
@@ -192,24 +205,6 @@ del used_sprites[0x29]
 
 # compute colors used for sprites, we have to put them in the upper part 16:32
 
-##sprite_colors = set()
-##for s in used_sprites.values():
-##    clut = s["clut"]
-##    sprite_colors.update(rgb_cluts[clut][1:])
-##
-##if len(sprite_colors)>16:
-##    # this is very unlikely, only 26 colors are used for that game!
-##    raise Exception("Too many colors for sprites")
-##
-### now reorder RGB palette
-##unordered_palette = set(palette)-sprite_colors
-##palette = sorted(unordered_palette)
-### pad if needed
-##if len(palette)<16:
-##    palette += [(255,255,255)]*(16-len(palette))
-##
-### mow sprite colors are above 16 index
-##palette += sorted(sprite_colors)
 
 
 # dump cluts as RGB4 for sprites

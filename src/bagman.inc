@@ -11,6 +11,7 @@
 	OPT_SKIP_INTRO_SCREEN=0           | LEAVE AT 0!!!
 	OPT_SKIP_TITLE_SCREEN=0           | LEAVE AT 0!!!
 	OPT_SKIP_GAME_DEMO=0              | LEAVE AT 0!!!
+	OPT_ONLY_ONE_GUARD=0              | LEAVE AT 0!!!
 	.else
 	
     * hardware options
@@ -19,7 +20,8 @@
    
 	* cheats to test game
     * score is BCD format
-	* all options must be zeroed for release
+	* all options are zeroed for release
+	OPT_ONLY_ONE_GUARD=1
     OPT_START_SCORE=0x45000
 	OPT_SKIP_INTRO_SCREEN=0
 	OPT_SKIP_TITLE_SCREEN=0

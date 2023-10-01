@@ -1,4 +1,6 @@
-- guards frozen in some places => reset guard
+- press 5 to insert coin works 1 time out of 2
+- walking on slopes Y seems +1
+- guard seems hesitant to change direction
 - guard at level 3 probably doesn't follow guide (debug with MAME & addresses)
 - pickup barrow: turns to pick..., dropping is buggy
 - pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
@@ -14,21 +16,11 @@
   
 - add elevator missing wire tiles
 
-- sprite/tiles conflict.
-
-  * maybe make tile palette fit in 16 colors (forgetting BAGMAN title
-  and green, purple on screen which can be faked using coppper, which forces to reactivate
-  dynamic copper for sprites too unless we restore original colors when displaying title)
-
-  * setting green & purple & title cols after 16 would also work
+- sprite/tiles color conflict MUCH reduced now. Test it on all screens
 
 - sounds
 - music
 - maybe try to cookie cut bags & pickaxes, avoid to destroy background
 
-converter: 
 
-- signal move.w from/to ax
-- inc hl/de/bc: addq.w
-- dec hl/de/bc: subq.w
-- sbc => sub.w avec review
+
