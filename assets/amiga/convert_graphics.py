@@ -121,14 +121,6 @@ with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
         block_dict[block_name] = {"size":size,"data":ast.literal_eval(txt)}
 
 
-def put_last(palette,color):
-    index = palette.index(color)
-    del palette[index]
-    palette.append(color)
-
-def put_first(palette,color):
-    palette.insert(1,color)
-
 # 26 colors total, we're going 32 colors total
 palette = block_dict["palette"]["data"]
 
@@ -153,19 +145,36 @@ rgb_cluts = [[tuple(palette[pidx]) for pidx in clut] for clut in bg_cluts]
 
 # now time to reorder the palette. Hardware sprites set palette dynamically for the 16-31 range
 # so we can get away with some hacks in title screen but a lot less during game
+# during game, without sprites, the number of total colors is 13 yay!
+#
+# actually it's more than a reorder, it's a complete redefine for tiles (sprites use partial dynamic
+# colors no need to change anything)
 
-# send some colors far in the palette (the ones only used for sprites or barrow, as we can copper hack
-# the first line where the barrow is)
-for color in ((0, 255, 0),(255,255,247), (255,33,79),(255,0,247),(184,255,0)):
-    put_last(palette,color)
+tiles_palette = [tuple(map(int,line.split())) for line in """0 0 0
+222 151 0
+184 104 0
+151 255 247
+71 184 247
+71 255 247
+255 255 0
+255 255 247
+0 0 247
+255 0 0
+255 33 79
+255 184 0
+28 19 0
+0 255 0
+255 222 247
+255 0 247""".splitlines()]
 
-# make sure that those colors come first (ideally 0-15 which isn't too hard in-game)
-for color in ((255,255,0),(255,0,0),(255, 151, 0),(71,184,247),(184,104,0),(222,151,0),(151,255,247)):
-    put_first(palette,color)
+original_palette = palette
+
+# "VALADON" title uses other colors, we just replace them, we'll change them dynamically in the title screen
+palette_replacement_dict = {(255,151,0):tiles_palette[1],(0,222,247):tiles_palette[2]}
 
 
 with open(os.path.join(src_dir,"palette.68k"),"w") as f:
-    bitplanelib.palette_dump(palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
+    bitplanelib.palette_dump(tiles_palette,f,pformat=bitplanelib.PALETTE_FORMAT_ASMGNU)
 
 # this game is so simple sprite-wise that it's possible to manually enter the clut/code
 # combination instead of ripping them from running game. Besides, the game has a tendency
@@ -221,7 +230,7 @@ for k,chardat in enumerate(block_dict["tile"]["data"]):
     # k < 0x100: normal tileset
     # k >= 0x100: alternate pack ice tileset
     img = Image.new('RGB',(8,8))
-    local_palette = palette
+    local_palette = tiles_palette
 
     character_codes = list()
 
@@ -233,38 +242,24 @@ for k,chardat in enumerate(block_dict["tile"]["data"]):
                     v = next(d)
                     c = colors[v]
                     tiles_used_colors.add(c)
-                    img.putpixel((j,i),c)
-            character_codes.append(bitplanelib.palette_image2raw(img,None,local_palette))
+                    img.putpixel((j,i),palette_replacement_dict.get(c,c))
+            picname = f"char_{k:03x}_{cidx:02x}.png"
+            try:
+                character_codes.append(bitplanelib.palette_image2raw(img,None,local_palette))
+            except bitplanelib.BitplaneException as e:
+                print(picname,e)
+                picname = "__dropped__"+picname
+                character_codes.append(None)
+
             if dump_tiles:
                 scaled = ImageOps.scale(img,5,0)
-                scaled.save(os.path.join(tiles_dump_dir,f"char_{k:03x}_{cidx:02x}.png"))
+                scaled.save(os.path.join(tiles_dump_dir,picname))
         else:
             character_codes.append(None)
     character_codes_list.append(character_codes)
 
 
-##with open(os.path.join(this_dir,"sprite_config.json")) as f:
-##    sprite_config = {int(k):v for k,v in json.load(f).items()}
-##
-##
-##
-##sprites = collections.defaultdict(dict)
-##
-##clut_index = 12  # temp
-##
-### pick a clut index with different colors
-### it doesn't matter which one
-##for clut in bg_cluts:
-##    if len(clut)==len(set(clut)):
-##        spritepal = clut
-##        break
-##else:
-##    # can't happen
-##    raise Exception("no way jose")
-##
-### convert our picked palette to RGB
-##spritepal = [tuple(palette[pidx]) for pidx in spritepal]
-##
+
 for k,data in used_sprites.items():
     sprdat = block_dict["sprite"]["data"][k]
 

@@ -1236,8 +1236,11 @@ l_0753:
 	movem.w	(sp)+,d1/d2                    	| [$0763: pop  bc]
 	rts                                    	| [$0764: ret]
 l_0765:
+	tst.b	invincible_flag
+	bne.b	0f
 	move.b	#0x01,d0                        	| [$0765: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$0767: ld   (player_death_flag_6025),a]
+0:
 	subq.b	#1,d0                           	| [$076a: dec  a]
 	move.b	d0,player_in_wagon_flag_6029    	| [$076b: ld   (player_in_wagon_flag_6029),a]
 
@@ -1647,9 +1650,12 @@ l_0a09:
 	move.b	current_guard_screen_index_6098,d0      	| [$0a09: ld   a,(current_guard_screen_index_6098)]
 	cmp.b	#0x01,d0                         	| [$0a0c: cp   $01]
 	jeq	l_09da                             	| [$0a0e: jr   z,$09DA]
-	move.b	fatal_fall_height_reached_604E,d0	| [$0a10: ld   a,(fatal_fall_height_reached_604E)]
+	tst.b	fatal_fall_height_reached_604E	| [$0a10: ld   a,(fatal_fall_height_reached_604E)]
 	                         	| [$0a13: cp   $00]
 	jeq	l_0a21                             	| [$0a15: jr   z,$0A21]
+	tst.b	invincible_flag
+	bne.b	l_0a21
+	* TODO where is D6 defined ? debug this
 	move.b	d6,d0                           	| [$0a17: ld   a,l]
 	cmp.b	#0x14,d0                         	| [$0a18: cp   $14]
 	jne	l_0a21                             	| [$0a1a: jr   nz,$0A21]
@@ -2792,6 +2798,8 @@ mainloop_1242:
 	move.b	unknown_6156,d0                 	| [$126f: ld   a,(unknown_6156)]
 	                         	| [$1272: cp   $00]
 	jne	l_127b                             	| [$1274: jr   nz,$127B]
+	tst.b	invincible_flag
+	bne.b	l_127b
 	move.b	#0x01,d0                        	| [$1276: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$1278: ld   (player_death_flag_6025),a]
 
@@ -2817,6 +2825,8 @@ l_127b:
 	move.b	unknown_6157,d0                 	| [$129a: ld   a,(unknown_6157)]
 	                         	| [$129d: cp   $00]
 	jne	l_12a6                             	| [$129f: jr   nz,$12A6]
+	tst.b	invincible_flag
+	bne.b	l_12a6
 	move.b	#0x01,d0                        	| [$12a1: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$12a3: ld   (player_death_flag_6025),a]
 
@@ -3209,10 +3219,13 @@ l_1621:
 	jbsr	guard_collision_with_pick_2AD1    	| [$1629: call guard_collision_with_pick_2AD1]
 	cmp.b	#0x01,d0                         	| [$162c: cp   $01]
 	jne	l_1641                             	| [$162e: jr   nz,$1641]
+	tst.b	invincible_flag
+	bne.b	0f
 	move.b	#0x01,d0                        	| [$1630: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$1632: ld   (player_death_flag_6025),a]
 	clr.b	d0                               	| [$1635: xor  a]
 	move.b	d0,player_in_wagon_flag_6029    	| [$1636: ld   (player_in_wagon_flag_6029),a]
+0:
 	jbsr	l_1d73                            	| [$1639: call $1D73]
 	cmp.b	#0x01,d0                         	| [$163c: cp   $01]
 	jeq	l_122b                             	| [$163e: jp   z,$122B]
@@ -3250,7 +3263,7 @@ l_1653:
 	move.l	a2,-(sp)                        	| [$1665: push ix]
 	move.b	current_guard_screen_index_6098,d0      	| [$1667: ld   a,(current_guard_screen_index_6098)]
 	move.b	d0,unknown_6280                 	| [$166a: ld   (unknown_6280),a]
-	jbsr	l_3bbc                            	| [$166d: call $3BBC]
+	jbsr	draw_elevator_3bbc                            	| [$166d: call $3BBC]
 	clr.b	d0                               	| [$1670: xor  a]
 	move.b	d0,unknown_627F                 	| [$1671: ld   (unknown_627F),a]
 	move.b	unknown_6280,d0                 	| [$1674: ld   a,(unknown_6280)]
@@ -4451,6 +4464,9 @@ one_wagon_player_collision_1DB4:
 	rts                                    	| [$1ddd: ret]
 
 l_1dde:
+	tst.b	invincible_flag
+	bne.b	l_1dea
+	
 	move.b	(A2),d0                    	| [$1dde: ld   a,(ix+$00)]
 	cmp.b	d1,d0                            	| [$1de1: cp   b]
 	jcs	l_1dea                             	| [$1de2: jr   c,$1DEA]
@@ -4661,7 +4677,7 @@ table_1F38:
 player_dies_1f50:
 	move.b	#0x01,d0                        	| [$1f50: ld   a,$01]
 	move.b	d0,unknown_61F1                 	| [$1f52: ld   (unknown_61F1),a]
-	jbsr	check_remaining_bags_3BBC         	| [$1f55: call check_remaining_bags_3BBC]
+	jbsr	check_remaining_bags_3B8C         	| [$1f55: call check_remaining_bags_3B8C]
 	move.b	d2,d0                           	| [$1f58: ld   a,c]
 	cmp.b	#0x01,d0                         	| [$1f59: cp   $01]
 	bne.b	0f
@@ -4736,8 +4752,11 @@ l_1fd3:
 	                         	| [$1ff1: cp   $00]
 	jeq	l_205c                             	| [$1ff3: jr   z,$205C]
 l_1ff5:
+	tst.b	infinite_lives_flag
+	bne.b	0f
 	subq.b	#1,d0                           	| [$1ff5: dec  a]
 	move.b	d0,lives_6056                   	| [$1ff6: ld   (lives_6056),a]
+0:
 	jbsr	l_3591                            	| [$1ff9: call $3591]
 	clr.b	d0                               	| [$1ffc: xor  a]
 	move.b	d0,unknown_6008                 	| [$1ffd: ld   (unknown_6008),a]
@@ -8382,7 +8401,7 @@ l_3a6b:
 	
 
 l_3b00:
-	jbsr	check_remaining_bags_3BBC         	| [$3b00: call check_remaining_bags_3BBC]
+	jbsr	check_remaining_bags_3B8C         	| [$3b00: call check_remaining_bags_3B8C]
 	move.b	d2,d0                           	| [$3b03: ld   a,c]
 	                         	| [$3b04: cp   $00]
 	bne.b	0f
@@ -8612,7 +8631,7 @@ l_39be:
 
 
 * < return c=0 if still bags, c=1 otherwise (level completed)
-check_remaining_bags_3BBC:
+check_remaining_bags_3B8C:
 	clr.b	d2                               	| [$3b8c: ld   c,$00]
 	lea	bags_coordinates_609C,a3       	| [$3b8e: ld   iy,bags_coordinates_609C]
 	move.b	#0x36,d1                        	| [$3b92: ld   b,$36]
@@ -8646,15 +8665,18 @@ l_3ba1:
 	clr.b	d0                               	| [$3bb7: xor  a]
 	move.b	d0,unknown_6142                 	| [$3bb8: ld   (unknown_6142),a]
 	rts                                    	| [$3bbb: ret]
-l_3bbc:
+	
+draw_elevator_3bbc:
 	move.b	player_screen_600D,d0           	| [$3bbc: ld   a,(player_screen_600D)]
 	move.b	d0,current_guard_screen_index_6098      	| [$3bbf: ld   (current_guard_screen_index_6098),a]
 	lea	unknown_6161,a3                	| [$3bc2: ld   iy,unknown_6161]
 	lea	elevator_struct_6584,a2                	| [$3bc6: ld   ix,elevator_struct_6584]
 	jbsr	compute_logical_address_from_xy_558c	| [$3bca: call compute_logical_address_from_xy_558c]
+	* now D6 contains the elevator logical address (used to stop wire draw)
 	move.b	player_screen_600D,d0           	| [$3bcd: ld   a,(player_screen_600D)]
 	cmp.b	#0x01,d0                         	| [$3bd0: cp   $01]
 	bne.b	0f                               	| [$3bd2: ret  z] [...]
+	* screen 1: no need to draw anything
 	rts                                    	| [$3bd2: ret  z]
 0:
 	move.b	(0x03,a2),d0                    	| [$3bd3: ld   a,(ix+$03)]
@@ -8667,17 +8689,20 @@ l_3bbc:
 	jne	l_3bed                             	| [$3bde: jr   nz,$3BED]
 											| [$3be0: ld   de,$4BDE]
 											| [$3be3: xor  a]
+	* start address & length of elevator wire for screen 2
 	add.w	#0x4BDE,d6			| adc  hl,de
 	move.w	#0x9162,d3                      	| [$3be6: ld   de,$9162]
 	move.b	#0x0F,d1                        	| [$3be9: ld   b,$0F]
 	jra	l_3bf8                             	| [$3beb: jr   $3BF8]
 l_3bed:
-	move.l	#0x47DE,d3                      	| [$3bed: ld   de,$47DE]
+	* start address & length of elevator wire for screen 3
+	                      	| [$3bed: ld   de,$47DE]
 	                               	| [$3bf0: xor  a]
-	add.w	d3,d6					| [adc  hl,de]
+	add.w	#0x47DE,d6					| [adc  hl,de]
 	move.w	#0x9302,d3                      	| [$3bf3: ld   de,$9302]
 	move.b	#0x17,d1                        	| [$3bf6: ld   b,$17]
 l_3bf8:
+    * draw full wire until meets elevator current address
 	move.b	#0xFB,d0                        	| [$3bf8: ld   a,$FB]
 
 	                        	| [$3bfa: push hl]
@@ -8685,32 +8710,37 @@ l_3bf8:
 	cmp.w	d3,d6		| [sbc  hl,de]
 	                        	| [$3bfe: pop  hl]
 	jeq	l_3c0a                             	| [$3bff: jr   z,$3C0A]
-											| [$3c01: ld   a,$FB]
-	jbsr	l_3c2c                            	| [$3c03: call $3C2C]
+	
+							| [$3c01: ld   a,$FB]
+	jbsr	draw_elevator_wire_tile_3c2c                            	| [$3c03: call $3C2C]
 	addq.w	#1,d3                           	| [$3c06: inc  de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_3bf8                             	| [$3c07: djnz $3BF8]
 	rts                                    	| [$3c09: ret]
 l_3c0a:
+	* tile "holding" elevator: 
+	* get elevator Y to compute which partial wire segment char to write
+	* (full wire not included)
 	move.b	(0x03,a2),d0                    	| [$3c0a: ld   a,(ix+$03)]
 	and.b	#0x07,d0                         	| [$3c0d: and  $07]
 	move.b	d0,d1                           	| [$3c0f: ld   b,a]
 	move.b	#0xF3,d0                        	| [$3c10: ld   a,$F3]
 	add.b	d1,d0                            	| [$3c12: add  a,b]
-	jbsr	l_3c2c                            	| [$3c13: call $3C2C]
+	jbsr	draw_elevator_wire_tile_3c2c                            	| [$3c13: call $3C2C]
 	move.b	#0x03,d1                        	| [$3c16: ld   b,$03]
+	* then clear other tiles below elevator roof
 l_3c18:
 	addq.w	#1,d3                           	| [$3c18: inc  de]
 	movem.w	d1/d2,-(sp)                    	| [$3c19: push bc]
 	move.w	d3,d6
 	jbsr	osd_r_videoram                         	| [$3c1a: ld   a,(de)]
 	move.w	#0x08,d1                        	| [$3c1b: ld   bc,$0008] 8
-											| [$3c1b: ld   bc,$0008] 8
 	lea	game_mem+0x3C3F,a0                      	| [$3c1e: ld   hl,$3C3F]
 	jbsr	cpir                              	| [$3c21: cpir]
 	bne.b	0f
+	* found elevator wire: write blank
 	move.b	#0xF3,d0                        	| [$3c23: ld   a,$F3]
-	jbsr	l_3c2c                            	| [$3c25: call z,$3C2C]
+	jbsr	draw_elevator_wire_tile_3c2c                            	| [$3c25: call z,$3C2C]
 0:
 
 	movem.w	(sp)+,d1/d2                    	| [$3c28: pop  bc]
@@ -8718,26 +8748,29 @@ l_3c18:
 	jne	l_3c18                             	| [$3c29: djnz $3C18]
 	rts                                    	| [$3c2b: ret]
 
-l_3c2c:
+draw_elevator_wire_tile_3c2c:
+	move.w	d3,d6
 	jbsr	osd_w_videoram                         	| [$3c2c: ld   (de),a]
-	movem.w	d1/d2,-(sp)                    	| [$3c2d: push bc]
-	move.b	d0,d1                           	| [$3c2e: ld   b,a]
-	jbsr	osd_r_videoram                         	| [$3c2f: ld   a,(de)]
-	move.b	d0,d2
-	move.b	d1,d0                           	| [$3c31: ld   a,b]
-	* swap cmp and move to preserve cmp flag
-	cmp.b	d1,d2                            	| [$3c30: cp   b]
+	* skipped part where it writes until it's correct
+	* (hardware bug?)
+	                    	| [$3c2d: push bc]
+	                     	| [$3c2e: ld   b,a]
+	                      	| [$3c2f: ld   a,(de)]
+	
 
-	movem.w	(sp)+,d1/d2                    	| [$3c32: pop  bc]
-	jne	l_3c2c                             	| [$3c33: jr   nz,$3C2C]
+	                      	| [$3c30: cp   b]
+	                     	| [$3c31: ld   a,b]
+
+	                    	| [$3c32: pop  bc]
+	                    	| [$3c33: jr   nz,$3C2C]
 	                        	| [$3c35: push de]
 												| [$3c36: ld   a,d]
 												| [$3c37: add  a,$08]
-	move.w	d6,-(sp)											| [$3c39: ld   d,a]
+												| [$3c39: ld   d,a]
 	move.b	#0x20,d0                        	| [$3c3a: ld   a,$20]
 	add.w	#0x800,d6
 	jbsr	osd_w_colorram                         	| [$3c3c: ld   (de),a]
-	move.w	(sp)+,d6
+	
 	                        	| [$3c3d: pop  de]
 	rts                                    	| [$3c3e: ret]
 

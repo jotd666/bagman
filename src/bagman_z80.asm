@@ -2756,7 +2756,7 @@ guard_1_sees_player_1560:
 1665: DD E5         push ix
 1667: 3A 98 60      ld   a,(current_guard_screen_index_6098)
 166A: 32 80 62      ld   (unknown_6280),a
-166D: CD BC 3B      call $3BBC
+166D: CD BC 3B      call draw_elevator_3bbc
 1670: AF            xor  a
 1671: 32 7F 62      ld   (unknown_627F),a
 1674: 3A 80 62      ld   a,(unknown_6280)
@@ -3904,7 +3904,7 @@ reset_barrow_position_1f25:
 player_dies_1f50:
 1F50: 3E 01         ld   a,$01
 1F52: 32 F1 61      ld   (unknown_61F1),a
-1F55: CD 8C 3B      call check_remaining_bags_3BBC
+1F55: CD 8C 3B      call check_remaining_bags_3B8C
 1F58: 79            ld   a,c
 1F59: FE 01         cp   $01
 1F5B: CC 4F 35      call z,set_bags_coordinates_hard_level_354f
@@ -7118,7 +7118,7 @@ read_player_controls_39fd:
 3A74: B1            or   c
 3A75: C9            ret
 
-3B00: CD 8C 3B      call check_remaining_bags_3BBC
+3B00: CD 8C 3B      call check_remaining_bags_3B8C
 3B03: 79            ld   a,c
 3B04: FE 00         cp   $00
 3B06: C8            ret  z
@@ -7181,7 +7181,7 @@ read_player_controls_39fd:
 3B89: C3 2B 12      jp   $122B
 
 ; < return c=0 if still bags, c=1 otherwise (level completed)
-check_remaining_bags_3BBC:
+check_remaining_bags_3B8C:
 3B8C: 0E 00         ld   c,$00
 3B8E: FD 21 9C 60   ld   iy,bags_coordinates_609C
 3B92: 06 36         ld   b,$36
@@ -7206,6 +7206,8 @@ check_remaining_bags_3BBC:
 3BB7: AF            xor  a
 3BB8: 32 42 61      ld   (unknown_6142),a
 3BBB: C9            ret
+
+draw_elevator_3bbc:
 3BBC: 3A 0D 60      ld   a,(player_screen_600D)
 3BBF: 32 98 60      ld   (current_guard_screen_index_6098),a
 3BC2: FD 21 61 61   ld   iy,unknown_6161
@@ -7220,35 +7222,41 @@ check_remaining_bags_3BBC:
 3BD9: 3A 0D 60      ld   a,(player_screen_600D)
 3BDC: FE 02         cp   $02
 3BDE: 20 0D         jr   nz,$3BED
+; start address & length of elevator wire for screen 2
 3BE0: 11 DE 4B      ld   de,$4BDE
 3BE3: AF            xor  a
 3BE4: ED 5A         adc  hl,de
 3BE6: 11 62 91      ld   de,$9162
 3BE9: 06 0F         ld   b,$0F
 3BEB: 18 0B         jr   $3BF8
+; start address & length of elevator wire for screen 3
 3BED: 11 DE 47      ld   de,$47DE
 3BF0: AF            xor  a
 3BF1: ED 5A         adc  hl,de
 3BF3: 11 02 93      ld   de,$9302
 3BF6: 06 17         ld   b,$17
+ ; draw full wire until meets elevator current address
 3BF8: 3E FB         ld   a,$FB
 3BFA: E5            push hl
 3BFB: AF            xor  a
 3BFC: ED 52         sbc  hl,de
 3BFE: E1            pop  hl
 3BFF: 28 09         jr   z,$3C0A
-3C01: 3E FB         ld   a,$FB
-3C03: CD 2C 3C      call $3C2C
+3C01: 3E FB         ld   a,$FB		; full wire
+3C03: CD 2C 3C      call draw_elevator_wire_tile_3c2c
 3C06: 13            inc  de
 3C07: 10 EF         djnz $3BF8
 3C09: C9            ret
+	; tile "holding" elevator: 
+	; get elevator Y to compute which char to write
 3C0A: DD 7E 03      ld   a,(ix+$03)
 3C0D: E6 07         and  $07
 3C0F: 47            ld   b,a
 3C10: 3E F3         ld   a,$F3
 3C12: 80            add  a,b
-3C13: CD 2C 3C      call $3C2C
+3C13: CD 2C 3C      call draw_elevator_wire_tile_3c2c
 3C16: 06 03         ld   b,$03
+	; then clear other tiles below elevator roof
 3C18: 13            inc  de
 3C19: C5            push bc
 3C1A: 1A            ld   a,(de)
@@ -7256,10 +7264,12 @@ check_remaining_bags_3BBC:
 3C1E: 21 3F 3C      ld   hl,$3C3F
 3C21: ED B1         cpir
 3C23: 3E F3         ld   a,$F3
-3C25: CC 2C 3C      call z,$3C2C
+3C25: CC 2C 3C      call z,draw_elevator_wire_tile_3c2c
 3C28: C1            pop  bc
 3C29: 10 ED         djnz $3C18
 3C2B: C9            ret
+
+draw_elevator_wire_tile_3c2c:
 3C2C: 12            ld   (de),a
 3C2D: C5            push bc
 3C2E: 47            ld   b,a
@@ -7267,7 +7277,7 @@ check_remaining_bags_3BBC:
 3C30: B8            cp   b
 3C31: 78            ld   a,b
 3C32: C1            pop  bc
-3C33: 20 F7         jr   nz,$3C2C
+3C33: 20 F7         jr   nz,draw_elevator_wire_tile_3c2c
 3C35: D5            push de
 3C36: 7A            ld   a,d
 3C37: C6 08         add  a,$08

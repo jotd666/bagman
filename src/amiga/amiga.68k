@@ -55,7 +55,7 @@ OPT_ENABLE_DOUBLE_BUFFERING_BG = 0
 _custom = 0xDFF000
 
 
-NB_PLAYFIELD_PLANES = 5
+NB_PLAYFIELD_PLANES = 4
 TOTAL_NB_COLORS = 32
 NB_BYTES_PER_ROW = 40
 NB_LINES = 280
@@ -78,6 +78,8 @@ SPRITE_Y = 1
 SPRITE_CODE = 2
 SPRITE_CLUT = 3
 SPRITE_SIZEOF = 4
+
+NB_UPPER_COLORS_TO_RESTORE = 10
 
 	move.l	a7,old_stack
 	bra	_user
@@ -832,9 +834,9 @@ osd_update_sprites:
 	.endif
 	move.l	d4,a5	| sprite pointer
 
-	* add 16 to both X & Y
-	add.b	#8,d0
-	add.b	#16,d1
+	* add offsets to both X & Y
+	add.b	#9,d0
+	add.b	#15,d1
 
 	bsr		store_sprite_pos_16
 	move.l	d0,(a5)
@@ -1262,7 +1264,7 @@ platform_init:
     move.w #0x2C81-8,diwstop(a5)
     move.w #0x0038,ddfstrt(a5)
     move.w #0x00D0,ddfstop(a5)
-    move.w #0x5200,bplcon0(a5) | 5 bitplanes
+    move.w #0x200+(NB_PLAYFIELD_PLANES<<12),bplcon0(a5) | 5 bitplanes
     move.w #0x0024,bplcon2(a5)
 	* AGA-compatible ECS default values
     move.w #0x0C00,bplcon3(a5)     | no AGA specificities, default ECS
@@ -1349,6 +1351,15 @@ load_palette_in_copperlist:
 	move.w	(a0)+,(a1)+
 	addq.w	#2,a1
 	dbf		d0,1b
+	
+*	lea		palette+32,a0
+*	move.w	#NB_UPPER_COLORS_TO_RESTORE-1,d0
+*	lea		reset_upper_colors_copperlist+2,a1
+*1:
+*	move.w	(a0)+,(a1)+
+*	addq.w	#2,a1
+*	dbf		d0,1b
+	
 	movem.l	(a7)+,d0-d1/a0-a1
 	rts
 	
@@ -1741,7 +1752,7 @@ osd_read_dipswitches:
 * bits 0-1    coins
 
 osd_read_inputs:
-	bsr		handle_keyboard
+	**bsr		handle_keyboard
 	moveq	#-1,d0
 	movem.l	a0/d1,-(a7)
 	lea		keyboard_table(pc),a0
@@ -2260,19 +2271,19 @@ sprites:
     .word    sprpt+28,0
     .word    sprpt+30,0
 
-	.set    beampos,0x1C01
-
 
 	* pal limit
     .word  0xFFDF,0xFFFE       | PAL wait
     .word  0x0401,0xFFFE
-
-	.set    beampos,0x0401
-    .word   beampos,0xFFFE	
 	
-color_row_29:
-	
-	.set    beampos,0x1401
+    .word   0x1C01,0xFFFE
+	.set	coffset,color+16*2
+reset_upper_colors_copperlist:
+	.rept	NB_UPPER_COLORS_TO_RESTORE
+	.word	coffset,0
+	.set	coffset,coffset+2
+	.endr
+	.set    beampos,0x1E01
 	
  	.word	beampos,0xFFFE   | wait before interrupt, avoid losing last bobs lines
     .word	 intreq,0x8010

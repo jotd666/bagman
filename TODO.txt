@@ -1,26 +1,33 @@
+- wire drawn fully debug draw_elevator_3bbc (worked before, check d3 vs d6)
 - press 5 to insert coin works 1 time out of 2
-- walking on slopes Y seems +1
+
 - guard seems hesitant to change direction
-- guard at level 3 probably doesn't follow guide (debug with MAME & addresses)
+- guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - pickup barrow: turns to pick..., dropping is buggy
 - pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
+  (same issue for bags at some point)
 - pickup pickaxes level 2: disappears immediately!
 
+- test trainer infinite lives
+- highscore screen
+- TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 
 - debug 2640 with values not 10 or E0 (not at start)
 
+  
+- VA logo add dyn copperlist for title only
+- brown stripe on row 0?
+
+
+- sounds
+- music
+
+maybe...:
+- try to cookie cut bags & pickaxes, avoid to destroy background
 - memory optim: fixed number of bitmap repeats for sprites:
   - 1 for player, barrow, falling bag, pick, elevator
   - 2 for guards
   - 3 for wagons
-  
-- add elevator missing wire tiles
-
-- sprite/tiles color conflict MUCH reduced now. Test it on all screens
-
-- sounds
-- music
-- maybe try to cookie cut bags & pickaxes, avoid to destroy background
 
 
 
