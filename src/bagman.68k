@@ -3263,7 +3263,7 @@ l_1653:
 	move.l	a2,-(sp)                        	| [$1665: push ix]
 	move.b	current_guard_screen_index_6098,d0      	| [$1667: ld   a,(current_guard_screen_index_6098)]
 	move.b	d0,unknown_6280                 	| [$166a: ld   (unknown_6280),a]
-	jbsr	draw_elevator_3bbc                            	| [$166d: call $3BBC]
+	jbsr	draw_elevator_cable_3bbc                            	| [$166d: call $3BBC]
 	clr.b	d0                               	| [$1670: xor  a]
 	move.b	d0,unknown_627F                 	| [$1671: ld   (unknown_627F),a]
 	move.b	unknown_6280,d0                 	| [$1674: ld   a,(unknown_6280)]
@@ -8666,13 +8666,13 @@ l_3ba1:
 	move.b	d0,unknown_6142                 	| [$3bb8: ld   (unknown_6142),a]
 	rts                                    	| [$3bbb: ret]
 	
-draw_elevator_3bbc:
+draw_elevator_cable_3bbc:
 	move.b	player_screen_600D,d0           	| [$3bbc: ld   a,(player_screen_600D)]
 	move.b	d0,current_guard_screen_index_6098      	| [$3bbf: ld   (current_guard_screen_index_6098),a]
 	lea	unknown_6161,a3                	| [$3bc2: ld   iy,unknown_6161]
 	lea	elevator_struct_6584,a2                	| [$3bc6: ld   ix,elevator_struct_6584]
 	jbsr	compute_logical_address_from_xy_558c	| [$3bca: call compute_logical_address_from_xy_558c]
-	* now D6 contains the elevator logical address (used to stop wire draw)
+	* now D6 contains the elevator logical address (used to stop cable draw)
 	move.b	player_screen_600D,d0           	| [$3bcd: ld   a,(player_screen_600D)]
 	cmp.b	#0x01,d0                         	| [$3bd0: cp   $01]
 	bne.b	0f                               	| [$3bd2: ret  z] [...]
@@ -8682,6 +8682,7 @@ draw_elevator_3bbc:
 	move.b	(0x03,a2),d0                    	| [$3bd3: ld   a,(ix+$03)]
 	cmp.b	#0x11,d0                         	| [$3bd6: cp   $11]
 	bcc.b	0f                               	| [$3bd8: ret  c] [...]
+	* elevator at the top: no need to draw cable
 	rts                                    	| [$3bd8: ret  c]
 0:
 	move.b	player_screen_600D,d0           	| [$3bd9: ld   a,(player_screen_600D)]
@@ -8689,20 +8690,21 @@ draw_elevator_3bbc:
 	jne	l_3bed                             	| [$3bde: jr   nz,$3BED]
 											| [$3be0: ld   de,$4BDE]
 											| [$3be3: xor  a]
-	* start address & length of elevator wire for screen 2
+									WPSET 	0x200
+	* start address & length of elevator cable for screen 2
 	add.w	#0x4BDE,d6			| adc  hl,de
 	move.w	#0x9162,d3                      	| [$3be6: ld   de,$9162]
 	move.b	#0x0F,d1                        	| [$3be9: ld   b,$0F]
 	jra	l_3bf8                             	| [$3beb: jr   $3BF8]
 l_3bed:
-	* start address & length of elevator wire for screen 3
+	* start address & length of elevator cable for screen 3
 	                      	| [$3bed: ld   de,$47DE]
 	                               	| [$3bf0: xor  a]
 	add.w	#0x47DE,d6					| [adc  hl,de]
 	move.w	#0x9302,d3                      	| [$3bf3: ld   de,$9302]
 	move.b	#0x17,d1                        	| [$3bf6: ld   b,$17]
 l_3bf8:
-    * draw full wire until meets elevator current address
+    * draw full cable until meets elevator current address
 	move.b	#0xFB,d0                        	| [$3bf8: ld   a,$FB]
 
 	                        	| [$3bfa: push hl]
@@ -8719,8 +8721,8 @@ l_3bf8:
 	rts                                    	| [$3c09: ret]
 l_3c0a:
 	* tile "holding" elevator: 
-	* get elevator Y to compute which partial wire segment char to write
-	* (full wire not included)
+	* get elevator Y to compute which partial cable segment char to write
+	* (full cable not included)
 	move.b	(0x03,a2),d0                    	| [$3c0a: ld   a,(ix+$03)]
 	and.b	#0x07,d0                         	| [$3c0d: and  $07]
 	move.b	d0,d1                           	| [$3c0f: ld   b,a]
@@ -8738,7 +8740,7 @@ l_3c18:
 	lea	game_mem+0x3C3F,a0                      	| [$3c1e: ld   hl,$3C3F]
 	jbsr	cpir                              	| [$3c21: cpir]
 	bne.b	0f
-	* found elevator wire: write blank
+	* found elevator cable: write blank
 	move.b	#0xF3,d0                        	| [$3c23: ld   a,$F3]
 	jbsr	draw_elevator_wire_tile_3c2c                            	| [$3c25: call z,$3C2C]
 0:
@@ -8749,6 +8751,7 @@ l_3c18:
 	rts                                    	| [$3c2b: ret]
 
 draw_elevator_wire_tile_3c2c:
+	move.w	d6,-(sp)
 	move.w	d3,d6
 	jbsr	osd_w_videoram                         	| [$3c2c: ld   (de),a]
 	* skipped part where it writes until it's correct
@@ -8770,7 +8773,7 @@ draw_elevator_wire_tile_3c2c:
 	move.b	#0x20,d0                        	| [$3c3a: ld   a,$20]
 	add.w	#0x800,d6
 	jbsr	osd_w_colorram                         	| [$3c3c: ld   (de),a]
-	
+	move.w	(sp)+,d6
 	                        	| [$3c3d: pop  de]
 	rts                                    	| [$3c3e: ret]
 

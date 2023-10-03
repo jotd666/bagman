@@ -2756,7 +2756,7 @@ guard_1_sees_player_1560:
 1665: DD E5         push ix
 1667: 3A 98 60      ld   a,(current_guard_screen_index_6098)
 166A: 32 80 62      ld   (unknown_6280),a
-166D: CD BC 3B      call draw_elevator_3bbc
+166D: CD BC 3B      call draw_elevator_cable_3bbc
 1670: AF            xor  a
 1671: 32 7F 62      ld   (unknown_627F),a
 1674: 3A 80 62      ld   a,(unknown_6280)
@@ -7207,7 +7207,7 @@ check_remaining_bags_3B8C:
 3BB8: 32 42 61      ld   (unknown_6142),a
 3BBB: C9            ret
 
-draw_elevator_3bbc:
+draw_elevator_cable_3bbc:
 3BBC: 3A 0D 60      ld   a,(player_screen_600D)
 3BBF: 32 98 60      ld   (current_guard_screen_index_6098),a
 3BC2: FD 21 61 61   ld   iy,unknown_6161
@@ -7222,27 +7222,27 @@ draw_elevator_3bbc:
 3BD9: 3A 0D 60      ld   a,(player_screen_600D)
 3BDC: FE 02         cp   $02
 3BDE: 20 0D         jr   nz,$3BED
-; start address & length of elevator wire for screen 2
+; start address & length of elevator cable for screen 2
 3BE0: 11 DE 4B      ld   de,$4BDE
 3BE3: AF            xor  a
 3BE4: ED 5A         adc  hl,de
 3BE6: 11 62 91      ld   de,$9162
 3BE9: 06 0F         ld   b,$0F
 3BEB: 18 0B         jr   $3BF8
-; start address & length of elevator wire for screen 3
+; start address & length of elevator cable for screen 3
 3BED: 11 DE 47      ld   de,$47DE
 3BF0: AF            xor  a
 3BF1: ED 5A         adc  hl,de
 3BF3: 11 02 93      ld   de,$9302
 3BF6: 06 17         ld   b,$17
- ; draw full wire until meets elevator current address
+ ; draw full cable until meets elevator current address
 3BF8: 3E FB         ld   a,$FB
 3BFA: E5            push hl
 3BFB: AF            xor  a
 3BFC: ED 52         sbc  hl,de
 3BFE: E1            pop  hl
 3BFF: 28 09         jr   z,$3C0A
-3C01: 3E FB         ld   a,$FB		; full wire
+3C01: 3E FB         ld   a,$FB		; full cable
 3C03: CD 2C 3C      call draw_elevator_wire_tile_3c2c
 3C06: 13            inc  de
 3C07: 10 EF         djnz $3BF8
