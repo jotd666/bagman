@@ -2232,7 +2232,7 @@ speech_management_10D1:
 1130: FD 77 05      ld   (iy+$05),a
 1133: 3E EC         ld   a,$EC
 1135: FD 77 06      ld   (iy+$06),a
-1138: C4 BA 21      call nz,$21BA
+1138: C4 BA 21      call nz,drop_object_21ba
 113B: C9            ret
 handle_pick_hold_timer_113c:
 113C: 3A CF 61      ld   a,(has_pick_61CF)
@@ -2977,7 +2977,7 @@ guard_1_sees_player_1560:
 185D: FD 77 05      ld   (iy+$05),a
 1860: 3E E4         ld   a,$E4
 1862: 32 D2 61      ld   (unknown_61D2),a
-1865: CD BA 21      call $21BA
+1865: CD BA 21      call drop_object_21ba
 1868: E1            pop  hl
 1869: FD E1         pop  iy
 186B: DD 21 80 65   ld   ix,player_struct_6580
@@ -3002,7 +3002,7 @@ guard_1_sees_player_1560:
 189C: FD 22 5C 61   ld   (unknown_615C),iy
 18A0: FD 66 01      ld   h,(iy+$01)
 18A3: FD 6E 00      ld   l,(iy+$00)
-18A6: 22 F6 61      ld   (dropped_bag_screen_address_61F6),hl
+18A6: 22 F6 61      ld   (picked_up_object_screen_address_61F6),hl
 18A9: AF            xor  a
 18AA: 32 7E 62      ld   (unknown_627E),a
 18AD: F3            di
@@ -3020,7 +3020,7 @@ guard_1_sees_player_1560:
 18C7: 3A 7E 62      ld   a,(unknown_627E)
 18CA: FE 07         cp   $07
 18CC: D0            ret  nc
-18CD: 2A F6 61      ld   hl,(dropped_bag_screen_address_61F6)
+18CD: 2A F6 61      ld   hl,(picked_up_object_screen_address_61F6)
 18D0: 7C            ld   a,h
 18D1: FE 00         cp   $00
 18D3: C8            ret  z
@@ -4139,9 +4139,11 @@ check_object_pickup_2137:
 2172: 78            ld   a,b
 2173: FE 00         cp   $00
 2175: C8            ret  z
+
+pick_up_object_2176:
 2176: 62            ld   h,d
 2177: 6B            ld   l,e
-2178: 22 F6 61      ld   (dropped_bag_screen_address_61F6),hl
+2178: 22 F6 61      ld   (picked_up_object_screen_address_61F6),hl
 217B: AF            xor  a
 217C: 32 7E 62      ld   (unknown_627E),a
 217F: DD 21 80 65   ld   ix,player_struct_6580
@@ -4172,6 +4174,7 @@ check_object_pickup_2137:
 21B7: FE 00         cp   $00
 21B9: C8            ret  z
 
+drop_object_21ba:
 21BA: DD 21 9C 65   ld   ix,object_held_struct_659C
 21BE: 3A 0D 60      ld   a,(player_screen_600D)
 21C1: 32 98 60      ld   (current_guard_screen_index_6098),a
@@ -4204,14 +4207,18 @@ check_object_pickup_2137:
 21F6: E5            push hl
 21F7: CA B7 3C      jp   z,$3CB7
 21FA: E1            pop  hl
+; useless code: pushes hl to sub $20 to it then pops it
+; without using the computing value
 21FB: E5            push hl
 21FC: AF            xor  a
 21FD: 7D            ld   a,l
 21FE: D6 20         sub  $20
+; does not even store a back to l !!
 2200: 7C            ld   a,h
 2201: DE 00         sbc  a,$00
 2203: 67            ld   h,a
 2204: E1            pop  hl
+; hl is the same here as in 21F3 so test cannot be true, ever
 2205: 7E            ld   a,(hl)
 2206: FE E0         cp   $E0
 2208: C8            ret  z
@@ -4222,6 +4229,8 @@ check_object_pickup_2137:
 2211: 3E 28         ld   a,$28
 2213: 08            ex   af,af'
 2214: 18 03         jr   $2219
+; compute attribute color in D7 for draw_object_tiles_3417
+; either pick or barrow
 2216: 3E 20         ld   a,$20
 2218: 08            ex   af,af'
 2219: AF            xor  a
@@ -7134,7 +7143,7 @@ read_player_controls_39fd:
 3B1B: 32 CA 61      ld   (unknown_61CA),a
 3B1E: FD 56 01      ld   d,(iy+$01)
 3B21: FD 5E 00      ld   e,(iy+$00)
-3B24: CD 76 21      call $2176
+3B24: CD 76 21      call pick_up_object_2176
 3B27: 21 1B 3F      ld   hl,$3F1B
 3B2A: CD 18 20      call copy_to_61bd_2018
 ; add one life for level completed
@@ -7315,6 +7324,7 @@ draw_elevator_wire_tile_3c2c:
 3C81: 32 98 60      ld   (current_guard_screen_index_6098),a
 3C84: C9            ret
 
+test_non_blocking_tiles_3c85:
 3C85: F5            push af
 3C86: D5            push de
 3C87: E5            push hl

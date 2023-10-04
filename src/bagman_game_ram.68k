@@ -153,7 +153,7 @@
 	.global	unknown_61F3
 	.global	unknown_61F4
 	.global	unknown_61F5
-	.global	dropped_bag_screen_address_61F6
+	.global	picked_up_object_screen_address_61F6
 	.global	unknown_61F9
 	.global	unknown_screen_address_61FA
 	.global	unknown_61FC
@@ -508,7 +508,7 @@ unknown_61F4:
 unknown_61F5:
 	ds.b	1
 	.align	2
-dropped_bag_screen_address_61F6:
+picked_up_object_screen_address_61F6:
 	ds.w	2
 unknown_61F9:
 	ds.b	1

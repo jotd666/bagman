@@ -1,10 +1,15 @@
+- debug pick_up_object_2176 ("regression" since exx is fixed)
+
+- pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
+  (same issue for bags at some point)
+  debug this: take pick and drop it, debug on MAME in //
+
+
 - press 5 to insert coin works 1 time out of 2
 
 - guard seems hesitant to change direction
 - guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - pickup barrow: turns to pick..., dropping is buggy
-- pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
-  (same issue for bags at some point)
 - pickup pickaxes level 2: disappears immediately!
 
 - test trainer infinite lives
@@ -29,4 +34,4 @@ maybe...:
   - 3 for wagons
 
 
-
+converter: fix exx
