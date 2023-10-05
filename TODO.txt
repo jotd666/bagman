@@ -1,16 +1,13 @@
-- debug pick_up_object_2176 ("regression" since exx is fixed)
-
-- pickup pickake level 1: works but dropping it is buggy, drops it somewhere else!
-  (same issue for bags at some point)
-  debug this: take pick and drop it, debug on MAME in //
-
-
 - press 5 to insert coin works 1 time out of 2
 
 - guard seems hesitant to change direction
 - guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
-- pickup barrow: turns to pick..., dropping is buggy
-- pickup pickaxes level 2: disappears immediately!
+- drop barrow sprite remains active on the top (screen 1 only)
+- pick pickaxe: ok on screen 1, disappears at once on screen 2 or
+  even entering level 2
+- invincibility for wagon, elevator hit & guard (fall ok)
+- player walks out of the ladder too low: stuck in wall
+- lives redrawn all the time??? they flicker
 
 - test trainer infinite lives
 - highscore screen
@@ -18,7 +15,6 @@
 
 - debug 2640 with values not 10 or E0 (not at start)
 
-  
 - VA logo add dyn copperlist for title only
 - brown stripe on row 0?
 
@@ -32,6 +28,3 @@ maybe...:
   - 1 for player, barrow, falling bag, pick, elevator
   - 2 for guards
   - 3 for wagons
-
-
-converter: fix exx

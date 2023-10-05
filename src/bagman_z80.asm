@@ -3029,17 +3029,17 @@ guard_1_sees_player_1560:
 18D7: FE 00         cp   $00
 18D9: C8            ret  z
 18DA: CD 2F 19      call restore_background_tile_192f
-18DD: CD 15 19      call $1915
+18DD: CD 15 19      call color_background_tile_1915
 18E0: 23            inc  hl
 18E1: CD 2F 19      call restore_background_tile_192f
-18E4: CD 15 19      call $1915
+18E4: CD 15 19      call color_background_tile_1915
 18E7: 11 20 00      ld   de,$0020
 18EA: 19            add  hl,de
 18EB: CD 2F 19      call restore_background_tile_192f
-18EE: CD 15 19      call $1915
+18EE: CD 15 19      call color_background_tile_1915
 18F1: 2B            dec  hl
 18F2: CD 2F 19      call restore_background_tile_192f
-18F5: CD 15 19      call $1915
+18F5: CD 15 19      call color_background_tile_1915
 18F8: 3A 7E 62      ld   a,(unknown_627E)
 18FB: 3C            inc  a
 18FC: 32 7E 62      ld   (unknown_627E),a
@@ -3058,6 +3058,8 @@ check_for_not_moving_timeout_1908:
 1912: AF            xor  a
 1913: 12            ld   (de),a
 1914: C9            ret
+
+color_background_tile_1915:
 1915: 06 1F         ld   b,$1F
 1917: 7E            ld   a,(hl)
 1918: FE 49         cp   $49

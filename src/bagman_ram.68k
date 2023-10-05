@@ -68,5 +68,5 @@ current_ticks_count:
 	.byte	0
 
 regscopy:
-	ds.b	110
+	ds.b	64
 	.ascii	"RAM_END!"

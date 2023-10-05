@@ -179,13 +179,13 @@ cpir:
 * < all registers d1-d4/a0/a1/a4 (BC,DE,HL)
 * > all registers swapped
 *: note regscopy must be defined somewhere in RAM
-*: with a size of 72
+*: with a size of 28*2
 exx:
-    lea     regscopy+36,a6
+    lea     regscopy+28,a6
     * save current regs in region 1
     movem.l d1-d4/a0/a1/a4,-(a6)
     * restore old regs from region 2
-    lea     regscopy+36,a6
+    lea     regscopy+28,a6
     movem.l (a6),d1-d4/a0/a1/a4
     * now copy region 1 to region 2
     movem.l d1-d4/a0/a1/a4,-(a7)
@@ -2476,12 +2476,12 @@ l_0f38:
 	move.b	#0x01,d0                        	| [$0f53: ld   a,$01]
 	move.b	d0,barrow_screen_61C6                 	| [$0f55: ld   (barrow_screen_61C6),a]
 	move.b	d0,unknown_61FC                 	| [$0f58: ld   (unknown_61FC),a]
-	clr.b	d0                               	| [$0f5b: xor  a]
-	move.b	d0,holds_barrow_61C7            	| [$0f5c: ld   (holds_barrow_61C7),a]
-	move.b	d0,has_pick_61CF                	| [$0f5f: ld   (has_pick_61CF),a]
-	move.b	d0,unknown_6014                 	| [$0f62: ld   (unknown_6014),a]
-	move.b	d0,player_in_wagon_1_601C                 	| [$0f65: ld   (player_in_wagon_1_601C),a]
-	move.b	d0,has_bag_6158                 	| [$0f68: ld   (has_bag_6158),a]
+											| [$0f5b: xor  a]
+	clr.b	holds_barrow_61C7            	| [$0f5c: ld   (holds_barrow_61C7),a]
+	clr.b	has_pick_61CF                	| [$0f5f: ld   (has_pick_61CF),a]
+	clr.b	unknown_6014                 	| [$0f62: ld   (unknown_6014),a]
+	clr.b	player_in_wagon_1_601C                 	| [$0f65: ld   (player_in_wagon_1_601C),a]
+	clr.b	has_bag_6158                 	| [$0f68: ld   (has_bag_6158),a]
 	jbsr	set_bags_coordinates_355b         	| [$0f6b: call set_bags_coordinates_355b]
 	jbsr	set_bags_coordinates_3567                            	| [$0f6e: call $3567]
 	rts                                    	| [$0f71: ret]
@@ -2699,7 +2699,7 @@ l_1150:
 	rts                                    	| [$116e: ret]
 
 guard_1_walk_movement_116F:
-	.ifne	OPT_ONLY_ONE_GUARD
+	.ifne	OPT_ONLY_GUARD_ONE
 	rts
 	.endif
 	
@@ -2720,6 +2720,9 @@ guard_1_walk_movement_116F:
 	rts                                    	| [$119a: ret]
 	
 guard_2_walk_movement_119B:
+	.ifne	OPT_ONLY_GUARD_TWO
+	rts
+	.endif
 	
 	move.b	guard_2_screen_609A,d0          	| [$119b: ld   a,(guard_2_screen_609A)]
 	move.b	d0,current_guard_screen_index_6098      	| [$119e: ld   (current_guard_screen_index_6098),a]
@@ -3136,7 +3139,7 @@ l_1564:
 	jeq	l_1593                             	| [$1570: jr   z,$1593]
 	move.b	has_bag_6158,d0                 	| [$1572: ld   a,(has_bag_6158)]
 	cmp.b	#0x01,d0                         	| [$1575: cp   $01]
-	jeq	l_1593                             	| [$1577: jr   z,$1593]
+	jeq	l_1593                             	| [$1577: jr   z,$1593] no need to test for pick barrow
 	lea		holds_barrow_61C7,a4       	| [$1579: ld   bc,holds_barrow_61C7] None
 	lea	barrow_screen_params_61C4,a3                	| [$157c: ld   iy,barrow_screen_params_61C4]
 	move.b	#0x3A,d0                        	| [$1580: ld   a,$3A]
@@ -3149,11 +3152,12 @@ l_1564:
 	jbsr	check_object_pickup_2137                            	| [$1590: call $2137]
 l_1593:
 	jbsr	osd_disable_vblank_interrupt
-	move.b	#0x04,d1                        	| [$1594: ld   b,$04]
+	move.b	#0x04,d1                        	| [$1594: ld   b,$04] max 4 picks per screen
 	lea	unknown_61D0,a3                	| [$1596: ld   iy,unknown_61D0]
 	move.b	holds_barrow_61C7,d0            	| [$159a: ld   a,(holds_barrow_61C7)]
 	cmp.b	#0x01,d0                         	| [$159d: cp   $01]
 	jeq	l_15cf                             	| [$159f: jp   z,$15CF]
+	* loop to check for pickaxe locations & see if player can pick them
 l_15a2:
 	movem.w	d1/d2,-(sp)                    	| [$15a2: push bc]
 
@@ -3177,7 +3181,7 @@ l_15a2:
 	jne	l_15a2                             	| [$15cd: djnz $15A2]
 l_15cf:
     jbsr	osd_enable_vblank_interrupt
-	move.b	has_pick_61CF,d0                	| [$15d0: ld   a,(has_pick_61CF)]
+	tst.b	has_pick_61CF                	| [$15d0: ld   a,(has_pick_61CF)]
 	                         	| [$15d3: cp   $00]
 	jeq	l_1621                             	| [$15d5: jr   z,$1621]
  * player has pick
@@ -3353,7 +3357,7 @@ l_1705:
 	jra	l_1711                             	| [$170c: jr   $1711]
 l_170e:
 	                           	| [$170e: ld   a,h]
-	add.w	#0x4800,d0                         	| [$170f: add  a,$48]
+	add.w	#0x4800,d6                         	| [$170f: add  a,$48]
 l_1711:
 												| [$1711: ld   h,a]
 												| [$1712: xor  a]
@@ -3364,7 +3368,7 @@ l_1711:
 												| [$1718: sbc  a,$00]
 										
 												| [$171a: ld   h,a]
-	jbsr	osd_r_videoram                       	| [$171b: ld   a,(hl)]
+	jbsr	osd_r_videoram                    	| [$171b: ld   a,(hl)]
 	cmp.b	#0xD0,d0                         	| [$171c: cp   $D0]
 	jeq	l_1730                             	| [$171e: jr   z,$1730]
 	exg	a1,a0                              	| [$1720: ex   de,hl]
@@ -3373,8 +3377,8 @@ l_1711:
 	jbsr	cpdr                              	| [$1727: cpdr]
 	exg	a1,a0                              	| [$1729: ex   de,hl]
 	jeq	l_1730                             	| [$172a: jr   z,$1730]
-	move.w	#0x0020,d3                      	| [$172c: ld   de,$0020] 32
-	add.w	d3,d6                            	| [$172f: add  hl,de]
+	                      	| [$172c: ld   de,$0020] 32
+	add.w	#0x0020,d6                            	| [$172f: add  hl,de]
 l_1730:
 	jbsr	osd_disable_vblank_interrupt		| jbsr	osd_disable_vblank_interrupt
 	* as big endian
@@ -3390,7 +3394,7 @@ l_1730:
 	move.b	d0,(0x02,a3)                    	| [$1741: ld   (iy+$02),a]
 	jbsr	osd_enable_vblank_interrupt			|     jbsr	osd_enable_vblank_interrupt
 	addq.w	#1,d6                           	| [$1745: inc  hl]
-	jbsr	osd_r_videoram                         	| [$1746: ld   a,(hl)]
+	jbsr	osd_r_videoram                     	| [$1746: ld   a,(hl)]
 	cmp.b	#0xED,d0                         	| [$1747: cp   $ED]
 	jeq	l_175e                             	| [$1749: jr   z,$175E]
 	cmp.b	#0xEF,d0                         	| [$174b: cp   $EF]
@@ -3401,7 +3405,7 @@ l_1730:
 												| [$1753: ld   a,h]
 					
 											| [$1756: ld   h,a]
-	jbsr	osd_r_videoram                         	| [$1757: ld   a,(hl)]
+	jbsr	osd_r_videoram                     	| [$1757: ld   a,(hl)]
 	cmp.b	#0xED,d0                         	| [$1758: cp   $ED]
 	jeq	l_175e                             	| [$175a: jr   z,$175E]
 	jra	l_17a0                             	| [$175c: jr   $17A0]
@@ -3428,21 +3432,21 @@ l_1775:
 l_178a:
 	move.l	(sp)+,a2                        	| [$178a: pop  ix]
 	jbsr	osd_disable_vblank_interrupt |	jbsr	osd_disable_vblank_interrupt
-	clr.b	d0                               	| [$178d: xor  a]
-	move.b	d0,(A3)                    	| [$178e: ld   (iy+$00),a]
-	move.b	d0,(0x01,a3)                    	| [$1791: ld   (iy+$01),a]
-	move.b	d0,(0x02,a3)                    	| [$1794: ld   (iy+$02),a]
+											| [$178d: xor  a]
+	clr.b	(A3)                    	| [$178e: ld   (iy+$00),a]
+	clr.b	(0x01,a3)                    	| [$1791: ld   (iy+$01),a]
+	clr.b	(0x02,a3)                    	| [$1794: ld   (iy+$02),a]
 	jbsr	osd_enable_vblank_interrupt    |     jbsr	osd_enable_vblank_interrupt
 	* reset time to 4000
 	move.b	#0x40,d0                        	| [$1798: ld   a,$40]
 	move.b	d0,time_61E8                    	| [$179a: ld   (time_61E8),a]
 	jbsr	l_3b00                            	| [$179d: call $3B00]
 l_17a0:
-	clr.b	d0                               	| [$17a0: xor  a]
+											| [$17a0: xor  a]
 	lea	object_held_struct_659C,a2                	| [$17a1: ld   ix,object_held_struct_659C]
-	move.b	d0,(0x02,a2)                    	| [$17a5: ld   (ix+$02),a]
-	st.b	d0                                	| [$17a8: ld   a,$FF]
-	move.b	d0,(0x03,a2)                    	| [$17aa: ld   (ix+$03),a]
+	clr.b	(0x02,a2)                    	| [$17a5: ld   (ix+$02),a]
+	                                	| [$17a8: ld   a,$FF]
+	st.b	(0x03,a2)                    	| [$17aa: ld   (ix+$03),a]
 	rts                                    	| [$17ad: ret]
 
 l_17d5:
@@ -3601,17 +3605,17 @@ l_18c7:
 	rts                                    	| [$18d9: ret  z]
 0:
 	jbsr	restore_background_tile_192f                            	| [$18da: call $192F]
-	jbsr	l_1915                            	| [$18dd: call $1915]
+	jbsr	color_background_tile_1915                            	| [$18dd: call $1915]
 	addq.w	#1,d6                           	| [$18e0: inc  hl]
 	jbsr	restore_background_tile_192f                            	| [$18e1: call $192F]
-	jbsr	l_1915                            	| [$18e4: call $1915]
-	move.w	#0x0020,d3                      	| [$18e7: ld   de,$0020] 32
-	add.w	d3,d6                            	| [$18ea: add  hl,de]
+	jbsr	color_background_tile_1915                            	| [$18e4: call $1915]
+	                      	| [$18e7: ld   de,$0020] 32
+	add.w	#0x20,d6                            	| [$18ea: add  hl,de]
 	jbsr	restore_background_tile_192f                            	| [$18eb: call $192F]
-	jbsr	l_1915                            	| [$18ee: call $1915]
+	jbsr	color_background_tile_1915                            	| [$18ee: call $1915]
 	subq.w	#1,d6                           	| [$18f1: dec  hl]
 	jbsr	restore_background_tile_192f                            	| [$18f2: call $192F]
-	jbsr	l_1915                            	| [$18f5: call $1915]
+	jbsr	color_background_tile_1915                            	| [$18f5: call $1915]
 	move.b	unknown_627E,d0                 	| [$18f8: ld   a,(unknown_627E)]
 	addq.b	#1,d0                           	| [$18fb: inc  a]
 	move.b	d0,unknown_627E                 	| [$18fc: ld   (unknown_627E),a]
@@ -3640,15 +3644,17 @@ check_for_not_moving_timeout_1908:
 	                         	| [$1913: ld   (de),a]
 	rts                                    	| [$1914: ret]
 
-l_1915:
+color_background_tile_1915:
 	move.b	#0x1F,d1                        	| [$1915: ld   b,$1F]
 	jbsr	osd_r_videoram                         	| [$1917: ld   a,(hl)]
+	* tunnel support beams have a different color
 	cmp.b	#0x49,d0                         	| [$1918: cp   $49]
 	jeq	l_1926                             	| [$191a: jr   z,$1926]
 	cmp.b	#0x4A,d0                         	| [$191c: cp   $4A]
 	jeq	l_1926                             	| [$191e: jr   z,$1926]
 	cmp.b	#0x4B,d0                         	| [$1920: cp   $4B]
 	jeq	l_1926                             	| [$1922: jr   z,$1926]
+	* other tiles
 	move.b	#0x3F,d1                        	| [$1924: ld   b,$3F]
 l_1926:
 
@@ -4930,6 +4936,7 @@ check_object_pickup_2137:
 0:
 	* also can't pick if already has object in hand
 	* rather release it
+	
 	move.b	(a4),d0                         	| [$2143: ld   a,(bc)]
 	jbsr	exx                               	| [$2144: exx]
     tst.b	d0                     	| [$2145: cp   $00]
@@ -4946,6 +4953,13 @@ check_object_pickup_2137:
 	LOAD_AX_BE_WORD_DY	a3,d3
 	                   	| [$2154: ld   d,(iy+$01)]
 	                   	| [$2157: ld   e,(iy+$00)]
+	tst.w	d3
+	bne.b	1f
+	* jotd: d3 is sometimes 0, I don't want to compute screen address from
+	* logical address 0 since it's bound to fail (and the routine has a sanity
+	* check to detect potential bugs)
+	rts
+1:
 	movem.w	d3,-(sp)                    	| [$215a: push de]
 	addq.w	#2,d3                           	| [$215b: inc  de] * 2
 	jbsr	compute_backbuffer_tile_address_1945	| [$215d: call compute_backbuffer_tile_address_1945]
@@ -4961,6 +4975,7 @@ check_object_pickup_2137:
 	rts                                    	| [$216d: ret]
 l_216e:
     movem.w	(sp)+,d3               	| [$216e: pop  de]
+	* we reach here when an object is pickable (pickaxe)
 	jbsr	test_pickup_flag_19A4             	| [$216f: call test_pickup_flag_19A4]
 	tst.b	d1                           	| [$2172: ld   a,b]
 	                       	| [$2173: cp   $00]
@@ -4968,9 +4983,7 @@ l_216e:
 	rts                                    	| [$2175: ret  z]
 * pickup flag was set: pick up object
 pick_up_object_2176:
-	WPSET	0x204
-	
-	move.w	d3,d6
+	move.w	d3,d6		| screen address of object
 												| [$2176: ld   h,d]
 												| [$2177: ld   l,e]
 	move.w	d3,picked_up_object_screen_address_61F6	| [$2178: ld   (picked_up_object_screen_address_61F6),hl]
@@ -4992,6 +5005,7 @@ pick_up_object_2176:
 l_21a2:
 	move.b	#0x01,d0                        	| [$21a2: ld   a,$01]
 	bsr		exx
+	* sets object picked up flag to true (barrow or pick)
 	move.b	d0,(a4)                         	| [$21a5: ld   (bc),a]
 	rts                                    	| [$21a6: ret]
 
@@ -8042,15 +8056,15 @@ play_intro_3700:
 	move.b	d0,guard_1_screen_6099          	| [$371b: ld   (guard_1_screen_6099),a]
 	move.b	d0,guard_2_screen_609A          	| [$371e: ld   (guard_2_screen_609A),a]
 	clr.b	d0                               	| [$3721: xor  a]
-	move.b	d0,unknown_6008                 	| [$3722: ld   (unknown_6008),a]
-	move.b	d0,guard_1_in_elevator_6037                 	| [$3725: ld   (guard_1_in_elevator_6037),a]
-	move.b	d0,fatal_fall_height_reached_604E                 	| [$3728: ld   (unknown_604E),a]
-	move.b	d0,guard_2_in_elevator_6077                 	| [$372b: ld   (guard_2_in_elevator_6077),a]
-	move.b	d0,elevator_y_current_screen_6587	| [$372e: ld   (elevator_y_current_screen_6587),a]
-	move.b	d0,guard_2_x_659A               	| [$3731: ld   (guard_2_x_659A),a]
-	move.b	d0,guard_2_y_659B               	| [$3734: ld   (guard_2_y_659B),a]
-	move.b	d0,bag_falling_6159                 	| [$3737: ld   (bag_falling_6159),a]
-	move.b	d0,has_pick_61CF                	| [$373a: ld   (has_pick_61CF),a]
+	clr.b	unknown_6008                 	| [$3722: ld   (unknown_6008),a]
+	clr.b	guard_1_in_elevator_6037                 	| [$3725: ld   (guard_1_in_elevator_6037),a]
+	clr.b	fatal_fall_height_reached_604E                 	| [$3728: ld   (unknown_604E),a]
+	clr.b	guard_2_in_elevator_6077                 	| [$372b: ld   (guard_2_in_elevator_6077),a]
+	clr.b	elevator_y_current_screen_6587	| [$372e: ld   (elevator_y_current_screen_6587),a]
+	clr.b	guard_2_x_659A               	| [$3731: ld   (guard_2_x_659A),a]
+	clr.b	guard_2_y_659B               	| [$3734: ld   (guard_2_y_659B),a]
+	clr.b	bag_falling_6159                 	| [$3737: ld   (bag_falling_6159),a]
+	clr.b	has_pick_61CF                	| [$373a: ld   (has_pick_61CF),a]
 	clr.w	pickaxe_timer_duration_61E0                 	| [$373d: ld   (pickaxe_timer_duration_61E0),a]
 	                 	| [$3740: ld   (unknown_61E1),a]
 	move.b	#0x01,d0                        	| [$3743: ld   a,$01]

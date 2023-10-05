@@ -1712,7 +1712,7 @@ osd_get_random:
 	rol.l #6,d0	
 	move.l	d0,(a0) 
 	movem.l	(a7)+,a0
-	
+	add.b	_custom+vposr,d0
 	and.l	#0xFF,d0
 	rts
 seed:
@@ -1730,7 +1730,7 @@ osd_r_videoram:
 	* should not happen
 	blitz
 	clr.b	d0
-	move.b	D0,d0
+	move.b	D1,d1
 	nop
 	bra.b	2f
 1:
