@@ -251,10 +251,10 @@ game_tick_0038:
 
 	jbsr	l_3123                            	| [$004e: call $3123]
 	jbsr	l_38fa                            	| [$0051: call $38FA]
-	move.b	unknown_6142,d0                 	| [$0054: ld   a,(unknown_6142)]
+	move.b	ay_sound_start_6142,d0                 	| [$0054: ld   a,(ay_sound_start_6142)]
 	addq.b	#1,d0                           	| [$0057: inc  a]
 l_0058:
-	move.b	d0,unknown_6142                 	| [$0058: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$0058: ld   (ay_sound_start_6142),a]
 	move.b	is_intermission_6274,d0         	| [$005b: ld   a,(is_intermission_6274)]
 	cmp.b	#0x01,d0                         	| [$005e: cp   $01]
 	jeq	l_0067                             	| [$0060: jr   z,$0067]
@@ -742,7 +742,7 @@ l_049b:
 	rts                                    	| [$04a2: ret]
 l_04a3:
 	move.b	#0x01,d0                        	| [$04a3: ld   a,$01]
-	move.b	d0,unknown_6152                 	| [$04a5: ld   (unknown_6152),a]
+	move.b	d0,wait_flag_6152                 	| [$04a5: ld   (wait_flag_6152),a]
 	rts                                    	| [$04a8: ret]
 
  * in ix guard structure
@@ -868,8 +868,9 @@ l_0523:
 	move.b	unknown_61F3,d0                 	| [$0533: ld   a,(unknown_61F3)]
 	                         	| [$0536: cp   $00]
 	jne	l_0540                             	| [$0538: jr   nz,$0540]
+	* which sound??
 	lea	  game_mem+0x3F15,a0                      	| [$053a: ld   hl,$3F15]
-	jbsr	copy_to_61bd_2018                            	| [$053d: call $2018]
+	jbsr	play_sample_2018                            	| [$053d: call $2018]
 l_0540:
 
 	movem.w	(sp)+,d1/d2                    	| [$0540: pop  bc]
@@ -1050,8 +1051,9 @@ guard_unconditional_move_0614:
 	tst.b	unknown_61F3                 	| [$0624: ld   a,(unknown_61F3)]
 	                         	| [$0627: cp   $00]
 	jne	l_0631                             	| [$0629: jr   nz,$0631]
+	* guard walking sound
 	lea	game_mem+0x3F39,a0                      	| [$062b: ld   hl,$3F39]
-	jbsr	copy_to_61bd_2018                            	| [$062e: call $2018]
+	jbsr	play_sample_2018                            	| [$062e: call $2018]
 l_0631:
 
 	movem.w	(sp)+,d1/d2                    	| [$0631: pop  bc]
@@ -1310,8 +1312,9 @@ player_grips_handle_07BD:
 	move.b	d0,unknown_602B                 	| [$07c6: ld   (unknown_602B),a]
 	move.b	#0x01,d0                        	| [$07c9: ld   a,$01]
 	move.b	d0,unknown_6275                 	| [$07cb: ld   (unknown_6275),a]
+	* play "ho hisse" sample
 	lea	game_mem+0x3EFD,a0                      	| [$07ce: ld   hl,$3EFD]
-	jbsr	copy_to_61bd_2018                            	| [$07d1: call $2018]
+	jbsr	play_sample_2018                            	| [$07d1: call $2018]
 	rts                                    	| [$07d4: ret]
 l_07d5:
 	move.b	player_gripping_handle_602A,d0  	| [$07d5: ld   a,(player_gripping_handle_602A)]
@@ -1432,8 +1435,9 @@ l_0876:
 	* add 100 points when player lands in wagon
 	move.w	#0x0100,d6                      	| [$0880: ld   hl,$0100]
 	jbsr	add_to_score_5C90                 	| [$0883: call add_to_score_5C90]
+	* plays "et hop la" sample
 	lea	game_mem+0x3F03,a0                      	| [$0886: ld   hl,$3F03]
-	jbsr	copy_to_61bd_2018                            	| [$0889: call $2018]
+	jbsr	play_sample_2018                            	| [$0889: call $2018]
 	move.b	#0x01,d0                        	| [$088c: ld   a,$01]
 	move.b	d0,unknown_6275                 	| [$088e: ld   (unknown_6275),a]
 	move.l	(sp)+,a2                        	| [$0891: pop  ix]
@@ -1828,7 +1832,7 @@ l_0b2e:
 	move.b	#0x01,d0                        	| [$0b53: ld   a,$01]
 	move.b	d0,unknown_61F5                 	| [$0b55: ld   (unknown_61F5),a]
 	lea		game_mem+0x3F45,a0                      	| [$0b58: ld   hl,$3F45]
-	jbsr	copy_to_61bd_2018                            	| [$0b5b: call $2018]
+	jbsr	play_sample_2018                            	| [$0b5b: call $2018]
 	rts                                    	| [$0b5e: ret]
 l_0b5f:
 	clr.b	d0                               	| [$0b5f: xor  a]
@@ -2009,7 +2013,7 @@ player_tries_to_move_laterally_0c36:
 	                         	| [$0c68: cp   $00]
 	jne	l_0c72                             	| [$0c6a: jr   nz,$0C72]
 	lea	  game_mem+0x3F33,a0                      	| [$0c6c: ld   hl,$3F33] [RAM]
-	jbsr	copy_to_61bd_2018                            	| [$0c6f: call $2018]
+	jbsr	play_sample_2018                            	| [$0c6f: call $2018]
 l_0c72:
 	move.b	#0x01,d0                        	| [$0c72: ld   a,$01]
 	move.b	d0,(A3)                    	| [$0c74: ld   (iy+$00),a]
@@ -2023,7 +2027,7 @@ l_0c7c:
 	rts                                    	| [$0c81: ret  z]
 0:
 	lea	  game_mem+0x3F2D,a0                      	| [$0c82: ld   hl,$3F2D]
-	jbsr	copy_to_61bd_2018                            	| [$0c85: call $2018]
+	jbsr	play_sample_2018                            	| [$0c85: call $2018]
 	rts                                    	| [$0c88: ret]
 l_0c89:
 	move.b	holds_barrow_61C7,d0            	| [$0c89: ld   a,(holds_barrow_61C7)]
@@ -2031,7 +2035,7 @@ l_0c89:
 	rts                                    	| [$0c8e: ret]
 	
 *	lea	  game_mem+0x3F3F,a0                      	| [$0c8f: ld   hl,$3F3F]
-*	jbsr	copy_to_61bd_2018                            	| [$0c92: call $2018]
+*	jbsr	play_sample_2018                            	| [$0c92: call $2018]
 *	rts                                    	| [$0c95: ret]
 try_left_0c96:
 	move.w	player_logical_address_6009,d6	| [$0c96: ld   hl,(player_logical_address_6009)]
@@ -2056,7 +2060,7 @@ try_left_0c96:
 	                         	| [$0cc5: cp   $00]
 	jne	l_0ccf                             	| [$0cc7: jr   nz,$0CCF]
 	lea	  game_mem+0x3F33,a0                      	| [$0cc9: ld   hl,$3F33]
-	jbsr	copy_to_61bd_2018                            	| [$0ccc: call $2018]
+	jbsr	play_sample_2018                            	| [$0ccc: call $2018]
 l_0ccf:
 	move.b	#0x01,d0                        	| [$0ccf: ld   a,$01]
 	move.b	d0,(A3)                    	| [$0cd1: ld   (iy+$00),a]
@@ -2339,7 +2343,7 @@ l_0e60:
 	                         	| [$0e63: cp   $00]
 	jne	l_0e6d                             	| [$0e65: jr   nz,$0E6D]
 	lea	game_mem+0x3F27,a0                      	| [$0e67: ld   hl,$3F27]
-	jbsr	copy_to_61bd_2018                            	| [$0e6a: call $2018]
+	jbsr	play_sample_2018                            	| [$0e6a: call $2018]
 l_0e6d:
 	move.b	has_bag_6158,d0                 	| [$0e6d: ld   a,(has_bag_6158)]
 	                         	| [$0e70: cp   $00]
@@ -2494,9 +2498,6 @@ align_character_x_0f72:
 	move.b	d0,(0x02,a2)                    	| [$0f7b: ld   (ix+$02),a]
 	rts                                    	| [$0f7e: ret]
 
-handle_ay_sound_0f7f:
-	rts
-	
 
 l_0ffd:
 	move.b	unknown_6143,d0                 	| [$0ffd: ld   a,(unknown_6143)]
@@ -2755,7 +2756,7 @@ l_121c:
 	jbsr	set_bags_coordinates_355b         	| [$121f: call set_bags_coordinates_355b]
 	jbsr	set_bags_coordinates_3567                            	| [$1222: call $3567]
 	lea	game_mem+0x513C,a0                      	| [$1225: ld   hl,$513C]
-	move.l	a0,unknown_pointer_6140                 	| [$1228: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$1228: ld   (ay_sound_pointer_6140),hl]
  * reset guards and player
 l_122b:
 
@@ -2856,7 +2857,7 @@ l_12a6:
 	jbsr	display_player_ids_and_credit_1dec	| [$12d1: call display_player_ids_and_credit_1dec]
 	jbsr	write_credits_and_lives_39be                            	| [$12d4: call $39BE]  ???
 										| [$12d7: ld   hl,$513C]
-									| [$12da: ld   (unknown_pointer_6140),hl]
+									| [$12da: ld   (ay_sound_pointer_6140),hl]
 	move.b	#0x01,d0                        	| [$12dd: ld   a,$01]
 	move.b	d0,unknown_6055                 	| [$12df: ld   (unknown_6055),a]
 	move.b	gameplay_allowed_6054,d0        	| [$12e2: ld   a,(gameplay_allowed_6054)]
@@ -3421,14 +3422,16 @@ l_175e:
 	jbsr	l_17d5                            	| [$176f: call $17D5]
 	jbsr	l_17d5                            	| [$1772: call $17D5]
 l_1775:
+	* plays "a moi le magot" sample
 	lea	game_mem+0x3F1B,a0                      	| [$1775: ld   hl,$3F1B]
-	jbsr	copy_to_61bd_2018                            	| [$1778: call $2018]
+	jbsr	play_sample_2018                            	| [$1778: call $2018]
 	jbsr	can_pick_bag_3DEB                 	| [$177b: call can_pick_bag_3DEB]
 	jne	l_178a                             	| [$177e: jr   nz,$178A]
+	* plays "bag dropped in barrow" music
 	lea	game_mem+0x5B78,a0                      	| [$1780: ld   hl,$5B78]
-	move.l	a0,unknown_pointer_6140                 	| [$1783: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$1783: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1786: xor  a]
-	move.b	d0,unknown_6142                 	| [$1787: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$1787: ld   (ay_sound_start_6142),a]
 l_178a:
 	move.l	(sp)+,a2                        	| [$178a: pop  ix]
 	jbsr	osd_disable_vblank_interrupt |	jbsr	osd_disable_vblank_interrupt
@@ -3440,7 +3443,7 @@ l_178a:
 	* reset time to 4000
 	move.b	#0x40,d0                        	| [$1798: ld   a,$40]
 	move.b	d0,time_61E8                    	| [$179a: ld   (time_61E8),a]
-	jbsr	l_3b00                            	| [$179d: call $3B00]
+	jbsr	check_if_level_completed_3b00                            	| [$179d: call $3B00]
 l_17a0:
 											| [$17a0: xor  a]
 	lea	object_held_struct_659C,a2                	| [$17a1: ld   ix,object_held_struct_659C]
@@ -3554,9 +3557,9 @@ l_186b:
 	jbsr	can_pick_bag_3DEB                 	| [$1888: call can_pick_bag_3DEB]
 	jne	l_1897                             	| [$188b: jr   nz,$1897]
 	lea	game_mem+0x5BA8,a0                      	| [$188d: ld   hl,$5BA8]
-	move.l	a0,unknown_pointer_6140                 	| [$1890: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$1890: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1893: xor  a]
-	move.b	d0,unknown_6142                 	| [$1894: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$1894: ld   (ay_sound_start_6142),a]
  * pickup money bag
 l_1897:
 	move.b	#0x01,d0                        	| [$1897: ld   a,$01]
@@ -4589,9 +4592,9 @@ init_new_game_1E94:
 	jbsr	can_pick_bag_3DEB                 	| [$1e9b: call can_pick_bag_3DEB]
 	jne	l_1eaa                             	| [$1e9e: jr   nz,$1EAA]
 	lea	game_mem+0x5000,a0                      	| [$1ea0: ld   hl,$5000]
-	move.l	a0,unknown_pointer_6140                 	| [$1ea3: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$1ea3: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1ea6: xor  a]
-	move.b	d0,unknown_6142                 	| [$1ea7: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$1ea7: ld   (ay_sound_start_6142),a]
 l_1eaa:
 											| [$1eaa: xor  a]
 											| [$1eab: ld   ($A003),a]
@@ -4703,15 +4706,18 @@ player_dies_1f50:
 	                 	| [$1f7d: ld   (unknown_6154),hl]
 	lea	game_mem+0x3EF7,a0                      	| [$1f80: ld   hl,$3EF7]
 	clr.b	d0                               	| [$1f83: xor  a]
-	move.b	d0,unknown_6152                 	| [$1f84: ld   (unknown_6152),a]
+	move.b	d0,wait_flag_6152                 	| [$1f84: ld   (wait_flag_6152),a]
     jbsr	osd_enable_vblank_interrupt
-	jbsr	copy_to_61bd_2018                            	| [$1f88: call $2018]
+	* plays "aie aie aie" sample
+	jbsr	play_sample_2018                            	| [$1f88: call $2018]
+	* plays "player dies" music
 	lea	game_mem+0x5B38,a0                      	| [$1f8b: ld   hl,$5B38]
-	move.l	a0,unknown_pointer_6140                 	| [$1f8e: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$1f8e: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1f91: xor  a]
-	move.b	d0,unknown_6142                 	| [$1f92: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$1f92: ld   (ay_sound_start_6142),a]
+	* wait a while
 l_1f95:
-	move.b	unknown_6152,d0                 	| [$1f95: ld   a,(unknown_6152)]
+	move.b	wait_flag_6152,d0                 	| [$1f95: ld   a,(wait_flag_6152)]
 	cmp.b	#0x01,d0                         	| [$1f98: cp   $01]
 	jne	l_1f95                             	| [$1f9a: jr   nz,$1F95]
 	jbsr	start_new_life_2026               	| [$1f9c: call start_new_life_2026]
@@ -4775,7 +4781,7 @@ l_1ff5:
 	jbsr	init_guard_directions_and_wagons_2957                            	| [$2012: call $2957]
 	move.b	#0x01,d0                        	| [$2015: ld   a,$01]
 	rts                                    	| [$2017: ret]
-copy_to_61bd_2018:
+play_sample_2018:
 	lea	unknown_61BD,a1                	| [$2018: ld   de,unknown_61BD]
 	moveq	#0x06,d1                        	| [$201b: ld   bc,$0006] 6
 	jbsr	ldir                              	| [$201e: ldir]
@@ -4790,17 +4796,17 @@ start_new_life_2026:
 	jbsr	memset_2054                       	| [$202e: call memset_2054]  clear region 6144-6144+6
 	clr.b	d0                               	| [$2031: xor  a]
 * set everything player-related to 0
-	move.b	d0,unknown_6152                 	| [$2032: ld   (unknown_6152),a]
-	move.b	d0,unknown_6151                 	| [$2035: ld   (unknown_6151),a]
-	move.b	d0,player_death_flag_6025       	| [$2038: ld   (player_death_flag_6025),a]
-	move.b	d0,player_controls_frozen_6028  	| [$203b: ld   (player_controls_frozen_6028),a]
-	move.b	d0,fatal_fall_height_reached_604E	| [$203e: ld   (fatal_fall_height_reached_604E),a]
-	move.b	d0,player_in_wagon_flag_6029    	| [$2041: ld   (player_in_wagon_flag_6029),a]
-	move.b	d0,unknown_6013                 	| [$2044: ld   (unknown_6013),a]
-	move.b	d0,fall_height_604D             	| [$2047: ld   (fall_height_604D),a]
-	move.b	d0,bag_falling_6159                 	| [$204a: ld   (bag_falling_6159),a]
-	move.b	d0,bag_sliding_615E                 	| [$204d: ld   (bag_sliding_615E),a]
-	move.b	d0,holds_barrow_61C7            	| [$2050: ld   (holds_barrow_61C7),a]
+	clr.b	wait_flag_6152                 	| [$2032: ld   (wait_flag_6152),a]
+	clr.b	unknown_6151                 	| [$2035: ld   (unknown_6151),a]
+	clr.b	player_death_flag_6025       	| [$2038: ld   (player_death_flag_6025),a]
+	clr.b	player_controls_frozen_6028  	| [$203b: ld   (player_controls_frozen_6028),a]
+	clr.b	fatal_fall_height_reached_604E	| [$203e: ld   (fatal_fall_height_reached_604E),a]
+	clr.b	player_in_wagon_flag_6029    	| [$2041: ld   (player_in_wagon_flag_6029),a]
+	clr.b	unknown_6013                 	| [$2044: ld   (unknown_6013),a]
+	clr.b	fall_height_604D             	| [$2047: ld   (fall_height_604D),a]
+	clr.b	bag_falling_6159                 	| [$204a: ld   (bag_falling_6159),a]
+	clr.b	bag_sliding_615E                 	| [$204d: ld   (bag_sliding_615E),a]
+	clr.b	holds_barrow_61C7            	| [$2050: ld   (holds_barrow_61C7),a]
 	rts                                    	| [$2053: ret]
 
 * < b number of bytes to set to a
@@ -5156,7 +5162,7 @@ l_2241:
 	move.w	#0x500,d6                      	| [$2253: ld   hl,$0500]
 	jbsr	add_to_score_5C90                 	| [$2256: call add_to_score_5C90]
 	lea	game_mem+0x3F09,a0                      	| [$2259: ld   hl,$3F09]
-	jbsr	copy_to_61bd_2018                            	| [$225c: call $2018]
+	jbsr	play_sample_2018                            	| [$225c: call $2018]
 	move.l	(sp)+,a2                        	| [$225f: pop  ix]
 	sub.l	a4,a4		| added to avoid issues
 	jbsr	l_3dbe                            	| [$2261: call $3DBE]
@@ -5184,7 +5190,7 @@ l_227c:
 	move.w	#0x0500,d6                      	| [$228e: ld   hl,$0500]
 	jbsr	add_to_score_5C90                 	| [$2291: call add_to_score_5C90]
 	lea	game_mem+0x3F09,a0                      	| [$2294: ld   hl,$3F09]
-	jbsr	copy_to_61bd_2018                            	| [$2297: call $2018]
+	jbsr	play_sample_2018                            	| [$2297: call $2018]
 	move.l	(sp)+,a2                        	| [$229a: pop  ix]
 	jbsr	l_3dbe                            	| [$229c: call $3DBE]
 	clr.b	d0                               	| [$229f: xor  a]
@@ -5772,9 +5778,9 @@ display_screen_3_265f:
 	rts                                    	| [$2751: ret  nz]
 0:
 	lea	game_mem+0x5200,a0                      	| [$2752: ld   hl,$5200]
-	move.l	a0,unknown_pointer_6140                 	| [$2755: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$2755: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$2758: xor  a]
-	move.b	d0,unknown_6142                 	| [$2759: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$2759: ld   (ay_sound_start_6142),a]
 	rts                                    	| [$275c: ret]
 	
 display_screen_2_275d:
@@ -5974,9 +5980,9 @@ display_maze_284c:
 	rts                                    	| [$2917: ret  nz]
 0:
 	lea	game_mem+0x5000,a0                      	| [$2918: ld   hl,$5000]
-	move.l	a0,unknown_pointer_6140                 	| [$291b: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$291b: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$291e: xor  a]
-	move.b	d0,unknown_6142                 	| [$291f: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$291f: ld   (ay_sound_start_6142),a]
 	rts                                    	| [$2922: ret]
 
 l_2923:
@@ -8429,7 +8435,7 @@ l_3a6b:
 	rts                                    	| [$3a75: ret]
 	
 
-l_3b00:
+check_if_level_completed_3b00:
 	jbsr	check_remaining_bags_3B8C         	| [$3b00: call check_remaining_bags_3B8C]
 	move.b	d2,d0                           	| [$3b03: ld   a,c]
 	                         	| [$3b04: cp   $00]
@@ -8450,7 +8456,7 @@ l_3b00:
 	move.w	(A3),d3                    	| [$3b21: ld   e,(iy+$00)]
 	jbsr	pick_up_object_2176                            	| [$3b24: call $2176]
 	lea	game_mem+0x3F1B,a0                      	| [$3b27: ld   hl,$3F1B]
-	jbsr	copy_to_61bd_2018                            	| [$3b2a: call $2018]
+	jbsr	play_sample_2018                            	| [$3b2a: call $2018]
 * add one life for level completed
 	move.b	lives_6056,d0                   	| [$3b2d: ld   a,(lives_6056)]
 	addq.b	#1,d0                           	| [$3b30: inc  a]
@@ -8483,9 +8489,9 @@ l_3b65:
 	subq.b	#1,d1                           	| [...]
 	jne	l_3b65                             	| [$3b67: djnz $3B65]
 	lea		game_mem+0x5200,a0                      	| [$3b69: ld   hl,$5200]
-	move.l	a0,unknown_pointer_6140                 	| [$3b6c: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140                 	| [$3b6c: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$3b6f: xor  a]
-	move.b	d0,unknown_6142                 	| [$3b70: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$3b70: ld   (ay_sound_start_6142),a]
 	move.b	#0x01,d0                        	| [$3b73: ld   a,$01]
 	move.b	d0,is_intermission_6274         	| [$3b75: ld   (is_intermission_6274),a]
 	jbsr	play_intro_3700                   	| [$3b78: call play_intro_3700]
@@ -8628,9 +8634,9 @@ l_3997:
 	lea	unknown_61E4,a0                	| [$39aa: ld   hl,unknown_61E4]
 	subq.b	#2,(a0)                         	| [$39ad: dec  (hl)] * 2
 	lea		game_mem+0x5B68,a0                      	| [$39af: ld   hl,$5B68]
-	move.l	a0,unknown_pointer_6140         	| [$39b2: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140         	| [$39b2: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$39b5: xor  a]
-	move.b	d0,unknown_6142                 	| [$39b6: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$39b6: ld   (ay_sound_start_6142),a]
 	jbsr	l_39be                            	| [$39b9: call $39BE]
 	jra	l_3997                             	| [$39bc: jr   $3997]
 l_39be:
@@ -8689,10 +8695,10 @@ l_3ba1:
 	rts                                    	| [$3bad: ret  nc]
 0:
 	lea	game_mem+0x5B94,a0                      	| [$3bae: ld   hl,$5B94]
-	move.l	a0,unknown_pointer_6140         	| [$3bb1: ld   (unknown_pointer_6140),hl]
+	move.l	a0,ay_sound_pointer_6140         	| [$3bb1: ld   (ay_sound_pointer_6140),hl]
 	move.b	d0,unknown_61F4                 	| [$3bb4: ld   (unknown_61F4),a]
 	clr.b	d0                               	| [$3bb7: xor  a]
-	move.b	d0,unknown_6142                 	| [$3bb8: ld   (unknown_6142),a]
+	move.b	d0,ay_sound_start_6142                 	| [$3bb8: ld   (ay_sound_start_6142),a]
 	rts                                    	| [$3bbb: ret]
 	
 draw_elevator_cable_3bbc:
@@ -9013,7 +9019,7 @@ l_3dbe:
 	rts                                    	| [$3ddf: ret  nz]
 0:
 	lea	game_mem+0x3F4B,a0                      	| [$3de0: ld   hl,$3F4B]
-	jbsr	copy_to_61bd_2018                            	| [$3de3: call $2018]
+	jbsr	play_sample_2018                            	| [$3de3: call $2018]
 	clr.b	d0                               	| [$3de6: xor  a]
 	move.b	d0,unknown_6153                 	| [$3de7: ld   (unknown_6153),a]
 	rts                                    	| [$3dea: ret]
@@ -9021,7 +9027,7 @@ l_3dbe:
  * test if can pick bag
 can_pick_bag_3DEB:
 	move.l	a2,-(sp)                        	| [$3deb: push ix]
-	move.l	unknown_pointer_6140,a2             	| [$3ded: ld   ix,(unknown_pointer_6140)]
+	move.l	ay_sound_pointer_6140,a2             	| [$3ded: ld   ix,(ay_sound_pointer_6140)]
 	move.b	(0x03,a2),d0                    	| [$3df1: ld   a,(ix+$03)]
 	move.l	(sp)+,a2                        	| [$3df4: pop  ix]
 	cmp.b	#0xFF,d0                         	| [$3df6: cp   $FF]

@@ -19,8 +19,11 @@
 - brown stripe on row 0?
 
 
-- sounds
-- music
+- re-record all sounds & samples cleanly
+  samples: turn off ay handling, turn off steps
+  ay: turn off samples
+  
+- find where music is played? (on switch screens & sometimes on game start!)
 
 maybe...:
 - try to cookie cut bags & pickaxes, avoid to destroy background

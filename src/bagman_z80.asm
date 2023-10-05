@@ -160,9 +160,9 @@
 004D: F3            di
 004E: CD 23 31      call $3123
 0051: CD FA 38      call $38FA
-0054: 3A 42 61      ld   a,(unknown_6142)
+0054: 3A 42 61      ld   a,(ay_sound_start_6142)
 0057: 3C            inc  a
-0058: 32 42 61      ld   (unknown_6142),a
+0058: 32 42 61      ld   (ay_sound_start_6142),a
 005B: 3A 74 62      ld   a,(is_intermission_6274)
 005E: FE 01         cp   $01
 0060: 28 05         jr   z,$0067
@@ -579,7 +579,7 @@
 049F: 32 53 61      ld   (unknown_6153),a
 04A2: C9            ret
 04A3: 3E 01         ld   a,$01
-04A5: 32 52 61      ld   (unknown_6152),a
+04A5: 32 52 61      ld   (wait_flag_6152),a
 04A8: C9            ret
 04A9: 94            sub  h
 04AA: 65            ld   h,l
@@ -675,7 +675,7 @@ guard_ladder_movement_04AD:
 0536: FE 00         cp   $00
 0538: 20 06         jr   nz,$0540
 053A: 21 15 3F      ld   hl,$3F15
-053D: CD 18 20      call copy_to_61bd_2018
+053D: CD 18 20      call play_sample_2018
 0540: C1            pop  bc
 0541: F1            pop  af
 0542: F5            push af
@@ -828,7 +828,7 @@ guard_unconditional_move_0614:
 0627: FE 00         cp   $00
 0629: 20 06         jr   nz,$0631
 062B: 21 39 3F      ld   hl,$3F39
-062E: CD 18 20      call copy_to_61bd_2018
+062E: CD 18 20      call play_sample_2018
 0631: C1            pop  bc
 0632: AF            xor  a
 0633: FD 2A 93 60   ld   iy,(guard_struct_pointer_6093)
@@ -1043,7 +1043,7 @@ player_grips_handle_07BD:
 07C9: 3E 01         ld   a,$01
 07CB: 32 75 62      ld   (unknown_6275),a
 07CE: 21 FD 3E      ld   hl,$3EFD
-07D1: CD 18 20      call copy_to_61bd_2018
+07D1: CD 18 20      call play_sample_2018
 07D4: C9            ret
 07D5: 3A 2A 60      ld   a,(player_gripping_handle_602A)
 07D8: FE 01         cp   $01
@@ -1135,7 +1135,7 @@ l_07F6:
 0880: 21 00 01      ld   hl,$0100
 0883: CD 90 5C      call add_to_score_5C90
 0886: 21 03 3F      ld   hl,$3F03
-0889: CD 18 20      call copy_to_61bd_2018
+0889: CD 18 20      call play_sample_2018
 088C: 3E 01         ld   a,$01
 088E: 32 75 62      ld   (unknown_6275),a
 0891: DD E1         pop  ix
@@ -1472,7 +1472,7 @@ handle_elevators_0a66:
 0B53: 3E 01         ld   a,$01
 0B55: 32 F5 61      ld   (unknown_61F5),a
 0B58: 21 45 3F      ld   hl,$3F45
-0B5B: CD 18 20      call copy_to_61bd_2018
+0B5B: CD 18 20      call play_sample_2018
 0B5E: C9            ret
 0B5F: AF            xor  a
 0B60: FD 77 00      ld   (iy+$00),a
@@ -1618,7 +1618,7 @@ player_tries_to_move_laterally_0c36:
 0C68: FE 00         cp   $00
 0C6A: 20 06         jr   nz,$0C72
 0C6C: 21 33 3F      ld   hl,$3F33
-0C6F: CD 18 20      call copy_to_61bd_2018
+0C6F: CD 18 20      call play_sample_2018
 0C72: 3E 01         ld   a,$01
 0C74: FD 77 00      ld   (iy+$00),a
 0C77: 32 9B 60      ld   (unknown_609B),a
@@ -1628,13 +1628,13 @@ player_tries_to_move_laterally_0c36:
 0C7F: FE 00         cp   $00
 0C81: C8            ret  z
 0C82: 21 2D 3F      ld   hl,$3F2D
-0C85: CD 18 20      call copy_to_61bd_2018
+0C85: CD 18 20      call play_sample_2018
 0C88: C9            ret
 0C89: 3A C7 61      ld   a,(holds_barrow_61C7)
 0C8C: FE 00         cp   $00
 0C8E: C9            ret
 0C8F: 21 3F 3F      ld   hl,$3F3F
-0C92: CD 18 20      call copy_to_61bd_2018
+0C92: CD 18 20      call play_sample_2018
 0C95: C9            ret
 0C96: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C99: CD 69 0D      call character_can_walk_left_0D69
@@ -1657,7 +1657,7 @@ player_tries_to_move_laterally_0c36:
 0CC5: FE 00         cp   $00
 0CC7: 20 06         jr   nz,$0CCF
 0CC9: 21 33 3F      ld   hl,$3F33
-0CCC: CD 18 20      call copy_to_61bd_2018
+0CCC: CD 18 20      call play_sample_2018
 0CCF: 3E 01         ld   a,$01
 0CD1: FD 77 00      ld   (iy+$00),a
 0CD4: 32 9B 60      ld   (unknown_609B),a
@@ -1872,7 +1872,7 @@ can_player_climb_up_0de9:
 0E63: FE 00         cp   $00
 0E65: 20 06         jr   nz,$0E6D
 0E67: 21 27 3F      ld   hl,$3F27
-0E6A: CD 18 20      call copy_to_61bd_2018
+0E6A: CD 18 20      call play_sample_2018
 0E6D: 3A 58 61      ld   a,(has_bag_6158)
 0E70: FE 00         cp   $00
 0E72: C8            ret  z
@@ -2001,7 +2001,7 @@ align_character_x_0f72:
 0F7E: C9            ret
 
 handle_ay_sound_0f7f:
-0F7F: 2A 40 61      ld   hl,(unknown_pointer_6140)
+0F7F: 2A 40 61      ld   hl,(ay_sound_pointer_6140)
 0F82: 11 03 00      ld   de,$0003
 0F85: 19            add  hl,de
 0F86: 7E            ld   a,(hl)
@@ -2009,22 +2009,22 @@ handle_ay_sound_0f7f:
 0F89: C8            ret  z
 0F8A: 7E            ld   a,(hl)
 0F8B: 47            ld   b,a
-0F8C: 3A 42 61      ld   a,(unknown_6142)
+0F8C: 3A 42 61      ld   a,(ay_sound_start_6142)
 0F8F: B8            cp   b
 0F90: C0            ret  nz
 0F91: AF            xor  a
-0F92: 32 42 61      ld   (unknown_6142),a
-0F95: 2A 40 61      ld   hl,(unknown_pointer_6140)
+0F92: 32 42 61      ld   (ay_sound_start_6142),a
+0F95: 2A 40 61      ld   hl,(ay_sound_pointer_6140)
 0F98: 11 25 5B      ld   de,$5B25
 0F9B: CD B2 0F      call $0FB2
 0F9E: 3E 0F         ld   a,$0F
 0FA0: D3 08         out  ($08),a
 0FA2: 3E 01         ld   a,$01
 0FA4: 32 07 A0      ld   ($A007),a
-0FA7: 2A 40 61      ld   hl,(unknown_pointer_6140)
+0FA7: 2A 40 61      ld   hl,(ay_sound_pointer_6140)
 0FAA: 11 04 00      ld   de,$0004
 0FAD: 19            add  hl,de
-0FAE: 22 40 61      ld   (unknown_pointer_6140),hl
+0FAE: 22 40 61      ld   (ay_sound_pointer_6140),hl
 0FB1: C9            ret
 0FB2: AF            xor  a
 0FB3: 32 07 A0      ld   ($A007),a
@@ -2314,7 +2314,7 @@ guard_2_walk_movement_119B:
 121F: CD 5B 35      call set_bags_coordinates_355b
 1222: CD 67 35      call set_bags_coordinates_3567
 1225: 21 3C 51      ld   hl,$513C
-1228: 22 40 61      ld   (unknown_pointer_6140),hl
+1228: 22 40 61      ld   (ay_sound_pointer_6140),hl
 	;; reset guards and player
 122B: F3            di
 122C: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
@@ -2406,7 +2406,7 @@ mainloop_1242:
 12D1: CD EC 1D      call display_player_ids_and_credit_1dec
 12D4: CD BE 39      call write_credits_and_lives_39be	;  ???
 12D7: 21 3C 51      ld   hl,$513C
-12DA: 22 40 61      ld   (unknown_pointer_6140),hl
+12DA: 22 40 61      ld   (ay_sound_pointer_6140),hl
 12DD: 3E 01         ld   a,$01
 12DF: 32 55 60      ld   (unknown_6055),a
 12E2: 3A 54 60      ld   a,(gameplay_allowed_6054)
@@ -2886,13 +2886,13 @@ guard_1_sees_player_1560:
 176F: CD D5 17      call $17D5
 1772: CD D5 17      call $17D5
 1775: 21 1B 3F      ld   hl,$3F1B
-1778: CD 18 20      call copy_to_61bd_2018
+1778: CD 18 20      call play_sample_2018
 177B: CD EB 3D      call can_pick_bag_3DEB
 177E: 20 0A         jr   nz,$178A
 1780: 21 78 5B      ld   hl,$5B78
-1783: 22 40 61      ld   (unknown_pointer_6140),hl
+1783: 22 40 61      ld   (ay_sound_pointer_6140),hl
 1786: AF            xor  a
-1787: 32 42 61      ld   (unknown_6142),a
+1787: 32 42 61      ld   (ay_sound_start_6142),a
 178A: DD E1         pop  ix
 178C: F3            di
 178D: AF            xor  a
@@ -2902,7 +2902,7 @@ guard_1_sees_player_1560:
 1797: FB            ei
 1798: 3E 40         ld   a,$40
 179A: 32 E8 61      ld   (time_61E8),a
-179D: CD 00 3B      call $3B00
+179D: CD 00 3B      call check_if_level_completed_3b00
 17A0: AF            xor  a
 17A1: DD 21 9C 65   ld   ix,object_held_struct_659C
 17A5: DD 77 02      ld   (ix+$02),a
@@ -2993,9 +2993,9 @@ guard_1_sees_player_1560:
 1888: CD EB 3D      call can_pick_bag_3DEB
 188B: 20 0A         jr   nz,$1897
 188D: 21 A8 5B      ld   hl,$5BA8
-1890: 22 40 61      ld   (unknown_pointer_6140),hl
+1890: 22 40 61      ld   (ay_sound_pointer_6140),hl
 1893: AF            xor  a
-1894: 32 42 61      ld   (unknown_6142),a
+1894: 32 42 61      ld   (ay_sound_start_6142),a
 	;; pickup money bag
 1897: 3E 01         ld   a,$01
 1899: 32 58 61      ld   (has_bag_6158),a
@@ -3835,9 +3835,9 @@ init_new_game_1E94:
 1E9B: CD EB 3D      call can_pick_bag_3DEB
 1E9E: 20 0A         jr   nz,$1EAA
 1EA0: 21 00 50      ld   hl,$5000
-1EA3: 22 40 61      ld   (unknown_pointer_6140),hl
+1EA3: 22 40 61      ld   (ay_sound_pointer_6140),hl
 1EA6: AF            xor  a
-1EA7: 32 42 61      ld   (unknown_6142),a
+1EA7: 32 42 61      ld   (ay_sound_start_6142),a
 1EAA: AF            xor  a
 1EAB: 32 03 A0      ld   ($A003),a
 1EAE: CD 4C 28      call display_maze_284c
@@ -3923,14 +3923,14 @@ player_dies_1f50:
 1F7D: 22 54 61      ld   (unknown_6154),hl
 1F80: 21 F7 3E      ld   hl,$3EF7
 1F83: AF            xor  a
-1F84: 32 52 61      ld   (unknown_6152),a
+1F84: 32 52 61      ld   (wait_flag_6152),a
 1F87: FB            ei
-1F88: CD 18 20      call copy_to_61bd_2018
+1F88: CD 18 20      call play_sample_2018	; plays "aie aie aie" sample
 1F8B: 21 38 5B      ld   hl,$5B38
-1F8E: 22 40 61      ld   (unknown_pointer_6140),hl
+1F8E: 22 40 61      ld   (ay_sound_pointer_6140),hl
 1F91: AF            xor  a
-1F92: 32 42 61      ld   (unknown_6142),a
-1F95: 3A 52 61      ld   a,(unknown_6152)
+1F92: 32 42 61      ld   (ay_sound_start_6142),a	; plays "player dies" music
+1F95: 3A 52 61      ld   a,(wait_flag_6152)
 1F98: FE 01         cp   $01
 1F9A: 20 F9         jr   nz,$1F95
 1F9C: CD 26 20      call start_new_life_2026
@@ -3985,7 +3985,7 @@ player_dies_1f50:
 2015: 3E 01         ld   a,$01
 2017: C9            ret
 
-copy_to_61bd_2018:
+play_sample_2018:
 2018: 11 BD 61      ld   de,unknown_61BD
 201B: 01 06 00      ld   bc,$0006
 201E: ED B0         ldir
@@ -4000,7 +4000,7 @@ start_new_life_2026:
 202E: CD 54 20      call memset_2054 ;  clear region 6144-6144+6
 2031: AF            xor  a
 ; set everything player-related to 0
-2032: 32 52 61      ld   (unknown_6152),a
+2032: 32 52 61      ld   (wait_flag_6152),a
 2035: 32 51 61      ld   (unknown_6151),a
 2038: 32 25 60      ld   (player_death_flag_6025),a
 203B: 32 28 60      ld   (player_controls_frozen_6028),a
@@ -4268,7 +4268,7 @@ convert_logical_to_screen_address_222d:
 2253: 21 00 05      ld   hl,$0500
 2256: CD 90 5C      call add_to_score_5C90
 2259: 21 09 3F      ld   hl,$3F09
-225C: CD 18 20      call copy_to_61bd_2018
+225C: CD 18 20      call play_sample_2018
 225F: DD E1         pop  ix
 2261: CD BE 3D      call $3DBE
 2264: AF            xor  a
@@ -4290,7 +4290,7 @@ convert_logical_to_screen_address_222d:
 228E: 21 00 05      ld   hl,$0500
 2291: CD 90 5C      call add_to_score_5C90
 2294: 21 09 3F      ld   hl,$3F09
-2297: CD 18 20      call copy_to_61bd_2018
+2297: CD 18 20      call play_sample_2018
 229A: DD E1         pop  ix
 229C: CD BE 3D      call $3DBE
 229F: AF            xor  a
@@ -4772,9 +4772,9 @@ display_screen_3_265f:
 274E: CD EB 3D      call can_pick_bag_3DEB
 2751: C0            ret  nz
 2752: 21 00 52      ld   hl,$5200
-2755: 22 40 61      ld   (unknown_pointer_6140),hl
+2755: 22 40 61      ld   (ay_sound_pointer_6140),hl
 2758: AF            xor  a
-2759: 32 42 61      ld   (unknown_6142),a
+2759: 32 42 61      ld   (ay_sound_start_6142),a
 275C: C9            ret
 display_screen_2_275d:
 275D: CD 16 2A      call $2A16
@@ -4956,9 +4956,9 @@ display_maze_284c:
 2914: CD EB 3D      call can_pick_bag_3DEB
 2917: C0            ret  nz
 2918: 21 00 50      ld   hl,$5000
-291B: 22 40 61      ld   (unknown_pointer_6140),hl
+291B: 22 40 61      ld   (ay_sound_pointer_6140),hl
 291E: AF            xor  a
-291F: 32 42 61      ld   (unknown_6142),a
+291F: 32 42 61      ld   (ay_sound_start_6142),a
 2922: C9            ret
 2923: 3A 0D 60      ld   a,(player_screen_600D)
 2926: FE 03         cp   $03
@@ -7029,9 +7029,9 @@ check_if_credit_inserted_38d7:
 39AD: 35            dec  (hl)
 39AE: 35            dec  (hl)
 39AF: 21 68 5B      ld   hl,$5B68
-39B2: 22 40 61      ld   (unknown_pointer_6140),hl
+39B2: 22 40 61      ld   (ay_sound_pointer_6140),hl
 39B5: AF            xor  a
-39B6: 32 42 61      ld   (unknown_6142),a
+39B6: 32 42 61      ld   (ay_sound_start_6142),a
 39B9: CD BE 39      call write_credits_and_lives_39be
 39BC: 18 D9         jr   $3997
 
@@ -7129,6 +7129,7 @@ read_player_controls_39fd:
 3A74: B1            or   c
 3A75: C9            ret
 
+check_if_level_completed_3b00:
 3B00: CD 8C 3B      call check_remaining_bags_3B8C
 3B03: 79            ld   a,c
 3B04: FE 00         cp   $00
@@ -7147,7 +7148,7 @@ read_player_controls_39fd:
 3B21: FD 5E 00      ld   e,(iy+$00)
 3B24: CD 76 21      call pick_up_object_2176
 3B27: 21 1B 3F      ld   hl,$3F1B
-3B2A: CD 18 20      call copy_to_61bd_2018
+3B2A: CD 18 20      call play_sample_2018
 ; add one life for level completed
 3B2D: 3A 56 60      ld   a,(lives_6056)
 3B30: 3C            inc  a
@@ -7177,9 +7178,9 @@ read_player_controls_39fd:
 3B66: 23            inc  hl
 3B67: 10 FC         djnz $3B65
 3B69: 21 00 52      ld   hl,$5200
-3B6C: 22 40 61      ld   (unknown_pointer_6140),hl
+3B6C: 22 40 61      ld   (ay_sound_pointer_6140),hl
 3B6F: AF            xor  a
-3B70: 32 42 61      ld   (unknown_6142),a
+3B70: 32 42 61      ld   (ay_sound_start_6142),a
 3B73: 3E 01         ld   a,$01
 3B75: 32 74 62      ld   (is_intermission_6274),a
 3B78: CD 00 37      call play_intro_3700
@@ -7212,10 +7213,10 @@ check_remaining_bags_3B8C:
 3BAB: FE 05         cp   $05
 3BAD: D0            ret  nc
 3BAE: 21 94 5B      ld   hl,$5B94
-3BB1: 22 40 61      ld   (unknown_pointer_6140),hl
+3BB1: 22 40 61      ld   (ay_sound_pointer_6140),hl
 3BB4: 32 F4 61      ld   (unknown_61F4),a
 3BB7: AF            xor  a
-3BB8: 32 42 61      ld   (unknown_6142),a
+3BB8: 32 42 61      ld   (ay_sound_start_6142),a
 3BBB: C9            ret
 
 draw_elevator_cable_3bbc:
@@ -7478,14 +7479,14 @@ test_non_blocking_tiles_3c85:
 3DDE: B8            cp   b
 3DDF: C0            ret  nz
 3DE0: 21 4B 3F      ld   hl,$3F4B
-3DE3: CD 18 20      call copy_to_61bd_2018
+3DE3: CD 18 20      call play_sample_2018
 3DE6: AF            xor  a
 3DE7: 32 53 61      ld   (unknown_6153),a
 3DEA: C9            ret
 	;; test if can pick bag
 can_pick_bag_3DEB:
 3DEB: DD E5         push ix
-3DED: DD 2A 40 61   ld   ix,(unknown_pointer_6140)
+3DED: DD 2A 40 61   ld   ix,(ay_sound_pointer_6140)
 3DF1: DD 7E 03      ld   a,(ix+$03)
 3DF4: DD E1         pop  ix
 3DF6: FE FF         cp   $FF

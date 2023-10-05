@@ -101,8 +101,8 @@
 	.global	guard_direction_pointer_6095
 	.global	guard_2_not_moving_timeout_counter_6097
 	.global	unknown_609B
-	.global	unknown_pointer_6140
-	.global	unknown_6142
+	.global	ay_sound_pointer_6140
+	.global	ay_sound_start_6142
 	.global	unknown_6143
 	.global	unknown_6144
 	.global	unknown_6145
@@ -110,7 +110,7 @@
 	.global	unknown_6148
 	.global	unknown_6149
 	.global	unknown_6151
-	.global	unknown_6152
+	.global	wait_flag_6152
 	.global	unknown_6153
 	.global	unknown_6154
 	.global	unknown_6156
@@ -384,9 +384,9 @@ unknown_609B:
 bags_coordinates_609C:
 	ds.b	164
 	.align	2
-unknown_pointer_6140:
+ay_sound_pointer_6140:
 	ds.l	1
-unknown_6142:
+ay_sound_start_6142:
 	ds.b	1
 unknown_6143:
 	ds.b	1
@@ -403,7 +403,7 @@ unknown_6149:
 	ds.b	8
 unknown_6151:
 	ds.b	1
-unknown_6152:
+wait_flag_6152:
 	ds.b	1
 unknown_6153:
 	ds.b	1
