@@ -828,6 +828,7 @@ guard_unconditional_move_0614:
 0627: FE 00         cp   $00
 0629: 20 06         jr   nz,$0631
 062B: 21 39 3F      ld   hl,$3F39
+* guard walking sound
 062E: CD 18 20      call play_sample_2018
 0631: C1            pop  bc
 0632: AF            xor  a
