@@ -5,8 +5,7 @@
 - drop barrow sprite remains active on the top (screen 1 only)
 - pick pickaxe: ok on screen 1, disappears at once on screen 2 or
   even entering level 2
-- invincibility for wagon, elevator hit & guard (fall ok)
-- player walks out of the ladder too low: stuck in wall
+- screen 1: player walks out of the ladder too low: stuck in wall
 - lives redrawn all the time??? they flicker
 
 - test trainer infinite lives

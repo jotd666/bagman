@@ -371,6 +371,7 @@ _user:
 	and.b	#0x0F,d0
 	move.b	d0,start_level		| 0-15 => 1-16
 	
+
 	move.l	cheat_flags,d0
 	btst	#0,d0
 	sne		invincible_flag
@@ -1029,7 +1030,7 @@ osd_sound_start:
 	
 	
 	lsl.w	#3,d0
-	lea		sound_table_set_1,a0
+	lea		sound_table,a0
 
 	move.w	(a0,d0.w),d1	| sound type
 	beq.b	0f		| no sound

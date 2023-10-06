@@ -3425,13 +3425,13 @@ l_1775:
 	* plays "a moi le magot" sample
 	lea	game_mem+0x3F1B,a0                      	| [$1775: ld   hl,$3F1B]
 	jbsr	play_sample_2018                            	| [$1778: call $2018]
-	jbsr	can_pick_bag_3DEB                 	| [$177b: call can_pick_bag_3DEB]
-	jne	l_178a                             	| [$177e: jr   nz,$178A]
+*	jbsr	is_ay_sound_playing_3DEB                 	| [$177b: call is_ay_sound_playing_3DEB]
+*	jne	l_178a                             	| [$177e: jr   nz,$178A]
 	* plays "bag dropped in barrow" music
-	lea	game_mem+0x5B78,a0                      	| [$1780: ld   hl,$5B78]
-	move.l	a0,ay_sound_pointer_6140                 	| [$1783: ld   (ay_sound_pointer_6140),hl]
-	clr.b	d0                               	| [$1786: xor  a]
-	move.b	d0,ay_sound_start_6142                 	| [$1787: ld   (ay_sound_start_6142),a]
+	move.w	#REWARD_TUNE_SND,d0				| [$1780: ld   hl,$5B78]
+	jbsr	osd_sound_start					| [$1783: ld   (ay_sound_pointer_6140),hl]
+				| [$1786: xor  a]
+						| [$1787: ld   (ay_sound_start_6142),a]
 l_178a:
 	move.l	(sp)+,a2                        	| [$178a: pop  ix]
 	jbsr	osd_disable_vblank_interrupt |	jbsr	osd_disable_vblank_interrupt
@@ -3554,8 +3554,8 @@ l_186b:
 	move.b	(0x02,a2),d0                    	| [$1880: ld   a,(ix+$02)]
 	sub.b	#0x08,d0                         	| [$1883: sub  $08]
 	move.b	d0,(0x1e,a2)                    	| [$1885: ld   (ix+$1e),a]
-	jbsr	can_pick_bag_3DEB                 	| [$1888: call can_pick_bag_3DEB]
-	jne	l_1897                             	| [$188b: jr   nz,$1897]
+	*jbsr	is_ay_sound_playing_3DEB                 	| [$1888: call is_ay_sound_playing_3DEB]
+	*jne	l_1897                             	| [$188b: jr   nz,$1897]
 	lea	game_mem+0x5BA8,a0                      	| [$188d: ld   hl,$5BA8]
 	move.l	a0,ay_sound_pointer_6140                 	| [$1890: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1893: xor  a]
@@ -4538,6 +4538,8 @@ l_1e3f:
 	move.b	fall_height_604D,d0             	| [$1e3f: ld   a,(fall_height_604D)]
 	cmp.b	#0x12,d0                         	| [$1e42: cp   $12]
 	jcs	l_1e64                             	| [$1e44: jr   c,$1E64]
+	tst.b	invincible_flag
+	jne	l_1e64
 	move.b	#0x01,d0                        	| [$1e46: ld   a,$01]
 	move.b	d0,fatal_fall_height_reached_604E	| [$1e48: ld   (fatal_fall_height_reached_604E),a]
 	move.w	player_logical_address_6009,d6	| [$1e4b: ld   hl,(player_logical_address_6009)]
@@ -4589,8 +4591,8 @@ init_new_game_1E94:
 	move.b	unknown_6210,d0                 	| [$1e94: ld   a,(unknown_6210)]
 	cmp.b	#0x01,d0                         	| [$1e97: cp   $01]
 	jne	l_1eaa                             	| [$1e99: jr   nz,$1EAA]
-	jbsr	can_pick_bag_3DEB                 	| [$1e9b: call can_pick_bag_3DEB]
-	jne	l_1eaa                             	| [$1e9e: jr   nz,$1EAA]
+	*jbsr	is_ay_sound_playing_3DEB                 	| [$1e9b: call is_ay_sound_playing_3DEB]
+	*jne	l_1eaa                             	| [$1e9e: jr   nz,$1EAA]
 	lea	game_mem+0x5000,a0                      	| [$1ea0: ld   hl,$5000]
 	move.l	a0,ay_sound_pointer_6140                 	| [$1ea3: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$1ea6: xor  a]
@@ -4781,6 +4783,7 @@ l_1ff5:
 	jbsr	init_guard_directions_and_wagons_2957                            	| [$2012: call $2957]
 	move.b	#0x01,d0                        	| [$2015: ld   a,$01]
 	rts                                    	| [$2017: ret]
+
 play_sample_2018:
 	lea	unknown_61BD,a1                	| [$2018: ld   de,unknown_61BD]
 	moveq	#0x06,d1                        	| [$201b: ld   bc,$0006] 6
@@ -5773,10 +5776,10 @@ display_screen_3_265f:
 	move.b	d0,(a0)                         	| [$2747: ld   (hl),a]
 	jbsr	l_1e26                            	| [$2748: call $1E26]
 	jbsr	l_3110                            	| [$274b: call $3110]
-	jbsr	can_pick_bag_3DEB                 	| [$274e: call can_pick_bag_3DEB]
-	beq.b	0f
-	rts                                    	| [$2751: ret  nz]
-0:
+*	jbsr	is_ay_sound_playing_3DEB                 	| [$274e: call is_ay_sound_playing_3DEB]
+*	beq.b	0f
+*	rts                                    	| [$2751: ret  nz]
+*0:
 	lea	game_mem+0x5200,a0                      	| [$2752: ld   hl,$5200]
 	move.l	a0,ay_sound_pointer_6140                 	| [$2755: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$2758: xor  a]
@@ -5975,10 +5978,10 @@ display_maze_284c:
 	bne.b	0f
 	rts                                    	| [$2913: ret  z]
 0:
-	jbsr	can_pick_bag_3DEB                 	| [$2914: call can_pick_bag_3DEB]
-	beq.b	0f
-	rts                                    	| [$2917: ret  nz]
-0:
+*	jbsr	is_ay_sound_playing_3DEB                 	| [$2914: call is_ay_sound_playing_3DEB]
+*	beq.b	0f
+*	rts                                    	| [$2917: ret  nz]
+*0:
 	lea	game_mem+0x5000,a0                      	| [$2918: ld   hl,$5000]
 	move.l	a0,ay_sound_pointer_6140                 	| [$291b: ld   (ay_sound_pointer_6140),hl]
 	clr.b	d0                               	| [$291e: xor  a]
@@ -8633,10 +8636,13 @@ l_3997:
 	move.b	d0,number_of_credits_6000       	| [$39a7: ld   (number_of_credits_6000),a]
 	lea	unknown_61E4,a0                	| [$39aa: ld   hl,unknown_61E4]
 	subq.b	#2,(a0)                         	| [$39ad: dec  (hl)] * 2
-	lea		game_mem+0x5B68,a0                      	| [$39af: ld   hl,$5B68]
-	move.l	a0,ay_sound_pointer_6140         	| [$39b2: ld   (ay_sound_pointer_6140),hl]
-	clr.b	d0                               	| [$39b5: xor  a]
-	move.b	d0,ay_sound_start_6142                 	| [$39b6: ld   (ay_sound_start_6142),a]
+	
+	move.w	#CREDIT_SND,d0
+	jbsr	osd_sound_start
+											| [$39af: ld   hl,$5B68]
+									| [$39b2: ld   (ay_sound_pointer_6140),hl]
+									| [$39b5: xor  a]
+										| [$39b6: ld   (ay_sound_start_6142),a]
 	jbsr	l_39be                            	| [$39b9: call $39BE]
 	jra	l_3997                             	| [$39bc: jr   $3997]
 l_39be:
@@ -9024,14 +9030,6 @@ l_3dbe:
 	move.b	d0,unknown_6153                 	| [$3de7: ld   (unknown_6153),a]
 	rts                                    	| [$3dea: ret]
 
- * test if can pick bag
-can_pick_bag_3DEB:
-	move.l	a2,-(sp)                        	| [$3deb: push ix]
-	move.l	ay_sound_pointer_6140,a2             	| [$3ded: ld   ix,(ay_sound_pointer_6140)]
-	move.b	(0x03,a2),d0                    	| [$3df1: ld   a,(ix+$03)]
-	move.l	(sp)+,a2                        	| [$3df4: pop  ix]
-	cmp.b	#0xFF,d0                         	| [$3df6: cp   $FF]
-	rts                                    	| [$3df8: ret]
 
 * update sprites for player, wagons, elevator, pickaxe/barrow/dropped bag (not guards)
 update_all_sprites_3df9:
