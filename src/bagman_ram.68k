@@ -7,21 +7,17 @@
 	.global start_level
 	.global vb_ticks_count
 	.global highscores_need_saving
+	.global invincible_flag
 	.global infinite_lives_flag
+	.global infinite_time_flag
+	.global infinite_pickaxe_time_flag
+	.global last_played_sound_timer_table
+	.global	sound_timer
 	
 	.ifdef	__amiga__
 	
 	.ascii	"RAM_STRT"
 	.ifndef	RELEASE
-	* easier to debug game to have memory aligned on 0x10000 plus 0x8000
-	* so addresses MSB match real game
-	* (alignment is done on "amiga.68k" end of text section else it doesn't work)
-	* wastes up to 80k but worth it when developping the game
-	* for instance
-	* lea	lives_counter_p1_8814,a0       	| [ld   hl,lives_counter_p1_8814]
-    * disassembles in raw WinUAE disassembler to
-	* 0011b6ee 41fa d124                lea.l (pc,$d124) == $00118814,a0 ($8814 LSW matches!)
-	*
 
 	.endif
 	.else
@@ -58,6 +54,10 @@ high_score_beaten:
 invincible_flag:
 	.byte	0
 infinite_lives_flag:
+	.byte	0
+infinite_time_flag:
+	.byte	0
+infinite_pickaxe_time_flag:
 	.byte	0
 start_level:
 	.byte	0

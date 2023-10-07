@@ -73,6 +73,9 @@ used_cluts.update({k:range(0,16) for k in range(0,64)})
 
 used_cluts.update({k:[0] for k in range(0x1F4,0x1FC)})
 
+# breakable wall
+
+used_cluts.update({k:[0xF] for k in range(0x101,0x10B)})
 
 dump_tiles = True
 dump_sprites = True

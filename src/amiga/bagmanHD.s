@@ -38,6 +38,8 @@ _expmem
 _config
 	dc.b    "C1:X:invincible:0;"
 	dc.b    "C1:X:infinite lives:1;"
+	dc.b    "C1:X:infinite time:2;"
+	dc.b    "C1:X:infinite pickaxe time:3;"
 	dc.b    "C1:X:cheat keys:2;"
 	dc.b    "C4:L:difficulty:easy,medium,hard,hardest;"
 	dc.b    "C5:L:start lives:2,3,4,5;"

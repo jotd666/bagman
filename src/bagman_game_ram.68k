@@ -137,9 +137,9 @@
 	.global	holds_barrow_61C7
 	.global	unknown_61CA
 	.global	current_pickaxe_screen_params_61CC
-	.global	unknown_61D0
+	.global	struct_swap_buffer_61D0
 	.global	unknown_61D2
-	.global	unknown_61D3
+	.global	struct_swap_buffer_61D3
 	.global	pickaxe_timer_duration_61E0
 	.global	unknown_61E4
 	.global	unknown_61E5
@@ -471,11 +471,11 @@ current_pickaxe_screen_params_61CC:
 	ds.b	3
 has_pick_61CF:
 	ds.b	1
-unknown_61D0:
+struct_swap_buffer_61D0:
 	ds.b	2
 unknown_61D2:
 	ds.b	1
-unknown_61D3:
+struct_swap_buffer_61D3:
 	ds.b	13
 	.align	2
 pickaxe_timer_duration_61E0:

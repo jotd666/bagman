@@ -899,18 +899,18 @@ l_0522:
 l_0523:
 	move.w	d0,-(sp)                        	| [$0523: push af]
 	movem.w	d1/d2,-(sp)                    	| [$0524: push bc]
-	move.b	unknown_61F5,d0                 	| [$0525: ld   a,(unknown_61F5)]
+	tst.b	unknown_61F5                 	| [$0525: ld   a,(unknown_61F5)]
 	                         	| [$0528: cp   $00]
 	jne	l_0540                             	| [$052a: jr   nz,$0540]
-	move.b	has_pick_61CF,d0                	| [$052c: ld   a,(has_pick_61CF)]
+	tst.b	has_pick_61CF                	| [$052c: ld   a,(has_pick_61CF)]
 	                         	| [$052f: cp   $00]
 	jne	l_0540                             	| [$0531: jr   nz,$0540]
-	move.b	unknown_61F3,d0                 	| [$0533: ld   a,(unknown_61F3)]
+	tst.b	unknown_61F3                 	| [$0533: ld   a,(unknown_61F3)]
 	                         	| [$0536: cp   $00]
 	jne	l_0540                             	| [$0538: jr   nz,$0540]
 	* guard climb sound
 	move.w	#GUARD_CLIMB_SND,d0                      	| [$053a: ld   hl,$3F15]
-	**jbsr	start_a_sound                            	| [$053d: call $2018]
+	jbsr	start_a_sound                            	| [$053d: call $2018]
 l_0540:
 
 	movem.w	(sp)+,d1/d2                    	| [$0540: pop  bc]
@@ -2726,6 +2726,10 @@ handle_pick_hold_timer_113c:
 	* player not holding the pick, do nothing
 	rts                                    	| [$114f: ret]
 l_1150:
+	tst.b	infinite_pickaxe_time_flag
+	beq.b	0f
+	rts
+0:
 	* increase pick timer (16 bit)
 	addq.w	#1,d5                           	| [$1150: inc  hl]
 	move.w	d5,pickaxe_timer_duration_61E0                 	| [$1151: ld   (pickaxe_timer_duration_61E0),hl]
@@ -3200,7 +3204,7 @@ l_1564:
 l_1593:
 	jbsr	osd_disable_vblank_interrupt
 	move.b	#0x04,d1                        	| [$1594: ld   b,$04] max 4 picks per screen
-	lea	unknown_61D0,a3                	| [$1596: ld   iy,unknown_61D0]
+	lea	struct_swap_buffer_61D0,a3                	| [$1596: ld   iy,struct_swap_buffer_61D0]
 	move.b	holds_barrow_61C7,d0            	| [$159a: ld   a,(holds_barrow_61C7)]
 	cmp.b	#0x01,d0                         	| [$159d: cp   $01]
 	jeq	l_15cf                             	| [$159f: jp   z,$15CF]
@@ -3208,7 +3212,7 @@ l_1593:
 l_15a2:
 	movem.w	d1/d2,-(sp)                    	| [$15a2: push bc]
 
-	move.l	a3,-(sp)                        	| [$15a3: push iy]
+	movem.l	a3/a4,-(sp)                        	| [$15a3: push iy]
 	lea		has_pick_61CF,a4           	| [$15a5: ld   bc,has_pick_61CF] None
 	lea	current_pickaxe_screen_params_61CC,a3                	| [$15a8: ld   iy,current_pickaxe_screen_params_61CC]
 	move.b	#0x37,d0                        	| [$15ac: ld   a,$37]
@@ -3216,10 +3220,10 @@ l_15a2:
 	move.b	#0x20,d0                        	| [$15b1: ld   a,$20]
 	move.b	d0,(0x05,a3)                    	| [$15b3: ld   (iy+$05),a]
 	            	| [$15b6: ld   a,(io_read_shit_B800)]
-	move.b	#0xE4,d0                        	| [$15b9: ld   a,$E4]
-	move.b	d0,unknown_61D2                 	| [$15bb: ld   (unknown_61D2),a]
+	move.b	#0xE4,unknown_61D2                        	| [$15b9: ld   a,$E4]
+											| [$15bb: ld   (unknown_61D2),a]
 	jbsr	check_object_pickup_2137                            	| [$15be: call $2137]
-	move.l	(sp)+,a3                        	| [$15c1: pop  iy]
+	movem.l	(sp)+,a3/a4                        	| [$15c1: pop  iy]
 	addq.w	#3,a3                           	| [$15c3: inc  iy] * 3
 	jbsr	swap_3_bytes_22b7                            	| [$15c9: call $22B7]
 
@@ -3284,15 +3288,16 @@ l_1641:
     jbsr	osd_enable_vblank_interrupt
 	jbsr	compute_guard_speed_from_dipsw_2C4D	| [$1642: call compute_guard_speed_from_dipsw_2C4D]
 	jbsr	check_timer_3ba1                            	| [$1645: call $3BA1]
-	move.b	check_scenery_disabled_61ED,d0                 	| [$1648: ld   a,(check_scenery_disabled_61ED)]
+	tst.b	check_scenery_disabled_61ED                 	| [$1648: ld   a,(check_scenery_disabled_61ED)]
 	                         	| [$164b: cp   $00]
 	bne.b	0f
+	* permanently draw objects unless scenery is disabled
 	jbsr	draw_object_tiles_22dc                            	| [$164d: call z,$22DC]
 0:
 	jra	mainloop_1242                      	| [$1650: jp   mainloop_1242]
 
 l_1653:
-	move.b	check_scenery_disabled_61ED,d0                 	| [$1653: ld   a,(check_scenery_disabled_61ED)]
+	tst.b	check_scenery_disabled_61ED                 	| [$1653: ld   a,(check_scenery_disabled_61ED)]
 	                         	| [$1656: cp   $00]
 	beq.b	0f
 	rts                                    	| [$1658: ret  nz]
@@ -4991,7 +4996,7 @@ check_object_pickup_2137:
 0:
 	* also can't pick if already has object in hand
 	* rather release it
-	move.l	a4,0x208
+	
 	move.b	(a4),d0                         	| [$2143: ld   a,(bc)]
 	jbsr	exx                               	| [$2144: exx]
     tst.b	d0                     	| [$2145: cp   $00]
@@ -5067,7 +5072,6 @@ l_21a2:
 	move.b	#0x01,d0                        	| [$21a2: ld   a,$01]
 	bsr		exx
 	* sets object picked up flag to true (barrow or pick)
-	WPSET	0x200
 	move.b	d0,(a4)                         	| [$21a5: ld   (bc),a]
 	rts                                    	| [$21a6: ret]
 
@@ -5258,31 +5262,34 @@ l_227c:
 	jbsr	l_2605                            	| [$22b3: call $2605]
 	rts                                    	| [$22b6: ret]
 
+* < A3: array to swap contents with current_pickaxe_screen_params_61CC array, 3 bytes total
 swap_3_bytes_22b7:
-	movem.w	d1,-(sp)                    	| [$22b7: push bc]
+	                    	| [$22b7: push bc]
 
-	move.l	a3,-(sp)                        	| [$22b8: push iy]
+	movem.l	d1/a2/a3,-(sp)                        	| [$22b8: push iy]
 
-	move.l	a2,-(sp)                        	| [$22ba: push ix]
+												| [$22ba: push ix]
 	move.b	#0x03,d1                        	| [$22bc: ld   b,$03]
 	lea	current_pickaxe_screen_params_61CC,a2                	| [$22be: ld   ix,current_pickaxe_screen_params_61CC]
+	move.l	a2,0x200
 l_22c2:
 	move.b	(a2),d0                    	| [$22c2: ld   a,(ix+$00)]
-	exg	d0,d7                              	| [$22c5: ex   af,af']
- 	move.b	(a3),d0                    	| [$22c6: ld   a,(iy+$00)]
-	move.b	d0,(a2)+                    	| [$22c9: ld   (ix+$00),a]
-	exg	d0,d7                              	| [$22cc: ex   af,af']
+	                              	| [$22c5: ex   af,af']
+ 	move.b	(a3),(a2)+                    	| [$22c6: ld   a,(iy+$00)]
+	                   	| [$22c9: ld   (ix+$00),a]
+	                              	| [$22cc: ex   af,af']
 	move.b	d0,(a3)+                    	| [$22cd: ld   (iy+$00),a]
 	                           	| [$22d0: inc  ix]
 	                           	| [$22d2: inc  iy]
 	subq.b	#1,d1                           	| [...]
 	jne	l_22c2                             	| [$22d4: djnz $22C2]
-	move.l	(sp)+,a2                        	| [$22d6: pop  ix]
-	move.l	(sp)+,a3                        	| [$22d8: pop  iy]
-
-	movem.w	(sp)+,d1                    	| [$22da: pop  bc]
+	movem.l	(sp)+,d1/a2/a3                        	| [$22d6: pop  ix]
+											| [$22d8: pop  iy]
+					
+										| [$22da: pop  bc]
 	rts                                    	| [$22db: ret]
 
+* objects are redrawn permanently!
 draw_object_tiles_22dc:
 	* first, blue bag, then yellow bags
 	lea	bags_coordinates_609C,a2       	| [$22dc: ld   ix,bags_coordinates_609C]
@@ -5357,7 +5364,7 @@ l_2320:
 	jbsr	draw_object_tiles_3417                            	| [$234d: call $3417]
 l_2350:
 	move.b	#0x04,d1                        	| [$2350: ld   b,$04]
-	lea	unknown_61D3,a3                	| [$2352: ld   iy,unknown_61D3]
+	lea	struct_swap_buffer_61D3,a3                	| [$2352: ld   iy,struct_swap_buffer_61D3]
 	lea	current_pickaxe_screen_params_61CC,a1                	| [$2356: ld   de,current_pickaxe_screen_params_61CC]
 l_2359:
 	movem.w	d1/d2,-(sp)                    	| [$2359: push bc]
@@ -7895,6 +7902,10 @@ l_3536:
 	rts                                    	| [$353d: ret]
 
 decrease_timer_353e:
+	tst.b	infinite_time_flag
+	beq.b	0f
+	rts
+0:
 	lea	timer_high_prec_61E7,a0                	| [$353e: ld   hl,timer_high_prec_61E7]
 	move.b	(a0),d0                         	| [$3541: ld   a,(hl)]
 	moveq	#1,d7

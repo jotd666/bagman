@@ -43,23 +43,23 @@
 
 
 
-    .equ  CREDIT_SND,         0x00
-    .equ  GUARD_KILLED_SND,         0x01
-    .equ  PICKAXE_SND,         0x02
-    .equ  PLAYER_CLIMB_SND,         0x03
-    .equ  PLAYER_WALK_SND,         0x04
-    .equ  TAKE_BAG_SND,         0x05
-    .equ  REWARD_TUNE_SND,         0x06
-    .equ  PLAYER_KILLED_TUNE_SND,	0x07
-    .equ  PLAYER_KILLED_TALK_SND,	0x08
-    .equ  REWARD_TALK_SND,		0x09
-    .equ  FALL_IN_WAGON_SND, 		0xA
-    .equ  PLAYER_GRABS_HANDLE_SND, 	0xB
-    .equ  TIME_WARN_SND,			0xC
-    .equ  GUARD_CLIMB_SND,			0xD
-	.equ  GUARD_WALK_SND,			0xE
-	.equ  TUNE1_SND,			0xF
-	.equ  TUNE2_SND,			0x10
+	.equ	GUARD_KILLED_SND,                     0
+	.equ	PICKAXE_SND,                          1
+	.equ	PLAYER_CLIMB_SND,                     2
+	.equ	PLAYER_WALK_SND,                      3
+	.equ	PLAYER_KILLED_TALK_SND,               4
+	.equ	REWARD_TALK_SND,                      5
+	.equ	FALL_IN_WAGON_SND,                    6
+	.equ	PLAYER_GRABS_HANDLE_SND,              7
+	.equ	GUARD_CLIMB_SND,                      8
+	.equ	GUARD_WALK_SND,                       9
+	.equ	CREDIT_SND,                           10
+	.equ	TIME_WARN_SND,                        11
+	.equ	TAKE_BAG_SND,                         12
+	.equ	REWARD_TUNE_SND,                      13
+	.equ	PLAYER_KILLED_TUNE_SND,     		  14
+	.equ	TUNE1_SND,			                  15
+	.equ	TUNE2_SND,			                  16
 
 
 

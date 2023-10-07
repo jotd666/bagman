@@ -2666,7 +2666,7 @@ guard_1_sees_player_1560:
 1590: CD 37 21      call check_object_pickup_2137
 1593: F3            di
 1594: 06 04         ld   b,$04
-1596: FD 21 D0 61   ld   iy,unknown_61D0
+1596: FD 21 D0 61   ld   iy,struct_swap_buffer_61D0
 159A: 3A C7 61      ld   a,(holds_barrow_61C7)
 159D: FE 01         cp   $01
 159F: CA CF 15      jp   z,$15CF
@@ -4387,7 +4387,7 @@ draw_object_tiles_22dc:
 234B: 3E E4         ld   a,$E4
 234D: CD 17 34      call draw_object_tiles_3417
 2350: 06 04         ld   b,$04
-2352: FD 21 D3 61   ld   iy,unknown_61D3
+2352: FD 21 D3 61   ld   iy,struct_swap_buffer_61D3
 2356: 11 CC 61      ld   de,current_pickaxe_screen_params_61CC
 2359: C5            push bc
 235A: FD E5         push iy

@@ -235,7 +235,7 @@ _user:
 	move.l	(A0)+,D0	| CHEATKEYS/S
 	beq.b	2f
 	* cheat isn't used as long as no cheat key is used
-	or.l	#4,cheat_flags
+	or.l	#1<<4,cheat_flags
 2:
 	move.l	(A0)+,D0	| STARTLEVEL/S
 	beq.b	2f
@@ -377,6 +377,10 @@ _user:
 	sne		invincible_flag
 	btst	#1,d0
 	sne		infinite_lives_flag
+	btst	#2,d0
+	sne		infinite_time_flag
+	btst	#3,d0
+	sne		infinite_pickaxe_time_flag
 	
 	* we don't need extra joypad buttons, and that will save a few cycles
 	* because reading CD32 joypad is (relatively) costly. Usually it doesn't
@@ -1939,7 +1943,7 @@ handle_keyboard:
 
     bsr	toggle_pause
 0:
-	btst	#2,cheat_flags+3
+	btst	#4,cheat_flags+3
 	beq.b	10f
 	* cheat keys
 	cmp.b	#0x50,d0	| F1 key

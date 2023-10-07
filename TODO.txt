@@ -1,18 +1,28 @@
-- press 5 to insert coin works 1 time out of 2
-
-- guard seems hesitant to change direction
-- guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - pick pickaxe: ok on screen 1, wrong on screen 2 & 3
   lost at $235d (swap_3_bytes_22b7)
-- sometimes carried yellow bag becomes blue (sprite alloc??)
+  debug A2+3 1 => 0
+	lea	current_pickaxe_screen_params_61CC,a2                	| [$22be: ld   ix,current_pickaxe_screen_params_61CC]
+	move.l	a2,0x200
+l_22c2:
+
+- press 5 to insert coin works 1 time out of 2
+
+- screen 1/2: player/guard walks out of the ladder too low: stuck in wall
+- guard sometimes changes direction with opposite, should not happen (unless stuck)
+- guard seems hesitant to change direction
+- guard at level 3 maybe? doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
+- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed?): dump sprite state
 - breaking wall: no animated tiles displayed (not encoded in
   graphics!!) then can't pass though. Also pick sprite stays in the air???
-- screen 1/2: player walks out of the ladder too low: stuck in wall
 - lives redrawn all the time??? they flicker
-- music doesn't start
-- sound: add delay if same sound played more than once
+- sound: add delay if same sound played more than once: done but not very good
+- get rid of walk/climb sounds if music is playing
 
+- guard sometimes stop falling, then resume, sometimes fall twice as fast!
 - test trainer infinite lives
+- add infinite time / infinite pick time
+- add start score
+- add cheat keys: level complete, game over, +10000 points
 - highscore screen
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 
@@ -20,7 +30,7 @@
 
 - VA logo add dyn copperlist for title only
 - brown stripe on row 0?
-
+- fix CLI command line options
  
 maybe...:
 - try to cookie cut bags & pickaxes, avoid to destroy background
