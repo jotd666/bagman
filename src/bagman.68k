@@ -868,7 +868,7 @@ l_0523:
 	move.b	unknown_61F3,d0                 	| [$0533: ld   a,(unknown_61F3)]
 	                         	| [$0536: cp   $00]
 	jne	l_0540                             	| [$0538: jr   nz,$0540]
-	* which sound??
+	* guard climb sound
 	lea	  game_mem+0x3F15,a0                      	| [$053a: ld   hl,$3F15]
 	jbsr	play_sample_2018                            	| [$053d: call $2018]
 l_0540:
@@ -2012,6 +2012,7 @@ player_tries_to_move_laterally_0c36:
 	move.b	unknown_61F3,d0                 	| [$0c65: ld   a,(unknown_61F3)]
 	                         	| [$0c68: cp   $00]
 	jne	l_0c72                             	| [$0c6a: jr   nz,$0C72]
+	* player walk (right) sound
 	lea	  game_mem+0x3F33,a0                      	| [$0c6c: ld   hl,$3F33] [RAM]
 	jbsr	play_sample_2018                            	| [$0c6f: call $2018]
 l_0c72:
@@ -2059,6 +2060,7 @@ try_left_0c96:
 	move.b	unknown_61F3,d0                 	| [$0cc2: ld   a,(unknown_61F3)]
 	                         	| [$0cc5: cp   $00]
 	jne	l_0ccf                             	| [$0cc7: jr   nz,$0CCF]
+	* player walk (left) sound
 	lea	  game_mem+0x3F33,a0                      	| [$0cc9: ld   hl,$3F33]
 	jbsr	play_sample_2018                            	| [$0ccc: call $2018]
 l_0ccf:
@@ -2342,6 +2344,7 @@ l_0e60:
 	move.b	unknown_61F3,d0                 	| [$0e60: ld   a,(unknown_61F3)]
 	                         	| [$0e63: cp   $00]
 	jne	l_0e6d                             	| [$0e65: jr   nz,$0E6D]
+	* player climb sound
 	lea	game_mem+0x3F27,a0                      	| [$0e67: ld   hl,$3F27]
 	jbsr	play_sample_2018                            	| [$0e6a: call $2018]
 l_0e6d:
@@ -4788,13 +4791,8 @@ l_1ff5:
 	rts                                    	| [$2017: ret]
 
 play_sample_2018:
-	lea	unknown_61BD,a1                	| [$2018: ld   de,unknown_61BD]
-	moveq	#0x06,d1                        	| [$201b: ld   bc,$0006] 6
-	jbsr	ldir                              	| [$201e: ldir]
-	move.b	#0x01,unknown_61F3                        	| [$2020: ld   a,$01]
-	                 	| [$2022: ld   (unknown_61F3),a]
-	rts                                    	| [$2025: ret]
-
+	rts
+	
 start_new_life_2026:
 	lea	unknown_6144,a2                	| [$2026: ld   ix,unknown_6144]
 	clr.b	d0                               	| [$202a: ld   a,$00]
