@@ -172,7 +172,7 @@
 006A: 3A 6F 62      ld   a,(unknown_626F)
 006D: FE 01         cp   $01
 006F: CA 94 03      jp   z,$0394
-0072: 3A 10 62      ld   a,(unknown_6210)
+0072: 3A 10 62      ld   a,(must_play_music_6210)
 0075: FE 01         cp   $01
 0077: 20 22         jr   nz,$009B
 0079: 3A 54 60      ld   a,(gameplay_allowed_6054)
@@ -1953,7 +1953,7 @@ start_a_game_0ebc:
 0F11: 32 90 62      ld   (unknown_6290),a
 0F14: CD 91 35      call $3591
 0F17: 3E 01         ld   a,$01
-0F19: 32 10 62      ld   (unknown_6210),a
+0F19: 32 10 62      ld   (must_play_music_6210),a
 0F1C: CD 94 1E      call init_new_game_1E94
 0F1F: CD 57 29      call init_guard_directions_and_wagons_2957
 
@@ -2186,7 +2186,7 @@ set_previous_guard_y_255_10CB:
 10CD: FD 77 03      ld   (iy+$03),a
 10D0: C9            ret
 speech_management_10D1:
-10D1: 3A 10 62      ld   a,(unknown_6210)
+10D1: 3A 10 62      ld   a,(must_play_music_6210)
 10D4: FE 01         cp   $01
 10D6: C0            ret  nz
 10D7: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
@@ -2395,7 +2395,7 @@ mainloop_1242:
 12B5: 3A 53 60      ld   a,(unknown_6053)
 12B8: FE 01         cp   $01
 12BA: 20 54         jr   nz,$1310
-12BC: 3A 10 62      ld   a,(unknown_6210)
+12BC: 3A 10 62      ld   a,(must_play_music_6210)
 12BF: FE 01         cp   $01
 12C1: 28 4D         jr   z,$1310
 12C3: F3            di
@@ -2413,7 +2413,7 @@ mainloop_1242:
 12E2: 3A 54 60      ld   a,(gameplay_allowed_6054)
 12E5: FE 01         cp   $01
 12E7: CA 42 12      jp   z,mainloop_1242
-12EA: 3A 10 62      ld   a,(unknown_6210)
+12EA: 3A 10 62      ld   a,(must_play_music_6210)
 12ED: FE 01         cp   $01
 12EF: 28 1F         jr   z,$1310
 12F1: 3A 00 60      ld   a,(number_of_credits_6000)
@@ -3830,11 +3830,12 @@ display_player_ids_and_credit_1dec:
 1E93: C9            ret
 
 init_new_game_1E94:
-1E94: 3A 10 62      ld   a,(unknown_6210)
+1E94: 3A 10 62      ld   a,(must_play_music_6210)
 1E97: FE 01         cp   $01
 1E99: 20 0F         jr   nz,$1EAA
 1E9B: CD EB 3D      call can_pick_bag_3DEB
 1E9E: 20 0A         jr   nz,$1EAA
+* play first tune
 1EA0: 21 00 50      ld   hl,$5000
 1EA3: 22 40 61      ld   (ay_sound_pointer_6140),hl
 1EA6: AF            xor  a
@@ -4039,7 +4040,7 @@ memset_2054
 207D: 10 EC         djnz $206B
 207F: CD 03 2D      call $2D03
 2082: AF            xor  a
-2083: 32 10 62      ld   (unknown_6210),a
+2083: 32 10 62      ld   (must_play_music_6210),a
 2086: 3A 00 60      ld   a,(number_of_credits_6000)
 2089: FE 00         cp   $00
 208B: 20 3C         jr   nz,$20C9
@@ -4446,7 +4447,7 @@ draw_object_tiles_22dc:
 249C: 01 50 00      ld   bc,$0050
 249F: ED B0         ldir
 24A1: C3 1C 12      jp   $121C
-24A4: 3A 10 62      ld   a,(unknown_6210)
+24A4: 3A 10 62      ld   a,(must_play_music_6210)
 24A7: FE 01         cp   $01
 24A9: 20 3E         jr   nz,write_attribute_2_on_line_24E9
 24AB: 3A 6D 62      ld   a,(unknown_626D)
@@ -4780,6 +4781,7 @@ display_screen_3_265f:
 274B: CD 10 31      call $3110
 274E: CD EB 3D      call can_pick_bag_3DEB
 2751: C0            ret  nz
+* play second tune (screen 3)
 2752: 21 00 52      ld   hl,$5200
 2755: 22 40 61      ld   (ay_sound_pointer_6140),hl
 2758: AF            xor  a
@@ -4959,7 +4961,7 @@ display_maze_284c:
 2905: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2908: CD 26 1E      call $1E26
 290B: CD 10 31      call $3110
-290E: 3A 10 62      ld   a,(unknown_6210)
+290E: 3A 10 62      ld   a,(must_play_music_6210)
 2911: FE 00         cp   $00
 2913: C8            ret  z
 2914: CD EB 3D      call can_pick_bag_3DEB
@@ -5538,7 +5540,7 @@ compute_guard_speed_2C7C:
 2CD2: C9            ret
 
 
-2D03: 3A 10 62      ld   a,(unknown_6210)
+2D03: 3A 10 62      ld   a,(must_play_music_6210)
 2D06: FE 01         cp   $01
 2D08: C0            ret  nz
 2D09: FD 21 76 61   ld   iy,player_1_score_6176

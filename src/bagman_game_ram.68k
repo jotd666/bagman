@@ -164,7 +164,7 @@
 	.global	unknown_6205
 	.global	unknown_6208
 	.global	unknown_6209
-	.global	unknown_6210
+	.global	must_play_music_6210
 	.global	unknown_6211
 	.global	unknown_6212
 	.global	guard_struct_pointer_6215
@@ -531,7 +531,7 @@ unknown_6208:
 	ds.b	1
 unknown_6209:
 	ds.b	7
-unknown_6210:
+must_play_music_6210:
 	ds.b	1
 unknown_6211:
 	ds.b	1

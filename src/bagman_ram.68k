@@ -47,12 +47,14 @@ ATTRIBUTE_RAM:						| $8400
 
 	.align	2
 	
-	
+last_played_sound_timer_table:
+	ds.w	20
+sound_timer:
+	.word	0
 vbl_sync_counter_start_screen:
 	.word	0
 high_score_beaten:
 	.word	0
-
 invincible_flag:
 	.byte	0
 infinite_lives_flag:

@@ -4,11 +4,13 @@
 - guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - pick pickaxe: ok on screen 1, wrong on screen 2 & 3
   lost at $235d (swap_3_bytes_22b7)
-- breaking wall: no animated tiles displayed (probably not encoded in
+- sometimes carried yellow bag becomes blue (sprite alloc??)
+- breaking wall: no animated tiles displayed (not encoded in
   graphics!!) then can't pass though. Also pick sprite stays in the air???
-- screen 1: player walks out of the ladder too low: stuck in wall
+- screen 1/2: player walks out of the ladder too low: stuck in wall
 - lives redrawn all the time??? they flicker
-
+- music doesn't start
+- sound: add delay if same sound played more than once
 
 - test trainer infinite lives
 - highscore screen
@@ -19,13 +21,7 @@
 - VA logo add dyn copperlist for title only
 - brown stripe on row 0?
 
-
-- re-record all sounds & samples cleanly
-  samples: turn off ay handling, turn off steps
-  ay: turn off samples
-  
-- find where music is played? (on switch screens & sometimes on game start!)
-
+ 
 maybe...:
 - try to cookie cut bags & pickaxes, avoid to destroy background
 - memory optim: fixed number of bitmap repeats for sprites:

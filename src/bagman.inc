@@ -50,20 +50,17 @@
     .equ  PLAYER_WALK_SND,         0x04
     .equ  TAKE_BAG_SND,         0x05
     .equ  REWARD_TUNE_SND,         0x06
-	
-    .equ  INTERMISSION_MUSIC_SND,         0x07
-    .equ  IN_GAME_MUSIC_SND,         0x08
-    .equ  HISCORE_MUSIC_SND,         0x09
-    .equ  IN_GAME_MUSIC_FAST_SND,         0x0A
-    .equ  IN_GAME_MUSIC_FASTER_SND,         0x0B
-    .equ  SNOBEE_EATEN_SND,         0xC
-    .equ  SNOBEE_CHICKEN_SND,         0xD
-    .equ  SNOBEE_HATCHING_SND,         0xE
-    .equ  SNOBEE_CRUSHED_SND,         0xF
-    .equ  SNOBEE_STUNNED_SND,         0x10
-    .equ  DIAMONDS_BONUS_SND,         0x11
-    .equ  EXTRA_LIFE_SND,         0x12
-    .equ  BLOCK_BROKEN_SND,         0x13
+    .equ  PLAYER_KILLED_TUNE_SND,	0x07
+    .equ  PLAYER_KILLED_TALK_SND,	0x08
+    .equ  REWARD_TALK_SND,		0x09
+    .equ  FALL_IN_WAGON_SND, 		0xA
+    .equ  PLAYER_GRABS_HANDLE_SND, 	0xB
+    .equ  TIME_WARN_SND,			0xC
+    .equ  GUARD_CLIMB_SND,			0xD
+	.equ  GUARD_WALK_SND,			0xE
+	.equ  TUNE1_SND,			0xF
+	.equ  TUNE2_SND,			0x10
+
 
 
     
