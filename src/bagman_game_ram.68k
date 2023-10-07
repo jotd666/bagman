@@ -201,8 +201,8 @@
 	.global	object_held_struct_659C
 	.global	unknown_659D
 	.global	unknown_659E
-	.global	unknown_659F
-	.global	sprite_shadow_ram_65A0
+	.global	sprite_object_y_659F
+	.global	barrow_sprite_shadow_ram_65A0
 	.global	unknown_65A3
 	.global	elevator_shadow_sprite_65A4
 	.global	unknown_65A6
@@ -634,9 +634,9 @@ unknown_659D:
 	ds.b	1
 unknown_659E:
 	ds.b	1
-unknown_659F:
+sprite_object_y_659F:
 	ds.b	1
-sprite_shadow_ram_65A0:
+barrow_sprite_shadow_ram_65A0:
 	ds.b	3
 unknown_65A3:
 	ds.b	1

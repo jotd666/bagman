@@ -288,7 +288,7 @@ l_0067:
 l_009b:
 										| [$009b: ld   a,(watchdog_reset_B800)] watchdog
 	                      	| [$009e: ld   de,$9800]
-	lea	sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,sprite_shadow_ram_65A0]
+	lea	barrow_sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,barrow_sprite_shadow_ram_65A0]
 	jbsr	osd_update_sprites						| [$00a4: ld   bc,$0020] 32
 								
 										| [$00a7: ldir]
@@ -646,7 +646,7 @@ l_03b1:
 	move.b	player_screen_600D,d0           	| [$03b7: ld   a,(player_screen_600D)]
 	cmp.b	#0x01,d0                         	| [$03ba: cp   $01]
 	jne	l_03cb                             	| [$03bc: jr   nz,$03CB]
-	move.b	unknown_659F,d0                 	| [$03be: ld   a,(unknown_659F)]
+	move.b	sprite_object_y_659F,d0                 	| [$03be: ld   a,(sprite_object_y_659F)]
 	cmp.b	#0x80,d0                         	| [$03c1: cp   $80]
 	jcs	l_03cb                             	| [$03c3: jr   c,$03CB]
 	move.b	unknown_659E,d0                 	| [$03c5: ld   a,(unknown_659E)]
@@ -674,9 +674,9 @@ l_03f4:
 	bne.b	0f
 	rts                                    	| [$03f9: ret  z]
 0:
-	move.b	unknown_659F,d0                 	| [$03fa: ld   a,(unknown_659F)]
+	move.b	sprite_object_y_659F,d0                 	| [$03fa: ld   a,(sprite_object_y_659F)]
 	addq.b	#2,d0                           	| [$03fd: inc  a] * 2
-	move.b	d0,unknown_659F                 	| [$03ff: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$03ff: ld   (sprite_object_y_659F),a]
 	rts                                    	| [$0402: ret]
 
 l_0403:
@@ -2523,7 +2523,7 @@ handle_player_object_carry_1010:
 0:
 	move.b	player_y_6583,d0                	| [$1016: ld   a,(player_y_6583)]
 	subq.b	#0x02,d0                        	| [$1019: sub  $02]
-	move.b	d0,unknown_659F                 	| [$101b: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$101b: ld   (sprite_object_y_659F),a]
 	move.b	player_struct_6580,d0           	| [$101e: ld   a,(player_struct_6580)]
 	and.b	#0x7F,d0                         	| [$1021: and  $7F]
 	cmp.b	#0x12,d0                         	| [$1023: cp   $12]
@@ -2566,7 +2566,7 @@ l_104b:
 	move.b	#0x38,d1                        	| [$1067: ld   b,$38]
 l_1069:
 	move.b	player_y_6583,d0                	| [$1069: ld   a,(player_y_6583)]
-	move.b	d0,unknown_659F                 	| [$106c: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$106c: ld   (sprite_object_y_659F),a]
 	move.b	player_struct_6580,d0           	| [$106f: ld   a,(player_struct_6580)]
 	and.b	#0x7F,d0                         	| [$1072: and  $7F]
 	cmp.b	#0x12,d0                         	| [$1074: cp   $12]
@@ -2641,11 +2641,11 @@ l_10ff:
 	cmp.b	#0x01,d0                         	| [$1110: cp   $01]
 	jeq	l_1119                             	| [$1112: jr   z,$1119]
 	move.b	#0x10,d0                        	| [$1114: ld   a,$10]
-	move.b	d0,unknown_659F                 	| [$1116: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$1116: ld   (sprite_object_y_659F),a]
 l_1119:
 	move.b	player_y_6583,d0                	| [$1119: ld   a,(player_y_6583)]
 	move.b	d0,d1                           	| [$111c: ld   b,a]
-	move.b	unknown_659F,d0                 	| [$111d: ld   a,(unknown_659F)]
+	move.b	sprite_object_y_659F,d0                 	| [$111d: ld   a,(sprite_object_y_659F)]
 	cmp.b	d1,d0                            	| [$1120: cp   b]
 	bne.b	0f
 	rts                                    	| [$1121: ret  z]
@@ -2668,7 +2668,7 @@ l_1119:
 	rts                                    	| [$113b: ret]
 	
 handle_pick_hold_timer_113c:
-	move.b	has_pick_61CF,d0                	| [$113c: ld   a,(has_pick_61CF)]
+	tst.b	has_pick_61CF                	| [$113c: ld   a,(has_pick_61CF)]
 	                         	| [$113f: cp   $00]
 	bne.b	0f
 	rts                                    	| [$1141: ret  z]
@@ -2680,8 +2680,10 @@ handle_pick_hold_timer_113c:
 												| [$114a: ld   a,h]
 												| [$114b: cp   $00]
 	jne	l_1150                             	| [$114d: jr   nz,$1150]
+	* player not holding the pick, do nothing
 	rts                                    	| [$114f: ret]
 l_1150:
+	* increase pick timer (16 bit)
 	addq.w	#1,d5                           	| [$1150: inc  hl]
 	move.w	d5,pickaxe_timer_duration_61E0                 	| [$1151: ld   (pickaxe_timer_duration_61E0),hl]
 	cmp.w	#0x01FF,d5                      	| [$1154: ld   de,$01FF]
@@ -2689,14 +2691,15 @@ l_1150:
 	beq.b	0f
 	rts                                    	| [$1159: ret  nz]
 0:
-	* lose the pickaxe
+	* timeout: lose the pickaxe
 												| [$115a: ld   hl,$0000] 0
+	* reset pickaxe timer properly (not only LSB)
 	clr.w	pickaxe_timer_duration_61E0                 	| [$115d: ld   (pickaxe_timer_duration_61E0),hl]
-	clr.b	d0                               	| [$1160: ld   a,$00]
+	                               	| [$1160: ld   a,$00]
 	lea	current_pickaxe_screen_params_61CC,a2                	| [$1162: ld   ix,current_pickaxe_screen_params_61CC]
-	move.b	d0,(0x03,a2)                    	| [$1166: ld   (ix+$03),a]
-	st.b	d0                                	| [$1169: ld   a,$FF]
-	move.b	d0,unknown_659F                 	| [$116b: ld   (unknown_659F),a]
+	clr.b	(0x03,a2)                    	| [$1166: ld   (ix+$03),a]  lose coord
+	                                	| [$1169: ld   a,$FF]
+	st.b	sprite_object_y_659F                 	| [$116b: ld   (sprite_object_y_659F),a] becomes invisible
 	rts                                    	| [$116e: ret]
 
 guard_1_walk_movement_116F:
@@ -3285,10 +3288,10 @@ l_1653:
 	
 * < D6 screen address
 l_1683:
-	move.b	bag_sliding_615E,d0                 	| [$1683: ld   a,(bag_sliding_615E)]
+	tst.b	bag_sliding_615E                 	| [$1683: ld   a,(bag_sliding_615E)]
 										| [$1686: cp   $00]
 	jne	l_1690                             	| [$1688: jr   nz,$1690]
-	move.b	bag_falling_6159,d0                 	| [$168a: ld   a,(bag_falling_6159)]
+	tst.b	bag_falling_6159                 	| [$168a: ld   a,(bag_falling_6159)]
 	                         	| [$168d: cp   $00]
 	bne.b	0f
 	rts                                    	| [$168f: ret  z]
@@ -4945,7 +4948,7 @@ check_object_pickup_2137:
 0:
 	* also can't pick if already has object in hand
 	* rather release it
-	
+	move.l	a4,0x208
 	move.b	(a4),d0                         	| [$2143: ld   a,(bc)]
 	jbsr	exx                               	| [$2144: exx]
     tst.b	d0                     	| [$2145: cp   $00]
@@ -5009,12 +5012,19 @@ pick_up_object_2176:
 	move.b	(0x04,a3),d0                    	| [$2196: ld   a,(iy+$04)]
 	cmp.b	#0x37,d0                         	| [$2199: cp   $37]
 	jne	l_21a2                             	| [$219b: jr   nz,$21A2]
+	* resets the LSB of pickaxe timer
+	* which means that if timer gets past 0x100 once during a life
+	* it's not reset (all picks will now only last half the time
+	* until a life is lost!)
+	* not sure if it's a bug or on purpose...
 	move.b	#0x01,d0                        	| [$219d: ld   a,$01]
-	move.b	d0,(0x14,a3)                    	| [$219f: ld   (iy+$14),a]
+	* we need to change offset as this counter is now big endian
+	move.b	d0,(0x14+1,a3)                    	| [$219f: ld   (iy+$14),a]
 l_21a2:
 	move.b	#0x01,d0                        	| [$21a2: ld   a,$01]
 	bsr		exx
 	* sets object picked up flag to true (barrow or pick)
+	WPSET	0x200
 	move.b	d0,(a4)                         	| [$21a5: ld   (bc),a]
 	rts                                    	| [$21a6: ret]
 
@@ -5038,7 +5048,6 @@ l_21a7:
 0:
 
 drop_object_21ba:
-	WPSET	0x200
 	
 	lea	object_held_struct_659C,a2                	| [$21ba: ld   ix,object_held_struct_659C]
 	move.b	player_screen_600D,d0           	| [$21be: ld   a,(player_screen_600D)]
@@ -5117,8 +5126,8 @@ l_2216:
 	                              	| [$2218: ex   af,af']
 l_2219:
 	* mark as object released
-	clr.b	d0                               	| [$2219: xor  a]
-	move.b	d0,(a4)                         	| [$221a: ld   (bc),a]
+	                               	| [$2219: xor  a]
+	clr.b	(a4)                         	| [$221a: ld   (bc),a]
 	LOAD_AX_BE_WORD_DY	a3,d6
 											| [$221e: ld   h,(iy+$01)]
 						
@@ -5127,7 +5136,7 @@ l_2219:
 	* object is dropped: draw object as tiles again
 	jbsr	draw_object_tiles_3417                            	| [$2224: call $3417]
 	st.b	d0                                	| [$2227: ld   a,$FF]
-	move.b	d0,unknown_659F                 	| [$2229: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$2229: ld   (sprite_object_y_659F),a]
 	rts                                    	| [$222c: ret]
 
 * < D0 character screen
@@ -5207,7 +5216,7 @@ l_227c:
 	rts                                    	| [$22b6: ret]
 
 swap_3_bytes_22b7:
-	movem.w	d1/d2,-(sp)                    	| [$22b7: push bc]
+	movem.w	d1,-(sp)                    	| [$22b7: push bc]
 
 	move.l	a3,-(sp)                        	| [$22b8: push iy]
 
@@ -5228,7 +5237,7 @@ l_22c2:
 	move.l	(sp)+,a2                        	| [$22d6: pop  ix]
 	move.l	(sp)+,a3                        	| [$22d8: pop  iy]
 
-	movem.w	(sp)+,d1/d2                    	| [$22da: pop  bc]
+	movem.w	(sp)+,d1                    	| [$22da: pop  bc]
 	rts                                    	| [$22db: ret]
 
 draw_object_tiles_22dc:
@@ -5316,12 +5325,13 @@ l_235c:
 	move.l	a1,-(sp)                        	| [$235c: push de]
 	jbsr	swap_3_bytes_22b7                           	| [$235d: call $22B7]
 	* decode screen address (now big endian, we changed the ROM source)
-	move.b	(a1)+,d6                         	| [$2360: ld   a,(de)]
+	LOAD_AX_BE_WORD_DY	a1,d6
+										| [$2360: ld   a,(de)]
 										| [$2361: ld   l,a]
 	                           	| [$2362: inc  de]
-	lsl.w	#8,d6
-	move.b	(a1),d6    	| screen address, can be 0 when holding pick
-	subq.w	#1,a1                           	| [$2365: dec  de]
+							
+									| screen address, can be 0 when holding pick
+										| [$2365: dec  de]
 
 	move.b	player_screen_600D,d0           	| [$2366: ld   a,(player_screen_600D)]
 	move.l	(sp),a3                        	| [$2369: pop  iy]
@@ -5363,9 +5373,6 @@ l_2398:
 	subq.b	#1,d1                           	| [...]
 	jne	l_2359                             	| [$2398: djnz $2359]
 	rts                                    	| [$239a: ret]
-	subq.b	#1,d1                           	| [...]
-	jne	l_235c                             	| [$239b: djnz $235C]
-	rts                                    	| [$239d: ret]
 
 
 l_2480:
@@ -7202,7 +7209,7 @@ l_313d:
 	move.w	d0,pickaxe_timer_duration_61E0  	| [$3145: ld   (pickaxe_timer_duration_61E0),a]
 												| [$3148: ld   (unknown_61E1),a]
 	st.b	d0                                	| [$314b: ld   a,$FF]
-	move.b	d0,unknown_659F                 	| [$314d: ld   (unknown_659F),a]
+	move.b	d0,sprite_object_y_659F                 	| [$314d: ld   (sprite_object_y_659F),a]
 	rts                                    	| [$3150: ret]
 	
 draw_bag_3151:
@@ -7560,9 +7567,9 @@ l_3374:
 	move.b	bag_falling_6159,d0                 	| [$3380: ld   a,(bag_falling_6159)]
 	                         	| [$3383: cp   $00]
 	jeq	l_3393                             	| [$3385: jr   z,$3393]
-	move.b	unknown_659F,d0                 	| [$3387: ld   a,(unknown_659F)]
-	addq.b	#1,d0                           	| [$338a: inc  a]
-	move.b	d0,unknown_659F                 	| [$338b: ld   (unknown_659F),a]
+	addq.b	#1,sprite_object_y_659F                 	| [$3387: ld   a,(sprite_object_y_659F)]
+											| [$338a: inc  a]
+										| [$338b: ld   (sprite_object_y_659F),a]
 	jbsr	l_1683                            	| [$338e: call $1683]
 	jra	l_3374                             	| [$3391: jr   $3374]
 l_3393:
@@ -7675,24 +7682,24 @@ draw_object_tiles_3417:
 	cmp.b	#0xD0,d0                         	| [$3421: cp   $D0]
 	movem.w	(sp)+,d0                        	| [$3425: pop  af]
 	jeq	l_342c                             	| [$3423: jr   z,$342B]
-	jbsr	l_3441                            	| [$3426: call $3441]
+	jbsr	write_next_object_tile_3441                            	| [$3426: call $3441]
 											| [$3429: jr   $342C]			
 											| [$342b: pop  af]
 l_342c:
 	addq.w	#1,d6                           	| [$342c: inc  hl]
 	addq.b	#1,d0                           	| [$342d: inc  a]
-	jbsr	l_3441                            	| [$342e: call $3441]
+	jbsr	write_next_object_tile_3441                            	| [$342e: call $3441]
 	                    	| [$3431: push de]
 	                     	| [$3432: ld   de,$001F] 31
 	add.w	#0x1F,d6                            	| [$3435: add  hl,de]
 	                    	| [$3436: pop  de]
 	addq.b	#1,d0                           	| [$3437: inc  a]
-	jbsr	l_3441                            	| [$3438: call $3441]
+	jbsr	write_next_object_tile_3441                            	| [$3438: call $3441]
 	addq.w	#1,d6                           	| [$343b: inc  hl]
 	addq.b	#1,d0                           	| [$343c: inc  a]
-	jbsr	l_3441                            	| [$343d: call $3441]
+	jbsr	write_next_object_tile_3441                            	| [$343d: call $3441]
 	rts                                    	| [$3440: ret]
-l_3441:
+write_next_object_tile_3441:
 	jbsr	osd_w_videoram                         	| [$3441: ld   (hl),a]
 
 	move.w	d6,-(sp)                        	| [$3442: push hl]
@@ -9050,7 +9057,7 @@ update_all_sprites_3df9:
 	lea	unknown_65B4,a3                	| [$3e2c: ld   iy,unknown_65B4]
 	jbsr	update_sprite_data_1001           	| [$3e30: call update_sprite_data_1001]
 	lea	object_held_struct_659C,a2                	| [$3e33: ld   ix,object_held_struct_659C]
-	lea	sprite_shadow_ram_65A0,a3                	| [$3e37: ld   iy,sprite_shadow_ram_65A0]
+	lea	barrow_sprite_shadow_ram_65A0,a3                	| [$3e37: ld   iy,barrow_sprite_shadow_ram_65A0]
 	jbsr	update_sprite_data_1001           	| [$3e3b: call update_sprite_data_1001]
 	clr.b	d0                               	| [$3e3e: xor  a]
 	move.w	#0x985F,d6                       	| [$3e3f: ld   ($985F),a]

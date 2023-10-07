@@ -192,7 +192,7 @@
 009B: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 * update sprite shadow ram
 009E: 11 00 98      ld   de,$9800
-00A1: 21 A0 65      ld   hl,sprite_shadow_ram_65A0
+00A1: 21 A0 65      ld   hl,barrow_sprite_shadow_ram_65A0
 00A4: 01 20 00      ld   bc,$0020
 00A7: ED B0         ldir
 00A9: CD A4 34      call log_inserted_coins_34A4
@@ -501,7 +501,7 @@
 03B7: 3A 0D 60      ld   a,(player_screen_600D)
 03BA: FE 01         cp   $01
 03BC: 20 0D         jr   nz,$03CB
-03BE: 3A 9F 65      ld   a,(unknown_659F)
+03BE: 3A 9F 65      ld   a,(sprite_object_y_659F)
 03C1: FE 80         cp   $80
 03C3: 38 06         jr   c,$03CB
 03C5: 3A 9E 65      ld   a,(unknown_659E)
@@ -524,10 +524,10 @@
 03F4: 3A 59 61      ld   a,(bag_falling_6159)
 03F7: FE 00         cp   $00
 03F9: C8            ret  z
-03FA: 3A 9F 65      ld   a,(unknown_659F)
+03FA: 3A 9F 65      ld   a,(sprite_object_y_659F)
 03FD: 3C            inc  a
 03FE: 3C            inc  a
-03FF: 32 9F 65      ld   (unknown_659F),a
+03FF: 32 9F 65      ld   (sprite_object_y_659F),a
 0402: C9            ret
 0403: FD 7E 00      ld   a,(iy+$00)
 0406: FE 00         cp   $00
@@ -2094,7 +2094,7 @@ handle_player_object_carry_1010:
 1015: C8            ret  z
 1016: 3A 83 65      ld   a,(player_y_6583)
 1019: D6 02         sub  $02
-101B: 32 9F 65      ld   (unknown_659F),a
+101B: 32 9F 65      ld   (sprite_object_y_659F),a
 101E: 3A 80 65      ld   a,(player_struct_6580)
 1021: E6 7F         and  $7F
 1023: FE 12         cp   $12
@@ -2130,7 +2130,7 @@ handle_player_object_carry_1010:
 1065: 28 02         jr   z,$1069
 1067: 06 38         ld   b,$38
 1069: 3A 83 65      ld   a,(player_y_6583)
-106C: 32 9F 65      ld   (unknown_659F),a
+106C: 32 9F 65      ld   (sprite_object_y_659F),a
 106F: 3A 80 65      ld   a,(player_struct_6580)
 1072: E6 7F         and  $7F
 1074: FE 12         cp   $12
@@ -2217,10 +2217,10 @@ speech_management_10D1:
 1110: FE 01         cp   $01
 1112: 28 05         jr   z,$1119
 1114: 3E 10         ld   a,$10
-1116: 32 9F 65      ld   (unknown_659F),a
+1116: 32 9F 65      ld   (sprite_object_y_659F),a
 1119: 3A 83 65      ld   a,(player_y_6583)
 111C: 47            ld   b,a
-111D: 3A 9F 65      ld   a,(unknown_659F)
+111D: 3A 9F 65      ld   a,(sprite_object_y_659F)
 1120: B8            cp   b
 1121: C8            ret  z
 1122: C6 01         add  a,$01
@@ -2260,7 +2260,7 @@ handle_pick_hold_timer_113c:
 1162: DD 21 CC 61   ld   ix,current_pickaxe_screen_params_61CC
 1166: DD 77 03      ld   (ix+$03),a
 1169: 3E FF         ld   a,$FF
-116B: 32 9F 65      ld   (unknown_659F),a
+116B: 32 9F 65      ld   (sprite_object_y_659F),a
 116E: C9            ret
 
 guard_1_walk_movement_116F:
@@ -4160,6 +4160,13 @@ pick_up_object_2176:
 2196: FD 7E 04      ld   a,(iy+$04)
 2199: FE 37         cp   $37
 219B: 20 05         jr   nz,$21A2
+; resets the LSB of pickaxe timer
+; which means that if timer gets past 0x100 once during a life
+; or until a pick is lost (not dropped)
+; it's not reset (all picks will now only last half the time
+; until a life is lost or the pick "times out"!)
+;
+; not sure if it's a bug or on purpose...
 219D: 3E 01         ld   a,$01
 219F: FD 77 14      ld   (iy+$14),a
 21A2: 3E 01         ld   a,$01
@@ -4243,7 +4250,7 @@ drop_object_21ba:
 2221: FD 7E 06      ld   a,(iy+$06)
 2224: CD 17 34      call draw_object_tiles_3417
 2227: 3E FF         ld   a,$FF
-2229: 32 9F 65      ld   (unknown_659F),a
+2229: 32 9F 65      ld   (sprite_object_y_659F),a
 222C: C9            ret
 convert_logical_to_screen_address_222d:
 222D: FE 01         cp   $01
@@ -4422,6 +4429,7 @@ draw_object_tiles_22dc:
 2396: FD 23         inc  iy
 2398: 10 BF         djnz $2359
 239A: C9            ret
+* not reached
 239B: 10 BF         djnz $235C
 239D: C9            ret
 
@@ -6050,7 +6058,7 @@ display_text_30F9:
 3145: 32 E0 61      ld   (pickaxe_timer_duration_61E0),a
 3148: 32 E1 61      ld   (unknown_61E1),a
 314B: 3E FF         ld   a,$FF
-314D: 32 9F 65      ld   (unknown_659F),a
+314D: 32 9F 65      ld   (sprite_object_y_659F),a
 3150: C9            ret
 
 draw_bag_3151:
@@ -6324,9 +6332,9 @@ reset_guard_position_31DF:
 3380: 3A 59 61      ld   a,(bag_falling_6159)
 3383: FE 00         cp   $00
 3385: 28 0C         jr   z,$3393
-3387: 3A 9F 65      ld   a,(unknown_659F)
+3387: 3A 9F 65      ld   a,(sprite_object_y_659F)
 338A: 3C            inc  a
-338B: 32 9F 65      ld   (unknown_659F),a
+338B: 32 9F 65      ld   (sprite_object_y_659F),a
 338E: CD 83 16      call $1683
 3391: 18 E1         jr   $3374
 3393: 3A 3B 60      ld   a,(guard_1_in_elevator_603B)
@@ -7371,7 +7379,7 @@ test_non_blocking_tiles_3c85:
 3CC8: DD 77 01      ld   (ix+$01),a
 3CCB: DD 77 03      ld   (ix+$03),a
 3CCE: 3E FF         ld   a,$FF
-3CD0: 32 9F 65      ld   (unknown_659F),a
+3CD0: 32 9F 65      ld   (sprite_object_y_659F),a
 3CD3: C9            ret
 3CD4: CD 75 55      call update_guard_2_screen_address_from_xy_5575
 3CD7: CD 7A 3D      call $3D7A
@@ -7511,7 +7519,7 @@ update_all_sprites_3df9:
 3E2C: FD 21 B4 65   ld   iy,unknown_65B4
 3E30: CD 01 10      call update_sprite_data_1001
 3E33: DD 21 9C 65   ld   ix,object_held_struct_659C
-3E37: FD 21 A0 65   ld   iy,sprite_shadow_ram_65A0
+3E37: FD 21 A0 65   ld   iy,barrow_sprite_shadow_ram_65A0
 3E3B: CD 01 10      call update_sprite_data_1001
 3E3E: AF            xor  a
 3E3F: 32 5F 98      ld   ($985F),a

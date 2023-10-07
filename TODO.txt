@@ -2,11 +2,13 @@
 
 - guard seems hesitant to change direction
 - guard at level 3 probably doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
-- drop barrow sprite remains active on the top (screen 1 only)
-- pick pickaxe: ok on screen 1, disappears at once on screen 2 or
-  even entering level 2
+- pick pickaxe: ok on screen 1, wrong on screen 2 & 3
+  lost at $235d (swap_3_bytes_22b7)
+- breaking wall: no animated tiles displayed (probably not encoded in
+  graphics!!) then can't pass though. Also pick sprite stays in the air???
 - screen 1: player walks out of the ladder too low: stuck in wall
 - lives redrawn all the time??? they flicker
+
 
 - test trainer infinite lives
 - highscore screen

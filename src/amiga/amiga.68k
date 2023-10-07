@@ -752,6 +752,7 @@ osd_update_sprites:
 	move.b	(1,a0),d3
 	beq.b	2f
 	move.b	(3,a0),d1  | sprite Y
+	beq.b	2f			| Y set to 0: not shown
 	cmp.b	#255,d1
 	beq.b	2f			| Y set to 255: not shown	
 	move.b	(2,a0),d0  | sprite X
