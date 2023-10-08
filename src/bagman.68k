@@ -5282,7 +5282,6 @@ swap_3_bytes_22b7:
 												| [$22ba: push ix]
 	move.b	#0x03,d1                        	| [$22bc: ld   b,$03]
 	lea	current_pickaxe_screen_params_61CC,a2                	| [$22be: ld   ix,current_pickaxe_screen_params_61CC]
-	move.l	a2,0x200
 l_22c2:
 	move.b	(a2),d0                    	| [$22c2: ld   a,(ix+$00)]
 	                              	| [$22c5: ex   af,af']
@@ -5580,6 +5579,7 @@ l_2539:
 	* reached when player close to blue bag wall with pick
 	move.w	#0x9318,d6                       	| [$2548: ld   a,($9318)]
  	jbsr	osd_r_videoram
+	* reaches 2: wall can be completely broken
 	cmp.b	#0x02,d0                         	| [$254b: cp   $02]
 	jeq	l_255a                             	| [$254d: jr   z,$255A]
 	subq.b	#2,d0                           	| [$254f: dec  a] * 2
@@ -5590,6 +5590,7 @@ l_2539:
 	jbsr	osd_w_videoram
  	jra	l_2562                             	| [$2558: jr   $2562]
 l_255a:
+	* wall is completely destroyed: way clear!
 	move.b	#0xE0,d0                        	| [$255a: ld   a,$E0]
 	move.w	#0x9318,d6                       	| [$255c: ld   ($9318),a]
 	jbsr	osd_w_videoram

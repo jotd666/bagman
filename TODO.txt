@@ -1,4 +1,4 @@
-- press 5 to insert coin works 1 time out of 2
+- press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 
 - timer at 400: stop music (special api)
 - killed: stop music
@@ -7,11 +7,11 @@
 - guard seems hesitant to change direction
 - guard at level 3 maybe? doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons): dump sprite state
-- breaking wall: no animated tiles displayed (not encoded in graphics??)
 - sound: add delay if same sound played more than once: done but not very good
 - get rid of walk/climb sounds if music is playing
 
 - guard sometimes stop falling, then resume, sometimes fall twice as fast!
+  (probably coupling between both guards)
 - test trainer infinite lives
 - add infinite time / infinite pick time
 - add start score
