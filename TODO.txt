@@ -1,10 +1,3 @@
-- pick pickaxe: ok on screen 1, wrong on screen 2 & 3
-  lost when calling at $235d (swap_3_bytes_22b7)
-  debug A2+3 1 => 0
-	lea	current_pickaxe_screen_params_61CC,a2                	| [$22be: ld   ix,current_pickaxe_screen_params_61CC]
-	move.l	a2,0x200
-l_22c2:
-
 - press 5 to insert coin works 1 time out of 2
 
 - timer at 400: stop music (special api)

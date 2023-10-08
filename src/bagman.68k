@@ -3229,6 +3229,7 @@ l_15a2:
 	jbsr	check_object_pickup_2137                            	| [$15be: call $2137]
 	movem.l	(sp)+,a3/a4                        	| [$15c1: pop  iy]
 	addq.w	#3,a3                           	| [$15c3: inc  iy] * 3
+
 	jbsr	swap_3_bytes_22b7                            	| [$15c9: call $22B7]
 
 	movem.w	(sp)+,d1/d2                    	| [$15cc: pop  bc]
@@ -5274,10 +5275,6 @@ l_227c:
 
 * < A3: array to swap contents with current_pickaxe_screen_params_61CC array, 3 bytes total
 swap_3_bytes_22b7:
-	cmp.l	#struct_swap_buffer_61D3-4,a3
-	bne.b	0f
-	WPSET	0x210
-0:
 	                    	| [$22b7: push bc]
 
 	movem.l	d1/a2/a3,-(sp)                        	| [$22b8: push iy]
@@ -5355,7 +5352,7 @@ l_2320:
 	* current_pickaxe_screen_params_61CC can be 0 and next videoram read
 	* reads in zero (also in the original game)
 	tst.w	d6
-	jeq		l_2392
+	jeq		l_2350
 												| [$2331: ld   h,(iy+$01)]
 	jbsr	osd_r_videoram                         	| [$2334: ld   a,(hl)]
 	jbsr	is_background_tile_for_object_drop_3573                            	| [$2335: call $3573]
@@ -5386,6 +5383,7 @@ l_2359:
 
 	move.l	a3,-(sp)                        	| [$235a: push iy]
 	move.l	a1,-(sp)                        	| [$235c: push de]
+
 	jbsr	swap_3_bytes_22b7                           	| [$235d: call $22B7]
 	* decode screen address (now big endian, we changed the ROM source)
 	LOAD_AX_BE_WORD_DY	a1,d6
@@ -5432,7 +5430,6 @@ l_238e:
 l_2392:
 	* next object to draw
 	addq.w	#3,a3                           	| [$2392: inc  iy] * 3
-l_2398:
 	subq.b	#1,d1                           	| [...]
 	jne	l_2359                             	| [$2398: djnz $2359]
 	rts                                    	| [$239a: ret]
