@@ -8419,9 +8419,14 @@ write_credits_and_lives_39be:
 	move.w	#0x90BF,d6                       	| [$39d3: ld   ($90BF),a]
 	jbsr	osd_w_videoram
 	* first erase the space where lives are drawn
+	* we're going to be smarter than the original to avoid flickering
 	move.b	#0xE0,d0                        	| [$39d6: ld   a,$E0]
 	move.b	#0x07,d1                        	| [$39d8: ld   b,$07]
+	move.b	lives_6056,d2
+	* only erase the end
+	sub.b	d2,d1
 	move.w	#0x939F,d6                      	| [$39da: ld   hl,$939F]
+	add.b	d2,d6
 	jbsr	draw_repeated_char_29bc                   	| [$39dd: call draw_repeated_char_29bc]
 	move.b	lives_6056,d0                   	| [$39e0: ld   a,(lives_6056)]
 	                         	| [$39e3: cp   $00]
