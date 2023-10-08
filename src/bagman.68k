@@ -211,23 +211,27 @@ cpir:
 1:
     rts
 
-* < all registers d1-d4/a0/a1/a4 (BC,DE,HL)
+* < all registers d1-d6/a0/a1/a4 (BC,DE,HL)
 * > all registers swapped
 *: note regscopy must be defined somewhere in RAM
-*: with a size of 28*2
+*: with a size of 36*2
 exx:
-    lea     regscopy+28,a6
+	move.w	sr,-(a7)
+	move.w	#0x2700,sr
+	
+    lea     regscopy+36,a6
     * save current regs in region 1
-    movem.l d1-d4/a0/a1/a4,-(a6)
+    movem.l d1-d6/a0/a1/a4,-(a6)
     * restore old regs from region 2
-    lea     regscopy+28,a6
-    movem.l (a6),d1-d4/a0/a1/a4
+    lea     regscopy+36,a6
+    movem.l (a6),d1-d6/a0/a1/a4
     * now copy region 1 to region 2
-    movem.l d1-d4/a0/a1/a4,-(a7)
+    movem.l d1-d6/a0/a1/a4,-(a7)
     lea     regscopy,a6
-    movem.l (a6)+,d1-d4/a0/a1/a4
-    movem.l d1-d4/a0/a1/a4,(a6)
-    movem.l (a7)+,d1-d4/a0/a1/a4
+    movem.l (a6)+,d1-d6/a0/a1/a4
+    movem.l d1-d6/a0/a1/a4,(a6)
+    movem.l (a7)+,d1-d6/a0/a1/a4
+	move.w	(a7)+,sr
     rts
 
 * < A0: source (HL)
@@ -270,13 +274,13 @@ game_tick_0038:
 	* don't stay at 0 ever
 	addq.w	#1,sound_timer
 0:
-	move.w	d0,-(sp)                        	| [$0038: push af]
-	movem.w	d1/d2,-(sp)                    	| [$0039: push bc]
-	movem.w	d3/d4,-(sp)                    	| [$003a: push de]
-	move.l	a1,-(sp)                        	| [$003a: push de]
-	move.l	a0,-(sp)                        	| [$003b: push hl]
-	move.l	a2,-(sp)                        	| [$003c: push ix]
-	move.l	a3,-(sp)                        	| [$003e: push iy]
+											| [$0038: push af]
+	movem.w	d0-d7,-(sp)                    	| [$0039: push bc]
+												| [$003a: push de]
+	movem.l	a0-a4,-(sp)                        	| [$003a: push de]
+												| [$003b: push hl]
+												| [$003c: push ix]
+												| [$003e: push iy]
 	jbsr	exx                               	| [$0040: exx]
 	movem.w	d1/d2,-(sp)                    	| [$0041: push bc]
 	movem.w	d3/d4,-(sp)                    	| [$0042: push de]
@@ -387,7 +391,7 @@ l_00fc:
 	jbsr	l_5c9a                            	| [$010f: call $5C9A]
 	           	| [$0112: ld   a,(watchdog_reset_B800)]
 	jbsr	l_03f4                            	| [$0115: call $03F4]
-	jbsr	l_2c96                            	| [$0118: call $2C96]
+	jbsr	check_guards_pick_collisions_2c96                            	| [$0118: call $2C96]
 	jbsr	l_344e                            	| [$011b: call $344E]
 	jbsr	l_3cd4                            	| [$011e: call $3CD4]
 	           	| [$0121: ld   a,(watchdog_reset_B800)]
@@ -664,14 +668,14 @@ l_0394:
 
 	movem.w	(sp)+,d1/d2                    	| [$03a5: pop  bc]
 	jbsr	exx                               	| [$03a6: exx]
-	move.l	(sp)+,a3                        	| [$03a7: pop  iy]
-	move.l	(sp)+,a2                        	| [$03a9: pop  ix]
-	move.l	(sp)+,a0                        	| [$03ab: pop  hl]
-	move.l	(sp)+,a1                        	| [$03ac: pop  de]
-	movem.w	(sp)+,d3/d4                    	| [$03ac: pop  de]
+	movem.l	(sp)+,a0-a4                        	| [$03a7: pop  iy]
+												| [$03a9: pop  ix]
+												| [$03ab: pop  hl]
+												| [$03ac: pop  de]
+	movem.w	(sp)+,d0-d7                    	| [$03ac: pop  de]
 
-	movem.w	(sp)+,d1/d2                    	| [$03ad: pop  bc]
-	move.w	(sp)+,d0                        	| [$03ae: pop  af]
+											| [$03ad: pop  bc]
+												| [$03ae: pop  af]
 
 	jbsr		osd_enable_vblank_interrupt		| [im 1]
 	rts                                    	| [$03b0: ret]
@@ -3210,11 +3214,11 @@ l_1593:
 	jeq	l_15cf                             	| [$159f: jp   z,$15CF]
 	* loop to check for pickaxe locations & see if player can pick them
 l_15a2:
-	movem.w	d1/d2,-(sp)                    	| [$15a2: push bc]
-
+	movem.w	d1/d2,-(sp)							| [$15a2: push bc]
 	movem.l	a3/a4,-(sp)                        	| [$15a3: push iy]
 	lea		has_pick_61CF,a4           	| [$15a5: ld   bc,has_pick_61CF] None
 	lea	current_pickaxe_screen_params_61CC,a3                	| [$15a8: ld   iy,current_pickaxe_screen_params_61CC]
+	* set tiles
 	move.b	#0x37,d0                        	| [$15ac: ld   a,$37]
 	move.b	d0,(0x04,a3)                    	| [$15ae: ld   (iy+$04),a]
 	move.b	#0x20,d0                        	| [$15b1: ld   a,$20]
@@ -5046,20 +5050,23 @@ pick_up_object_2176:
 	move.w	d3,d6		| screen address of object
 												| [$2176: ld   h,d]
 												| [$2177: ld   l,e]
-	move.w	d3,picked_up_object_screen_address_61F6	| [$2178: ld   (picked_up_object_screen_address_61F6),hl]
+	move.w	d6,picked_up_object_screen_address_61F6	| [$2178: ld   (picked_up_object_screen_address_61F6),hl]
 	clr.b	d0                               	| [$217b: xor  a]
 	move.b	d0,unknown_627E                 	| [$217c: ld   (unknown_627E),a]
 	lea	player_struct_6580,a2          	| [$217f: ld   ix,player_struct_6580]
+	* copy some object params into player structure
 	move.b	(0x04,a3),d0                    	| [$2183: ld   a,(iy+$04)]
 	move.b	d0,(0x1c,a2)                    	| [$2186: ld   (ix+$1c),a]
 	move.b	(0x05,a3),d0                    	| [$2189: ld   a,(iy+$05)]
 	move.b	d0,(0x1d,a2)                    	| [$218c: ld   (ix+$1d),a]
-	clr.b	d0                               	| [$218f: xor  a]
-	move.b	d0,(A3)                    	| [$2190: ld   (iy+$00),a]
-	move.b	d0,(0x01,a3)                    	| [$2193: ld   (iy+$01),a]
+											| [$218f: xor  a]
+	* zero out object address: no longer drawn in the scenery, player has it
+	clr.b	(A3)                    	| [$2190: ld   (iy+$00),a]
+	clr.b	(0x01,a3)                    	| [$2193: ld   (iy+$01),a]
 	move.b	(0x04,a3),d0                    	| [$2196: ld   a,(iy+$04)]
 	cmp.b	#0x37,d0                         	| [$2199: cp   $37]
-	jne	l_21a2                             	| [$219b: jr   nz,$21A2]
+	jne	l_21a2                             	| [$219b: jr   nz,$21A2]  pickaxe?
+	* we just picked up pickaxe
 	* resets the LSB of pickaxe timer
 	* which means that if timer gets past 0x100 once during a life
 	* it's not reset (all picks will now only last half the time
@@ -5071,7 +5078,9 @@ pick_up_object_2176:
 l_21a2:
 	move.b	#0x01,d0                        	| [$21a2: ld   a,$01]
 	bsr		exx
+	* pick up object (pick up pickaxe or pick up barrow)
 	* sets object picked up flag to true (barrow or pick)
+	WPSET	0x204
 	move.b	d0,(a4)                         	| [$21a5: ld   (bc),a]
 	rts                                    	| [$21a6: ret]
 
@@ -5261,9 +5270,14 @@ l_227c:
 	lea	guard_2_struct_6598,a2         	| [$22af: ld   ix,guard_2_struct_6598]
 	jbsr	l_2605                            	| [$22b3: call $2605]
 	rts                                    	| [$22b6: ret]
+	
 
 * < A3: array to swap contents with current_pickaxe_screen_params_61CC array, 3 bytes total
 swap_3_bytes_22b7:
+	cmp.l	#struct_swap_buffer_61D3-4,a3
+	bne.b	0f
+	WPSET	0x210
+0:
 	                    	| [$22b7: push bc]
 
 	movem.l	d1/a2/a3,-(sp)                        	| [$22b8: push iy]
@@ -5364,14 +5378,13 @@ l_2320:
 	jbsr	draw_object_tiles_3417                            	| [$234d: call $3417]
 l_2350:
 	move.b	#0x04,d1                        	| [$2350: ld   b,$04]
+	
 	lea	struct_swap_buffer_61D3,a3                	| [$2352: ld   iy,struct_swap_buffer_61D3]
 	lea	current_pickaxe_screen_params_61CC,a1                	| [$2356: ld   de,current_pickaxe_screen_params_61CC]
 l_2359:
 	movem.w	d1/d2,-(sp)                    	| [$2359: push bc]
 
 	move.l	a3,-(sp)                        	| [$235a: push iy]
-l_235c:
-	movem.w	d3/d4,-(sp)                    	| [$235c: push de]
 	move.l	a1,-(sp)                        	| [$235c: push de]
 	jbsr	swap_3_bytes_22b7                           	| [$235d: call $22B7]
 	* decode screen address (now big endian, we changed the ROM source)
@@ -5384,7 +5397,7 @@ l_235c:
 										| [$2365: dec  de]
 
 	move.b	player_screen_600D,d0           	| [$2366: ld   a,(player_screen_600D)]
-	move.l	(sp),a3                        	| [$2369: pop  iy]
+	move.l	(sp),a3                        	| [$2369: pop  iy] (previous address of a1)
 	cmp.b	(0x02,a3),d0                     	| [$236b: cp   (iy+$02)]
 
 	                        	| [$236e: push iy]
@@ -5413,11 +5426,11 @@ l_235c:
 	jbsr	draw_object_tiles_3417                            	| [$238b: call $3417]
 l_238e:
 	move.l	(sp)+,a1                        	| [$238e: pop  de]
-	movem.w	(sp)+,d3/d4                    	| [$238e: pop  de]
 	move.l	(sp)+,a3                        	| [$238f: pop  iy]
 
 	movem.w	(sp)+,d1/d2                    	| [$2391: pop  bc]
 l_2392:
+	* next object to draw
 	addq.w	#3,a3                           	| [$2392: inc  iy] * 3
 l_2398:
 	subq.b	#1,d1                           	| [...]
@@ -5598,8 +5611,8 @@ check_blocked_by_breakable_wall_2569:
 	movem.w	d3/d4/d6,-(sp)                    	| [$256b: push de]
 	clr.b	d0                               	| [$256c: xor  a]
 	move.b	d0,way_clear_flag_600B                 	| [$256d: ld   (way_clear_flag_600B),a]
-	lea	game_mem+0x46FA,a1                      	| [$2570: ld   de,$46FA]
-	cmp.w	d3,d6										| [sbc  hl,de]
+												| [$2570: ld   de,$46FA]
+	cmp.w	#0x46FA,d6										| [sbc  hl,de]
 	jne	l_2581                             	| [$2575: jr   nz,$2581]
 	jbsr	check_breakable_wall_present_25a1                            	| [$2577: call $25A1]
 	jeq	l_2581                             	| [$257a: jr   z,$2581]
@@ -6134,12 +6147,12 @@ write_3_attributes_2989:
 
 * repeats the same character
 draw_repeated_char_29bc:
-	movem.w	d1,-(sp)                    	| [$29bc: push bc]
-	move.w	#-0x20,d1                        	| [$29bd: ld   bc,$FFE0] 65504
+								| [$29bc: push bc]
+									| [$29bd: ld   bc,$FFE0] 65504
 	jbsr	osd_w_videoram                         	| [$29c0: ld   (hl),a]
-	add.w	d1,d6                            	| [$29c1: add  hl,bc]
+	sub.w	#0x20,d6                            	| [$29c1: add  hl,bc]
 
-	movem.w	(sp)+,d1                    	| [$29c2: pop  bc]
+	                    	| [$29c2: pop  bc]
 	subq.b	#1,d1                           	| [...]
 	jne	draw_repeated_char_29bc                             	| [$29c3: djnz $29BC]
 	rts                                    	| [$29c5: ret]
@@ -6644,7 +6657,7 @@ compute_guard_speed_2C7C:
 	move.b	#0x0A,d1                        	| [$2c93: ld   b,$0A]
 	rts                                    	| [$2c95: ret]
 
-l_2c96:
+check_guards_pick_collisions_2c96:
 	lea	guard_1_struct_6594,a2         	| [$2c96: ld   ix,guard_1_struct_6594]
 	lea	object_held_struct_659C,a3                	| [$2c9a: ld   iy,object_held_struct_659C]
 	jbsr	guard_collision_with_pick_2AD1    	| [$2c9e: call guard_collision_with_pick_2AD1]
@@ -8405,6 +8418,7 @@ write_credits_and_lives_39be:
 	and.b	#0x0F,d0                         	| [$39d1: and  $0F]
 	move.w	#0x90BF,d6                       	| [$39d3: ld   ($90BF),a]
 	jbsr	osd_w_videoram
+	* first erase the space where lives are drawn
 	move.b	#0xE0,d0                        	| [$39d6: ld   a,$E0]
 	move.b	#0x07,d1                        	| [$39d8: ld   b,$07]
 	move.w	#0x939F,d6                      	| [$39da: ld   hl,$939F]
@@ -8414,7 +8428,7 @@ write_credits_and_lives_39be:
 	bne.b	0f                               	| [$39e5: ret  z] [...]
 	rts                                    	| [$39e5: ret  z]
 0:
-	* lives
+	* then draw lives
 	move.w	#0x939F,d6                      	| [$39e6: ld   hl,$939F]
 	move.b	d0,d1                           	| [$39e9: ld   b,a]
 	move.b	#0xCA,d0                        	| [$39ea: ld   a,$CA]

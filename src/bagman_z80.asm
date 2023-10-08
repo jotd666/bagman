@@ -244,7 +244,7 @@
 010F: CD 9A 5C      call $5C9A
 0112: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0115: CD F4 03      call $03F4
-0118: CD 96 2C      call $2C96
+0118: CD 96 2C      call check_guards_pick_collisions_2c96
 011B: CD 4E 34      call $344E
 011E: CD D4 3C      call $3CD4
 0121: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
@@ -5515,6 +5515,7 @@ compute_guard_speed_2C7C:
 2C93: 06 0A         ld   b,$0A
 2C95: C9            ret
 
+check_guards_pick_collisions_2c96:
 2C96: DD 21 94 65   ld   ix,guard_1_struct_6594
 2C9A: FD 21 9C 65   ld   iy,object_held_struct_659C
 2C9E: CD D1 2A      call guard_collision_with_pick_2AD1
