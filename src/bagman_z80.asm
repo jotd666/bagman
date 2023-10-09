@@ -4971,6 +4971,10 @@ display_maze_284c:
 291E: AF            xor  a
 291F: 32 42 61      ld   (ay_sound_start_6142),a
 2922: C9            ret
+
+* protection: check VALADON copyright at level 3
+* if guard 1 is at some Y if fail write shit at the top
+* and block player (making it look like a bug)
 2923: 3A 0D 60      ld   a,(player_screen_600D)
 2926: FE 03         cp   $03
 2928: C0            ret  nz

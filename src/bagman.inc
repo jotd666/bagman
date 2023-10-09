@@ -11,8 +11,8 @@
 	OPT_SKIP_INTRO_SCREEN=0           | LEAVE AT 0!!!
 	OPT_SKIP_TITLE_SCREEN=0           | LEAVE AT 0!!!
 	OPT_SKIP_GAME_DEMO=0              | LEAVE AT 0!!!
-	OPT_ONLY_GUARD_ONE=0              | LEAVE AT 0!!!
-	OPT_ONLY_GUARD_TWO=0              | LEAVE AT 0!!!
+	OPT_BLOCK_GUARD_ONE=0              | LEAVE AT 0!!!
+	OPT_BLOCK_GUARD_TWO=0              | LEAVE AT 0!!!
 	.else
 	
     * hardware options
@@ -23,9 +23,9 @@
     * score is BCD format
 	* all options are zeroed for release
 	* set to 1 for: only guard at screen one is moving
-	OPT_ONLY_GUARD_ONE=0
+	OPT_BLOCK_GUARD_ONE=0
 	* set to 1 for: only guard at screen 3 is moving
-	OPT_ONLY_GUARD_TWO=0
+	OPT_BLOCK_GUARD_TWO=0
     OPT_START_SCORE=0x45000
 	OPT_SKIP_INTRO_SCREEN=0
 	OPT_SKIP_TITLE_SCREEN=0

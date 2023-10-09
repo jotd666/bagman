@@ -2,9 +2,8 @@
 
 - timer at 400: stop music (special api)
 - killed: stop music
-- screen 1/2: player/guard walks out of the ladder too low: stuck in wall
-- guard sometimes changes direction with opposite, should not happen (unless stuck)
-- guard seems hesitant to change direction
+- guard sometimes changes direction with opposite, should not happen (unless stuck): retest
+- guard seems hesitant to change direction: retest
 - guard at level 3 maybe? doesn't follow guide & blocks (debug with MAME & addresses at junctions in parallel)
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons): dump sprite state
 - sound: add delay if same sound played more than once: done but not very good

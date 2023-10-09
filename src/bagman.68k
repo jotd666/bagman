@@ -957,10 +957,12 @@ guard_walk_movement_0570:
 	jne	l_0588                             	| [$0577: jr   nz,$0588]
  * guard walks right
 	
+	move.l	a0,-(sp)
 	move.w	d6,-(sp)                        	| [$0579: push hl]
 	move.w	stored_logical_address_6044,d6             	| [$057a: ld   hl,(stored_logical_address_6044)]
 	jbsr	character_can_walk_right_0CFA     	| [$057d: call character_can_walk_right_0CFA]
 	move.w	(sp)+,d6                        	| [$0580: pop  hl]
+	move.l	(sp)+,a0
 	move.b	way_clear_flag_600B,d0                 	| [$0581: ld   a,(way_clear_flag_600B)]
 	cmp.b	#0x02,d0                         	| [$0584: cp   $02]
 	jeq	l_05a2                             	| [$0586: jr   z,$05A2]  can walk right
@@ -973,10 +975,12 @@ l_0588:
 	beq.b	0f
 	rts                                    	| [$058f: ret  nz] neither right or left: on ladder? quit
 0:
+	move.l	a0,-(sp)
 	move.w	d6,-(sp)                        	| [$0590: push hl]
 	move.w	stored_logical_address_6044,d6             	| [$0591: ld   hl,(stored_logical_address_6044)]
 	jbsr	character_can_walk_left_0D69      	| [$0594: call character_can_walk_left_0D69]
 	move.w	(sp)+,d6                        	| [$0597: pop  hl]
+	move.l	(sp)+,a0
 	move.b	way_clear_flag_600B,d0                 	| [$0598: ld   a,(way_clear_flag_600B)]
 	cmp.b	#0x02,d0                         	| [$059b: cp   $02]
 	beq.b	0f
@@ -2254,10 +2258,8 @@ l_0d76:
 	addq.w	#2,d6                           	| [$0d96: inc  hl] * 2
 	jbsr	check_edge_tiles_0d34                            	| [$0d98: call $0D34]
 	rts                                    	| [$0d9b: ret]
-l_0d9c:
-											| [$0d9c: ld   a,$02]
-	move.b	#2,way_clear_flag_600B                 	| [$0d9e: ld   (way_clear_flag_600B),a]
-	rts                                    	| [$0da1: ret]
+
+
 check_against_space_tiles_0da2:
 	                           	| [$0da2: ld   c,a]
 	* check against possible space tiles
@@ -2272,6 +2274,10 @@ l_0da8:
 	
 	dbf	d1,l_0da8                             	| [$0dad: djnz $0DA8]
 	jra	l_0d63                             	| [$0daf: jr   $0D63]
+* moved that code below, it's clearer
+l_0d9c:											| [$0d9c: ld   a,$02]
+	move.b	#2,way_clear_flag_600B                 	| [$0d9e: ld   (way_clear_flag_600B),a]
+	rts                                    	| [$0da1: ret]
 
 l_0dc7:
 	move.b	unknown_609B,d0                 	| [$0dc7: ld   a,(unknown_609B)]
@@ -2754,7 +2760,7 @@ l_1150:
 	rts                                    	| [$116e: ret]
 
 guard_1_walk_movement_116F:
-	.ifne	OPT_ONLY_GUARD_ONE
+	.ifne	OPT_BLOCK_GUARD_TWO
 	rts
 	.endif
 	
@@ -2775,7 +2781,7 @@ guard_1_walk_movement_116F:
 	rts                                    	| [$119a: ret]
 	
 guard_2_walk_movement_119B:
-	.ifne	OPT_ONLY_GUARD_TWO
+	.ifne	OPT_BLOCK_GUARD_ONE
 	rts
 	.endif
 	
@@ -5081,7 +5087,7 @@ l_21a2:
 	bsr		exx
 	* pick up object (pick up pickaxe or pick up barrow)
 	* sets object picked up flag to true (barrow or pick)
-	WPSET	0x204
+
 	move.b	d0,(a4)                         	| [$21a5: ld   (bc),a]
 	rts                                    	| [$21a6: ret]
 
@@ -5742,7 +5748,7 @@ l_2640:
 	roxl.b	#1,d1                           	| [$2655: rl   b]
 	roxl.b	#1,d0                            	| [$2657: rlc  a]
 	roxl.b	#1,d1                           	| [$2659: rl   b]
-	jbsr	l_2923                            	| [$265b: call $2923]
+	* removed another protection check         	| [$265b: call $2923]
 	rts                                    	| [$265e: ret]
 
 display_screen_3_265f:
@@ -6057,48 +6063,6 @@ display_maze_284c:
 	     	| [$291e: xor  a]
 	           	| [$291f: ld   (ay_sound_start_6142),a]
 	                                    	| [$2922: ret]
-
-l_2923:
-	move.b	player_screen_600D,d0           	| [$2923: ld   a,(player_screen_600D)]
-	cmp.b	#0x03,d0                         	| [$2926: cp   $03]
-	beq.b	0f
-	rts                                    	| [$2928: ret  nz]
-0:
-	move.b	guard_1_y_6597,d0               	| [$2929: ld   a,(guard_1_y_6597)]
-	cmp.b	#0x28,d0                         	| [$292c: cp   $28]
-	beq.b	0f
-	rts                                    	| [$292e: ret  nz]
-0:
-
-	move.l	a2,-(sp)                        	| [$292f: push ix]
-
-	move.l	a0,-(sp)                        	| [$2931: push hl]
-	movem.w	d3/d4,-(sp)                    	| [$2932: push de]
-	move.l	a1,-(sp)                        	| [$2932: push de]
-	lea	game_mem+0x570C,a2                      	| [$2933: ld   ix,$570C]
-	move.b	(a2),d0                    	| [$2937: ld   a,(ix+$00)]
-	lea	game_mem+0x2994,a0                      	| [$293a: ld   hl,$2994]
-	cmp.b	(a0),d0                          	| [$293d: cp   (hl)]
-	beq.b	0f
-	jbsr	l_2946                            	| [$293e: call nz,$2946]
-0:
-	move.l	(sp)+,a1                        	| [$2941: pop  de]
-	movem.w	(sp)+,d3/d4                    	| [$2941: pop  de]
-	move.l	(sp)+,a0                        	| [$2942: pop  hl]
-	move.l	(sp)+,a2                        	| [$2943: pop  ix]
-	rts                                    	| [$2945: ret]
-l_2946:
-	lea		game_mem+0x29A9,a1                      	| [$2946: ld   de,$29A9]
-	move.w	#0x92E2,d6                      	| [$2949: ld   hl,$92E2]
-	movem.w	d1/d2,-(sp)                    	| [$294c: push bc]
-	move.w	d0,-(sp)                        	| [$294d: push af]
-	move.b	#0x07,d0                        	| [$294e: ld   a,$07]
-	exg	d0,d7                              	| [$2950: ex   af,af']
-	jbsr	write_text_55f0                   	| [$2951: call write_text_55f0]
-	move.w	(sp)+,d0                        	| [$2954: pop  af]
-
-	movem.w	(sp)+,d1/d2                    	| [$2955: pop  bc]
-	rts                                    	| [$2956: ret]
 
 
 init_guard_directions_and_wagons_2957:
@@ -6602,6 +6566,7 @@ compute_guard_speed_from_dipsw_2C4D:
 	move.b	d0,d1                           	| [$2c64: ld   b,a]
 l_2c65:
 	jbsr	osd_read_dipswitches            	| [$2c65: ld   a,(dip_switch_B000)]
+	CLEAR_XC_FLAG
 	roxr.b	#3,d0                           	| [$2c68: rr   a] * 3
 	not.b	d0                               	| [$2c6e: cpl]
 	and.b	#0x03,d0                         	| [$2c6f: and  $03]
