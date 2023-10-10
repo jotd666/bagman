@@ -600,11 +600,6 @@ demo_game:
 		move		#0x4000,_custom+intena						| disable interrupts
 		move		#0x7FFF,_custom+intreq						| ack all interrupts
 		bsr			platform_init					| amiga-specific init
-		move.l	cheat_flags(pc),d0
-		btst	#0,D0
-		sne		invincible_flag
-		btst	#1,D0
-		sne		infinite_lives_flag
 		
 0:	
 		jmp			bagman_reset					| pass control to the bagman core
@@ -1554,6 +1549,7 @@ update_bg_tile:
 	and.w	#0x1F,d6	| this is X
 	neg.w	d6
 	add.w	#32,d6
+	bra.b	0f			| this is not enough to hide 2 first rows
 	bra.b	1f
 	* two last rows as well
 2:
@@ -1943,15 +1939,16 @@ handle_keyboard:
 
     bsr	toggle_pause
 0:
+
 	btst	#4,cheat_flags+3
 	beq.b	10f
+	move.b	#0x1,0x210
 	* cheat keys
 	cmp.b	#0x50,d0	| F1 key
 	bne.b	0f
 	move.w	#0x0FF,_custom+color
 	st.b	cheat_used
-	* will be triggered as soon as a diamond is pushed,
-	* not before
+	st.b	next_bag_completes_level_flag
 	
 0:
 	cmp.b	#0x51,d0	| F2 key

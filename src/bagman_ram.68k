@@ -11,6 +11,7 @@
 	.global infinite_lives_flag
 	.global infinite_time_flag
 	.global infinite_pickaxe_time_flag
+	.global	next_bag_completes_level_flag
 	.global last_played_sound_timer_table
 	.global	sound_timer
 	
@@ -63,7 +64,8 @@ start_level:
 	.byte	0
 highscores_need_saving:
 	.byte	0
-
+next_bag_completes_level_flag:
+	.byte	0
 vb_ticks_count:
 	.byte	0
 current_ticks_count:

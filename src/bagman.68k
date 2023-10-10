@@ -160,10 +160,15 @@ start_a_sound:
 	
 play_first_tune:
 	move.w	#TUNE1_SND,d0
+	rts
+	
 	jra		osd_sound_start
 
 play_second_tune:
 	move.w	#TUNE2_SND,d0
+	rts
+	
+	
 	jra		osd_sound_start
 	
 	
@@ -8484,12 +8489,15 @@ l_3a6b:
 	
 
 check_if_level_completed_3b00:
+	tst.b	next_bag_completes_level_flag
+	bne.b	0f
 	jbsr	check_remaining_bags_3B8C         	| [$3b00: call check_remaining_bags_3B8C]
 	move.b	d2,d0                           	| [$3b03: ld   a,c]
 	                         	| [$3b04: cp   $00]
 	bne.b	0f
 	rts                                    	| [$3b06: ret  z]
 0:
+	clr.b	next_bag_completes_level_flag
 * level completed
 	lea		holds_barrow_61C7,a4       	| [$3b07: ld   bc,holds_barrow_61C7] None
 	bsr		exx
@@ -8501,32 +8509,47 @@ check_if_level_completed_3b00:
 	move.b	#0xEC,d0                        	| [$3b19: ld   a,$EC]
 	move.b	d0,unknown_61CA                 	| [$3b1b: ld   (unknown_61CA),a]
 	                    	| [$3b1e: ld   d,(iy+$01)]
-	move.w	(A3),d3                    	| [$3b21: ld   e,(iy+$00)]
+	LOAD_AX_BE_WORD_DY	A3,d3      	| [$3b21: ld   e,(iy+$00)]
+	* pick up barrow
 	jbsr	pick_up_object_2176                            	| [$3b24: call $2176]
 	move.w	#REWARD_TALK_SND,d0                      	| [$3b27: ld   hl,$3F1B]
 	jbsr	start_a_sound                            	| [$3b2a: call $2018]
 * add one life for level completed
-	move.b	lives_6056,d0                   	| [$3b2d: ld   a,(lives_6056)]
-	addq.b	#1,d0                           	| [$3b30: inc  a]
-	move.b	d0,lives_6056                   	| [$3b31: ld   (lives_6056),a]
+	                   	| [$3b2d: ld   a,(lives_6056)]
+	addq.b	#1,lives_6056                           	| [$3b30: inc  a]
+											| [$3b31: ld   (lives_6056),a]
+	* loop until player flees by the right
+	* save SR (we can read it, we're in an interrupt, see below)
+	move.w	SR,-(a7)
 l_3b34:
 	move.b	player_input_6026,d0            	| [$3b34: ld   a,(player_input_6026)]
 	or.b	#0x10,d0                          	| [$3b37: or   $10]
 	move.b	d0,player_input_6026            	| [$3b39: ld   (player_input_6026),a]
-	clr.b	d0                               	| [$3b3c: xor  a]
-	move.b	d0,guard_1_x_6596               	| [$3b3d: ld   (guard_1_x_6596),a]
-	move.b	d0,guard_2_x_659A               	| [$3b40: ld   (guard_2_x_659A),a]
+	                               	| [$3b3c: xor  a]
+	* hide guards
+	clr.b	guard_1_x_6596               	| [$3b3d: ld   (guard_1_x_6596),a]
+	clr.b	guard_2_x_659A               	| [$3b40: ld   (guard_2_x_659A),a]
 	move.b	#0x01,d0                        	| [$3b43: ld   a,$01]
 										| [$3b45: ld   (interrupt_control_A000),a]
 	move.b	d0,player_controls_blocked_61F2                 	| [$3b48: ld   (player_controls_blocked_61F2),a]
+	* this SR thing is required, as the game enables interrupt during the interrupt!!
+	* then waits for the interrupt to move player... nested interrupt... enable vblank only
+	* changes custom register not SR (at least on the amiga) because it could just crash
+	* (moving to SR is privileged, code could run in user mode). Here it doesn't matter as we're
+	* already in the interrupt code so we can hack through SR
+	move.w	#0x2000,SR
 	jbsr	osd_enable_vblank_interrupt	|     jbsr	osd_enable_vblank_interrupt
+	* keep drawing elevator
 	jbsr	l_1653                            	| [$3b4c: call $1653]
 	move.b	player_x_6582,d0                	| [$3b4f: ld   a,(player_x_6582)]
 	cmp.b	#0xF0,d0                         	| [$3b52: cp   $F0]
 	jne	l_3b34                             	| [$3b54: jr   nz,$3B34]
-	clr.b	d0                               	| [$3b56: xor  a]
-	move.b	d0,player_controls_blocked_61F2                 	| [$3b57: ld   (player_controls_blocked_61F2),a]
-	move.b	d0,holds_barrow_61C7            	| [$3b5a: ld   (holds_barrow_61C7),a]
+	clr.b	player_controls_blocked_61F2                               	| [$3b56: xor  a]
+	                 	| [$3b57: ld   (player_controls_blocked_61F2),a]
+	clr.b	holds_barrow_61C7            	| [$3b5a: ld   (holds_barrow_61C7),a]
+	* restore SR. Not really necessary but cleaner
+	move.w	(a7)+,SR
+	* and enable interrupts again
 	jbsr	osd_disable_vblank_interrupt    | jbsr	osd_disable_vblank_interrupt
 	move.b	#0x40,d1                        	| [$3b5e: ld   b,$40]
 	lea	player_struct_6580,a0          	| [$3b60: ld   hl,player_struct_6580]

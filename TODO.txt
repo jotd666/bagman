@@ -1,29 +1,38 @@
-- end level: locks up when dropping the last bag in barrow
+- at level 3, elevator?? memory corruption kills player lives & guard coords
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons): dump sprite state
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 - timer at 400: stop music (special api)
 - killed: stop music
-- guard doesn't see the player when climbing down stairs and player is in a gallery
+- (sometimes?) guard doesn't see the player when climbing down stairs and player is in a gallery
 - guard killed in elevator: falls off the elevator instead of staying there
 - guards not taking elevator at level 3 as much as in the original
-- guard at level 3 maybe? doesn't follow guide & blocks (maybe it's OK!)
 - sound: add delay if same sound played more than once: done but not very good
 - get rid of walk/climb sounds if music is playing
+- restore music
 
 - guard sometimes stop falling, then resume, sometimes fall twice as fast!
   (probably coupling between both guards)
 - test trainer infinite lives
-- add infinite time / infinite pick time
-- add start score
-- add cheat keys: level complete, game over, +10000 points
+- add option to start at hard level directly
+- make command line options work
+- add infinite pick time: test it!
+- implement start score
+- add cheat keys: F1: level complete (done), F2: +10000 points, F3: game over, 
 - highscore screen
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 
+- the original game had a tendency (not all the time) to leave the barrow in the last screen when you completed
+  the level, which is unfair and makes next level very difficult because you have to bring back the barrow or go
+  to last screen right after appearing in the first screen.
+- ??? ground-disappearing bug found when trying to drop a bag off a ledge in screen 3 in the elevator shaft.
+- enhance instructions
+- save/load highscores
+- fix highscore screen
 
 - debug 2640 with values not 10 or E0 (not at start)
 
 - VA logo add dyn copperlist for title only
-- brown stripe on row 0?
+- brown/blue stripe on row 0? disable those rows completely, make display higher
 - fix CLI command line options
  
 maybe...:
