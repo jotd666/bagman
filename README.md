@@ -1,6 +1,19 @@
-# Karate Champ (68K)
+# Bagman (68K)
 
-This is a transcode from the original arcade game Z80 to 68K assembly.
+Bagman remake by JOTD in 2010-2023
+
+Original game by Valadon Automation
+ROM strings show that it has been coded by Jacques Brisse (still head of Valadon in 2015 at least)
+
+Game has been resourced (Z80) and A.I & speeds extracted from the first versions. Now the Amiga version
+uses 100% of the transcoded original code for better accuracy.
+
+History: 
+
+2010: first SDL version (Windows, Amiga - super slow)
+2015: fixed a lot of bugs on SDL version
+2019: Amiga version (needs 68020+ and fastmem, still slow)
+2023: Amiga version using real game code transcoded to 68000 (should run on A500)
 
 
 ### PROGRESS:
@@ -11,25 +24,22 @@ This is a transcode from the original arcade game Z80 to 68K assembly.
 #### AMIGA
 
 - fully playable with sound
-- minor bugs
+- still bugs
 - missing features
+- stuck on highscore screen
 
 #### NEO GEO
 
+- not planned ATM ...
 
 ### FEATURES:
 
 #### CREDITS:
 
 - Jean-Francois Fabre (aka jotd): Z80 reverse engineering, Z80 to 68k transcode, Amiga code and assets
-- Mark McDougall (aka tcdev): Neo Geo code and graphical asset rips, invaluable
-  help about how the graphics are displayed.
-- no9: remade amiga tunes
+- J.M.D: remade amiga tunes
 - phx: ptplayer sound/music replay Amiga code
-- DamienD: floppy menu
-- mrv2k: amiga boxart
-- blastar: NGFX SoundBuilder (Neo Geo sound tool)
-- SEGA: original game :)
+- Valadon Automation: original game :)
 
 #### SPECIAL THANKS:
 
@@ -59,13 +69,6 @@ This is a transcode from the original arcade game Z80 to 68K assembly.
 - install above tools & adjust python paths
 - make -f makefile.am
 
-#### When changing asset-related data (since dependencies aren't good):
-
-- To update the "graphics.68k" & "palette*.68k" files from "assets/amiga" subdir, 
-  just run the "convert_graphics.py" python script, 
-- To update sounds, use "convert_sounds.py"
-  python script (audio) to create sound*.68k files.
-
 ### NEO GEO:
 
 #### Prerequesites:
@@ -85,10 +88,10 @@ This is a transcode from the original arcade game Z80 to 68K assembly.
 
 - make -f makefile.ng OUTPUT={cart|cd} MAMEDIR={mamedir} install
   - (mamedir defaults to '.')
-- paste kchampvs.xml into MAME's hash/neogeo.xml file
+- paste bagman.xml into MAME's hash/neogeo.xml file
 
 #### To run in MAME:
 
-- cart : 'mame neogeo pengo'
-- cd : 'mame neocdz -cdrom roms/neocdz/kchampvs.iso'
+- cart : 'mame neogeo bagman'
+- cd : 'mame neocdz -cdrom roms/neocdz/bagman.iso'
   

@@ -1,20 +1,21 @@
+- guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
 - OK on whdload, but privilege violation on DOS
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons): dump sprite state
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 - timer at 400: stop music (special api)
 - killed: stop music
-- guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
 - sound: add delay if same sound played more than once: done but not very good
 - get rid of walk/climb sounds if music is playing
 - restore music
 - guard speed doesn't seem to increase with score
 
-- guard sometimes stop falling, then resumes, sometimes fall twice as fast!
+- guard sometimes stops falling, then resumes, sometimes fall twice as fast!
   (probably coupling between both guards)
 - test trainer infinite lives
 - add option to start at hard level directly
 - make command line options work
 - implement start score
+- "PLAYER 1" flashes with wrong timing
 - add cheat keys: F1: level complete (done), F2: +10000 points, F3: game over, 
 - highscore screen not working: stuck here
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
@@ -29,7 +30,6 @@
 
 - debug 2640 with values not 10 or E0 (not at start)
 
-- VA logo add dyn copperlist for title only
 - brown/blue stripe on row 0? disable those rows completely, make display higher
 - fix CLI command line options
  

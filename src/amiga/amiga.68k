@@ -1353,13 +1353,6 @@ load_palette_in_copperlist:
 	addq.w	#2,a1
 	dbf		d0,1b
 	
-*	lea		palette+32,a0
-*	move.w	#NB_UPPER_COLORS_TO_RESTORE-1,d0
-*	lea		reset_upper_colors_copperlist+2,a1
-*1:
-*	move.w	(a0)+,(a1)+
-*	addq.w	#2,a1
-*	dbf		d0,1b
 	
 	movem.l	(a7)+,d0-d1/a0-a1
 	rts
@@ -1429,6 +1422,26 @@ osd_w_videoram:
 	bra.b	0f
 	
 1:
+	cmp.w	#0x288,d6
+	bne.b	2f
+	* location of VA logo tile (to detect title)
+	lea		palette+2,a0			| points on second color 
+	lea		copperlist_colors+4,a1	| second color copperlist entry
+	cmp.b	#0xE5,d0
+	bne.b	22f
+	* title: set proper colors for V/A logo in title: note: if palette is
+	* reordered in python convert_graphics.py script
+	* this will fail changing the proper colors!
+	* But palette is fixed now so it's going to work.
+	* Not as clean as it should be but this is a hack anyway...)
+	move.w	#0xF90,(2,a1)
+	move.w	#0x0DF,(6,a1)
+	bra.b	2f
+22:
+	* not title: remove copperlist dynamic color changes
+	move.w	(A0)+,(2,a1)
+	move.w	(a0),(6,a1)
+2:
 	lea		bg_videoram,a1
 	add.w	d6,a1
 	
@@ -2274,7 +2287,7 @@ sprites:
     .word    sprpt+28,0
     .word    sprpt+30,0
 
-
+	
 	* pal limit
     .word  0xFFDF,0xFFFE       | PAL wait
     .word  0x0401,0xFFFE
