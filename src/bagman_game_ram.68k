@@ -200,7 +200,7 @@
 	.global	wagon_3_shadow_sprite_6590
 	.global	object_held_struct_659C
 	.global	unknown_659D
-	.global	unknown_659E
+	.global	sprite_object_x_659E
 	.global	sprite_object_y_659F
 	.global	barrow_sprite_shadow_ram_65A0
 	.global	unknown_65A3
@@ -390,11 +390,12 @@ ay_sound_start_6142:
 	ds.b	1
 unknown_6143:
 	ds.b	1
+	* guard/elevator related
+	.align	2
 unknown_6144:
 	ds.b	1
 unknown_6145:
 	ds.b	1
-	.align	2
 unknown_pointer_6146:
 	ds.l	1
 unknown_6148:
@@ -632,7 +633,7 @@ object_held_struct_659C:
 	ds.b	1
 unknown_659D:
 	ds.b	1
-unknown_659E:
+sprite_object_x_659E:
 	ds.b	1
 sprite_object_y_659F:
 	ds.b	1

@@ -1355,6 +1355,8 @@ move_a_wagon_0925:
 0A40: 77            ld   (hl),a
 0A41: C9            ret
 
+; < ix: player struct (6580)
+; < iy: unknown_6014
 handle_elevators_0a66:
 0A66: 3A 12 60      ld   a,(elevator_not_moving_6012)                                      
 0A69: FE 00         cp   $00                                            
@@ -1401,12 +1403,15 @@ handle_elevators_0a66:
 0AC1: FD 7E 27      ld   a,(iy+$27)
 0AC4: FE 01         cp   $01
 0AC6: 20 07         jr   nz,$0ACF
+; elevator lifts guard 1 (bad programming practice, offsetting
+; guard struct from player struct!!)
 0AC8: DD 7E 17      ld   a,(ix+$17)
 0ACB: 3D            dec  a
 0ACC: DD 77 17      ld   (ix+$17),a
 0ACF: FD 7E 67      ld   a,(iy+$67)
 0AD2: FE 01         cp   $01
 0AD4: C0            ret  nz
+; elevator lifts guard 2
 0AD5: DD 7E 1B      ld   a,(ix+$1b)
 0AD8: 3D            dec  a
 0AD9: DD 77 1B      ld   (ix+$1b),a

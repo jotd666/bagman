@@ -698,14 +698,14 @@ l_03b1:
 	move.b	sprite_object_y_659F,d0                 	| [$03be: ld   a,(sprite_object_y_659F)]
 	cmp.b	#0x80,d0                         	| [$03c1: cp   $80]
 	jcs	l_03cb                             	| [$03c3: jr   c,$03CB]
-	move.b	unknown_659E,d0                 	| [$03c5: ld   a,(unknown_659E)]
+	move.b	sprite_object_x_659E,d0                 	| [$03c5: ld   a,(sprite_object_x_659E)]
 	subq.b	#1,d0                           	| [$03c8: dec  a]
 	jra	l_03cf                             	| [$03c9: jr   $03CF]
 l_03cb:
-	move.b	unknown_659E,d0                 	| [$03cb: ld   a,(unknown_659E)]
+	move.b	sprite_object_x_659E,d0                 	| [$03cb: ld   a,(sprite_object_x_659E)]
 	addq.b	#1,d0                           	| [$03ce: inc  a]
 l_03cf:
-	move.b	d0,unknown_659E                 	| [$03cf: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$03cf: ld   (sprite_object_x_659E),a]
 	lea	object_held_struct_659C,a2                	| [$03d2: ld   ix,object_held_struct_659C]
 	subq.b	#1,(0x03,a2)                    	| [$03d6: dec  (ix+$03)]
 	lea	unknown_615A,a3                	| [$03d9: ld   iy,unknown_615A]
@@ -729,7 +729,7 @@ l_03f4:
 	rts                                    	| [$0402: ret]
 
 l_0403:
-	move.b	(a3),d0                    	| [$0403: ld   a,(iy+$00)]
+	tst.b	(a3)                    	| [$0403: ld   a,(iy+$00)]
 	                        	| [$0406: cp   $00]
 	bne.b	0f
 	rts                                    	| [$0408: ret  z]
@@ -1742,6 +1742,9 @@ l_0a38:
 	move.b	d0,(a0)                         	| [$0a40: ld   (hl),a]
 	rts                                    	| [$0a41: ret]
 
+* < a2: player struct (6580)
+* < a3: unknown_6014
+
 handle_elevators_0a66:
 	move.b	elevator_not_moving_6012,d0                       	| [$0a66: ld   a,($6012)]
 	                         	| [$0a69: cp   $00]
@@ -1790,27 +1793,31 @@ l_0aae:
 	subq.b	#1,d0                           	| [$0abd: dec  a]
 	move.b	d0,(0x03,a2)                    	| [$0abe: ld   (ix+$03),a]
 l_0ac1:
-	move.b	(0x27,a3),d0                    	| [$0ac1: ld   a,(iy+$27)]
+	move.b	guard_1_in_elevator_603B,d0                    	| [$0ac1: ld   a,(iy+$27)]
 	cmp.b	#0x01,d0                         	| [$0ac4: cp   $01]
 	jne	l_0acf                             	| [$0ac6: jr   nz,$0ACF]
-	move.b	(0x17,a2),d0                    	| [$0ac8: ld   a,(ix+$17)]
-	subq.b	#1,d0                           	| [$0acb: dec  a]
-	move.b	d0,(0x17,a2)                    	| [$0acc: ld   (ix+$17),a]
+* elevator lifts guard 1 (bad programming practice, offsetting
+* guard struct from player struct!! better to use absolute addresses
+* as code for guard 1 and guard 2 is copy/pasted anyway :)
+
+	                    	| [$0ac8: ld   a,(ix+$17)]
+	subq.b	#1,guard_1_y_6597                           	| [$0acb: dec  a]
+	                    	| [$0acc: ld   (ix+$17),a]
 l_0acf:
-	move.b	(0x67,a3),d0                    	| [$0acf: ld   a,(iy+$67)]
+	move.b	guard_2_in_elevator_607B,d0                    	| [$0acf: ld   a,(iy+$67)]
 	cmp.b	#0x01,d0                         	| [$0ad2: cp   $01]
 	beq.b	0f
 	rts                                    	| [$0ad4: ret  nz]
 0:
-	move.b	(0x1b,a2),d0                    	| [$0ad5: ld   a,(ix+$1b)]
-	subq.b	#1,d0                           	| [$0ad8: dec  a]
-	move.b	d0,(0x1b,a2)                    	| [$0ad9: ld   (ix+$1b),a]
+	                    	| [$0ad5: ld   a,(ix+$1b)]
+	subq.b	#1,guard_2_y_659B                           	| [$0ad8: dec  a]
+	                    	| [$0ad9: ld   (ix+$1b),a]
 	rts                                    	| [$0adc: ret]
 l_0add:
-	clr.b	d0                               	| [$0add: ld   a,$00]
-	move.b	d0,elevator_dir_current_screen_6010	| [$0adf: ld   (elevator_dir_current_screen_6010),a]
-	addq.b	#1,d0                           	| [$0ae2: inc  a]
-	move.b	d0,elevator_not_moving_6012     	| [$0ae3: ld   (elevator_not_moving_6012),a]
+	                               	| [$0add: ld   a,$00]
+	clr.b	elevator_dir_current_screen_6010	| [$0adf: ld   (elevator_dir_current_screen_6010),a]
+	                           	| [$0ae2: inc  a]
+	move.b	#1,elevator_not_moving_6012     	| [$0ae3: ld   (elevator_not_moving_6012),a]
 	rts                                    	| [$0ae6: ret]
 l_0ae7:
 	move.b	player_screen_600D,d0           	| [$0ae7: ld   a,(player_screen_600D)]
@@ -1832,20 +1839,20 @@ l_0af6:
 	addq.b	#1,(0x03,a2)                           	| [$0b03: inc  a]
 	                    	| [$0b04: ld   (ix+$03),a]
 l_0b07:
-	move.b	(0x27,a3),d0                    	| [$0b07: ld   a,(iy+$27)]
+	move.b	guard_1_in_elevator_603B,d0                    	| [$0b07: ld   a,(iy+$27)]
 	cmp.b	#0x01,d0                         	| [$0b0a: cp   $01]
 	jne	l_0b15                             	| [$0b0c: jr   nz,$0B15]
 	                    	| [$0b0e: ld   a,(ix+$17)]
-	addq.b	#1,(0x17,a2)                           	| [$0b11: inc  a]
+	addq.b	#1,guard_1_y_6597                           	| [$0b11: inc  a]
 	                    	| [$0b12: ld   (ix+$17),a]
 l_0b15:
-	move.b	(0x67,a3),d0                    	| [$0b15: ld   a,(iy+$67)]
+	move.b	guard_2_in_elevator_607B,d0                    	| [$0b15: ld   a,(iy+$67)]
 	cmp.b	#0x01,d0                         	| [$0b18: cp   $01]
 	beq.b	0f
 	rts                                    	| [$0b1a: ret  nz]
 0:
 	                    	| [$0b1b: ld   a,(ix+$1b)]
-	addq.b	#1,(0x1b,a2)                           	| [$0b1e: inc  a]
+	addq.b	#1,guard_2_y_659B                          	| [$0b1e: inc  a]
 	                    	| [$0b1f: ld   (ix+$1b),a]
 	rts                                    	| [$0b22: ret]
 l_0b23:
@@ -2411,7 +2418,7 @@ l_0e6d:
 	move.b	#0x3F,d0                        	| [$0e73: ld   a,$3F]
 	move.b	d0,object_held_struct_659C                 	| [$0e75: ld   (object_held_struct_659C),a]
 	move.b	player_x_6582,d0                	| [$0e78: ld   a,(player_x_6582)]
-	move.b	d0,unknown_659E                 	| [$0e7b: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$0e7b: ld   (sprite_object_x_659E),a]
 	rts                                    	| [$0e7e: ret]
 l_0e7f:
 	move.w	d0,-(sp)                        	| [$0e7f: push af]
@@ -2594,14 +2601,14 @@ handle_player_object_carry_1010:
 	jne	l_103d                             	| [$102d: jr   nz,$103D]
 	move.b	player_x_6582,d0                	| [$102f: ld   a,(player_x_6582)]
 	add.b	#0x08,d0                         	| [$1032: add  a,$08]
-	move.b	d0,unknown_659E                 	| [$1034: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$1034: ld   (sprite_object_x_659E),a]
 	move.b	#0xBF,d0                        	| [$1037: ld   a,$BF]
 	move.b	d0,object_held_struct_659C                 	| [$1039: ld   (object_held_struct_659C),a]
 	rts                                    	| [$103c: ret]
 l_103d:
 	move.b	player_x_6582,d0                	| [$103d: ld   a,(player_x_6582)]
 	sub.b	#0x08,d0                         	| [$1040: sub  $08]
-	move.b	d0,unknown_659E                 	| [$1042: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$1042: ld   (sprite_object_x_659E),a]
 	move.b	#0x3F,d0                        	| [$1045: ld   a,$3F]
 	move.b	d0,object_held_struct_659C                 	| [$1047: ld   (object_held_struct_659C),a]
 	rts                                    	| [$104a: ret]
@@ -2635,14 +2642,14 @@ l_1069:
 	jeq	l_108e                             	| [$107f: jr   z,$108E]
 	move.b	player_x_6582,d0                	| [$1081: ld   a,(player_x_6582)]
 	add.b	#0x0C,d0                         	| [$1084: add  a,$0C]
-	move.b	d0,unknown_659E                 	| [$1086: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$1086: ld   (sprite_object_x_659E),a]
 	move.b	d1,d0                           	| [$1089: ld   a,b]
 	move.b	d0,object_held_struct_659C                 	| [$108a: ld   (object_held_struct_659C),a]
 	rts                                    	| [$108d: ret]
 l_108e:
 	move.b	player_x_6582,d0                	| [$108e: ld   a,(player_x_6582)]
 	sub.b	#0x0C,d0                         	| [$1091: sub  $0C]
-	move.b	d0,unknown_659E                 	| [$1093: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$1093: ld   (sprite_object_x_659E),a]
 	move.b	d1,d0                           	| [$1096: ld   a,b]
 	or.b	#0x80,d0                          	| [$1097: or   $80]
 	move.b	d0,object_held_struct_659C                 	| [$1099: ld   (object_held_struct_659C),a]
@@ -2694,7 +2701,7 @@ l_10ff:
 0:
 	move.b	player_x_6582,d0                	| [$1105: ld   a,(player_x_6582)]
 	add.b	#0x0E,d0                         	| [$1108: add  a,$0E]
-	move.b	d0,unknown_659E                 	| [$110a: ld   (unknown_659E),a]
+	move.b	d0,sprite_object_x_659E                 	| [$110a: ld   (sprite_object_x_659E),a]
 	move.b	check_scenery_disabled_61ED,d0                 	| [$110d: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$1110: cp   $01]
 	jeq	l_1119                             	| [$1112: jr   z,$1119]
@@ -3613,14 +3620,14 @@ l_183e:
 l_186b:
 	lea	player_struct_6580,a2          	| [$186b: ld   ix,player_struct_6580]
 	move.b	#0x3F,d0                        	| [$186f: ld   a,$3F]
-	move.b	d0,(0x1c,a2)                    	| [$1871: ld   (ix+$1c),a]
+	move.b	d0,object_held_struct_659C                    	| [$1871: ld   (ix+$1c),a]
 	move.b	unknown_627B,d0                 	| [$1874: ld   a,(unknown_627B)]
-	move.b	d0,(0x1d,a2)                    	| [$1877: ld   (ix+$1d),a]
-	move.b	(0x03,a2),d0                    	| [$187a: ld   a,(ix+$03)]
-	move.b	d0,(0x1f,a2)                    	| [$187d: ld   (ix+$1f),a]
-	move.b	(0x02,a2),d0                    	| [$1880: ld   a,(ix+$02)]
+	move.b	d0,unknown_659D                    	| [$1877: ld   (ix+$1d),a]
+	move.b	player_y_6583,d0                    	| [$187a: ld   a,(ix+$03)]
+	move.b	d0,sprite_object_y_659F                    	| [$187d: ld   (ix+$1f),a]
+	move.b	player_x_6582,d0                    	| [$1880: ld   a,(ix+$02)]
 	sub.b	#0x08,d0                         	| [$1883: sub  $08]
-	move.b	d0,(0x1e,a2)                    	| [$1885: ld   (ix+$1e),a]
+	move.b	d0,sprite_object_x_659E                    	| [$1885: ld   (ix+$1e),a]
 	*jbsr	is_ay_sound_playing_3DEB                 	| [$1888: call is_ay_sound_playing_3DEB]
 	*jne	l_1897                             	| [$188b: jr   nz,$1897]
 	move.w	#TAKE_BAG_SND,d0          	| [$188d: ld   hl,$5BA8]
@@ -3801,7 +3808,7 @@ l_195a:
 
 
 l_195f:
-	move.b	unknown_659E,d0                 	| [$195f: ld   a,(unknown_659E)]
+	move.b	sprite_object_x_659E,d0                 	| [$195f: ld   a,(sprite_object_x_659E)]
 	cmp.b	#0xE0,d0                         	| [$1962: cp   $E0]
 	bcs.b	0f
 	rts                                    	| [$1964: ret  nc]
@@ -5066,11 +5073,11 @@ pick_up_object_2176:
 	clr.b	d0                               	| [$217b: xor  a]
 	move.b	d0,unknown_627E                 	| [$217c: ld   (unknown_627E),a]
 	lea	player_struct_6580,a2          	| [$217f: ld   ix,player_struct_6580]
-	* copy some object params into player structure
+	* copy some object params into object held structure
 	move.b	(0x04,a3),d0                    	| [$2183: ld   a,(iy+$04)]
-	move.b	d0,(0x1c,a2)                    	| [$2186: ld   (ix+$1c),a]
+	move.b	d0,object_held_struct_659C                    	| [$2186: ld   (ix+$1c),a]
 	move.b	(0x05,a3),d0                    	| [$2189: ld   a,(iy+$05)]
-	move.b	d0,(0x1d,a2)                    	| [$218c: ld   (ix+$1d),a]
+	move.b	d0,unknown_659D                    	| [$218c: ld   (ix+$1d),a]
 											| [$218f: xor  a]
 	* zero out object address: no longer drawn in the scenery, player has it
 	clr.b	(A3)                    	| [$2190: ld   (iy+$00),a]
@@ -6400,17 +6407,28 @@ l_2b31:
 	cmp.b	d1,d0                            	| [$2b45: cp   b]
 	jeq	l_2bc6                             	| [$2b46: jp   z,$2BC6]
 	move.l	unknown_pointer_6146,a0     	| [$2b49: ld   hl,(unknown_pointer_6146)]
-	addq.w	#4,a0                           	| [$2b4c: inc  hl] * 4
+												| [$2b4c: inc  hl] * 4
 	move.b	#0x01,d0                        	| [$2b50: ld   a,$01]
-	move.b	d0,(a0)                         	| [$2b52: ld   (hl),a]
+	move.b	d0,(4,a0)                         	| [$2b52: ld   (hl),a]
 	move.l	(sp)+,a0                        	| [$2b53: pop  hl]
+	* HL pointed on 603B or 607B
                   	| [$2b54: push de]
-                   	| [$2b54: push de]
                    	| [$2b55: ld   de,$001C] 28
-	add.w	#0x1C,a0                            	| [$2b58: add  hl,de]
+	                            	| [$2b58: add  hl,de]
                	| [$2b59: pop  de]
 	clr.b	d0                               	| [$2b5a: xor  a]
-	move.b	d0,(a0)                         	| [$2b5b: ld   (hl),a]
+	* clear guard not moving timeout counter while waiting for the elevator
+	* to avoid that the immobile guard watchdog triggers and resets guard position
+	* rework code as it was adding offsets but now there are 32 bit pointers
+	* instead of 16... much cleaner that way
+	cmp.l	#guard_1_in_elevator_603B,a0
+	bne.b	0f
+	clr.b	guard_1_not_moving_timeout_counter_6057                    	| [$2b5b: ld   (hl),a]
+	bra.b	1f
+0:
+	* guard 2 in elevator
+	clr.b	guard_2_not_moving_timeout_counter_6097                    	| [$2b5b: ld   (hl),a]
+1:
 	move.b	(0x07,a2),d0                    	| [$2b5c: ld   a,(ix+$07)] elevator y for current screen
 	subq.b	#1,d0                           	| [$2b5f: dec  a]
 	cmp.b	(0x03,a3),d0                     	| [$2b60: cp   (iy+$03)]
@@ -6439,8 +6457,10 @@ l_2b84:
 	cmp.b	#0x01,d0                         	| [$2b85: cp   $01]
 	jeq	l_2b92                             	| [$2b87: jr   z,$2B92]
 	move.l	unknown_pointer_6146,a0     	| [$2b89: ld   hl,(unknown_pointer_6146)]
-	addq.w	#4,a0                           	| [$2b8c: inc  hl] * 4
-	move.b	d0,(a0)                         	| [$2b90: ld   (hl),a]
+	* was +4, but pointer is now 32 bits and points on                           	| [$2b8c: inc  hl] * 4
+	* unknown_6144 so it would write in wrong location instead of
+	* unknown_6148...
+	move.b	d0,(6,a0)                         	| [$2b90: ld   (hl),a]
 	rts                                    	| [$2b91: ret]
 l_2b92:
 	move.l	unknown_pointer_6146,a0     	| [$2b92: ld   hl,(unknown_pointer_6146)]
@@ -6474,9 +6494,12 @@ l_2bc6:
 	move.l	(sp)+,a0                        	| [$2bc6: pop  hl]
 l_2bc7:
 	move.l	unknown_pointer_6146,a0     	| [$2bc7: ld   hl,(unknown_pointer_6146)]
-	addq.w	#4,a0                           	| [$2bca: inc  hl] * 4
-	clr.b	d0                               	| [$2bce: xor  a]
-	move.b	d0,(a0)                         	| [$2bcf: ld   (hl),a]
+	* was +4, but pointer is now 32 bits and points on                           	| [$2b8c: inc  hl] * 4
+	* unknown_6144 so it would write in wrong location instead of
+	* unknown_6148...
+											| [$2bca: inc  hl] * 4
+											| [$2bce: xor  a]
+	clr.b	(6,a0)                         	| [$2bcf: ld   (hl),a]
 	rts                                    	| [$2bd0: ret]
 	
  * called when guard is waiting or in the stopped elevator
@@ -6549,9 +6572,10 @@ l_2c17_A9:
 
 l_2c1e:
 	move.l	unknown_pointer_6146,a0     	| [$2c1e: ld   hl,(unknown_pointer_6146)]
-	addq.w	#4,a0                           	| [$2c21: inc  hl] * 4
-	clr.b	d0                               	| [$2c25: xor  a]
-	move.b	d0,(a0)                         	| [$2c26: ld   (hl),a]
+	* was +4 but now +6 because points on 6144 and 6146 is 32 bit...
+	                         	| [$2c21: inc  hl] * 4
+	                          	| [$2c25: xor  a]
+	clr.b	(6,a0)                         	| [$2c26: ld   (hl),a]
 	rts                                    	| [$2c27: ret]
 
 
@@ -8192,9 +8216,12 @@ l_3755:
 	jne	l_37cd                             	| [$37c1: jr   nz,$37CD]
 	* english: change last "E" of "PRESENTE" by "S"
 	move.b	#0xE1,d0                        	| [$37c3: ld   a,$E1]
-	move.b	d0,0x918B                       	| [$37c5: ld   ($918B),a]
-	move.b	#0x13,d0                        	| [$37c8: ld   a,$13]
-	move.b	d0,0x998B                       	| [$37ca: ld   ($998B),a]
+	move.w	#0x918B,d6
+	jbsr	osd_w_videoram                       	| [$37c5: ld   ($918B),a]
+	* no need!
+*	move.b	#0x13,d0                        	| [$37c8: ld   a,$13]
+*	add.w	#0x800,d6                       	| [$37ca: ld   ($998B),a]
+*	jbsr	osd_w_colorram
 l_37cd:
 	* "BAGMAN title" (c) 1982
 	lea	game_mem+0x4C2A,a1                      	| [$37cd: ld   de,$4C2A]
