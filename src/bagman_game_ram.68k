@@ -87,8 +87,8 @@
 	.global	fall_height_604D
 	.global	fatal_fall_height_reached_604E
 	.global	unknown_604F
-	.global	unknown_6051
-	.global	unknown_6052
+	.global	coin_start_inputs_6051
+	.global	coin_start_prev_inputs_6052
 	.global	unknown_6053
 	.global	unknown_6055
 	.global	guard_1_not_moving_timeout_counter_6057
@@ -301,6 +301,7 @@ unknown_603A:
 	ds.b	1
 guard_1_in_elevator_603B:
 	ds.b	1
+* right/left/up/down flags must be CONTIGUOUS!!
 guard_2_sees_player_right_603C:
 	ds.b	1
 guard_2_sees_player_left_603D:
@@ -325,9 +326,9 @@ unknown_604F:
 	ds.b	1
 player_previous_input_6050:
 	ds.b	1
-unknown_6051:
+coin_start_inputs_6051:
 	ds.b	1
-unknown_6052:
+coin_start_prev_inputs_6052:
 	ds.b	1
 unknown_6053:
 	ds.b	1

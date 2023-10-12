@@ -1932,7 +1932,7 @@ start_a_game_0ebc:
 0EDE: 3A 00 60      ld   a,(number_of_credits_6000)
 0EE1: FE 02         cp   $02
 0EE3: D8            ret  c
-0EE4: 3A 51 60      ld   a,(unknown_6051)
+0EE4: 3A 51 60      ld   a,(coin_start_inputs_6051)
 0EE7: E6 04         and  $04
 0EE9: FE 04         cp   $04
 0EEB: C0            ret  nz
@@ -6990,14 +6990,14 @@ check_if_credit_inserted_38d7:
 393B: 0E 02         ld   c,$02
 393D: CD 7B 39      call $397B
 3940: C9            ret
-3941: 3A 51 60      ld   a,(unknown_6051)
+3941: 3A 51 60      ld   a,(coin_start_inputs_6051)
 3944: E6 01         and  $01
 3946: 47            ld   b,a
-3947: 3A 52 60      ld   a,(unknown_6052)
+3947: 3A 52 60      ld   a,(coin_start_prev_inputs_6052)
 394A: E6 01         and  $01
 394C: B8            cp   b
 394D: C8            ret  z
-394E: 3A 52 60      ld   a,(unknown_6052)
+394E: 3A 52 60      ld   a,(coin_start_prev_inputs_6052)
 3951: E6 01         and  $01
 3953: FE 01         cp   $01
 3955: C0            ret  nz
@@ -7005,14 +7005,14 @@ check_if_credit_inserted_38d7:
 3958: 0E 05         ld   c,$05
 395A: CD 7B 39      call $397B
 395D: C9            ret
-395E: 3A 51 60      ld   a,(unknown_6051)
+395E: 3A 51 60      ld   a,(coin_start_inputs_6051)
 3961: E6 02         and  $02
 3963: 47            ld   b,a
-3964: 3A 52 60      ld   a,(unknown_6052)
+3964: 3A 52 60      ld   a,(coin_start_prev_inputs_6052)
 3967: E6 02         and  $02
 3969: B8            cp   b
 396A: C8            ret  z
-396B: 3A 52 60      ld   a,(unknown_6052)
+396B: 3A 52 60      ld   a,(coin_start_prev_inputs_6052)
 396E: E6 02         and  $02
 3970: FE 02         cp   $02
 3972: C0            ret  nz
@@ -7099,23 +7099,25 @@ read_player_controls_39fd:
 3A11: D3 08         out  ($08),a
 3A13: DB 0C         in   a,($0C)
 3A15: 2F            cpl
-3A16: CD 3F 3A      call $3A3F
+3A16: CD 3F 3A      call restrict_controls_if_not_playing_3a3f
 3A19: CD 54 3A      call $3A54
 3A1C: 32 26 60      ld   (player_input_6026),a
-3A1F: 3A 51 60      ld   a,(unknown_6051)
-3A22: 32 52 60      ld   (unknown_6052),a
+3A1F: 3A 51 60      ld   a,(coin_start_inputs_6051)
+3A22: 32 52 60      ld   (coin_start_prev_inputs_6052),a
 3A25: 3E 0F         ld   a,$0F
 3A27: D3 08         out  ($08),a
 3A29: DB 0C         in   a,($0C)
 3A2B: 2F            cpl
-3A2C: CD 3F 3A      call $3A3F
-3A2F: 32 51 60      ld   (unknown_6051),a
+3A2C: CD 3F 3A      call restrict_controls_if_not_playing_3a3f
+3A2F: 32 51 60      ld   (coin_start_inputs_6051),a
 3A32: 3A 00 B0      ld   a,(dip_switch_B000)
 3A35: 2F            cpl
 3A36: 32 63 61      ld   (unknown_6163),a
 3A39: 3E 01         ld   a,$01
 3A3B: 32 07 A0      ld   ($A007),a
 3A3E: C9            ret
+
+restrict_controls_if_not_playing_3a3f:
 3A3F: F5            push af
 3A40: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 3A43: FE 01         cp   $01
@@ -7142,7 +7144,7 @@ read_player_controls_39fd:
 3A69: 78            ld   a,b
 3A6A: C9            ret
 
-3A6B: 3A 51 60      ld   a,(unknown_6051)
+3A6B: 3A 51 60      ld   a,(coin_start_inputs_6051)
 3A6E: E6 F8         and  $F8
 3A70: 4F            ld   c,a
 3A71: 78            ld   a,b

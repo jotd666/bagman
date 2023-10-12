@@ -12,7 +12,6 @@
 
 *  guard sees right:	$80, left $40, up $10, down $20
 
-* todo:	 find the "guard stuck" monitoring routine that resets guard at the third screen:	block the guards at 3rd screen to see!
 * gameplay_allowed_6054:	if 0, cannot do anything. pressing start sets to 1:	 unimportant for the game
 * elevator_y_current_screen_6587:
 * elevator_dir_current_screen_6010:	 direction shared by both elevators:	1 up, 0 down
@@ -221,9 +220,20 @@ cpir:
 *: note regscopy must be defined somewhere in RAM
 *: with a size of 36*2
 exx:
-	move.w	sr,-(a7)
-	move.w	#0x2700,sr
+	move.w	d0,-(a7)
+	jbsr	osd_is_vblank_interrupt_enabled
+	tst		d0
+	movem.w	(a7)+,d0
+	beq.b	0f		| interrupts disabled => no need to do anything
 	
+	* if interrupts are enabled, disable them to copy memory
+	* then enable them again
+	jbsr	osd_disable_vblank_interrupt
+	bsr.b	0f
+	jbsr	osd_enable_vblank_interrupt
+	rts
+0:
+
     lea     regscopy+36,a6
     * save current regs in region 1
     movem.l d1-d6/a0/a1/a4,-(a6)
@@ -236,7 +246,6 @@ exx:
     movem.l (a6)+,d1-d6/a0/a1/a4
     movem.l d1-d6/a0/a1/a4,(a6)
     movem.l (a7)+,d1-d6/a0/a1/a4
-	move.w	(a7)+,sr
     rts
 
 * < A0: source (HL)
@@ -2479,7 +2488,7 @@ l_0ec9:
 	bcc.b	0f
 	rts                                    	| [$0ee3: ret  c]
 0:
-	move.b	unknown_6051,d0                 	| [$0ee4: ld   a,(unknown_6051)]
+	move.b	coin_start_inputs_6051,d0                 	| [$0ee4: ld   a,(coin_start_inputs_6051)]
 	and.b	#0x04,d0                         	| [$0ee7: and  $04]
 	cmp.b	#0x04,d0                         	| [$0ee9: cp   $04]
 	beq.b	0f
@@ -2518,21 +2527,34 @@ l_0f00:
 	jbsr	init_guard_directions_and_wagons_2957                            	| [$0f1f: call $2957]
 
 * put one guard on screen 1
-	move.b	#0x01,d0                        	| [$0f22: ld   a,$01]
-	move.b	d0,guard_2_screen_609A          	| [$0f24: ld   (guard_2_screen_609A),a]
-	clr.b	d0                               	| [$0f27: xor  a]
-	move.b	d0,unknown_6053                 	| [$0f28: ld   (unknown_6053),a]
-	move.b	d0,unknown_6055                 	| [$0f2b: ld   (unknown_6055),a]
-	addq.b	#1,d0                           	| [$0f2e: inc  a]
-	move.b	d0,gameplay_allowed_6054        	| [$0f2f: ld   (gameplay_allowed_6054),a]
-	clr.b	d0                               	| [$0f32: xor  a]
+	                        	| [$0f22: ld   a,$01]
+	move.b	#1,guard_2_screen_609A          	| [$0f24: ld   (guard_2_screen_609A),a]
+                              	| [$0f27: xor  a]
+	clr.b	unknown_6053                 	| [$0f28: ld   (unknown_6053),a]
+	clr.b	unknown_6055                 	| [$0f2b: ld   (unknown_6055),a]
+												| [$0f2e: inc  a]
+	move.b	#1,gameplay_allowed_6054        	| [$0f2f: ld   (gameplay_allowed_6054),a]
+												| [$0f32: xor  a]
+	* clear both players scores
 	lea	player_1_score_6176,a0                	| [$0f33: ld   hl,player_1_score_6176]
 	move.b	#0x06,d1                        	| [$0f36: ld   b,$06]
 l_0f38:
-	move.b	d0,(a0)+                         	| [$0f38: ld   (hl),a]
+	clr.b	(a0)+                         	| [$0f38: ld   (hl),a]
 	                           	| [$0f39: inc  hl]
 	subq.b	#1,d1                           	| [...]
 	jne	l_0f38                             	| [$0f3a: djnz $0F38]
+
+	.ifne	OPT_START_SCORE
+	lea	player_1_score_6176,a0                	| [$0f33: ld   hl,player_1_score_6176]
+	move.l	#OPT_START_SCORE,d0
+	move.b	d0,(a0)+
+	lsr.l	#8,d0
+	move.b	d0,(a0)+
+	lsr.l	#8,d0
+	move.b	d0,(a0)+
+	lsr.l	#8,d0
+	.endif
+	
 	move.b	flipped_dip_switches_copy_6163,d0                 	| [$0f3c: ld   a,(flipped_dip_switches_copy_6163)]
 	and.b	#0x03,d0                         	| [$0f3f: and  $03]
 	addq.b	#0x01,d0                        	| [$0f41: add  a,$01]
@@ -3149,10 +3171,11 @@ l_14b8:
 	cmp.b	#0x01,d0                         	| [$14e9: cp   $01]
 	jeq	l_122b                             	| [$14eb: jp   z,$122B]
 
+	* test all 4 directions
 	lea	guard_2_sees_player_right_603C,a2	| [$14ee: ld   ix,guard_2_sees_player_right_603C]
 	move.b	#0x04,d1                        	| [$14f2: ld   b,$04]
 l_14f4:
-	move.b	(a2),d0                    	| [$14f4: ld   a,(ix+$00)]
+	tst.b	(a2)                    	| [$14f4: ld   a,(ix+$00)]
 										| [$14f7: cp   $00]
 	jne	guard_2_sees_player_1525           	| [$14f9: jr   nz,guard_2_sees_player_1525]
 	addq.w	#1,a2                           	| [$14fb: inc  ix]
@@ -4115,22 +4138,22 @@ l_1b38:
 	         	| [$1b42: ld   (guard_struct_pointer_6093),iy]
 	move.l	#guard_1_direction_6027,guard_direction_pointer_6095      	| [$1b46: ld   hl,guard_1_direction_6027]
 	                 	| [$1b49: ld   (guard_direction_pointer_6095),hl]
-	move.b	guard_2_sees_player_right_603C,d0	| [$1b4c: ld   a,(guard_2_sees_player_right_603C)]
+	tst.b	guard_2_sees_player_right_603C	| [$1b4c: ld   a,(guard_2_sees_player_right_603C)]
 	                         	| [$1b4f: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_right_1B6D    	| [$1b51: call nz,set_guard_direction_right_1B6D]
 0:
-	move.b	guard_2_sees_player_left_603D,d0	| [$1b54: ld   a,(guard_2_sees_player_left_603D)]
+	tst.b	guard_2_sees_player_left_603D	| [$1b54: ld   a,(guard_2_sees_player_left_603D)]
 	                         	| [$1b57: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_left_1B8B     	| [$1b59: call nz,set_guard_direction_left_1B8B]
 0:
-	move.b	guard_2_sees_player_up_603E,d0  	| [$1b5c: ld   a,(guard_2_sees_player_up_603E)]
+	tst.b	guard_2_sees_player_up_603E  	| [$1b5c: ld   a,(guard_2_sees_player_up_603E)]
 	                         	| [$1b5f: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_up_1BB3       	| [$1b61: call nz,set_guard_direction_up_1BB3]
 0:
-	move.b	guard_2_sees_player_down_603F,d0	| [$1b64: ld   a,(guard_2_sees_player_down_603F)]
+	tst.b	guard_2_sees_player_down_603F	| [$1b64: ld   a,(guard_2_sees_player_down_603F)]
 	                         	| [$1b67: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_down_1BA9     	| [$1b69: call nz,set_guard_direction_down_1BA9]
@@ -4332,22 +4355,22 @@ l_1c94:
 								| [$1c9e: ld   (guard_struct_pointer_6093),iy]
 	move.l	#guard_2_direction_6067,guard_direction_pointer_6095      	| [$1ca2: ld   hl,guard_2_direction_6067]
 	                 	| [$1ca5: ld   (guard_direction_pointer_6095),hl]
-	move.b	guard_1_sees_player_right_607C,d0	| [$1ca8: ld   a,(guard_1_sees_player_right_607C)]
+	tst.b	guard_1_sees_player_right_607C	| [$1ca8: ld   a,(guard_1_sees_player_right_607C)]
 										| [$1cab: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_right_1B6D    	| [$1cad: call nz,set_guard_direction_right_1B6D]
 0:
-	move.b	guard_1_sees_player_left_607D,d0	| [$1cb0: ld   a,(guard_1_sees_player_left_607D)]
+	tst.b	guard_1_sees_player_left_607D	| [$1cb0: ld   a,(guard_1_sees_player_left_607D)]
 											| [$1cb3: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_left_1B8B     	| [$1cb5: call nz,set_guard_direction_left_1B8B]
 0:
-	move.b	guard_1_sees_player_up_607E,d0  	| [$1cb8: ld   a,(guard_1_sees_player_up_607E)]
+	tst.b	guard_1_sees_player_up_607E  	| [$1cb8: ld   a,(guard_1_sees_player_up_607E)]
 	                         	| [$1cbb: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_up_1BB3       	| [$1cbd: call nz,set_guard_direction_up_1BB3]
 0:
-	move.b	guard_1_sees_player_down_607F,d0	| [$1cc0: ld   a,(guard_1_sees_player_down_607F)]
+	tst.b	guard_1_sees_player_down_607F	| [$1cc0: ld   a,(guard_1_sees_player_down_607F)]
 	                         	| [$1cc3: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_down_1BA9     	| [$1cc5: call nz,set_guard_direction_down_1BA9]
@@ -4388,6 +4411,7 @@ l_1ceb:
 
 	                	| [$1cf9: ld   a,(has_pick_61CF)]
 	                         	| [$1cfc: cp   $00]
+	* wtf part of the protection ???
 	move.w	d6,-(a7)
 	move.w	#0x91B2,d6                       	| [$1cfe: ld   a,($91B2)]
 	jbsr	osd_r_videoram
@@ -5977,6 +6001,7 @@ display_screen_2_275d:
 	jbsr	l_1e26                            	| [$2845: call $1E26]
 	jbsr	l_3110                            	| [$2848: call $3110]
 	rts                                    	| [$284b: ret]
+	
 display_maze_284c:
 	jbsr	l_2a16                            	| [$284c: call $2A16]
 	move.b	#0x3F,d0                        	| [$284f: ld   a,$3F]
@@ -6582,17 +6607,18 @@ l_2c1e:
 
 
 compute_guard_speed_from_dipsw_2C4D:
+	WPSET	0x204
 	move.b	check_scenery_disabled_61ED,d0                 	| [$2c4d: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$2c50: cp   $01]
 	jeq	l_2c78                             	| [$2c54: jr   z,$2C78]
-	clr.b	d0                               	| [$2c52: ld   a,$00]
-	move.b	score_ten_thousands_player_1_6178,d0     	| [$2c56: ld   a,(score_ten_thousands_player_1_6178)]
-	move.b	d0,d1                           	| [$2c59: ld   b,a]
+	                               	| [$2c52: ld   a,$00]
+	move.b	score_ten_thousands_player_1_6178,d1     	| [$2c56: ld   a,(score_ten_thousands_player_1_6178)]
+												| [$2c59: ld   b,a]
 	move.b	current_player_617C,d0          	| [$2c5a: ld   a,(current_player_617C)]
 	cmp.b	#0x01,d0                         	| [$2c5d: cp   $01]
 	jne	l_2c65                             	| [$2c5f: jr   nz,$2C65]
-	move.b	score_ten_thousands_player_2_617B,d0                 	| [$2c61: ld   a,(score_ten_thousands_player_2_617B)]
-	move.b	d0,d1                           	| [$2c64: ld   b,a]
+	move.b	score_ten_thousands_player_2_617B,d1                 	| [$2c61: ld   a,(score_ten_thousands_player_2_617B)]
+												| [$2c64: ld   b,a]
 l_2c65:
 	jbsr	osd_read_dipswitches            	| [$2c65: ld   a,(dip_switch_B000)]
 	CLEAR_XC_FLAG
@@ -6602,10 +6628,11 @@ l_2c65:
 	add.b	d1,d0                            	| [$2c71: add  a,b] difficulty level
 	clr.b	d1                               	| [$2c72: ld   b,$00]
 	jbsr	compute_guard_speed_2C7C          	| [$2c74: call compute_guard_speed_2C7C]
-	move.b	d1,d0                           	| [$2c77: ld   a,b]
+	move.b	d1,guard_speed_6164					| [$2c77: ld   a,b]
+	rts
+	
 l_2c78:
-	clr.b	d0                               	| [$2c52: ld   a,$00]
-	move.b	d0,guard_speed_6164             	| [$2c78: ld   (guard_speed_6164),a]
+	clr.b	guard_speed_6164             	| [$2c78: ld   (guard_speed_6164),a]
 	rts                                    	| [$2c7b: ret]
 
  * depending on score & difficulty level, return guard speed in b
@@ -8144,8 +8171,8 @@ play_intro_3700:
 	clr.b	has_pick_61CF                	| [$373a: ld   (has_pick_61CF),a]
 	clr.w	pickaxe_timer_duration_61E0                 	| [$373d: ld   (pickaxe_timer_duration_61E0),a]
 	                 	| [$3740: ld   (unknown_61E1),a]
-	move.b	#0x01,d0                        	| [$3743: ld   a,$01]
-	move.b	d0,check_scenery_disabled_61ED                 	| [$3745: ld   (check_scenery_disabled_61ED),a]
+	move.b	#0x01,check_scenery_disabled_61ED                        	| [$3743: ld   a,$01]
+	                 	| [$3745: ld   (check_scenery_disabled_61ED),a]
 	jbsr	compute_guard_speed_from_dipsw_2C4D	| [$3748: call compute_guard_speed_from_dipsw_2C4D]
 
 	* draw the line the characters are going to walk on
@@ -8458,24 +8485,26 @@ read_player_controls_39fd:
 								
 								
 	not.b	d0                               	| [$3a15: cpl]
-	jbsr	l_3a3f                            	| [$3a16: call $3A3F]
+	jbsr	restrict_controls_if_not_playing_3a3f                            	| [$3a16: call $3A3F]
 	**jbsr	handle_cocktail_3a54                            	| [$3a19: call $3A54]
 	move.b	d0,player_input_6026            	| [$3a1c: ld   (player_input_6026),a]
-	move.b	unknown_6051,d0                 	| [$3a1f: ld   a,(unknown_6051)]
-	move.b	d0,unknown_6052                 	| [$3a22: ld   (unknown_6052),a]
+	move.b	coin_start_inputs_6051,coin_start_prev_inputs_6052
+											| [$3a1f: ld   a,(coin_start_inputs_6051)]
+	                	| [$3a22: ld   (coin_start_prev_inputs_6052),a]
 	move.b	#0x0F,d0                        	| [$3a25: ld   a,$0F]
 *out  ($08),a
 *in   a,($0C)
 	not.b	d0                               	| [$3a2b: cpl]
-	jbsr	l_3a3f                            	| [$3a2c: call $3A3F]
-	move.b	d0,unknown_6051                 	| [$3a2f: ld   (unknown_6051),a]
+	jbsr	restrict_controls_if_not_playing_3a3f                            	| [$3a2c: call $3A3F]
+	move.b	d0,coin_start_inputs_6051                 	| [$3a2f: ld   (coin_start_inputs_6051),a]	
 	jbsr	osd_read_dipswitches              	| [$3a32: ld   a,(dip_switch_B000)]
 	not.b	d0                               	| [$3a35: cpl]
 	move.b	d0,flipped_dip_switches_copy_6163                 	| [$3a36: ld   (flipped_dip_switches_copy_6163),a]
 *	move.b	#0x01,d0                        	| [$3a39: ld   a,$01]
 *	move.b	d0,0xA007                       	| [$3a3b: ld   ($A007),a]
 	rts                                    	| [$3a3e: ret]
-l_3a3f:
+	
+restrict_controls_if_not_playing_3a3f:
 	move.w	d0,-(sp)                        	| [$3a3f: push af]
 	move.b	check_scenery_disabled_61ED,d0                 	| [$3a40: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$3a43: cp   $01]
@@ -8487,6 +8516,7 @@ l_3a3f:
 	rts                                    	| [$3a4f: ret]
 l_3a50:
 	move.w	(sp)+,d0                        	| [$3a50: pop  af]
+	* keep only coin inputs & start button
 	and.b	#0x07,d0                         	| [$3a51: and  $07]
 	rts                                    	| [$3a53: ret]
 handle_cocktail_3a54:
@@ -8506,7 +8536,7 @@ handle_cocktail_3a54:
 	rts                                    	| [$3a6a: ret]
 
 l_3a6b:
-	move.b	unknown_6051,d0                 	| [$3a6b: ld   a,(unknown_6051)]
+	move.b	coin_start_inputs_6051,d0                 	| [$3a6b: ld   a,(coin_start_inputs_6051)]
 	and.b	#0xF8,d0                         	| [$3a6e: and  $F8]
 	move.b	d0,d2                           	| [$3a70: ld   c,a]
 	move.b	d1,d0                           	| [$3a71: ld   a,b]
@@ -8650,16 +8680,16 @@ l_3924:
 	jbsr	l_397b                            	| [$393d: call $397B]
 	rts                                    	| [$3940: ret]
 l_3941:
-	move.b	unknown_6051,d0                 	| [$3941: ld   a,(unknown_6051)]
+	move.b	coin_start_inputs_6051,d0                 	| [$3941: ld   a,(coin_start_inputs_6051)]
 	and.b	#0x01,d0                         	| [$3944: and  $01]
 	move.b	d0,d1                           	| [$3946: ld   b,a]
-	move.b	unknown_6052,d0                 	| [$3947: ld   a,(unknown_6052)]
+	move.b	coin_start_prev_inputs_6052,d0                 	| [$3947: ld   a,(coin_start_prev_inputs_6052)]
 	and.b	#0x01,d0                         	| [$394a: and  $01]
 	cmp.b	d1,d0                            	| [$394c: cp   b]
 	bne.b	0f                               	| [$394d: ret  z] [...]
 	rts                                    	| [$394d: ret  z]
 0:
-	move.b	unknown_6052,d0                 	| [$394e: ld   a,(unknown_6052)]
+	move.b	coin_start_prev_inputs_6052,d0                 	| [$394e: ld   a,(coin_start_prev_inputs_6052)]
 	and.b	#0x01,d0                         	| [$3951: and  $01]
 	cmp.b	#0x01,d0                         	| [$3953: cp   $01]
 	beq.b	0f                               	| [$3955: ret  nz] [...]
@@ -8670,16 +8700,16 @@ l_3941:
 	jbsr	l_397b                            	| [$395a: call $397B]
 	rts                                    	| [$395d: ret]
 l_395e:
-	move.b	unknown_6051,d0                 	| [$395e: ld   a,(unknown_6051)]
+	move.b	coin_start_inputs_6051,d0                 	| [$395e: ld   a,(coin_start_inputs_6051)]
 	and.b	#0x02,d0                         	| [$3961: and  $02]
 	move.b	d0,d1                           	| [$3963: ld   b,a]
-	move.b	unknown_6052,d0                 	| [$3964: ld   a,(unknown_6052)]
+	move.b	coin_start_prev_inputs_6052,d0                 	| [$3964: ld   a,(coin_start_prev_inputs_6052)]
 	and.b	#0x02,d0                         	| [$3967: and  $02]
 	cmp.b	d1,d0                            	| [$3969: cp   b]
 	bne.b	0f                               	| [$396a: ret  z] [...]
 	rts                                    	| [$396a: ret  z]
 0:
-	move.b	unknown_6052,d0                 	| [$396b: ld   a,(unknown_6052)]
+	move.b	coin_start_prev_inputs_6052,d0                 	| [$396b: ld   a,(coin_start_prev_inputs_6052)]
 	and.b	#0x02,d0                         	| [$396e: and  $02]
 	cmp.b	#0x02,d0                         	| [$3970: cp   $02]
 	beq.b	0f                               	| [$3972: ret  nz] [...]
