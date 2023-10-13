@@ -9,10 +9,10 @@
 	.global	guard_1_ladder_frame_6035
 	.global	guard_1_screen_6099
 	.global	guard_1_logical_address_6038
-	.global	guard_1_sees_player_down_607F
-	.global	guard_1_sees_player_left_607D
-	.global	guard_1_sees_player_right_607C
-	.global	guard_1_sees_player_up_607E
+	.global	guard_2_sees_player_down_607F
+	.global	guard_2_sees_player_left_607D
+	.global	guard_2_sees_player_right_607C
+	.global	guard_2_sees_player_up_607E
 	.global	guard_1_struct_6594
 	.global	guard_1_x_6596
 	.global	guard_1_y_6597
@@ -21,10 +21,10 @@
 	.global	guard_2_ladder_frame_6075
 	.global	guard_2_screen_609A
 	.global	guard_2_logical_address_6078
-	.global	guard_2_sees_player_down_603F
-	.global	guard_2_sees_player_left_603D
-	.global	guard_2_sees_player_right_603C
-	.global	guard_2_sees_player_up_603E
+	.global	guard_1_sees_player_down_603F
+	.global	guard_1_sees_player_left_603D
+	.global	guard_1_sees_player_right_603C
+	.global	guard_1_sees_player_up_603E
 	.global	guard_2_struct_6598
 	.global	guard_2_x_659A
 	.global	guard_2_y_659B
@@ -302,13 +302,13 @@ unknown_603A:
 guard_1_in_elevator_603B:
 	ds.b	1
 * right/left/up/down flags must be CONTIGUOUS!!
-guard_2_sees_player_right_603C:
+guard_1_sees_player_right_603C:
 	ds.b	1
-guard_2_sees_player_left_603D:
+guard_1_sees_player_left_603D:
 	ds.b	1
-guard_2_sees_player_up_603E:
+guard_1_sees_player_up_603E:
 	ds.b	1
-guard_2_sees_player_down_603F:
+guard_1_sees_player_down_603F:
 	ds.b	5
 	.align	2
 stored_logical_address_6044:
@@ -355,13 +355,13 @@ unknown_607A:
 	ds.b	1
 guard_2_in_elevator_607B:
 	ds.b	1
-guard_1_sees_player_right_607C:
+guard_2_sees_player_right_607C:
 	ds.b	1
-guard_1_sees_player_left_607D:
+guard_2_sees_player_left_607D:
 	ds.b	1
-guard_1_sees_player_up_607E:
+guard_2_sees_player_up_607E:
 	ds.b	1
-guard_1_sees_player_down_607F:
+guard_2_sees_player_down_607F:
 	ds.b	16
 unknown_608F:
 	ds.b	2

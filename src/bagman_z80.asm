@@ -2238,7 +2238,7 @@ speech_management_10D1:
 1130: FD 77 05      ld   (iy+$05),a
 1133: 3E EC         ld   a,$EC
 1135: FD 77 06      ld   (iy+$06),a
-1138: C4 BA 21      call nz,drop_object_21ba
+1138: C4 BA 21      call nz,drop_object_21ba   ; called every time as Z isn't set, tested at $1125
 113B: C9            ret
 handle_pick_hold_timer_113c:
 113C: 3A CF 61      ld   a,(has_pick_61CF)
@@ -2600,7 +2600,7 @@ mainloop_1242:
 14E9: FE 01         cp   $01
 14EB: CA 2B 12      jp   z,$122B
 
-14EE: DD 21 3C 60   ld   ix,guard_2_sees_player_right_603C
+14EE: DD 21 3C 60   ld   ix,guard_1_sees_player_right_603C
 14F2: 06 04         ld   b,$04
 14F4: DD 7E 00      ld   a,(ix+$00)
 14F7: FE 00         cp   $00
@@ -2626,7 +2626,7 @@ mainloop_1242:
 guard_2_sees_player_1525:
 1525: AF            xor  a
 1526: 32 48 61      ld   (unknown_6148),a
-1529: DD 21 7C 60   ld   ix,guard_1_sees_player_right_607C
+1529: DD 21 7C 60   ld   ix,guard_2_sees_player_right_607C
 152D: 06 04         ld   b,$04
 152F: DD 7E 00      ld   a,(ix+$00)
 1532: FE 00         cp   $00
@@ -3386,16 +3386,16 @@ guard_goes_down_1b2b:
 1B42: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1B46: 21 27 60      ld   hl,guard_1_direction_6027
 1B49: 22 95 60      ld   (guard_direction_pointer_6095),hl
-1B4C: 3A 3C 60      ld   a,(guard_2_sees_player_right_603C)
+1B4C: 3A 3C 60      ld   a,(guard_1_sees_player_right_603C)
 1B4F: FE 00         cp   $00
 1B51: C4 6D 1B      call nz,set_guard_direction_right_1B6D
-1B54: 3A 3D 60      ld   a,(guard_2_sees_player_left_603D)
+1B54: 3A 3D 60      ld   a,(guard_1_sees_player_left_603D)
 1B57: FE 00         cp   $00
 1B59: C4 8B 1B      call nz,set_guard_direction_left_1B8B
-1B5C: 3A 3E 60      ld   a,(guard_2_sees_player_up_603E)
+1B5C: 3A 3E 60      ld   a,(guard_1_sees_player_up_603E)
 1B5F: FE 00         cp   $00
 1B61: C4 B3 1B      call nz,set_guard_direction_up_1BB3
-1B64: 3A 3F 60      ld   a,(guard_2_sees_player_down_603F)
+1B64: 3A 3F 60      ld   a,(guard_1_sees_player_down_603F)
 1B67: FE 00         cp   $00
 1B69: C4 A9 1B      call nz,set_guard_direction_down_1BA9
 1B6C: C9            ret
@@ -3521,25 +3521,25 @@ guide_guard_on_hidden_screen_1bbd:
 1C34: 3A 99 60      ld   a,(guard_1_screen_6099)
 1C37: B8            cp   b
 1C38: C0            ret  nz
-1C39: DD 21 3D 60   ld   ix,guard_2_sees_player_left_603D
+1C39: DD 21 3D 60   ld   ix,guard_1_sees_player_left_603D
 1C3D: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 1C40: 01 E0 FF      ld   bc,$FFE0
 1C43: 3A CF 61      ld   a,(has_pick_61CF)
 1C46: FE 00         cp   $00
 1C48: 3E 40         ld   a,$40
 1C4A: 20 06         jr   nz,$1C52
-1C4C: DD 21 3C 60   ld   ix,guard_2_sees_player_right_603C
+1C4C: DD 21 3C 60   ld   ix,guard_1_sees_player_right_603C
 1C50: 3E 80         ld   a,$80
 1C52: 08            ex   af,af'
 1C53: CD 33 1D      call is_way_clear_to_player_1D33
 1C56: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
-1C59: DD 21 3C 60   ld   ix,guard_2_sees_player_right_603C
+1C59: DD 21 3C 60   ld   ix,guard_1_sees_player_right_603C
 1C5D: 01 20 00      ld   bc,$0020
 1C60: 3A CF 61      ld   a,(has_pick_61CF)
 1C63: FE 00         cp   $00
 1C65: 3E 80         ld   a,$80
 1C67: 20 06         jr   nz,$1C6F
-1C69: DD 21 3D 60   ld   ix,guard_2_sees_player_left_603D
+1C69: DD 21 3D 60   ld   ix,guard_1_sees_player_left_603D
 1C6D: 3E 40         ld   a,$40
 1C6F: 08            ex   af,af'
 1C70: CD 33 1D      call is_way_clear_to_player_1D33
@@ -3547,10 +3547,10 @@ guide_guard_on_hidden_screen_1bbd:
 1C76: 01 FF FF      ld   bc,$FFFF
 1C79: 3E 10         ld   a,$10
 1C7B: 08            ex   af,af'
-1C7C: DD 21 3E 60   ld   ix,guard_2_sees_player_up_603E
+1C7C: DD 21 3E 60   ld   ix,guard_1_sees_player_up_603E
 1C80: CD 33 1D      call is_way_clear_to_player_1D33
 1C83: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
-1C86: DD 21 3F 60   ld   ix,guard_2_sees_player_down_603F
+1C86: DD 21 3F 60   ld   ix,guard_1_sees_player_down_603F
 1C8A: 01 01 00      ld   bc,$0001
 1C8D: 3E 20         ld   a,$20
 1C8F: 08            ex   af,af'
@@ -3563,16 +3563,16 @@ guide_guard_on_hidden_screen_1bbd:
 1C9E: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1CA2: 21 67 60      ld   hl,guard_2_direction_6067
 1CA5: 22 95 60      ld   (guard_direction_pointer_6095),hl
-1CA8: 3A 7C 60      ld   a,(guard_1_sees_player_right_607C)
+1CA8: 3A 7C 60      ld   a,(guard_2_sees_player_right_607C)
 1CAB: FE 00         cp   $00
 1CAD: C4 6D 1B      call nz,set_guard_direction_right_1B6D
-1CB0: 3A 7D 60      ld   a,(guard_1_sees_player_left_607D)
+1CB0: 3A 7D 60      ld   a,(guard_2_sees_player_left_607D)
 1CB3: FE 00         cp   $00
 1CB5: C4 8B 1B      call nz,set_guard_direction_left_1B8B
-1CB8: 3A 7E 60      ld   a,(guard_1_sees_player_up_607E)
+1CB8: 3A 7E 60      ld   a,(guard_2_sees_player_up_607E)
 1CBB: FE 00         cp   $00
 1CBD: C4 B3 1B      call nz,set_guard_direction_up_1BB3
-1CC0: 3A 7F 60      ld   a,(guard_1_sees_player_down_607F)
+1CC0: 3A 7F 60      ld   a,(guard_2_sees_player_down_607F)
 1CC3: FE 00         cp   $00
 1CC5: C4 A9 1B      call nz,set_guard_direction_down_1BA9
 1CC8: C9            ret
@@ -3584,7 +3584,7 @@ guide_guard_on_hidden_screen_1bbd:
 1CD0: B8            cp   b
 1CD1: C0            ret  nz
 
-1CD2: DD 21 7D 60   ld   ix,guard_1_sees_player_left_607D
+1CD2: DD 21 7D 60   ld   ix,guard_2_sees_player_left_607D
 1CD6: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 1CD9: 01 E0 FF      ld   bc,$FFE0
 
@@ -3595,13 +3595,13 @@ guide_guard_on_hidden_screen_1bbd:
 1CDF: FE 00         cp   $00
 1CE1: 3E 40         ld   a,$40
 1CE3: 20 06         jr   nz,$1CEB
-1CE5: DD 21 7C 60   ld   ix,guard_1_sees_player_right_607C
+1CE5: DD 21 7C 60   ld   ix,guard_2_sees_player_right_607C
 1CE9: 3E 80         ld   a,$80
 1CEB: 08            ex   af,af'
 1CEC: CD 33 1D      call is_way_clear_to_player_1D33
 1CEF: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
 1CF2: 01 20 00      ld   bc,$0020
-1CF5: DD 21 7C 60   ld   ix,guard_1_sees_player_right_607C
+1CF5: DD 21 7C 60   ld   ix,guard_2_sees_player_right_607C
 
 ;; if player has pick reverts tests:	 if sees on the left, actually
 ;;  pretend he saw him on the right
@@ -3612,7 +3612,7 @@ guide_guard_on_hidden_screen_1bbd:
 1D01: 32 72 62      ld   (unknown_6272),a
 1D04: 3E 80         ld   a,$80
 1D06: 20 06         jr   nz,$1D0E
-1D08: DD 21 7D 60   ld   ix,guard_1_sees_player_left_607D
+1D08: DD 21 7D 60   ld   ix,guard_2_sees_player_left_607D
 1D0C: 3E 40         ld   a,$40
 1D0E: 08            ex   af,af'
 1D0F: CD 33 1D      call is_way_clear_to_player_1D33
@@ -3622,10 +3622,10 @@ guide_guard_on_hidden_screen_1bbd:
 1D15: 01 FF FF      ld   bc,$FFFF
 1D18: 3E 10         ld   a,$10
 1D1A: 08            ex   af,af'
-1D1B: DD 21 7E 60   ld   ix,guard_1_sees_player_up_607E
+1D1B: DD 21 7E 60   ld   ix,guard_2_sees_player_up_607E
 1D1F: CD 33 1D      call is_way_clear_to_player_1D33
 1D22: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
-1D25: DD 21 7F 60   ld   ix,guard_1_sees_player_down_607F
+1D25: DD 21 7F 60   ld   ix,guard_2_sees_player_down_607F
 1D29: 01 01 00      ld   bc,$0001
 1D2C: 3E 20         ld   a,$20
 1D2E: 08            ex   af,af'
@@ -5842,12 +5842,14 @@ busy_wait_2f19:
 2F68: 06 0D         ld   b,$0D
 2F6A: 3E 8B         ld   a,$8B
 2F6C: 21 83 93      ld   hl,$9383
-2F6F: CD 7D 2F      call $2F7D
+2F6F: CD 7D 2F      call write_score_frame_vertical_bar_2f7d
 2F72: 3E 8E         ld   a,$8E
 2F74: 06 0D         ld   b,$0D
 2F76: 21 63 90      ld   hl,$9063
-2F79: CD 7D 2F      call $2F7D
+2F79: CD 7D 2F      call write_score_frame_vertical_bar_2f7d
 2F7C: C9            ret
+
+write_score_frame_vertical_bar_2f7d:
 2F7D: 77            ld   (hl),a
 2F7E: E5            push hl
 2F7F: F5            push af
@@ -5859,7 +5861,7 @@ busy_wait_2f19:
 2F87: F1            pop  af
 2F88: E1            pop  hl
 2F89: 23            inc  hl
-2F8A: 10 F1         djnz $2F7D
+2F8A: 10 F1         djnz write_score_frame_vertical_bar_2f7d
 2F8C: C9            ret
 2F8D: DD E5         push ix
 2F8F: C5            push bc
@@ -5945,11 +5947,11 @@ high_score_entry_2ffb:
 3033: 06 0C         ld   b,$0C
 3035: 21 92 93      ld   hl,$9392
 3038: 3E 8B         ld   a,$8B
-303A: CD 7D 2F      call $2F7D
+303A: CD 7D 2F      call write_score_frame_vertical_bar_2f7d
 303D: 06 0C         ld   b,$0C
 303F: 3E 8E         ld   a,$8E
 3041: 21 72 90      ld   hl,$9072
-3044: CD 7D 2F      call $2F7D
+3044: CD 7D 2F      call write_score_frame_vertical_bar_2f7d
 3047: 11 36 4D      ld   de,$4D36
 304A: 21 75 92      ld   hl,$9275
 304D: CD DB 30      call $30DB

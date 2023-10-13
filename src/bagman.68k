@@ -2749,7 +2749,7 @@ l_1119:
 	move.b	d0,(0x05,a3)                    	| [$1130: ld   (iy+$05),a]
 	move.b	#0xEC,d0                        	| [$1133: ld   a,$EC]
 	move.b	d0,(0x06,a3)                    	| [$1135: ld   (iy+$06),a]
-	beq.b	0f
+	**beq.b	0f   | never happens!
 	jbsr	drop_object_21ba                            	| [$1138: call nz,$21BA]
 0:
 	rts                                    	| [$113b: ret]
@@ -3172,16 +3172,16 @@ l_14b8:
 	jeq	l_122b                             	| [$14eb: jp   z,$122B]
 
 	* test all 4 directions
-	lea	guard_2_sees_player_right_603C,a2	| [$14ee: ld   ix,guard_2_sees_player_right_603C]
+	lea	guard_1_sees_player_right_603C,a2	| [$14ee: ld   ix,guard_1_sees_player_right_603C]
 	move.b	#0x04,d1                        	| [$14f2: ld   b,$04]
 l_14f4:
 	tst.b	(a2)                    	| [$14f4: ld   a,(ix+$00)]
 										| [$14f7: cp   $00]
-	jne	guard_2_sees_player_1525           	| [$14f9: jr   nz,guard_2_sees_player_1525]
+	jne	guard_1_sees_player_1525           	| [$14f9: jr   nz,guard_2_sees_player_1525]
 	addq.w	#1,a2                           	| [$14fb: inc  ix]
 	subq.b	#1,d1                           	| [...]
 	jne	l_14f4                             	| [$14fd: djnz $14F4]
- * guard 2 does not see player anywhere: do something special
+ * guard 1 does not see player anywhere: do something special
 
 	move.l	#guard_1_direction_6027,guard_direction_pointer_6095      	| [$14ff: ld   hl,guard_1_direction_6027]
 	                 	| [$1502: ld   (guard_direction_pointer_6095),hl]
@@ -3196,11 +3196,11 @@ l_14f4:
 	jbsr	guard_wait_for_elevator_test_2AFA 	| [$1520: call guard_wait_for_elevator_test_2AFA]
 	jra	l_1529                             	| [$1523: jr   $1529]
 
-guard_2_sees_player_1525:
+guard_1_sees_player_1525:
 	clr.b	d0                               	| [$1525: xor  a]
 	move.b	d0,unknown_6148                 	| [$1526: ld   (unknown_6148),a]
 l_1529:
-	lea	guard_1_sees_player_right_607C,a2	| [$1529: ld   ix,guard_1_sees_player_right_607C]
+	lea	guard_2_sees_player_right_607C,a2	| [$1529: ld   ix,guard_2_sees_player_right_607C]
 	move.b	#0x04,d1                        	| [$152d: ld   b,$04]
 l_152f:
 	move.b	(a2),d0                    	| [$152f: ld   a,(ix+$00)]
@@ -4138,22 +4138,22 @@ l_1b38:
 	         	| [$1b42: ld   (guard_struct_pointer_6093),iy]
 	move.l	#guard_1_direction_6027,guard_direction_pointer_6095      	| [$1b46: ld   hl,guard_1_direction_6027]
 	                 	| [$1b49: ld   (guard_direction_pointer_6095),hl]
-	tst.b	guard_2_sees_player_right_603C	| [$1b4c: ld   a,(guard_2_sees_player_right_603C)]
+	tst.b	guard_1_sees_player_right_603C	| [$1b4c: ld   a,(guard_1_sees_player_right_603C)]
 	                         	| [$1b4f: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_right_1B6D    	| [$1b51: call nz,set_guard_direction_right_1B6D]
 0:
-	tst.b	guard_2_sees_player_left_603D	| [$1b54: ld   a,(guard_2_sees_player_left_603D)]
+	tst.b	guard_1_sees_player_left_603D	| [$1b54: ld   a,(guard_1_sees_player_left_603D)]
 	                         	| [$1b57: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_left_1B8B     	| [$1b59: call nz,set_guard_direction_left_1B8B]
 0:
-	tst.b	guard_2_sees_player_up_603E  	| [$1b5c: ld   a,(guard_2_sees_player_up_603E)]
+	tst.b	guard_1_sees_player_up_603E  	| [$1b5c: ld   a,(guard_1_sees_player_up_603E)]
 	                         	| [$1b5f: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_up_1BB3       	| [$1b61: call nz,set_guard_direction_up_1BB3]
 0:
-	tst.b	guard_2_sees_player_down_603F	| [$1b64: ld   a,(guard_2_sees_player_down_603F)]
+	tst.b	guard_1_sees_player_down_603F	| [$1b64: ld   a,(guard_1_sees_player_down_603F)]
 	                         	| [$1b67: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_down_1BA9     	| [$1b69: call nz,set_guard_direction_down_1BA9]
@@ -4311,25 +4311,25 @@ l_1c30:
 	beq.b	0f
 	rts                                    	| [$1c38: ret  nz]
 0:
-	lea	guard_2_sees_player_left_603D,a2	| [$1c39: ld   ix,guard_2_sees_player_left_603D]
+	lea	guard_1_sees_player_left_603D,a2	| [$1c39: ld   ix,guard_1_sees_player_left_603D]
 	move.w	guard_1_logical_address_6038,d6	| [$1c3d: ld   hl,(guard_1_logical_address_6038)]
 	move.w	#-0x20,d1                        	| [$1c40: ld   bc,$FFE0] 65504
 	move.b	#0x40,d0                        	| [$1c48: ld   a,$40]
 	tst.b	has_pick_61CF                	| [$1c43: ld   a,(has_pick_61CF)]
 	jne	l_1c52                             	| [$1c4a: jr   nz,$1C52]
- 	lea	guard_2_sees_player_right_603C,a2	| [$1c4c: ld   ix,guard_2_sees_player_right_603C]
+ 	lea	guard_1_sees_player_right_603C,a2	| [$1c4c: ld   ix,guard_1_sees_player_right_603C]
 	move.b	#0x80,d0                        	| [$1c50: ld   a,$80]
 l_1c52:
 	exg	d0,d7                              	| [$1c52: ex   af,af']
 	jbsr	is_way_clear_to_player_1D33       	| [$1c53: call is_way_clear_to_player_1D33]
 	move.w	guard_1_logical_address_6038,d6	| [$1c56: ld   hl,(guard_1_logical_address_6038)]
-	lea	guard_2_sees_player_right_603C,a2	| [$1c59: ld   ix,guard_2_sees_player_right_603C]
+	lea	guard_1_sees_player_right_603C,a2	| [$1c59: ld   ix,guard_1_sees_player_right_603C]
 	move.w	#0x20,d1                        	| [$1c5d: ld   bc,$0020] 32
 	                         	| [$1c63: cp   $00]
 	move.b	#0x80,d0                        	| [$1c65: ld   a,$80]
 	tst.b	has_pick_61CF                	| [$1c60: ld   a,(has_pick_61CF)]
 	jne	l_1c6f                             	| [$1c67: jr   nz,$1C6F]
- 	lea	guard_2_sees_player_left_603D,a2	| [$1c69: ld   ix,guard_2_sees_player_left_603D]
+ 	lea	guard_1_sees_player_left_603D,a2	| [$1c69: ld   ix,guard_1_sees_player_left_603D]
 	move.b	#0x40,d0                        	| [$1c6d: ld   a,$40]
 l_1c6f:
 	exg	d0,d7                              	| [$1c6f: ex   af,af']
@@ -4338,10 +4338,10 @@ l_1c6f:
 	move.w	#-1,d1                        	| [$1c76: ld   bc,$FFFF] 65535
 	move.b	#0x10,d0                        	| [$1c79: ld   a,$10]
 	exg	d0,d7                              	| [$1c7b: ex   af,af']
-	lea	guard_2_sees_player_up_603E,a2 	| [$1c7c: ld   ix,guard_2_sees_player_up_603E]
+	lea	guard_1_sees_player_up_603E,a2 	| [$1c7c: ld   ix,guard_1_sees_player_up_603E]
 	jbsr	is_way_clear_to_player_1D33       	| [$1c80: call is_way_clear_to_player_1D33]
 	move.w	guard_1_logical_address_6038,d6	| [$1c83: ld   hl,(guard_1_logical_address_6038)]
-	lea	guard_2_sees_player_down_603F,a2	| [$1c86: ld   ix,guard_2_sees_player_down_603F]
+	lea	guard_1_sees_player_down_603F,a2	| [$1c86: ld   ix,guard_1_sees_player_down_603F]
 	move.w	#0x01,d1                        	| [$1c8a: ld   bc,$0001] 1
 	move.b	#0x20,d0                        	| [$1c8d: ld   a,$20]
 	exg	d0,d7                              	| [$1c8f: ex   af,af']
@@ -4355,22 +4355,22 @@ l_1c94:
 								| [$1c9e: ld   (guard_struct_pointer_6093),iy]
 	move.l	#guard_2_direction_6067,guard_direction_pointer_6095      	| [$1ca2: ld   hl,guard_2_direction_6067]
 	                 	| [$1ca5: ld   (guard_direction_pointer_6095),hl]
-	tst.b	guard_1_sees_player_right_607C	| [$1ca8: ld   a,(guard_1_sees_player_right_607C)]
+	tst.b	guard_2_sees_player_right_607C	| [$1ca8: ld   a,(guard_2_sees_player_right_607C)]
 										| [$1cab: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_right_1B6D    	| [$1cad: call nz,set_guard_direction_right_1B6D]
 0:
-	tst.b	guard_1_sees_player_left_607D	| [$1cb0: ld   a,(guard_1_sees_player_left_607D)]
+	tst.b	guard_2_sees_player_left_607D	| [$1cb0: ld   a,(guard_2_sees_player_left_607D)]
 											| [$1cb3: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_left_1B8B     	| [$1cb5: call nz,set_guard_direction_left_1B8B]
 0:
-	tst.b	guard_1_sees_player_up_607E  	| [$1cb8: ld   a,(guard_1_sees_player_up_607E)]
+	tst.b	guard_2_sees_player_up_607E  	| [$1cb8: ld   a,(guard_2_sees_player_up_607E)]
 	                         	| [$1cbb: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_up_1BB3       	| [$1cbd: call nz,set_guard_direction_up_1BB3]
 0:
-	tst.b	guard_1_sees_player_down_607F	| [$1cc0: ld   a,(guard_1_sees_player_down_607F)]
+	tst.b	guard_2_sees_player_down_607F	| [$1cc0: ld   a,(guard_2_sees_player_down_607F)]
 	                         	| [$1cc3: cp   $00]
 	beq.b	0f
 	jbsr	set_guard_direction_down_1BA9     	| [$1cc5: call nz,set_guard_direction_down_1BA9]
@@ -4387,7 +4387,7 @@ l_1cc9:
 	rts                                    	| [$1cd1: ret  nz]
 0:
 
-	lea	guard_1_sees_player_left_607D,a2	| [$1cd2: ld   ix,guard_1_sees_player_left_607D]
+	lea	guard_2_sees_player_left_607D,a2	| [$1cd2: ld   ix,guard_2_sees_player_left_607D]
 	move.w	guard_2_logical_address_6078,d6	| [$1cd6: ld   hl,(guard_2_logical_address_6078)]
 	move.b	#-0x20,d1                        	| [$1cd9: ld   bc,$FFE0] 65504
 
@@ -4397,14 +4397,14 @@ l_1cc9:
 	move.b	#0x40,d0                        	| [$1ce1: ld   a,$40]
 	tst.b	has_pick_61CF                	| [$1cdc: ld   a,(has_pick_61CF)]
 	jne	l_1ceb                             	| [$1ce3: jr   nz,$1CEB]
- 	lea	guard_1_sees_player_right_607C,a2	| [$1ce5: ld   ix,guard_1_sees_player_right_607C]
+ 	lea	guard_2_sees_player_right_607C,a2	| [$1ce5: ld   ix,guard_2_sees_player_right_607C]
 	move.b	#0x80,d0                        	| [$1ce9: ld   a,$80]
 l_1ceb:
 	exg	d0,d7                              	| [$1ceb: ex   af,af']
  	jbsr	is_way_clear_to_player_1D33       	| [$1cec: call is_way_clear_to_player_1D33]
 	move.w	guard_2_logical_address_6078,d6	| [$1cef: ld   hl,(guard_2_logical_address_6078)]
 	move.w	#0x20,d1                        	| [$1cf2: ld   bc,$0020] 32
-	lea	guard_1_sees_player_right_607C,a2	| [$1cf5: ld   ix,guard_1_sees_player_right_607C]
+	lea	guard_2_sees_player_right_607C,a2	| [$1cf5: ld   ix,guard_2_sees_player_right_607C]
 
 * if player has pick reverts tests:	 if sees on the left, actually
 *  pretend he saw him on the right
@@ -4421,7 +4421,7 @@ l_1ceb:
 	move.b	#0x80,d0                        	| [$1d04: ld   a,$80]
 	tst.b	has_pick_61CF
 	jne	l_1d0e                             	| [$1d06: jr   nz,$1D0E]
-	lea	guard_1_sees_player_left_607D,a2	| [$1d08: ld   ix,guard_1_sees_player_left_607D]
+	lea	guard_2_sees_player_left_607D,a2	| [$1d08: ld   ix,guard_2_sees_player_left_607D]
 	move.b	#0x40,d0                        	| [$1d0c: ld   a,$40]
 l_1d0e:
 	exg	d0,d7                              	| [$1d0e: ex   af,af']
@@ -4432,10 +4432,10 @@ l_1d0e:
 	move.w	#-1,d1                        	| [$1d15: ld   bc,$FFFF] 65535
 	move.b	#0x10,d0                        	| [$1d18: ld   a,$10]
 	exg	d0,d7                              	| [$1d1a: ex   af,af']
- 	lea	guard_1_sees_player_up_607E,a2 	| [$1d1b: ld   ix,guard_1_sees_player_up_607E]
+ 	lea	guard_2_sees_player_up_607E,a2 	| [$1d1b: ld   ix,guard_2_sees_player_up_607E]
 	jbsr	is_way_clear_to_player_1D33       	| [$1d1f: call is_way_clear_to_player_1D33]
 	move.w	guard_2_logical_address_6078,d6	| [$1d22: ld   hl,(guard_2_logical_address_6078)]
-	lea	guard_1_sees_player_down_607F,a2	| [$1d25: ld   ix,guard_1_sees_player_down_607F]
+	lea	guard_2_sees_player_down_607F,a2	| [$1d25: ld   ix,guard_2_sees_player_down_607F]
 	move.w	#0x01,d1                        	| [$1d29: ld   bc,$0001] 1
 	move.b	#0x20,d0                        	| [$1d2c: ld   a,$20]
 	exg	d0,d7                              	| [$1d2e: ex   af,af']
@@ -6563,34 +6563,33 @@ l_2bee:
 l_2bf9:
 	move.b	(0x03,a2),d0                    	| [$2bf9: ld   a,(ix+$03)] player y
 	cmp.b	#0x78,d0                         	| [$2bfc: cp   $78]
-	jcs	l_2c17_29                             	| [$2c00: jr   c,$2C17]  exits at y=$29 (below the top exit) if player y < $78
+	jcs	change_guard_direction_2c17_29                             	| [$2c00: jr   c,$2C17]  exits at y=$29 (below the top exit) if player y < $78
 
 	move.b	(0x03,a2),d0                    	| [$2c02: ld   a,(ix+$03)]
 	cmp.b	#0xA0,d0                         	| [$2c05: cp   $A0]
-	jcs	l_2c17_71                             	| [$2c09: jr   c,$2C17]  exits at y=$71 (slope exit) if player y < $A0
+	jcs	change_guard_direction_2c17_71                             	| [$2c09: jr   c,$2C17]  exits at y=$71 (slope exit) if player y < $A0
 
 	move.b	(0x03,a2),d0                    	| [$2c0b: ld   a,(ix+$03)]
 	cmp.b	#0xC0,d0                         	| [$2c0e: cp   $C0]
-	move.b	#0xA9,d0                        	| [$2c10: ld   a,$A9]
-	jcs	l_2c17_A9                             	| [$2c12: jr   c,$2C17]  exits at y=$A9 (pickaxe exit) if player y < $C0
+												| [$2c10: ld   a,$A9]
+	jcs	change_guard_direction_2c17_A9                             	| [$2c12: jr   c,$2C17]  exits at y=$A9 (pickaxe exit) if player y < $C0
 	move.b	#0xC8,d0                        	| [$2c14: ld   a,$C8] exits at the bottom else
 	rts                                    	| [$2c16: ret]
-l_2c17:
-
+change_guard_direction_2c17:
 	move.l	a0,-(sp)                        	| [$2c17: push hl]
 	move.l	guard_direction_pointer_6095,a0	| [$2c18: ld   hl,(guard_direction_pointer_6095)]
 	move.b	d1,(a0)                         	| [$2c1b: ld   (hl),b]
 	move.l	(sp)+,a0                        	| [$2c1c: pop  hl]
 	rts                                    	| [$2c1d: ret]
-l_2c17_71:
+change_guard_direction_2c17_71:
 	move.b	#0x71,d0                        	| [$2c07: ld   a,$71]
-	bra.b	l_2c17
-l_2c17_29:
+	bra.b	change_guard_direction_2c17
+change_guard_direction_2c17_29:
 	move.b	#0x29,d0                        	| [$2bfe: ld   a,$29]
-	bra.b	l_2c17
-l_2c17_A9:
+	bra.b	change_guard_direction_2c17
+change_guard_direction_2c17_A9:
 	move.b	#0xA9,d0                        	| [$2bfe: ld   a,$29]
-	bra.b	l_2c17
+	bra.b	change_guard_direction_2c17
 
 * not the same screen as the player:	different behaviour
 * don't wait for the elevator, just jump in the hole and die
@@ -6603,11 +6602,7 @@ l_2c1e:
 	clr.b	(6,a0)                         	| [$2c26: ld   (hl),a]
 	rts                                    	| [$2c27: ret]
 
-
-
-
 compute_guard_speed_from_dipsw_2C4D:
-	WPSET	0x204
 	move.b	check_scenery_disabled_61ED,d0                 	| [$2c4d: ld   a,(check_scenery_disabled_61ED)]
 	cmp.b	#0x01,d0                         	| [$2c50: cp   $01]
 	jeq	l_2c78                             	| [$2c54: jr   z,$2C78]
@@ -7051,30 +7046,31 @@ l_2f2d:
 	move.b	#0x12,d0                        	| [$2f62: ld   a,$12]
 	exg	d0,d7                              	| [$2f64: ex   af,af']
 	jbsr	write_text_55f0                   	| [$2f65: call write_text_55f0]
+	* draw vertical red bars (frames)
 	move.b	#0x0D,d1                        	| [$2f68: ld   b,$0D]
 	move.b	#0x8B,d0                        	| [$2f6a: ld   a,$8B]
 	move.w	#0x9383,d6                      	| [$2f6c: ld   hl,$9383]
-	jbsr	l_2f7d                            	| [$2f6f: call $2F7D]
+	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$2f6f: call $2F7D]
 	move.b	#0x8E,d0                        	| [$2f72: ld   a,$8E]
 	move.b	#0x0D,d1                        	| [$2f74: ld   b,$0D]
 	move.w	#0x9063,d6                      	| [$2f76: ld   hl,$9063]
-	jbsr	l_2f7d                            	| [$2f79: call $2F7D]
+	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$2f79: call $2F7D]
 	rts                                    	| [$2f7c: ret]
-l_2f7d:
+write_score_frame_vertical_bar_2f7d:
 	jbsr	osd_w_videoram                         	| [$2f7d: ld   (hl),a]
 
 	                        	| [$2f7e: push hl]
-	move.w	d6,-(sp)                        	| [$2f7f: push af]
+	movem.w	d0/d6,-(sp)                        	| [$2f7f: push af]
 	                           	| [$2f80: ld   a,h]
 	add.w	#0x0800,d6                         	| [$2f81: add  a,$08]
 	                           	| [$2f83: ld   h,a]
 	move.b	#0x10,d0                        	| [$2f84: ld   a,$10]
 	jbsr	osd_w_colorram                         	| [$2f86: ld   (hl),a]
-	move.w	(sp)+,d6                        	| [$2f87: pop  af]
+	movem.w	(sp)+,d0/d6                        	| [$2f87: pop  af]
 	                        	| [$2f88: pop  hl]
 	addq.w	#1,d6                           	| [$2f89: inc  hl]
 	subq.b	#1,d1                           	| [...]
-	jne	l_2f7d                             	| [$2f8a: djnz $2F7D]
+	jne	write_score_frame_vertical_bar_2f7d                             	| [$2f8a: djnz $2F7D]
 	rts                                    	| [$2f8c: ret]
 
 l_2f8d:
@@ -7176,11 +7172,11 @@ high_score_entry_2ffb:
 	move.b	#0x0C,d1                        	| [$3033: ld   b,$0C]
 	move.w  #0x9392,d6                      	| [$3035: ld   hl,$9392]
 	move.b	#0x8B,d0                        	| [$3038: ld   a,$8B]
-	jbsr	l_2f7d                            	| [$303a: call $2F7D]
+	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$303a: call $2F7D]
 	move.b	#0x0C,d1                        	| [$303d: ld   b,$0C]
 	move.b	#0x8E,d0                        	| [$303f: ld   a,$8E]
 	move.w  #0x9072,d6                      	| [$3041: ld   hl,$9072]
-	jbsr	l_2f7d                            	| [$3044: call $2F7D]
+	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$3044: call $2F7D]
 	lea  game_mem+0x4D36,a1                      	| [$3047: ld   de,$4D36]
 	move.w  #0x9275,d6                      	| [$304a: ld   hl,$9275]
 	jbsr	l_30db                            	| [$304d: call $30DB]
@@ -8606,7 +8602,7 @@ l_3b34:
 	clr.b	holds_barrow_61C7            	| [$3b5a: ld   (holds_barrow_61C7),a]
 	* restore SR. Not really necessary but cleaner
 	move.w	(a7)+,SR
-	* and enable interrupts again
+	* and disable interrupts again
 	jbsr	osd_disable_vblank_interrupt    | jbsr	osd_disable_vblank_interrupt
 	move.b	#0x40,d1                        	| [$3b5e: ld   b,$40]
 	lea	player_struct_6580,a0          	| [$3b60: ld   hl,player_struct_6580]
@@ -8623,10 +8619,10 @@ l_3b65:
 	move.b	#0x01,d0                        	| [$3b73: ld   a,$01]
 	move.b	d0,is_intermission_6274         	| [$3b75: ld   (is_intermission_6274),a]
 	jbsr	play_intro_3700                   	| [$3b78: call play_intro_3700]
-	clr.b	d0                               	| [$3b7b: xor  a]
-	move.b	d0,is_intermission_6274         	| [$3b7c: ld   (is_intermission_6274),a]
-	addq.b	#1,d0                           	| [$3b7f: inc  a]
-	move.b	d0,gameplay_allowed_6054        	| [$3b80: ld   (gameplay_allowed_6054),a]
+	                               	| [$3b7b: xor  a]
+	clr.b	is_intermission_6274         	| [$3b7c: ld   (is_intermission_6274),a]
+											| [$3b7f: inc  a]
+	move.b	#1,gameplay_allowed_6054        	| [$3b80: ld   (gameplay_allowed_6054),a]
 	jbsr	set_bags_coordinates_hard_level_354f         	| [$3b83: call set_bags_coordinates_hard_level_354f]
 	* restart next level ?
 	lea		stack_top_67F0,sp       | [ld   sp,stack_top_67F0]

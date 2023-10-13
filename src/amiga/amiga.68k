@@ -225,38 +225,24 @@ _user:
 	or.l	#2,cheat_flags
 	st.b	cheat_used
 2:
+	move.l	(A0)+,D0	| INFTIME/S
+	beq.b	2f
+	or.l	#4,cheat_flags
+	st.b	cheat_used
+2:
+	move.l	(A0)+,D0	| INFPICK/S
+	beq.b	2f
+	or.l	#8,cheat_flags
+	st.b	cheat_used
+2:
 	move.l	(A0)+,D0	| CHEATKEYS/S
 	beq.b	2f
 	* cheat isn't used as long as no cheat key is used
-	or.l	#1<<4,cheat_flags
+	or.l	#0x10,cheat_flags
 2:
-	move.l	(A0)+,D0	| STARTLEVEL/S
+	move.l	(A0)+,D0	| HARDBAGS/S
 	beq.b	2f
-	bsr		bcpl_string_to_int
-	subq	#1,d0
-	move.l	d0,start_level_option
-
-2:
-	moveq.l	#0,d7
-
-
-	move.l	(A0)+,D0	| BAT50000/S
-	beq.b	2f
-	bset	#0,d7
-2:
-	move.l	(A0)+,D0	| QUICKMAZEDRAW/S
-	beq.b	2f
-	bset	#1,d7
-2:
-
-	move.l	(A0)+,D0	| NOINTERMISSIONS/S
-	beq.b	2f
-	bset	#2,d7
-2:
-
-	move.l	(A0)+,D0	| ALTMUSIC/S
-	beq.b	2f
-	bset	#3,d7
+	or.l	#1,misc_options
 2:
 
 	move.l	(A0)+,D0	| SKILL/S
@@ -275,7 +261,7 @@ _user:
 	move.l	#2,dip_switch_start_lives		| 3 lives default
 3:
 	
-	move.l	d7,misc_options
+
 	
 	bsr		store_system
 
@@ -721,8 +707,10 @@ osd_wait:
 * < A0: pointer on sprite shadow zone 65A0:
 
 osd_update_sprites:
+	move.l	a0,0x110
 	*lea		test_sprites,a0
-	***add.w	#NB_TARGET_SPRITES*4,a0
+	*add.w	#NB_TARGET_SPRITES*4,a0
+	
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
 
@@ -1972,22 +1960,16 @@ handle_keyboard:
 0:
 	cmp.b	#0x51,d0	| F2 key
 	bne.b	0f
-	* no snobees: level completed
-	st.b	cheat_used
-	* more "professional" cheat: hide remaining snobees
-0:
-	cmp.b	#0x52,d0	| F3 key
-	bne.b	0f
-	* snobees play chicken
-	st.b	cheat_used
-	*st.b	snobee_chicken_flag
-0:
-	cmp.b	#0x53,d0	| F4 key
-	bne.b	0f
-
 	st.b	cheat_used
 	move.w	#0x0FF,_custom+color
 	eor.b	#1,invincible_flag
+	
+0:
+	cmp.b	#0x52,d0	| F3 key
+	bne.b	0f
+	* game over, no lives
+	move.b	#1,player_death_flag_6025
+	clr.b	lives_6056
 0:
 10:
 	.ifndef	RELEASE
@@ -2045,9 +2027,8 @@ program_args_end:
 	.align	4
 read_args_string:
 	.byte	read_args_string_end-read_args_string
-	.ascii	"INVINCIBLE/S,INFLIVES/S,CHEATKEYS/S,STARTLEVEL/K/N,"
-	.ascii	"BAT50000/S,QUICKMAZEDRAW/S,NOINTERMISSIONS/S,ALTMUSIC/S"
-	.ascii	",SKILL/K/N,STARTLIVES/K/N"
+	.ascii	"INVINCIBLE/S,INFLIVES/S,INFTIME/S,INFPICK/S,"
+	.ascii	"CHEATKEYS/S,HARDBAGS/S,SKILL/K/N,STARTLIVES/K/N"
 read_args_string_end:
 	.align	2
 

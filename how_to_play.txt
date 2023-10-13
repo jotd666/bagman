@@ -15,7 +15,8 @@ Assets:
 
 - use the mine carts to safely & quickly carry bags
 - elevators help you to cross screens with the barrow and to reach some otherwise unreachable areas
-- pick help you to reach blue bag, and frighten/kill the guards (does not work when you're on a ladder)
+- you need the pickaxe to destroy the wall that protects the blue bag,
+- you can use the pickaxe to frighten/kill the guards (does not work when you're on a ladder)
 - blocking a guard's path on the ladder when on top of it with the pick or the barrow causes the guard to fall down
 
 General tactics:
@@ -34,5 +35,9 @@ General tactics:
 - The higher score you get, the fastest the guards run. On the ladders, they always have the same speed.
 - The elevators moves are not independent. They only move when you're on the same screen. They also share direction. If you change
   to screen 2 and make the elevator go down, when going back to screen 3, the elevator will also go down (and you'll lose a life :))
+- When carrying pickaxe for a long distance, drop it from time to time to avoid timeout
+- When dropping the last bag (on screen 3), the barrow will remain there for the next level,
+  which makes the start of the next level difficult. Getting the barrow on screen 2 or even 1
+  when there's only one bag left can be a nice option (leave 1 bag at screen 1/2)
 
-JOTD 2010
+JOTD 2010-2023
