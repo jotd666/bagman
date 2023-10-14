@@ -4049,7 +4049,7 @@ memset_2054
 2086: 3A 00 60      ld   a,(number_of_credits_6000)
 2089: FE 00         cp   $00
 208B: 20 3C         jr   nz,$20C9
-208D: CD 03 21      call $2103
+208D: CD 03 21      call prepare_cleared_screen_2103
 2090: 11 AC 56      ld   de,$56AC
 2093: 21 5A 93      ld   hl,$935A
 2096: CD F9 30      call display_text_30F9
@@ -4064,7 +4064,7 @@ memset_2054
 20AF: CD 05 56      call write_attribute_on_line_5605
 20B2: 3E 11         ld   a,$11
 20B4: 32 B5 9B      ld   ($9BB5),a
-20B7: CD 8D 2F      call $2F8D
+20B7: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 20BA: 3A B5 91      ld   a,($91B5)
 20BD: FE 1F         cp   $1F
 20BF: 20 F9         jr   nz,$20BA
@@ -4085,6 +4085,7 @@ memset_2054
 20E3: 3E 01         ld   a,$01
 20E5: C9            ret
 
+prepare_cleared_screen_2103:
 2103: 3E 00         ld   a,$00
 2105: 32 03 A0      ld   ($A003),a
 2108: CD 00 2A      call clear_screen_2a00
@@ -4448,7 +4449,7 @@ draw_object_tiles_22dc:
 2491: 3E 01         ld   a,$01
 2493: 32 03 A0      ld   ($A003),a
 2496: 21 96 36      ld   hl,$3696
-2499: 11 17 62      ld   de,unknown_6217
+2499: 11 17 62      ld   de,high_score_table_6217
 249C: 01 50 00      ld   bc,$0050
 249F: ED B0         ldir
 24A1: C3 1C 12      jp   $121C
@@ -5563,12 +5564,12 @@ check_guards_pick_collisions_2c96:
 2D1C: 78            ld   a,b
 2D1D: FE 05         cp   $05
 2D1F: D0            ret  nc
-2D20: CD 03 21      call $2103
+2D20: CD 03 21      call prepare_cleared_screen_2103
 2D23: CD FB 2F      call high_score_entry_2ffb
 2D26: 3A 6C 62      ld   a,(unknown_626C)
 2D29: FE 01         cp   $01
 2D2B: CC 70 2A      call z,$2A70
-2D2E: CD 8D 2F      call $2F8D
+2D2E: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 2D31: 3E 01         ld   a,$01
 2D33: 32 01 A0      ld   ($A001),a
 2D36: 32 02 A0      ld   ($A002),a
@@ -5592,12 +5593,12 @@ check_guards_pick_collisions_2c96:
 2D5B: 3E 60         ld   a,$60
 2D5D: 32 E8 61      ld   (time_61E8),a
 2D60: E1            pop  hl
-2D61: CD 8D 2F      call $2F8D
+2D61: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 2D64: DD E1         pop  ix
 2D66: 3E 01         ld   a,$01
 2D68: 32 79 62      ld   (unknown_6279),a
-2D6B: CD 58 2E      call $2E58
-2D6E: CD 8D 2F      call $2F8D
+2D6B: CD 58 2E      call enter_highscore_name_2e58
+2D6E: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 2D71: 3A 7D 61      ld   a,(unknown_617D)
 2D74: FE 01         cp   $01
 2D76: 28 5B         jr   z,$2DD3
@@ -5617,7 +5618,7 @@ check_guards_pick_collisions_2c96:
 2D99: 78            ld   a,b
 2D9A: FE 05         cp   $05
 2D9C: 30 35         jr   nc,$2DD3
-2D9E: CD 8D 2F      call $2F8D
+2D9E: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 2DA1: DD 23         inc  ix
 2DA3: DD 23         inc  ix
 2DA5: DD 23         inc  ix
@@ -5633,19 +5634,19 @@ check_guards_pick_collisions_2c96:
 2DB6: 3E 60         ld   a,$60
 2DB8: 32 E8 61      ld   (time_61E8),a
 2DBB: E1            pop  hl
-2DBC: CD 8D 2F      call $2F8D
+2DBC: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
 2DBF: DD E1         pop  ix
 2DC1: 3E 00         ld   a,$00
 2DC3: 32 79 62      ld   (unknown_6279),a
 2DC6: CD 19 2F      call busy_wait_2f19
 2DC9: CD 19 2F      call busy_wait_2f19
 2DCC: CD 19 2F      call busy_wait_2f19
-2DCF: CD 58 2E      call $2E58
+2DCF: CD 58 2E      call enter_highscore_name_2e58
 2DD2: C9            ret
 2DD3: AF            xor  a
 2DD4: 32 67 62      ld   (unknown_6267),a
 2DD7: C9            ret
-2DD8: DD 21 17 62   ld   ix,unknown_6217
+2DD8: DD 21 17 62   ld   ix,high_score_table_6217
 2DDC: 11 10 00      ld   de,$0010
 2DDF: 21 0F 92      ld   hl,$920F
 2DE2: 06 05         ld   b,$05
@@ -5666,7 +5667,7 @@ check_guards_pick_collisions_2c96:
 2E01: 10 E1         djnz $2DE4
 2E03: C9            ret
 2E04: C5            push bc
-2E05: DD 21 17 62   ld   ix,unknown_6217
+2E05: DD 21 17 62   ld   ix,high_score_table_6217
 2E09: 78            ld   a,b
 2E0A: FE 04         cp   $04
 2E0C: 30 11         jr   nc,$2E1F
@@ -5680,7 +5681,7 @@ check_guards_pick_collisions_2c96:
 2E1C: 04            inc  b
 2E1D: 18 EA         jr   $2E09
 2E1F: C1            pop  bc
-2E20: DD 21 17 62   ld   ix,unknown_6217
+2E20: DD 21 17 62   ld   ix,high_score_table_6217
 2E24: 78            ld   a,b
 2E25: FE 04         cp   $04
 2E27: 30 05         jr   nc,$2E2E
@@ -5706,50 +5707,52 @@ check_guards_pick_collisions_2c96:
 2E54: DD E1         pop  ix
 2E56: C1            pop  bc
 2E57: C9            ret
+
+enter_highscore_name_2e58:
 2E58: 06 11         ld   b,$11
 2E5A: 3E 00         ld   a,$00
-2E5C: 32 78 62      ld   (unknown_6278),a
+2E5C: 32 78 62      ld   (high_score_joystick_input_6278),a
 2E5F: 3A 79 62      ld   a,(unknown_6279)
 2E62: FE 01         cp   $01
 2E64: 20 05         jr   nz,$2E6B
-2E66: CD 9C 30      call $309C
+2E66: CD 9C 30      call read_controls_highscore_309c
 2E69: 18 0C         jr   $2E77
 2E6B: 3A 00 B0      ld   a,(dip_switch_B000)
 2E6E: E6 80         and  $80
 2E70: FE 80         cp   $80
 2E72: 28 F2         jr   z,$2E66
 2E74: CD B8 30      call $30B8
-2E77: 3A 78 62      ld   a,(unknown_6278)
+2E77: 3A 78 62      ld   a,(high_score_joystick_input_6278)
 2E7A: E6 10         and  $10
 2E7C: FE 10         cp   $10
 2E7E: CC B2 2E      call z,$2EB2
-2E81: 3A 78 62      ld   a,(unknown_6278)
+2E81: 3A 78 62      ld   a,(high_score_joystick_input_6278)
 2E84: E6 08         and  $08
 2E86: FE 08         cp   $08
 2E88: CC C1 2E      call z,$2EC1
-2E8B: 3A 78 62      ld   a,(unknown_6278)
+2E8B: 3A 78 62      ld   a,(high_score_joystick_input_6278)
 2E8E: E6 40         and  $40
 2E90: FE 40         cp   $40
 2E92: CC D0 2E      call z,$2ED0
-2E95: 3A 78 62      ld   a,(unknown_6278)
+2E95: 3A 78 62      ld   a,(high_score_joystick_input_6278)
 2E98: E6 20         and  $20
 2E9A: FE 20         cp   $20
 2E9C: CC EE 2E      call z,$2EEE
-2E9F: 3A 78 62      ld   a,(unknown_6278)
+2E9F: 3A 78 62      ld   a,(high_score_joystick_input_6278)
 2EA2: E6 80         and  $80
 2EA4: FE 80         cp   $80
 2EA6: C8            ret  z
 2EA7: 3A E8 61      ld   a,(time_61E8)
 2EAA: FE 00         cp   $00
 2EAC: C8            ret  z
-2EAD: CD 0A 2F      call $2F0A
+2EAD: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2EB0: 18 AD         jr   $2E5F
 2EB2: 78            ld   a,b
 2EB3: FE 29         cp   $29
 2EB5: 20 02         jr   nz,$2EB9
 2EB7: 06 10         ld   b,$10
 2EB9: 04            inc  b
-2EBA: CD 0A 2F      call $2F0A
+2EBA: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2EBD: CD 19 2F      call busy_wait_2f19
 2EC0: C9            ret
 2EC1: 78            ld   a,b
@@ -5757,7 +5760,7 @@ check_guards_pick_collisions_2c96:
 2EC4: 20 02         jr   nz,$2EC8
 2EC6: 06 2A         ld   b,$2A
 2EC8: 05            dec  b
-2EC9: CD 0A 2F      call $2F0A
+2EC9: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2ECC: CD 19 2F      call busy_wait_2f19
 2ECF: C9            ret
 2ED0: 7D            ld   a,l
@@ -5768,12 +5771,12 @@ check_guards_pick_collisions_2c96:
 2ED8: FE 92         cp   $92
 2EDA: C8            ret  z
 2EDB: 06 10         ld   b,$10
-2EDD: CD 0A 2F      call $2F0A
+2EDD: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2EE0: 11 20 00      ld   de,$0020
 2EE3: 19            add  hl,de
 2EE4: DD 2B         dec  ix
 2EE6: 46            ld   b,(hl)
-2EE7: CD 0A 2F      call $2F0A
+2EE7: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2EEA: CD 19 2F      call busy_wait_2f19
 2EED: C9            ret
 2EEE: 7D            ld   a,l
@@ -5787,13 +5790,19 @@ check_guards_pick_collisions_2c96:
 2EFC: AF            xor  a
 2EFD: ED 52         sbc  hl,de
 2EFF: DD 23         inc  ix
-2F01: 06 11         ld   b,$11
-2F03: CD 0A 2F      call $2F0A
+2F01: 06 11         ld   b,$11		; letter "A"
+2F03: CD 0A 2F      call write_current_highscore_name_letter_2f0a
 2F06: CD 19 2F      call busy_wait_2f19
 2F09: C9            ret
+
+; < b: letter (0x11: A, 0x12: B and so on)
+; < iy: highscore table name pointer
+; < hl: screen pointer
+write_current_highscore_name_letter_2f0a:
 2F0A: 78            ld   a,b
 2F0B: DD 77 00      ld   (ix+$00),a
-2F0E: 77            ld   (hl),a
+write_highscore_name_letter_2f0e:
+2F0E: 77            ld   (hl),a			; write character to screen
 2F0F: E5            push hl
 2F10: 7C            ld   a,h
 2F11: C6 08         add  a,$08
@@ -5817,6 +5826,8 @@ busy_wait_2f19:
 2F2A: F1            pop  af
 2F2B: C1            pop  bc
 2F2C: C9            ret
+
+draw_hiscore_frames_2f2d:
 2F2D: 21 25 93      ld   hl,$9325
 2F30: 11 4F 57      ld   de,$574F
 2F33: CD F9 30      call display_text_30F9
@@ -5863,21 +5874,22 @@ write_score_frame_vertical_bar_2f7d:
 2F89: 23            inc  hl
 2F8A: 10 F1         djnz write_score_frame_vertical_bar_2f7d
 2F8C: C9            ret
+draw_highscore_names_and_scores_2f8d:
 2F8D: DD E5         push ix
 2F8F: C5            push bc
 2F90: E5            push hl
 2F91: D5            push de
-2F92: CD 2D 2F      call $2F2D
+2F92: CD 2D 2F      call draw_hiscore_frames_2f2d
 2F95: 11 20 00      ld   de,$0020
 2F98: 21 8F 92      ld   hl,$928F
-2F9B: DD 21 17 62   ld   ix,unknown_6217
+2F9B: DD 21 17 62   ld   ix,high_score_table_6217
 2F9F: 06 05         ld   b,$05
 2FA1: C5            push bc
 2FA2: E5            push hl
 2FA3: 06 03         ld   b,$03
 2FA5: DD 7E 00      ld   a,(ix+$00)
 2FA8: E6 0F         and  $0F
-2FAA: CD 0E 2F      call $2F0E
+2FAA: CD 0E 2F      call write_highscore_name_letter_2f0e
 2FAD: DD 7E 00      ld   a,(ix+$00)
 2FB0: 0F            rrca
 2FB1: 0F            rrca
@@ -5886,7 +5898,7 @@ write_score_frame_vertical_bar_2f7d:
 2FB4: E6 0F         and  $0F
 2FB6: 11 20 00      ld   de,$0020
 2FB9: 19            add  hl,de
-2FBA: CD 0E 2F      call $2F0E
+2FBA: CD 0E 2F      call write_highscore_name_letter_2f0e
 2FBD: DD 23         inc  ix
 2FBF: 19            add  hl,de
 2FC0: 10 E3         djnz $2FA5
@@ -5898,7 +5910,7 @@ write_score_frame_vertical_bar_2f7d:
 2FC9: DD 19         add  ix,de
 2FCB: 10 D4         djnz $2FA1
 2FCD: 11 20 00      ld   de,$0020
-2FD0: DD 21 17 62   ld   ix,unknown_6217
+2FD0: DD 21 17 62   ld   ix,high_score_table_6217
 2FD4: 21 0F 92      ld   hl,$920F
 2FD7: 06 05         ld   b,$05
 2FD9: C5            push bc
@@ -5908,7 +5920,7 @@ write_score_frame_vertical_bar_2f7d:
 2FDF: DD 23         inc  ix
 2FE1: 06 0D         ld   b,$0D
 2FE3: DD 7E 00      ld   a,(ix+$00)
-2FE6: CD 0E 2F      call $2F0E
+2FE6: CD 0E 2F      call write_highscore_name_letter_2f0e
 2FE9: DD 23         inc  ix
 2FEB: ED 52         sbc  hl,de
 2FED: 10 F4         djnz $2FE3
@@ -5966,21 +5978,23 @@ high_score_entry_2ffb:
 3068: CD DB 30      call $30DB
 306B: 11 86 4D      ld   de,$4D86
 306E: 21 58 92      ld   hl,$9258
-3071: CD D4 30      call $30D4
+3071: CD D4 30      call write_text_attr_14_30d4
 3074: 11 8C 4D      ld   de,$4D8C
 3077: 21 16 92      ld   hl,$9216
-307A: CD D4 30      call $30D4
+307A: CD D4 30      call write_text_attr_14_30d4
 307D: 11 8E 4D      ld   de,$4D8E
 3080: 21 17 92      ld   hl,$9217
-3083: CD D4 30      call $30D4
+3083: CD D4 30      call write_text_attr_14_30d4
 3086: 11 90 4D      ld   de,$4D90
 3089: 21 19 92      ld   hl,$9219
-308C: CD D4 30      call $30D4
+308C: CD D4 30      call write_text_attr_14_30d4
 308F: 11 92 4D      ld   de,$4D92
 3092: 21 1A 92      ld   hl,$921A
-3095: CD D4 30      call $30D4
-3098: CD 2D 2F      call $2F2D
+3095: CD D4 30      call write_text_attr_14_30d4
+3098: CD 2D 2F      call draw_hiscore_frames_2f2d
 309B: C9            ret
+* read controls, for high score
+read_controls_highscore_309c:
 309C: AF            xor  a
 309D: 32 07 A0      ld   ($A007),a
 30A0: 3E 07         ld   a,$07
@@ -5991,7 +6005,7 @@ high_score_entry_2ffb:
 30AA: D3 08         out  ($08),a
 30AC: DB 0C         in   a,($0C)
 30AE: 2F            cpl
-30AF: 32 78 62      ld   (unknown_6278),a
+30AF: 32 78 62      ld   (high_score_joystick_input_6278),a
 30B2: 3E 01         ld   a,$01
 30B4: 32 07 A0      ld   ($A007),a
 30B7: C9            ret
@@ -6005,10 +6019,12 @@ high_score_entry_2ffb:
 30C6: D3 08         out  ($08),a
 30C8: DB 0C         in   a,($0C)
 30CA: 2F            cpl
-30CB: 32 78 62      ld   (unknown_6278),a
+30CB: 32 78 62      ld   (high_score_joystick_input_6278),a
 30CE: 3E 01         ld   a,$01
 30D0: 32 07 A0      ld   ($A007),a
 30D3: C9            ret
+
+write_text_attr_14_30d4:
 30D4: 3E 14         ld   a,$14
 30D6: 08            ex   af,af'
 30D7: CD F0 55      call write_text_55f0

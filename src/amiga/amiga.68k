@@ -707,9 +707,7 @@ osd_wait:
 * < A0: pointer on sprite shadow zone 65A0:
 
 osd_update_sprites:
-	move.l	a0,0x110
 	*lea		test_sprites,a0
-	*add.w	#NB_TARGET_SPRITES*4,a0
 	
 	* clear host sprites
 	move.w	#NB_HOST_SPRITES-1,d0
@@ -783,18 +781,25 @@ osd_update_sprites:
 	move.b	(SPRITE_CODE,a2),d2
 	move.b	d2,d5		| for flip bit
 	bclr	#7,d2		| clear flip bit
+	cmp.b	#0x33,d2
+	bne.b	21f
+	* elevator, change clut, match player clut
+	* in the future, also change elevator with different
+	* bitplanes if clut 4 so colors are respected (red instead of orange)
+	move.b	#8,d3
+21:
 	move.w	d2,d4
 	add.w	d4,d4
 	add.w	d4,d4
 	move.l	(a4,d4.w),d4	| get pointer
 	.ifndef	RELEASE
-	bne.b	21f
+	bne.b	25f
 	* sprite doesn't exist: blitz and bail out
 	blitz
 	move.b	d1,d1
 	move.b	d2,d2
 	jra		30f
-21:
+25:
 	.endif
 	
 	move.l	d4,a5
@@ -870,7 +875,7 @@ osd_update_sprites:
 
 
 * priorities are from last to first
-test_sprites:
+test_sprites_demo:
 * guard chasing bagman+barrow
 	.byte	0x3A,0x28,0x9D,0xC1,0x00,0x00,0x00,0x38,0x1E,0x08,0x90,0xC1,0x00,0x00,0x00,0xE1
 	.byte	0x00,0x00,0x00,0x41,0x00,0x00,0x00,0xC9,0x2E,0x0C,0x30,0xC1,0x00,0x00,0x00,0x00
@@ -885,6 +890,12 @@ test_sprites:
 * in game with wagons & guards
 	.byte  0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x12,0x1b,0x8,0x5e,0xe1,0x35,0x4,0x69,0xe1
 	.byte  0x35,0x4,0x67,0xff,0x35,0x4,0x18,0xff,0x0,0x0,0x0,0x0,0x31,0xc,0x51,0x63
+
+* 6 active sprites
+test_sprites:
+	.byte  0x3f,0x20,0x35,0xdf,0x33,0x4,0x97,0x15,0x1a,0x8,0x3d,0xe1,0x35,0x4,0x3d,0xe1
+	.byte  0x35,0x4,0x39,0x41,0x35,0x4,0x6e,0xff,0x31,0xc,0x1d,0xe1,0x27,0xc,0x1c,0x5c
+
 
 * < D0: sprite X
 * < D1: sprite Y
@@ -2145,7 +2156,29 @@ bg_displayed_screen_ptr:
 
 
 	.include	"sound_entries.68k"
+	* continuing on sound table for guard step/climb sounds
+	* which are the same as the player, only less loud
+	.word	1,0
+	.long	guard_climb_sound | 15
 
+	.word	1,0
+	.long	guard_walk_sound | 16
+
+guard_climb_sound:
+    .long    player_climb_raw
+    .word   5136    | copied from player climb
+    .word   FXFREQBASE/HQ_SOUNDFREQ,8
+    .byte    2
+    .byte    2		| priority
+    .endm
+guard_walk_sound:
+    .long    player_walk_raw
+    .word   4467   | copied from player walk
+    .word   FXFREQBASE/HQ_SOUNDFREQ,8
+    .byte    2
+    .byte    2		| priority
+    .endm
+	
 _keyexit:
 	.byte	0x45	| ESC by default unless whdload overwrites it
 music_loops:

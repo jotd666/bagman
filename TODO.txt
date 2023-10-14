@@ -1,31 +1,28 @@
-- highscore screen not working: stuck here
+- highscore screen not working properly: draw_highscore_names_and_scores_2f8d
   * name entry 2 rows too high
-  * can't change or validate letters
   * graphical instructions not displayed in the bottom frame
 - check level complete in non whdload (SR not reset so....)
-- add cheat keys: F1: level complete (done), F2: toggle invincibility (to test), F3: game over (to test)
+- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
+  => generate 2 copies of elevator and change CLUT in screen 2 so it matches player clut
+- add cheat keys: F1: level complete, F2: toggle invincibility (to test), F3: game over
 - guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
    debug with just 1 guard!!
-- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons): dump sprite state: 0x110 temp
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 - brown/blue stripe on row 0? disable those rows completely, make display higher
-- timer at 400: stop music (special api)
-- killed: stop music
+- timer at 400: stop sound
+- killed: stop sound
 - sfx are playing in demo when guard is chasing player
-- sound: add delay if same sound played more than once: done but not very good
-- get rid of walk/climb sounds if music is playing
+
 - restore music
 - start 2P game??
 - joystick/fire to start game/insert coin not working
 - guard sometimes stops falling, then resumes, sometimes fall twice as fast!
   (probably coupling between both guards)
-- test trainer infinite lives
 - invincible flag in demo game should be made inefficient
 - add option to start at hard level directly: done plug it
 - make command line options work: done, to test
 - "PLAYER 1" flashes with wrong timing
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
-
 
 - the original game had a tendency (not all the time) to leave the barrow in the last screen when you completed
   the level, which is unfair and makes next level very difficult because you have to bring back the barrow or go

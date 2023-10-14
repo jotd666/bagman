@@ -168,7 +168,7 @@
 	.global	unknown_6211
 	.global	unknown_6212
 	.global	guard_struct_pointer_6215
-	.global	unknown_6217
+	.global	high_score_table_6217
 	.global	unknown_6267
 	.global	unknown_626C
 	.global	unknown_626D
@@ -179,7 +179,7 @@
 	.global	unknown_6272
 	.global	unknown_6273
 	.global	unknown_6275
-	.global	unknown_6278
+	.global	high_score_joystick_input_6278
 	.global	unknown_6279
 	.global	bag_color_color_attribute_627A
 	.global	unknown_627B
@@ -542,7 +542,7 @@ unknown_6212:
 	.align	2
 guard_struct_pointer_6215:
 	ds.l	1
-unknown_6217:
+high_score_table_6217:
 	ds.b	80
 unknown_6267:
 	ds.b	5
@@ -566,7 +566,7 @@ is_intermission_6274:
 	ds.b	1
 unknown_6275:
 	ds.b	3
-unknown_6278:
+high_score_joystick_input_6278:
 	ds.b	1
 unknown_6279:
 	ds.b	1
