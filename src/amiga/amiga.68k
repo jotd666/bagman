@@ -781,13 +781,7 @@ osd_update_sprites:
 	move.b	(SPRITE_CODE,a2),d2
 	move.b	d2,d5		| for flip bit
 	bclr	#7,d2		| clear flip bit
-	cmp.b	#0x33,d2
-	bne.b	21f
-	* elevator, change clut, match player clut
-	* in the future, also change elevator with different
-	* bitplanes if clut 4 so colors are respected (red instead of orange)
-	move.b	#8,d3
-21:
+	
 	move.w	d2,d4
 	add.w	d4,d4
 	add.w	d4,d4
@@ -828,9 +822,9 @@ osd_update_sprites:
 	bsr		store_sprite_pos_16
 	move.l	d0,(a5)
 	* set colors
+	lea		cluts+2,a6
 	moveq	#0,d3
 	move.b	(SPRITE_CLUT,a2),d3
-	lea		cluts+2,a6
 	lsl.w	#3,d3		| times 8
 
 	add.w	d3,a6
@@ -927,6 +921,15 @@ alloc_sprite:
 	move.b	d0,(a2)+		| X
 	move.b	d1,(a2)+		| Y
 	move.b	d2,(a2)+		| code
+
+* this should work but does not!	
+*	cmp.b	#0x33,d2
+*	bne.b	21f
+*	* elevator, change clut, match player clut
+*	* in the future, also change elevator with different
+*	* bitplanes if clut 4 so colors are respected (red instead of orange)
+*	move.b	#8,d3
+*21:
 	move.b	d3,(a2)+		| clut
 	rts						| done
 1:
@@ -2170,14 +2173,14 @@ guard_climb_sound:
     .word   FXFREQBASE/HQ_SOUNDFREQ,8
     .byte    2
     .byte    2		| priority
-    .endm
+
 guard_walk_sound:
     .long    player_walk_raw
     .word   4467   | copied from player walk
     .word   FXFREQBASE/HQ_SOUNDFREQ,8
     .byte    2
     .byte    2		| priority
-    .endm
+
 	
 _keyexit:
 	.byte	0x45	| ESC by default unless whdload overwrites it

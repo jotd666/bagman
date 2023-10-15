@@ -1,14 +1,14 @@
 - highscore screen not working properly: draw_highscore_names_and_scores_2f8d
   * name entry 2 rows too high
-  * graphical instructions not displayed in the bottom frame
+- english/french switch
 - check level complete in non whdload (SR not reset so....)
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
-  => generate 2 copies of elevator and change CLUT in screen 2 so it matches player clut
+  => generate 2 copies of elevator and change CLUT in screen 2 so it matches player clut: doesn't work!!
 - add cheat keys: F1: level complete, F2: toggle invincibility (to test), F3: game over
 - guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
    debug with just 1 guard!!
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
-- brown/blue stripe on row 0? disable those rows completely, make display higher
+- brown/blue stripe on row 0? disable those rows completely
 - timer at 400: stop sound
 - killed: stop sound
 - sfx are playing in demo when guard is chasing player

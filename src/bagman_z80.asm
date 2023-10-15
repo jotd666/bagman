@@ -6031,10 +6031,11 @@ write_text_attr_14_30d4:
 30DA: C9            ret
 30DB: 3E 18         ld   a,$18
 30DD: 08            ex   af,af'
-30DE: CD E5 30      call $30E5
+30DE: CD E5 30      call select_highscore_entering_localized_text_30e5
 30E1: CD F0 55      call write_text_55f0
 30E4: C9            ret
 
+select_highscore_entering_localized_text_30e5:
 30E5: F5            push af
 30E6: 3A 00 B0      ld   a,(dip_switch_B000)
 30E9: E6 20         and  $20

@@ -7168,6 +7168,7 @@ high_score_entry_2ffb:
 	* "END BY ACTION BUTTON"
 	lea	game_mem+0x5775,a1                      	| [$3015: ld   de,$5775]
 	jbsr	display_text_30F9                 	| [$3018: call display_text_30F9]
+	* horizontal bars
 	lea	game_mem+0x4D00,a1                      	| [$301b: ld   de,$4D00]
 	move.w	#0x9391,d6                      	| [$301e: ld   hl,$9391]
 	move.b	#0x12,d0                        	| [$3021: ld   a,$12]
@@ -7178,6 +7179,7 @@ high_score_entry_2ffb:
 	move.b	#0x12,d0                        	| [$302d: ld   a,$12]
 	exg	d0,d7                              	| [$302f: ex   af,af']
 	jbsr	write_text_55f0                   	| [$3030: call write_text_55f0]
+	* vertical bars
 	move.b	#0x0C,d1                        	| [$3033: ld   b,$0C]
 	move.w  #0x9392,d6                      	| [$3035: ld   hl,$9392]
 	move.b	#0x8B,d0                        	| [$3038: ld   a,$8B]
@@ -7186,6 +7188,8 @@ high_score_entry_2ffb:
 	move.b	#0x8E,d0                        	| [$303f: ld   a,$8E]
 	move.w  #0x9072,d6                      	| [$3041: ld   hl,$9072]
 	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$3044: call $2F7D]
+	
+	
 	lea  game_mem+0x4D36,a1                      	| [$3047: ld   de,$4D36]
 	move.w  #0x9275,d6                      	| [$304a: ld   hl,$9275]
 	jbsr	l_30db                            	| [$304d: call $30DB]
@@ -7232,23 +7236,24 @@ write_text_attr_14_30d4:
 l_30db:
 	move.b	#0x18,d0                        	| [$30db: ld   a,$18]
 	exg	d0,d7                              	| [$30dd: ex   af,af']
-	*jbsr	l_30e5                            	| [$30de: call $30E5]
+	jbsr	select_highscore_entering_localized_text_30e5                            	| [$30de: call $30E5]
 	jbsr	write_text_55f0                   	| [$30e1: call write_text_55f0]
 	rts                                    	| [$30e4: ret]
 
-l_30e5:
+* shift tile index by 10 to select french instead of english
+select_highscore_entering_localized_text_30e5:
 	move.w	d0,-(sp)                        	| [$30e5: push af]
 	jbsr	osd_read_dipswitches              	| [$30e6: ld   a,(dip_switch_B000)]
 	and.b	#0x20,d0                         	| [$30e9: and  $20]
 	cmp.b	#0x20,d0                         	| [$30eb: cp   $20]
 	jne	l_30f7                             	| [$30ed: jr   nz,$30F7]
 * fix stuff for french (disabled ATM)
-	move.l	a0,-(sp)                        	| [$30ef: push hl]
-	exg	d3,a0                              	| [$30f0: ex   de,hl]
-	move.w	#0x000A,d3                      	| [$30f1: ld   de,$000A] 10
-	add.w	d3,a0                            	| [$30f4: add  hl,de]
-	exg	d3,a0                              	| [$30f5: ex   de,hl]
-	move.l	(sp)+,a0                        	| [$30f6: pop  hl]
+	                        	| [$30ef: push hl]
+	                              	| [$30f0: ex   de,hl]
+	                      	| [$30f1: ld   de,$000A] 10
+	add.w	#0xA,a1                            	| [$30f4: add  hl,de]
+	                      	| [$30f5: ex   de,hl]
+	                       	| [$30f6: pop  hl]
 l_30f7:
 	move.w	(sp)+,d0                        	| [$30f7: pop  af]
 	rts                                    	| [$30f8: ret]

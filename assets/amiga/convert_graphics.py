@@ -67,6 +67,7 @@ for sf in glob.glob(os.path.join(screens_dir,"*.bin")):
             clut_index = raw_clut_index & 0xF
             used_cluts[tile_index].add(clut_index)
 
+# force some tiles
 used_cluts.update({k:range(0,16) for k in range(0,64)})
 
 # elevator wire 1F4 -> 1FB clut F
@@ -76,6 +77,15 @@ used_cluts.update({k:[0] for k in range(0x1F4,0x1FC)})
 # breakable wall
 
 used_cluts.update({k:[0xF] for k in range(0x301,0x30B)})
+
+# highscore instructions
+
+used_cluts.update({k:[0x8] for k in range(0x25D,0x28A)})
+used_cluts[0x254] = [0x8]
+
+# highscore arrows
+
+used_cluts.update({k:[0x4] for k in range(0x255,0x25D)})
 
 dump_tiles = True
 dump_sprites = True
