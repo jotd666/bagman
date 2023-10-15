@@ -1,12 +1,10 @@
-- level completed: intermission locks up with bogus sprites  
-- guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
-   debug with just 1 guard!!
+- "PLAYER 1" flashes with wrong timing
+- set supervisor state at start in DOS mode (revert to user in the end)
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
   => screen 2: elevator clut forced at white+orange,
      generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
 	 but uses third color (red)
-- english/french switch (hiscore entry instructions + title presents/presente, check other locations?)
 - check level complete in non whdload (SR not reset so....)
 - brown/blue stripe on row 0? disable those rows completely
 - timer at 400: stop sound
@@ -19,7 +17,6 @@
 - invincible flag in demo game should be made inefficient
 - add option to start at hard level directly: done plug it
 - make command line options work: done, to test
-- "PLAYER 1" flashes with wrong timing
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 
 - the original game had a tendency (not all the time) to leave the barrow in the last screen when you completed

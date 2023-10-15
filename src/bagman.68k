@@ -398,7 +398,7 @@ l_00fc:
 	move.b	unknown_6053,d0                 	| [$00fc: ld   a,(unknown_6053)]
 	cmp.b	#0x01,d0                         	| [$00ff: cp   $01]
 	jeq	l_0380                             	| [$0101: jp   z,$0380]
-	jbsr	l_0472                            	| [$0104: call $0472]
+	jbsr	handle_demo_mode_0472                            	| [$0104: call $0472]
 	move.b	unknown_6151,d0                 	| [$0107: ld   a,(unknown_6151)]
 	cmp.b	#0x01,d0                         	| [$010a: cp   $01]
 	jeq	l_0380                             	| [$010c: jp   z,$0380]
@@ -771,7 +771,7 @@ l_042c:
 	move.b	d0,(a1)                         	| [$0435: ld   (de),a]
 	rts                                    	| [$0436: ret]
 
-l_0472:
+handle_demo_mode_0472:
 	lea	unknown_6151,a3                	| [$0472: ld   iy,unknown_6151]
 	lea	player_struct_6580,a2          	| [$0476: ld   ix,player_struct_6580]
 	move.w	unknown_6154,d6             	| [$047a: ld   hl,(unknown_6154)]
@@ -2797,7 +2797,10 @@ guard_1_walk_movement_116F:
 	.ifne	OPT_BLOCK_GUARD_TWO
 	rts
 	.endif
-	
+	tst.b	guard_2_inactive
+	beq.b	0f
+	rts
+0:
 	move.b	guard_1_screen_6099,d0          	| [$116f: ld   a,(guard_1_screen_6099)]
 	move.b	d0,current_guard_screen_index_6098      	| [$1172: ld   (current_guard_screen_index_6098),a]
 	move.w	guard_1_logical_address_6038,stored_logical_address_6044	| [$1175: ld   hl,(guard_1_logical_address_6038)]
@@ -2818,7 +2821,10 @@ guard_2_walk_movement_119B:
 	.ifne	OPT_BLOCK_GUARD_ONE
 	rts
 	.endif
-	
+	tst.b	guard_1_inactive
+	beq.b	0f
+	rts
+0:	
 	move.b	guard_2_screen_609A,d0          	| [$119b: ld   a,(guard_2_screen_609A)]
 	move.b	d0,current_guard_screen_index_6098      	| [$119e: ld   (current_guard_screen_index_6098),a]
 	move.w	guard_2_logical_address_6078,stored_logical_address_6044	| [$11a1: ld   hl,(guard_2_logical_address_6078)]
@@ -2859,12 +2865,12 @@ l_122b:
 	            	| [$122c: ld   a,(io_read_shit_B800)]
 	jbsr	init_new_game_1E94                 	| [$122f: call init_new_game_1E94]
 	jbsr	init_guard_directions_and_wagons_2957                            	| [$1232: call $2957]
-	clr.b	d0                               	| [$1235: xor  a]
-	move.b	d0,player_death_flag_6025       	| [$1236: ld   (player_death_flag_6025),a]
-	addq.b	#1,d0                           	| [$1239: inc  a]
-	move.b	d0,guard_2_screen_609A          	| [$123a: ld   (guard_2_screen_609A),a]
-	move.b	#0x03,d0                        	| [$123d: ld   a,$03]
-	move.b	d0,guard_1_screen_6099          	| [$123f: ld   (guard_1_screen_6099),a]
+	                               	| [$1235: xor  a]
+	clr.b	player_death_flag_6025       	| [$1236: ld   (player_death_flag_6025),a]
+	                           	| [$1239: inc  a]
+	move.b	#1,guard_2_screen_609A          	| [$123a: ld   (guard_2_screen_609A),a]
+	                        	| [$123d: ld   a,$03]
+	move.b	#3,guard_1_screen_6099          	| [$123f: ld   (guard_1_screen_6099),a]
 
 * game main loop
 
@@ -2988,7 +2994,7 @@ l_1310:
 l_1327:
 	jbsr	l_1e7a                            	| [$1327: call $1E7A]  ????
 	            	| [$132a: ld   (io_read_shit_B800),a]
-	jbsr	l_1c30                            	| [$132d: call $1C30]  ????
+	jbsr	handle_guard_1_views_player_1c30                            	| [$132d: call $1C30]
 	* "L" from VALADON copyright (protection check, probably decoy)
 	move.b	#0x4C,d0                       	| [$1330: ld   a,($58A3)]
 	move.b	d0,unknown_6273                 	| [$1333: ld   (unknown_6273),a]
@@ -3001,7 +3007,7 @@ l_1327:
 	jbsr	l_1b38                            	| [$1341: call z,$1B38]
 0:
     jbsr	osd_enable_vblank_interrupt
-	jbsr	l_1cc9                            	| [$1345: call $1CC9]  ???
+	jbsr	handle_guard_2_views_player_1cc9                            	| [$1345: call $1CC9]  ???
 	* D from VALADON (protection check)
 	move.b	#0x44,d0                       	| [$1348: ld   a,($570F)]
  	move.b	d0,unknown_6270                 	| [$134b: ld   (unknown_6270),a]
@@ -3205,7 +3211,7 @@ l_1529:
 l_152f:
 	move.b	(a2),d0                    	| [$152f: ld   a,(ix+$00)]
 	                         	| [$1532: cp   $00]
-	jne	guard_1_sees_player_1560           	| [$1534: jr   nz,guard_1_sees_player_1560]
+	jne	guard_2_sees_player_1560           	| [$1534: jr   nz,guard_1_sees_player_1560]
 	addq.w	#1,a2                           	| [$1536: inc  ix]
 	subq.b	#1,d1                           	| [...]
 	jne	l_152f                             	| [$1538: djnz $152F]
@@ -3223,7 +3229,7 @@ l_152f:
 	jbsr	guard_wait_for_elevator_test_2AFA 	| [$155b: call guard_wait_for_elevator_test_2AFA]
 	jra	l_1564                             	| [$155e: jr   $1564]
 
-guard_1_sees_player_1560:
+guard_2_sees_player_1560:
 	clr.b	d0                               	| [$1560: xor  a]
 	move.b	d0,unknown_6149                 	| [$1561: ld   (unknown_6149),a]
 l_1564:
@@ -4303,7 +4309,8 @@ l_1c26:
 	move.l	(sp)+,a2                        	| [$1c2a: pop  ix]
 	move.l	(sp)+,a0                        	| [$1c2c: pop  hl]
 	jra	l_1b0b                             	| [$1c2d: jp   $1B0B]
-l_1c30:
+	
+handle_guard_1_views_player_1c30:
 	move.b	player_screen_600D,d0           	| [$1c30: ld   a,(player_screen_600D)]
 	move.b	d0,d1                           	| [$1c33: ld   b,a]
 	move.b	guard_1_screen_6099,d0          	| [$1c34: ld   a,(guard_1_screen_6099)]
@@ -4311,6 +4318,7 @@ l_1c30:
 	beq.b	0f
 	rts                                    	| [$1c38: ret  nz]
 0:
+	* guard in the same screen as player: check if sees player
 	lea	guard_1_sees_player_left_603D,a2	| [$1c39: ld   ix,guard_1_sees_player_left_603D]
 	move.w	guard_1_logical_address_6038,d6	| [$1c3d: ld   hl,(guard_1_logical_address_6038)]
 	move.w	#-0x20,d1                        	| [$1c40: ld   bc,$FFE0] 65504
@@ -4322,6 +4330,7 @@ l_1c30:
 l_1c52:
 	exg	d0,d7                              	| [$1c52: ex   af,af']
 	jbsr	is_way_clear_to_player_1D33       	| [$1c53: call is_way_clear_to_player_1D33]
+
 	move.w	guard_1_logical_address_6038,d6	| [$1c56: ld   hl,(guard_1_logical_address_6038)]
 	lea	guard_1_sees_player_right_603C,a2	| [$1c59: ld   ix,guard_1_sees_player_right_603C]
 	move.w	#0x20,d1                        	| [$1c5d: ld   bc,$0020] 32
@@ -4334,6 +4343,8 @@ l_1c52:
 l_1c6f:
 	exg	d0,d7                              	| [$1c6f: ex   af,af']
 	jbsr	is_way_clear_to_player_1D33       	| [$1c70: call is_way_clear_to_player_1D33]
+	
+
 	move.w	guard_1_logical_address_6038,d6	| [$1c73: ld   hl,(guard_1_logical_address_6038)]
 	move.w	#-1,d1                        	| [$1c76: ld   bc,$FFFF] 65535
 	move.b	#0x10,d0                        	| [$1c79: ld   a,$10]
@@ -4378,7 +4389,7 @@ l_1c94:
 	rts                                    	| [$1cc8: ret]
 
 
-l_1cc9:
+handle_guard_2_views_player_1cc9:
 	move.b	player_screen_600D,d0           	| [$1cc9: ld   a,(player_screen_600D)]
 	move.b	d0,d1                           	| [$1ccc: ld   b,a]
 	move.b	guard_2_screen_609A,d0          	| [$1ccd: ld   a,(guard_2_screen_609A)]
@@ -4389,7 +4400,7 @@ l_1cc9:
 
 	lea	guard_2_sees_player_left_607D,a2	| [$1cd2: ld   ix,guard_2_sees_player_left_607D]
 	move.w	guard_2_logical_address_6078,d6	| [$1cd6: ld   hl,(guard_2_logical_address_6078)]
-	move.b	#-0x20,d1                        	| [$1cd9: ld   bc,$FFE0] 65504
+	move.w	#-0x20,d1                        	| [$1cd9: ld   bc,$FFE0] 65504
 
 * if player has pick reverts tests:	 if sees on the right, actually
 *  pretend he saw him on the left
@@ -4402,6 +4413,8 @@ l_1cc9:
 l_1ceb:
 	exg	d0,d7                              	| [$1ceb: ex   af,af']
  	jbsr	is_way_clear_to_player_1D33       	| [$1cec: call is_way_clear_to_player_1D33]
+
+
 	move.w	guard_2_logical_address_6078,d6	| [$1cef: ld   hl,(guard_2_logical_address_6078)]
 	move.w	#0x20,d1                        	| [$1cf2: ld   bc,$0020] 32
 	lea	guard_2_sees_player_right_607C,a2	| [$1cf5: ld   ix,guard_2_sees_player_right_607C]
@@ -4426,6 +4439,8 @@ l_1ceb:
 l_1d0e:
 	exg	d0,d7                              	| [$1d0e: ex   af,af']
  	jbsr	is_way_clear_to_player_1D33       	| [$1d0f: call is_way_clear_to_player_1D33]
+	
+
 
  * up and down (note that having the pick has no effect on those tests)
 	move.w	guard_2_logical_address_6078,d6	| [$1d12: ld   hl,(guard_2_logical_address_6078)]
@@ -4492,6 +4507,7 @@ l_1d4e:
 	jeq	l_1d66                             	| [$1d62: jr   z,$1D66]
 	jra	l_1d35                             	| [$1d64: jr   $1D35]
 l_1d66:
+	* way is clear, set way clear direction
 	exg	d0,d7                              	| [$1d66: ex   af,af']
  	move.b	d0,(a2)                    	| [$1d67: ld   (ix+$00),a]
 	rts                                    	| [$1d6a: ret]
@@ -7399,6 +7415,10 @@ set_bag_color_attribute_3197:
 	rts                                    	| [$31a2: ret]
 
 maybe_guard_1_is_stuck_31a3:
+	.ifne	OPT_GUARD_RESET_OFF
+	rts
+	.endif
+
 	lea	guard_1_struct_6594,a2         	| [$31a3: ld   ix,guard_1_struct_6594]
 	move.b	guard_1_in_elevator_603B,d0     	| [$31a7: ld   a,(guard_1_in_elevator_603B)]
 	cmp.b	#0x01,d0                         	| [$31aa: cp   $01]
@@ -7421,6 +7441,10 @@ maybe_guard_1_is_stuck_31a3:
 	rts                                    	| [$31c0: ret]
 
 maybe_guard_2_is_stuck_31c1:
+	.ifne	OPT_GUARD_RESET_OFF
+	rts
+	.endif
+
 	lea	guard_2_struct_6598,a2         	| [$31c1: ld   ix,guard_2_struct_6598]
 	move.b	guard_2_in_elevator_607B,d0     	| [$31c5: ld   a,(guard_2_in_elevator_607B)]
 	cmp.b	#0x01,d0                         	| [$31c8: cp   $01]
@@ -8602,8 +8626,6 @@ check_if_level_completed_3b00:
 	addq.b	#1,lives_6056                           	| [$3b30: inc  a]
 											| [$3b31: ld   (lives_6056),a]
 	* loop until player flees by the right
-	* save SR (we can read it, we're in an interrupt, see below)
-	move.w	SR,-(a7)
 l_3b34:
 	move.b	player_input_6026,d0            	| [$3b34: ld   a,(player_input_6026)]
 	or.b	#0x10,d0                          	| [$3b37: or   $10]
@@ -8621,6 +8643,10 @@ l_3b34:
 	* (moving to SR is privileged, code could run in user mode). Here it doesn't matter as we're
 	* already in the interrupt code so we can hack through SR
 	move.w	#0x2000,SR
+	* the only problem is that now, even if game was started from user state
+	* the game is now in supervisor state even outside the interrupt!
+	* This forces us to start the game in
+	* supervisor state beforehand, or else it will crash when quitting
 	jbsr	osd_enable_vblank_interrupt	|     jbsr	osd_enable_vblank_interrupt
 	* keep drawing elevator
 	jbsr	l_1653                            	| [$3b4c: call $1653]
@@ -8630,8 +8656,7 @@ l_3b34:
 	clr.b	player_controls_blocked_61F2                               	| [$3b56: xor  a]
 	                 	| [$3b57: ld   (player_controls_blocked_61F2),a]
 	clr.b	holds_barrow_61C7            	| [$3b5a: ld   (holds_barrow_61C7),a]
-	* restore SR. Not really necessary but cleaner
-	move.w	(a7)+,SR
+
 	* and disable interrupts again
 	jbsr	osd_disable_vblank_interrupt    | jbsr	osd_disable_vblank_interrupt
 	move.b	#0x40,d1                        	| [$3b5e: ld   b,$40]
@@ -9648,6 +9673,7 @@ l_5d2a:
 	move.b	#0x01,d0                        	| [$5d33: ld   a,$01]
 	move.b	d0,barrow_screen_61C6                 	| [$5d35: ld   (barrow_screen_61C6),a]
 	move.b	d0,unknown_61FC                 	| [$5d38: ld   (unknown_61FC),a]
+ * make guards start at 3rd screen
 	move.b	#0x03,d0                        	| [$5d3b: ld   a,$03]
 	move.b	d0,guard_1_screen_6099          	| [$5d3d: ld   (guard_1_screen_6099),a]
 	move.b	d0,guard_2_screen_609A          	| [$5d40: ld   (guard_2_screen_609A),a]

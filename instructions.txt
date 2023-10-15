@@ -27,7 +27,14 @@ INVINCIBLE: can't be killed (except by timer)
 INFLIVES: infinite lives
 INFTIME: infinite time
 INFPICK: infinite pickaxe time
-CHEATKEYS: cheat keys: F1: level complete, F2: toggle invincibility, F3: game over
+CHEATKEYS: cheat keys:
+* F1: level complete (on dropping next bag in barrow)
+* F2: toggle invincibility
+* F3: add 10000 points (and make guards slightly faster each time)
+* F4: toggle guard 1 inactive
+* F5: toggle guard 2 inactive
+* F6: game over
+FRENCH: localize some parts in french
 HARDBAGS: start with hard level bags layout
 SKILL: difficulty dip switch
 STARTLIVES: 2,3,4,5 lives dip switch

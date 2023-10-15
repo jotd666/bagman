@@ -14,7 +14,8 @@
 	.global	next_bag_completes_level_flag
 	.global last_played_sound_timer_table
 	.global	sound_timer
-	
+	.global guard_1_inactive
+	.global guard_2_inactive
 	.ifdef	__amiga__
 	
 	.ascii	"RAM_STRT"
@@ -60,6 +61,10 @@ infinite_time_flag:
 	.byte	0
 infinite_pickaxe_time_flag:
 	.byte	0
+guard_1_inactive:
+	.byte	0
+guard_2_inactive:
+	.byte	0
 start_level:
 	.byte	0
 highscores_need_saving:
@@ -70,6 +75,7 @@ vb_ticks_count:
 	.byte	0
 current_ticks_count:
 	.byte	0
+
 	.align	2
 regscopy:
 	ds.b	64

@@ -237,7 +237,7 @@
 00FC: 3A 53 60      ld   a,(unknown_6053)
 00FF: FE 01         cp   $01
 0101: CA 80 03      jp   z,$0380
-0104: CD 72 04      call $0472
+0104: CD 72 04      call handle_demo_mode_0472
 0107: 3A 51 61      ld   a,(unknown_6151)
 010A: FE 01         cp   $01
 010C: CA 80 03      jp   z,$0380
@@ -556,6 +556,7 @@
 0435: 12            ld   (de),a
 0436: C9            ret
 
+handle_demo_mode_0472:
 0472: FD 21 51 61   ld   iy,unknown_6151
 0476: DD 21 80 65   ld   ix,player_struct_6580
 047A: 2A 54 61      ld   hl,(unknown_6154)
@@ -2444,7 +2445,7 @@ mainloop_1242:
 1324: CA 2B 12      jp   z,$122B
 1327: CD 7A 1E      call $1E7A	;  ????
 132A: 32 00 B8      ld   (io_read_shit_B800),a
-132D: CD 30 1C      call $1C30	;  ????
+132D: CD 30 1C      call handle_guard_1_views_player_1c30	;  ????
 1330: 3A A3 58      ld   a,($58A3)
 1333: 32 73 62      ld   (unknown_6273),a
 1336: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
@@ -2454,7 +2455,7 @@ mainloop_1242:
 1340: B8            cp   b
 1341: CC 38 1B      call z,$1B38
 1344: FB            ei
-1345: CD C9 1C      call $1CC9	;  ???
+1345: CD C9 1C      call handle_guard_2_views_player_1cc9	;  ???
 1348: 3A 0F 57      ld   a,($570F)
 134B: 32 70 62      ld   (unknown_6270),a
 134E: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
@@ -3516,6 +3517,8 @@ guide_guard_on_hidden_screen_1bbd:
 1C2A: DD E1         pop  ix
 1C2C: E1            pop  hl
 1C2D: C3 0B 1B      jp   $1B0B
+
+handle_guard_1_views_player_1c30:
 1C30: 3A 0D 60      ld   a,(player_screen_600D)
 1C33: 47            ld   b,a
 1C34: 3A 99 60      ld   a,(guard_1_screen_6099)
@@ -3577,7 +3580,7 @@ guide_guard_on_hidden_screen_1bbd:
 1CC5: C4 A9 1B      call nz,set_guard_direction_down_1BA9
 1CC8: C9            ret
 
-
+handle_guard_2_views_player_1cc9:
 1CC9: 3A 0D 60      ld   a,(player_screen_600D)
 1CCC: 47            ld   b,a
 1CCD: 3A 9A 60      ld   a,(guard_2_screen_609A)
@@ -3608,8 +3611,10 @@ guide_guard_on_hidden_screen_1bbd:
 
 1CF9: 3A CF 61      ld   a,(has_pick_61CF)
 1CFC: FE 00         cp   $00
+; protection??? reads video memory stores is somewhere
 1CFE: 3A B2 91      ld   a,($91B2)
 1D01: 32 72 62      ld   (unknown_6272),a
+; protection ends
 1D04: 3E 80         ld   a,$80
 1D06: 20 06         jr   nz,$1D0E
 1D08: DD 21 7D 60   ld   ix,guard_2_sees_player_left_607D

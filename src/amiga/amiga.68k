@@ -244,6 +244,10 @@ _user:
 	beq.b	2f
 	or.l	#1,misc_options
 2:
+	move.l	(A0)+,D0	| FRENCH/S
+	beq.b	2f
+	or.l	#2,misc_options
+2:
 
 	move.l	(A0)+,D0	| SKILL/S
 	beq.b	2f
@@ -331,11 +335,15 @@ _user:
 	lsl.b	#2,d1
 	or.b	d1,d0
 
-
+	
 	move.l	misc_options,d1
 	btst	#0,d1
-	bne.b	0f
+	beq.b	0f
 	bset	#0,d0
+0:
+	btst	#1,d1
+	beq.b	0f
+	bset	#5,d0
 0:
 	move.b	d0,dip_switches
 
@@ -1963,8 +1971,7 @@ handle_keyboard:
 0:
 
 	btst	#4,cheat_flags+3
-	beq.b	10f
-	move.b	#0x1,0x210
+	jeq		10f
 	* cheat keys
 	cmp.b	#0x50,d0	| F1 key
 	bne.b	0f
@@ -1981,6 +1988,25 @@ handle_keyboard:
 	
 0:
 	cmp.b	#0x52,d0	| F3 key
+	bne.b	0f
+	st.b	cheat_used
+	* add 10000 points
+	add.b	#1,player_1_score_6176+2
+0:
+	cmp.b	#0x53,d0	| F4 key
+	bne.b	0f
+	st.b	cheat_used
+	move.w	#0x0FF,_custom+color
+	eor.b	#1,guard_1_inactive
+0:
+	cmp.b	#0x54,d0	| F5 key
+	bne.b	0f
+	st.b	cheat_used
+	move.w	#0x0FF,_custom+color
+	eor.b	#1,guard_2_inactive
+0:
+
+	cmp.b	#0x55,d0	| F6 key
 	bne.b	0f
 	* game over, no lives
 	move.b	#1,player_death_flag_6025
