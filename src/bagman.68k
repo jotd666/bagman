@@ -5488,11 +5488,15 @@ l_2486:
 	jbsr	clear_screen_2a00                            	| [$248e: call $2A00]
 *	move.b	#0x01,d0                        	| [$2491: ld   a,$01]
 *	move.b	d0,0xA003                       	| [$2493: ld   ($A003),a]
+	* init highscore table
 	lea	game_mem+0x3696,a0                      	| [$2496: ld   hl,$3696]
 	lea	high_score_table_6217,a1                	| [$2499: ld   de,high_score_table_6217]
 										| [$249c: ld   bc,$0050] 80
 	move.w	#0x50,d1                        	| [$249c: ld   bc,$0050] 80
 	jbsr	ldir                              	| [$249f: ldir]
+	
+	lea	high_score_table_6217,a0
+	jbsr	osd_read_high_scores
 	jra	l_121c                             	| [$24a1: jp   $121C]
 l_24a4:
 	move.b	must_play_music_6210,d0                 	| [$24a4: ld   a,(must_play_music_6210)]
@@ -6706,12 +6710,12 @@ l_2d03:
 	rts                                    	| [$2d08: ret  nz]
 0:
 	lea	player_1_score_6176,a3                	| [$2d09: ld   iy,player_1_score_6176]
-	jbsr	l_2dd8                            	| [$2d0d: call $2DD8]
+	jbsr	check_score_rank_2dd8                            	| [$2d0d: call $2DD8]
 	move.b	d1,d0                           	| [$2d10: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d11: cp   $05]
 	jcs	l_2d20                             	| [$2d13: jr   c,$2D20]
 	lea	player_2_score_6179,a3                	| [$2d15: ld   iy,player_2_score_6179]
-	jbsr	l_2dd8                            	| [$2d19: call $2DD8]
+	jbsr	check_score_rank_2dd8                            	| [$2d19: call $2DD8]
 	move.b	d1,d0                           	| [$2d1c: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d1d: cp   $05]
 	bcs.b	0f                               	| [$2d1f: ret  nc] [...]
@@ -6730,7 +6734,7 @@ l_2d20:
                    	| [$2d33: ld   ($A001),a]
                         	| [$2d36: ld   ($A002),a]
 	lea	player_1_score_6176,a3                	| [$2d39: ld   iy,player_1_score_6176]
-	jbsr	l_2dd8                            	| [$2d3d: call $2DD8]
+	jbsr	check_score_rank_2dd8                            	| [$2d3d: call $2DD8]
 	move.b	d1,d0                           	| [$2d40: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d41: cp   $05]
 	jcc	l_2d71                             	| [$2d43: jp   nc,$2D71]
@@ -6743,7 +6747,8 @@ l_2d20:
 	                    	| [$2d52: pop  de]
 
 	move.l	a2,-(sp)                        	| [$2d53: push ix]
-	addq.w	#2,a0                           	| [$2d55: inc  hl] * 2
+	* 2 rows below (highscore name)
+	addq.w	#2,d6                           	| [$2d55: inc  hl] * 2
 
 	move.l	a0,-(sp)                        	| [$2d57: push hl]
 	jbsr	l_2e04                            	| [$2d58: call $2E04]
@@ -6756,6 +6761,9 @@ l_2d20:
 	move.b	d0,unknown_6279                 	| [$2d68: ld   (unknown_6279),a]
 	jbsr	enter_highscore_name_2e58                            	| [$2d6b: call $2E58]
 	jbsr	draw_highscore_names_and_scores_2f8d                            	| [$2d6e: call $2F8D]
+	
+	lea		high_score_table_6217,a0
+	jbsr	osd_write_high_scores
 l_2d71:
 	move.b	unknown_617D,d0                 	| [$2d71: ld   a,(unknown_617D)]
 	cmp.b	#0x01,d0                         	| [$2d74: cp   $01]
@@ -6773,7 +6781,7 @@ l_2d89:
 	cmp.b	#0x80,d0                         	| [$2d8e: cp   $80]
 	jeq	l_2d89                             	| [$2d90: jr   z,$2D89]
 	lea	player_2_score_6179,a3                	| [$2d92: ld   iy,player_2_score_6179]
-	jbsr	l_2dd8                            	| [$2d96: call $2DD8]
+	jbsr	check_score_rank_2dd8                            	| [$2d96: call $2DD8]
 	move.b	d1,d0                           	| [$2d99: ld   a,b]
 	cmp.b	#0x05,d0                         	| [$2d9a: cp   $05]
 	jcc	l_2dd3                             	| [$2d9c: jr   nc,$2DD3]
@@ -6807,11 +6815,12 @@ l_2dd3:
 	clr.b	d0                               	| [$2dd3: xor  a]
 	move.b	d0,unknown_6267                 	| [$2dd4: ld   (unknown_6267),a]
 	rts                                    	| [$2dd7: ret]
-l_2dd8:
+check_score_rank_2dd8:
 	lea	high_score_table_6217,a2                	| [$2dd8: ld   ix,high_score_table_6217]
 	move.w	#0x0010,d3                      	| [$2ddc: ld   de,$0010] 16
 	move.w	#0x920F,d6                      	| [$2ddf: ld   hl,$920F]
 	move.b	#0x05,d1                        	| [$2de2: ld   b,$05]
+	* check scores against highscore table scores
 l_2de4:
 	move.b	(0x02,a3),d0                    	| [$2de4: ld   a,(iy+$02)]
 	cmp.b	(0x02,a2),d0                     	| [$2de7: cp   (ix+$02)]
@@ -6979,8 +6988,10 @@ l_2ed0:
 l_2edb:
 	move.b	#0x10,d1                        	| [$2edb: ld   b,$10]
 	jbsr	write_current_highscore_name_letter_2f0a                            	| [$2edd: call $2F0A]
-	move.w	#0x0020,d3                      	| [$2ee0: ld   de,$0020] 32
-	add.w	d3,d6                            	| [$2ee3: add  hl,de]
+	                      	| [$2ee0: ld   de,$0020] 32
+	* previous X coord
+	add.w	#0x0020,d6                            	| [$2ee3: add  hl,de]
+	* previous letter to store
 	subq.w	#1,a2                           	| [$2ee4: dec  ix]
 	jbsr	osd_r_videoram
 	move.b	d0,d1                         	| [$2ee6: ld   b,(hl)]
@@ -6999,9 +7010,10 @@ l_2eee:
 	rts                                    	| [$2ef8: ret  z]
 0:
 l_2ef9:
-	move.w	#0x0020,d3                      	| [$2ef9: ld   de,$0020] 32
-	                               	| [$2efc: xor  a]
-	sub.w	d3,d6		| [sbc  hl,de]
+	                      	| [$2ef9: ld   de,$0020] 32
+	* next X                               	| [$2efc: xor  a]
+	sub.w	#0x20,d6		| [sbc  hl,de]
+	* next hiscore name
 	addq.w	#1,a2                           	| [$2eff: inc  ix]
 	move.b	#0x11,d1                        	| [$2f01: ld   b,$11] letter "A"
 	jbsr	write_current_highscore_name_letter_2f0a                            	| [$2f03: call $2F0A]
@@ -7189,7 +7201,7 @@ high_score_entry_2ffb:
 	move.w  #0x9072,d6                      	| [$3041: ld   hl,$9072]
 	jbsr	write_score_frame_vertical_bar_2f7d                            	| [$3044: call $2F7D]
 	
-	
+	* arrows & write/return/advance/erase
 	lea  game_mem+0x4D36,a1                      	| [$3047: ld   de,$4D36]
 	move.w  #0x9275,d6                      	| [$304a: ld   hl,$9275]
 	jbsr	l_30db                            	| [$304d: call $30DB]

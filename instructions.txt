@@ -18,15 +18,19 @@ Command line arguments (no whdload, but 1.3 compatible)
 
 Usage:
 
-bagman 
-
-Cheats:
-
-TBD
+bagman INVINCIBLE/S,INFLIVES/S,INFTIME/S,INFPICK/S,
+       CHEATKEYS/S,HARDBAGS/S,SKILL/K/N,STARTLIVES/K/N
 
 Options/dipswitches:
 
-TBD
+INVINCIBLE: can't be killed (except by timer)
+INFLIVES: infinite lives
+INFTIME: infinite time
+INFPICK: infinite pickaxe time
+CHEATKEYS: cheat keys: F1: level complete, F2: toggle invincibility, F3: game over
+HARDBAGS: start with hard level bags layout
+SKILL: difficulty dip switch
+STARTLIVES: 2,3,4,5 lives dip switch
 
 Hiscores save:
 

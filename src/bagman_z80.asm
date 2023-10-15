@@ -4448,6 +4448,7 @@ draw_object_tiles_22dc:
 248E: CD 00 2A      call clear_screen_2a00
 2491: 3E 01         ld   a,$01
 2493: 32 03 A0      ld   ($A003),a
+* init highscore table
 2496: 21 96 36      ld   hl,$3696
 2499: 11 17 62      ld   de,high_score_table_6217
 249C: 01 50 00      ld   bc,$0050
@@ -5555,12 +5556,12 @@ check_guards_pick_collisions_2c96:
 2D06: FE 01         cp   $01
 2D08: C0            ret  nz
 2D09: FD 21 76 61   ld   iy,player_1_score_6176
-2D0D: CD D8 2D      call $2DD8
+2D0D: CD D8 2D      call check_score_rank_2dd8
 2D10: 78            ld   a,b
 2D11: FE 05         cp   $05
 2D13: 38 0B         jr   c,$2D20
 2D15: FD 21 79 61   ld   iy,player_2_score_6179
-2D19: CD D8 2D      call $2DD8
+2D19: CD D8 2D      call check_score_rank_2dd8
 2D1C: 78            ld   a,b
 2D1D: FE 05         cp   $05
 2D1F: D0            ret  nc
@@ -5574,7 +5575,7 @@ check_guards_pick_collisions_2c96:
 2D33: 32 01 A0      ld   ($A001),a
 2D36: 32 02 A0      ld   ($A002),a
 2D39: FD 21 76 61   ld   iy,player_1_score_6176
-2D3D: CD D8 2D      call $2DD8
+2D3D: CD D8 2D      call check_score_rank_2dd8
 2D40: 78            ld   a,b
 2D41: FE 05         cp   $05
 2D43: D2 71 2D      jp   nc,$2D71
@@ -5614,7 +5615,7 @@ check_guards_pick_collisions_2c96:
 2D8E: FE 80         cp   $80
 2D90: 28 F7         jr   z,$2D89
 2D92: FD 21 79 61   ld   iy,player_2_score_6179
-2D96: CD D8 2D      call $2DD8
+2D96: CD D8 2D      call check_score_rank_2dd8
 2D99: 78            ld   a,b
 2D9A: FE 05         cp   $05
 2D9C: 30 35         jr   nc,$2DD3
@@ -5646,6 +5647,8 @@ check_guards_pick_collisions_2c96:
 2DD3: AF            xor  a
 2DD4: 32 67 62      ld   (unknown_6267),a
 2DD7: C9            ret
+
+check_score_rank_2dd8:
 2DD8: DD 21 17 62   ld   ix,high_score_table_6217
 2DDC: 11 10 00      ld   de,$0010
 2DDF: 21 0F 92      ld   hl,$920F

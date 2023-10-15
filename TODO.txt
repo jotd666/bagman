@@ -1,13 +1,13 @@
-- highscore screen not working properly: draw_highscore_names_and_scores_2f8d
-  * name entry 2 rows too high
-- english/french switch
-- check level complete in non whdload (SR not reset so....)
-- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
-  => generate 2 copies of elevator and change CLUT in screen 2 so it matches player clut: doesn't work!!
-- add cheat keys: F1: level complete, F2: toggle invincibility (to test), F3: game over
+- level completed: intermission locks up with bogus sprites  
 - guard #2 (the one which starts at level 3) doesn't see the player when climbing down stairs and player is in a gallery
    debug with just 1 guard!!
 - press 5 to insert coin works 1 time out of 2 (previous state interfering?)
+- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
+  => screen 2: elevator clut forced at white+orange,
+     generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
+	 but uses third color (red)
+- english/french switch (hiscore entry instructions + title presents/presente, check other locations?)
+- check level complete in non whdload (SR not reset so....)
 - brown/blue stripe on row 0? disable those rows completely
 - timer at 400: stop sound
 - killed: stop sound
@@ -16,8 +16,6 @@
 - restore music
 - start 2P game??
 - joystick/fire to start game/insert coin not working
-- guard sometimes stops falling, then resumes, sometimes fall twice as fast!
-  (probably coupling between both guards)
 - invincible flag in demo game should be made inefficient
 - add option to start at hard level directly: done plug it
 - make command line options work: done, to test
@@ -28,7 +26,6 @@
   the level, which is unfair and makes next level very difficult because you have to bring back the barrow or go
   to last screen right after appearing in the first screen.
 - enhance instructions
-- save/load highscores
 
 
 - debug 2640 with values not 10 or E0 (not at start)

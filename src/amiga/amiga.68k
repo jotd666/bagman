@@ -19,7 +19,7 @@ NO68020 = 1
 SCREEN_ADDRESS = 0x9000
 
 
-SCORE_FILE_SIZE = 0x1E
+SCORE_FILE_SIZE = 0x50
 
 * sprites:
 
@@ -750,6 +750,15 @@ osd_update_sprites:
 * < D3: sprite color (clut index)
 * > D6: allocated sprite index
 
+	* special case: elevator
+	cmp.b	#0x33,d2
+	bne.b	21f
+	* elevator, change clut, match player clut
+	* in the future, also change elevator with different
+	* bitplanes if clut 4 so colors are respected (red instead of orange)
+	move.b	#8,d3
+21:
+
 	* sprite active: allocate a sprite in host table
 	* it HAS to succeed (in Pengo it did, here I'm less sure)
 	bsr		alloc_sprite
@@ -837,6 +846,7 @@ osd_update_sprites:
 	bne.b	24f
 	* all black sprites would hide bagman sprites & tiles
 	* we want to hide them instead (no need to change palette)
+	* inherited from pengo, probably not required
 	move.l	#blank_sprite,d4
 	bra.b	25f
 24:
@@ -921,15 +931,6 @@ alloc_sprite:
 	move.b	d0,(a2)+		| X
 	move.b	d1,(a2)+		| Y
 	move.b	d2,(a2)+		| code
-
-* this should work but does not!	
-*	cmp.b	#0x33,d2
-*	bne.b	21f
-*	* elevator, change clut, match player clut
-*	* in the future, also change elevator with different
-*	* bitplanes if clut 4 so colors are respected (red instead of orange)
-*	move.b	#8,d3
-*21:
 	move.b	d3,(a2)+		| clut
 	rts						| done
 1:
