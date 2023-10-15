@@ -365,9 +365,9 @@ guard_2_sees_player_down_607F:
 	ds.b	16
 unknown_608F:
 	ds.b	2
-guard_logical_address_6091:
-	ds.b	2
 	.align	2
+guard_logical_address_6091:
+	ds.w	1
 guard_struct_pointer_6093:
 	ds.l	1
 guard_direction_pointer_6095:
@@ -461,14 +461,15 @@ unknown_61BD:
 unknown_61C0:
 	ds.b	4
 	* screen address + current screen index
+	.align	2
 barrow_screen_params_61C4:
-	ds.b	2
+	ds.w	1
 barrow_screen_61C6:
 	ds.b	1
 holds_barrow_61C7:
 	ds.b	3
 unknown_61CA:
-	ds.b	2
+	ds.w	1
 current_pickaxe_screen_params_61CC:
 	ds.b	3
 has_pick_61CF:
@@ -514,15 +515,16 @@ picked_up_object_screen_address_61F6:
 	ds.w	2
 unknown_61F9:
 	ds.b	1
+	.align	2
 unknown_screen_address_61FA:
-	ds.b	2
+	ds.w	1
 unknown_61FC:
 	ds.b	1
 unknown_61FD:
 	ds.b	2
-unknown_61FF:
-	ds.b	2
 	.align	2
+unknown_61FF:
+	ds.w	1
 unknown_pointer_6201:
 	ds.l	1
 unknown_pointer_6203:
