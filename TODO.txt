@@ -1,3 +1,4 @@
+- default only 1 life should be 2
 - "PLAYER 1" flashes with wrong timing
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
   => screen 2: elevator clut forced at white+orange,
@@ -8,9 +9,9 @@
 - sfx are playing in demo when guard is chasing player
 - make command line options work: done, to test
 
-- DOS exe: quit then run again => crash. Maybe DONT allow quit from DOS?
+- DOS exe: quit then run again => crash
 - set supervisor state at start in DOS mode (revert to user in the end)
-- restore music
+- restore music, block SFX when music is playing (compute music playing time)
 - timer at 400: stop sound
 - killed: stop sound
 - start 2P game??
@@ -24,7 +25,4 @@
 
 maybe...:
 - try to cookie cut bags & pickaxes, avoid to destroy background
-- memory optim: fixed number of bitmap repeats for sprites:
-  - 1 for player, barrow, falling bag, pick, elevator
-  - 2 for guards
-  - 3 for wagons
+

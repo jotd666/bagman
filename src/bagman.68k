@@ -358,9 +358,9 @@ l_009b:
 												| [$00b2: inc  a]
 												| [$00b3: ld   (unknown_6143),a]
 	* speed management disabled                        	| [$00b6: call $10D1]
-	addq.b	#1,unknown_626D                 	| [$00b9: ld   a,(unknown_626D)]
+	addq.b	#1,flash_counter_626D                 	| [$00b9: ld   a,(flash_counter_626D)]
 												| [$00bc: inc  a]
-												| [$00bd: ld   (unknown_626D),a]
+												| [$00bd: ld   (flash_counter_626D),a]
 	lea	previous_guard_1_struct_65B8,a3	| [$00c0: ld   iy,previous_guard_1_struct_65B8]
 
 	move.b	player_screen_600D,d1           	| [$00c4: ld   a,(player_screen_600D)]
@@ -2972,13 +2972,13 @@ l_12ea:
 	jne	l_1304                             	| [$12f6: jr   nz,$1304]
 	lea	game_mem+0x56DF,a1                      	| [$12f8: ld   de,$56DF]
 	move.w   #0x9311,d6                      	| [$12fb: ld   hl,$9311]
-	jbsr	display_text_30F9                 	| [$12fe: call display_text_30F9]  ???
+	jbsr	display_localized_text_30F9                 	| [$12fe: call display_localized_text_30F9]  ???
 	jra	mainloop_1242                      	| [$1301: jp   mainloop_1242]
 l_1304:
 	* display "one or two players"
 	lea	game_mem+0x56F2,a1                      	| [$1304: ld   de,$56F2]
 	move.w   #0x9311,d6                      	| [$1307: ld   hl,$9311]
-	jbsr	display_text_30F9                 	| [$130a: call display_text_30F9]  ???
+	jbsr	display_localized_text_30F9                 	| [$130a: call display_localized_text_30F9]  ???
 	jra	mainloop_1242                      	| [$130d: jp   mainloop_1242]
 
 l_1310:
@@ -4608,16 +4608,16 @@ display_player_ids_and_credit_1dec:
 	* display PLAYER 1
 	lea	game_mem+0x5680,a1                      	| [$1dec: ld   de,$5680]
 	move.w	#0x93A0,d6                      	| [$1def: ld   hl,$93A0]
-	jbsr	display_text_30F9                 	| [$1df2: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$1df2: call display_localized_text_30F9]
 
 	* display PLAYER 1 again
 	lea	game_mem+0x5680,a1                      	| [$1df5: ld   de,$5680]
 	move.w	#0x9120,d6                      	| [$1df8: ld   hl,$9120]
-	jbsr	display_text_30F9                 	| [$1dfb: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$1dfb: call display_localized_text_30F9]
 	* display BONUS
 	lea	game_mem+0x5705,a1                      	| [$1dfe: ld   de,$5705]
 	move.w	#0x9240,d6                      	| [$1e01: ld   hl,$9240]
-	jbsr	display_text_30F9                 	| [$1e04: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$1e04: call display_localized_text_30F9]
 	* "2" for PLAYER 2
 	move.b	#0x02,d0                        	| [$1e07: ld   a,$02]
 	move.w	#0x9040,d6                      	| [$1e09: ld   hl,$9040]
@@ -4625,7 +4625,7 @@ display_player_ids_and_credit_1dec:
 	* display CREDIT followed by number of credits
 	lea	game_mem+0x5689,a1                      	| [$1e0d: ld   de,$5689]
 	move.w	#0x919F,d6                      	| [$1e10: ld   hl,$919F]
-	jbsr	display_text_30F9                 	| [$1e13: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$1e13: call display_localized_text_30F9]
 	move.b	fake_credit_digit_6004,d0                 	| [$1e16: ld   a,(unknown_6004)]
 	move.w	#0x909F,d6
 	jbsr	osd_w_videoram                       	| [$1e19: ld   ($909F),a]
@@ -4939,7 +4939,7 @@ l_205c:
 	move.w	#0x926E,d6                      	| [$205c: ld   hl,$926E]
 	lea		game_mem+0x56A1,a1                      	| [$205f: ld   de,$56A1]
 	* "GAME OVER"
-	jbsr	display_text_30F9                 	| [$2062: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$2062: call display_localized_text_30F9]
 	                               	| [$2065: xor  a]
 	clr.b	gameplay_allowed_6054        	| [$2066: ld   (gameplay_allowed_6054),a]
 	* replacing CPU-dependent loop
@@ -4968,7 +4968,7 @@ l_205c:
 	* "INSERT COIN"
 	lea	game_mem+0x56AC,a1                      	| [$2090: ld   de,$56AC]
 	move.w	#0x935A,d6                      	| [$2093: ld   hl,$935A]
-	jbsr	display_text_30F9                 	| [$2096: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$2096: call display_localized_text_30F9]
 	* "BY VALADON AUTOMATION 1982"
 	lea	game_mem+0x20E6,a1                      	| [$2099: ld   de,$20E6]
 	move.w	#0x93B5,d6                      	| [$209c: ld   hl,$93B5]
@@ -5518,20 +5518,20 @@ l_2486:
 l_24a4:
 	move.b	must_play_music_6210,d0                 	| [$24a4: ld   a,(must_play_music_6210)]
 	cmp.b	#0x01,d0                         	| [$24a7: cp   $01]
-	jne	l_24e9                             	| [$24a9: jr   nz,$24E9]
-	move.b	unknown_626D,d0                 	| [$24ab: ld   a,(unknown_626D)]
+	jne	write_attribute_on_first_row_24e9                             	| [$24a9: jr   nz,$24E9]
+	move.b	flash_counter_626D,d0                 	| [$24ab: ld   a,(flash_counter_626D)]
 	cmp.b	#0x20,d0                         	| [$24ae: cp   $20]
-	bcc.b	0f
-	jbsr	l_24bd                            	| [$24b0: call c,$24BD]
-0:
+	bcs.b	display_player_text_24bd
+		                            	| [$24b0: call c,$24BD]
+
 	cmp.b	#0x30,d0                         	| [$24b3: cp   $30]
-	bcc.b	0f
-	jbsr	l_24f2                            	| [$24b5: call c,$24F2]
-0:
-	clr.b	d0                               	| [$24b8: xor  a]
-	move.b	d0,unknown_626D                 	| [$24b9: ld   (unknown_626D),a]
+	bcs.b	erase_player_text_24f2
+												| [$24b5: call c,$24F2]
+	clr.b	flash_counter_626D                               	| [$24b8: xor  a]
+											| [$24b9: ld   (flash_counter_626D),a]
 	rts                                    	| [$24bc: ret]
-l_24bd:
+
+display_player_text_24bd:
 	move.b	unknown_626E,d0                 	| [$24bd: ld   a,(unknown_626E)]
 	cmp.b	#0x01,d0                         	| [$24c0: cp   $01]
 	jeq	l_24d7                             	| [$24c2: jr   z,$24D7]
@@ -5539,41 +5539,46 @@ l_24bd:
 	jeq	l_24d9                             	| [$24c7: jr   z,$24D9]
 	* display PLAYER 1
 	lea	game_mem+0x575A,a1                      	| [$24c9: ld   de,$575A]
-	jbsr	display_text_30F9                            	| [$24cc: call $30F9]
-	jbsr	l_24e9                            	| [$24cf: call $24E9]
+	jbsr	display_localized_text_30F9                            	| [$24cc: call $30F9]
+	jbsr	write_attribute_on_first_row_24e9                            	| [$24cf: call $24E9]
 	move.b	#0x01,d0                        	| [$24d2: ld   a,$01]
 	move.b	d0,unknown_626E                 	| [$24d4: ld   (unknown_626E),a]
 l_24d7:
-	* actual stack pop!
-	move.w	(sp)+,d0
-	addq.w	#2,a7                        	| [$24d7: pop  af]
+						
+						
+											| [$24d7: pop  af]
 	rts                                    	| [$24d8: ret]
+	
 l_24d9:
 	* display PLAYER2
 	lea	game_mem+0x5763,a1                      	| [$24d9: ld   de,$5763]
-	jbsr	display_text_30F9                            	| [$24dc: call $30F9]
-	jbsr	l_24e9                            	| [$24df: call $24E9]
+	jbsr	display_localized_text_30F9                            	| [$24dc: call $30F9]
+	jbsr	write_attribute_on_first_row_24e9                            	| [$24df: call $24E9]
 	move.b	#0x01,d0                        	| [$24e2: ld   a,$01]
 	move.b	d0,unknown_626E                 	| [$24e4: ld   (unknown_626E),a]
 	* actual stack pop!
-	move.w	(sp)+,d0
-	addq.w	#2,a7                        	| [$24e7: pop  af]
+						
+										| [$24e7: pop  af]
 	rts                                    	| [$24e8: ret]
-l_24e9:
+write_attribute_on_first_row_24e9:
 	move.b	#0x02,d0                        	| [$24e9: ld   a,$02]
 	move.w	#0x9840,d6                      	| [$24eb: ld   hl,$9840]
 	jbsr	write_attribute_on_line_5605                            	| [$24ee: call $5605]
 	rts                                    	| [$24f1: ret]
-l_24f2:
+
+erase_player_text_24f2:
+	
 	jbsr	get_XUP_screen_address_2501                            	| [$24f2: call $2501]
+	* empty characters
 	lea	game_mem+0x576C,a1                      	| [$24f5: ld   de,$576C]
-	jbsr	display_text_30F9                            	| [$24f8: call $30F9]
-	clr.b	d0                               	| [$24fb: xor  a]
-	move.b	d0,unknown_626E                 	| [$24fc: ld   (unknown_626E),a]
+	jbsr	display_localized_text_30F9                            	| [$24f8: call $30F9]
+	                               	| [$24fb: xor  a]
+	clr.b	unknown_626E                 	| [$24fc: ld   (unknown_626E),a]
 	* actual stack pop!
-	move.w	(sp)+,d0
-	addq.w	#2,a7                        	| [$24ff: pop  af]
+	
+	                 	| [$24ff: pop  af]
 	rts                                    	| [$2500: ret]
+	
 get_XUP_screen_address_2501:
 	move.b	current_player_617C,d0          	| [$2501: ld   a,(current_player_617C)]
 	move.w	#0x93A0,d6                     	| [$2504: ld   hl,$93A0]
@@ -5582,6 +5587,7 @@ get_XUP_screen_address_2501:
 	rts                                    	| [$2509: ret  nz]
 0:
 	move.w	#0x9120,d6                     	| [$250a: ld   hl,$9120]
+	cmp.b	#0x01,d0                         	| [$2507: cp   $01]
 	rts                                    	| [$250d: ret]
 	
 l_250e:
@@ -5891,7 +5897,7 @@ display_screen_3_265f:
 	* write "BONUS"
 	lea	game_mem+0x5705,a1                      	| [$2729: ld   de,$5705]
 	move.w   #0x9240,d6                      	| [$272c: ld   hl,$9240]
-	jbsr	display_text_30F9                 	| [$272f: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$272f: call display_localized_text_30F9]
 	lea	elevator_struct_6584,a0                	| [$2732: ld   hl,elevator_struct_6584]
 	move.b	#0x33,d0                        	| [$2735: ld   a,$33]
 	move.b	d0,(a0)+                         	| [$2737: ld   (hl),a]
@@ -5906,7 +5912,7 @@ display_screen_3_265f:
 	move.b	unknown_6166,d0                 	| [$2744: ld   a,(unknown_6166)]
 	move.b	d0,(a0)                         	| [$2747: ld   (hl),a]
 	jbsr	l_1e26                            	| [$2748: call $1E26]
-	jbsr	l_3110                            	| [$274b: call $3110]
+	jbsr	display_player_1_and_2_text_3110                            	| [$274b: call $3110]
 *	jbsr	is_ay_sound_playing_3DEB                 	| [$274e: call is_ay_sound_playing_3DEB]
 *	beq.b	0f
 *	rts                                    	| [$2751: ret  nz]
@@ -6005,7 +6011,7 @@ display_screen_2_275d:
 	* write "BONUS"
 	lea	game_mem+0x5705,a1                      	| [$2826: ld   de,$5705]
 	move.w   #0x9240,d6                      	| [$2829: ld   hl,$9240]
-	jbsr	display_text_30F9                 	| [$282c: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$282c: call display_localized_text_30F9]
 	lea	elevator_struct_6584,a0                	| [$282f: ld   hl,elevator_struct_6584]
 	move.b	#0x33,d0                        	| [$2832: ld   a,$33]
 	move.b	d0,(a0)+                         	| [$2834: ld   (hl),a]
@@ -6020,7 +6026,7 @@ display_screen_2_275d:
 	move.b	d0,(a0)                         	| [$2841: ld   (hl),a]
 	            	| [$2842: ld   a,(io_read_shit_B800)]
 	jbsr	l_1e26                            	| [$2845: call $1E26]
-	jbsr	l_3110                            	| [$2848: call $3110]
+	jbsr	display_player_1_and_2_text_3110                            	| [$2848: call $3110]
 	rts                                    	| [$284b: ret]
 	
 display_maze_284c:
@@ -6105,7 +6111,7 @@ display_maze_284c:
 	move.b	d0,(a0)                         	| [$2904: ld   (hl),a]
 	            	| [$2905: ld   a,(io_read_shit_B800)]
 	jbsr	l_1e26                            	| [$2908: call $1E26]
-	jbsr	l_3110                            	| [$290b: call $3110]
+	jbsr	display_player_1_and_2_text_3110                            	| [$290b: call $3110]
 	move.b	must_play_music_6210,d0                 	| [$290e: ld   a,(must_play_music_6210)]
 	                         	| [$2911: cp   $00]
 	bne.b	0f
@@ -6299,13 +6305,13 @@ l_2a2c:
 	lea	game_mem+0x56C3,a1                      	| [$2a47: ld   de,$56C3]
 	* write "PUSH START BUTTON" to screen
 	move.w	#0x93AF,d6                      	| [$2a4a: ld   hl,$93AF]
-	jbsr	display_text_30F9                            	| [$2a4d: call $30F9]
+	jbsr	display_localized_text_30F9                            	| [$2a4d: call $30F9]
 l_2a50:
 	move.b	#0x01,d1                        	| [$2a50: ld   b,$01]
 	lea	player_struct_6580,a0          	| [$2a52: ld   hl,player_struct_6580]
 	clr.b	d0                               	| [$2a55: ld   a,$00]
 	jbsr	l_29f1                            	| [$2a57: call $29F1]
-	jbsr	l_3110                            	| [$2a5a: call $3110]
+	jbsr	display_player_1_and_2_text_3110                            	| [$2a5a: call $3110]
 	* video enable
     jbsr	osd_enable_display                   	| [$2a5d: ld   a,$01]
                        	| [$2a5f: ld   ($A003),a]
@@ -7063,13 +7069,13 @@ busy_wait_2f19:
 draw_hiscore_frames_2f2d:
 	move.w	#0x9325,d6                      	| [$2f2d: ld   hl,$9325]
 	lea	game_mem+0x574F,a1                      	| [$2f30: ld   de,$574F]
-	jbsr	display_text_30F9                 	| [$2f33: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$2f33: call display_localized_text_30F9]
 	move.w	#0x9205,d6                      	| [$2f36: ld   hl,$9205]
 	lea	game_mem+0x5755,a1                      	| [$2f39: ld   de,$5755]
-	jbsr	display_text_30F9                 	| [$2f3c: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$2f3c: call display_localized_text_30F9]
 	move.w	#0x92E3,d6                      	| [$2f3f: ld   hl,$92E3]
 	lea	game_mem+0x5690,a1                      	| [$2f42: ld   de,$5690]
-	jbsr	display_text_30F9                 	| [$2f45: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$2f45: call display_localized_text_30F9]
 	move.w	#0x9883,d6                      	| [$2f48: ld   hl,$9883]
 	move.b	#0x0E,d0                        	| [$2f4b: ld   a,$0E]
 	jbsr	write_attribute_on_line_5605      	| [$2f4d: call write_attribute_on_line_5605]
@@ -7181,6 +7187,7 @@ l_2fe3:
 	movem.w	(sp)+,d1/d2                    	| [$2ff7: pop  bc]
 	move.l	(sp)+,a2                        	| [$2ff8: pop  ix]
 	rts                                    	| [$2ffa: ret]
+	
 	* high score entry
 high_score_entry_2ffb:
 	move.b	#0x01,d0                        	| [$2ffb: ld   a,$01]
@@ -7188,15 +7195,15 @@ high_score_entry_2ffb:
 	move.w	#0x9372,d6                      	| [$3000: ld   hl,$9372]
 	lea	game_mem+0x571E,a1                      	| [$3003: ld   de,$571E]
 	* "MOVE JOYSTICK"
-	jbsr	display_text_30F9                 	| [$3006: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$3006: call display_localized_text_30F9]
 	move.w	#0x9373,d6                      	| [$3009: ld   hl,$9373]
 	* "TO DISPLAY YOUR NAME"
 	lea	game_mem+0x5737,a1                      	| [$300c: ld   de,$5737]
-	jbsr	display_text_30F9                 	| [$300f: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$300f: call display_localized_text_30F9]
 	move.w	#0x937D,d6                      	| [$3012: ld   hl,$937D]
 	* "END BY ACTION BUTTON"
 	lea	game_mem+0x5775,a1                      	| [$3015: ld   de,$5775]
-	jbsr	display_text_30F9                 	| [$3018: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$3018: call display_localized_text_30F9]
 	* horizontal bars
 	lea	game_mem+0x4D00,a1                      	| [$301b: ld   de,$4D00]
 	move.w	#0x9391,d6                      	| [$301e: ld   hl,$9391]
@@ -7276,7 +7283,7 @@ select_highscore_entering_localized_text_30e5:
 	and.b	#0x20,d0                         	| [$30e9: and  $20]
 	cmp.b	#0x20,d0                         	| [$30eb: cp   $20]
 	jne	l_30f7                             	| [$30ed: jr   nz,$30F7]
-* fix stuff for french (disabled ATM)
+* fix stuff for french
 	                        	| [$30ef: push hl]
 	                              	| [$30f0: ex   de,hl]
 	                      	| [$30f1: ld   de,$000A] 10
@@ -7289,30 +7296,33 @@ l_30f7:
 
 
 * < A1: text
-display_text_30F9:
-*	move.w	d0,-(sp)                        	| [$30f9: push af]
-*	move.b	dip_switch_B000,d0              	| [$30fa: ld   a,(dip_switch_B000)]
-*	and.b	#0x20,d0                         	| [$30fd: and  $20]
-*	cmp.b	#0x20,d0                         	| [$30ff: cp   $20]
-*	jeq	l_310b                             	| [$3101: jr   z,$310B]
-*
-*	move.l	a0,-(sp)                        	| [$3103: push hl]
-*	exg	a1,a0                              	| [$3104: ex   de,hl]
-*	                      	| [$3105: ld   de,$0196]
-*	add.w	#0x196,a0                            	| [$3108: add  hl,de]
-*	exg	a1,a0                              	| [$3109: ex   de,hl]
-*	move.l	(sp)+,a0                        	| [$310a: pop  hl]
-*l_310b:
-*	move.w	(sp)+,d0                        	| [$310b: pop  af]
+display_localized_text_30F9:
+	move.w	d0,-(sp)                        	| [$30f9: push af]
+	jbsr	osd_read_dipswitches              	| [$30fa: ld   a,(dip_switch_B000)]
+	btst.b	#5,d0                         	| [$30fd: and  $20]
+											| [$30ff: cp   $20]
+	jeq	l_310b                             	| [$3101: jr   z,$310B]
+	* french: change strings
+	                        	| [$3103: push hl]
+	                       	| [$3104: ex   de,hl]
+	                      	| [$3105: ld   de,$0196]
+	add.w	#0x196,a1                            	| [$3108: add  hl,de]
+	                      	| [$3109: ex   de,hl]
+	                       	| [$310a: pop  hl]
+l_310b:
+	move.w	(sp)+,d0                        	| [$310b: pop  af]
 	jra		display_text_55d9                            	| [$310c: call $55D9]
-	rts                                    	| [$310f: ret]	
-l_3110:
+	rts                                    	| [$310f: ret]
+
+display_player_1_and_2_text_3110:
+	* player 1
 	lea	game_mem+0x575A,a1                      	| [$3110: ld   de,$575A]
 	move.w	#0x93A0,d6                      	| [$3113: ld   hl,$93A0]
-	jbsr	display_text_30F9                 	| [$3116: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$3116: call display_localized_text_30F9]
+	* player 2
 	lea	game_mem+0x5763,a1                      	| [$3119: ld   de,$5763]
 	move.w	#0x9120,d6                      	| [$311c: ld   hl,$9120]
-	jbsr	display_text_30F9                 	| [$311f: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$311f: call display_localized_text_30F9]
 	rts                                    	| [$3122: ret]
 
 l_3123:
@@ -8099,11 +8109,11 @@ l_3591:
 	* write "PLAYER 1"
 	lea	game_mem+0x575A,a1                      	| [$35a2: ld   de,$575A]
 	move.w	#0x9274,d6                      	| [$35a5: ld   hl,$9274]
-	jbsr	display_text_30F9                 	| [$35a8: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$35a8: call display_localized_text_30F9]
 	* write "CREDIT"
 	lea	game_mem+0x5689,a1                      	| [$35ab: ld   de,$5689]
 	move.w	#0x919F,d6                      	| [$35ae: ld   hl,$919F]
-	jbsr	display_text_30F9                 	| [$35b1: call display_text_30F9]
+	jbsr	display_localized_text_30F9                 	| [$35b1: call display_localized_text_30F9]
 	move.b	current_player_617C,d0          	| [$35b4: ld   a,(current_player_617C)]
 	addq.b	#1,d0                           	| [$35b7: inc  a]
 	move.w	#0x9194,d6                       	| [$35b8: ld   ($9194),a]

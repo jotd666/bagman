@@ -1627,6 +1627,8 @@ update_bg_tile:
 	* empty character is passed (standard charset)
 	cmp.w	#0xE0,d0	| empty character
 	jeq	11f
+	cmp.w	#0x10,d0	| empty character
+	jeq	11f
 
 	lea		character_table,a0
 	add.w	d0,d0

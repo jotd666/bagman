@@ -2,6 +2,7 @@
 ;;;
 ;;; Z80
 ;;; disassembled by JOTD in 2010 (never too late for a good job!!)
+;;; reverse-engineering done in 2010, then more deeply in 2023
 ;;;
 ;;; Original code (C) 1982 Valadon Automation, singlehandedly coded
 ;;; by Jacques Brisse
@@ -12,7 +13,6 @@
 
 ;;;  guard sees right:	$80, left $40, up $10, down $20
 
-;;; todo:	 find the "guard stuck" monitoring routine that resets guard at the third screen:	block the guards at 3rd screen to see!
 ;;; gameplay_allowed_6054:	if 0, cannot do anything. pressing start sets to 1:	 unimportant for the game
 ;;; elevator_y_current_screen_6587:
 ;;; elevator_dir_current_screen_6010:	 direction shared by both elevators:	1 up, 0 down
@@ -201,9 +201,9 @@
 00B2: 3C            inc  a
 00B3: 32 43 61      ld   (unknown_6143),a
 00B6: CD D1 10      call speech_management_10D1
-00B9: 3A 6D 62      ld   a,(unknown_626D)
+00B9: 3A 6D 62      ld   a,(flash_counter_626D)
 00BC: 3C            inc  a
-00BD: 32 6D 62      ld   (unknown_626D),a
+00BD: 32 6D 62      ld   (flash_counter_626D),a
 00C0: FD 21 B8 65   ld   iy,previous_guard_1_struct_65B8
 
 00C4: 3A 0D 60      ld   a,(player_screen_600D)
@@ -1995,7 +1995,7 @@ start_a_game_0ebc:
 0F62: 32 14 60      ld   (unknown_6014),a
 0F65: 32 1C 60      ld   (player_in_wagon_1_601C),a
 0F68: 32 58 61      ld   (has_bag_6158),a
-0F6B: CD 5B 35      call set_bags_coordinates_355b
+0F6B: CD 5B 35      call set_bags_coordinates_easy_level_355b
 0F6E: CD 67 35      call set_bags_coordinates_3567
 0F71: C9            ret
 
@@ -2318,7 +2318,7 @@ guard_2_walk_movement_119B:
 
 
 121C: CD 00 37      call play_intro_3700
-121F: CD 5B 35      call set_bags_coordinates_355b
+121F: CD 5B 35      call set_bags_coordinates_easy_level_355b
 1222: CD 67 35      call set_bags_coordinates_3567
 1225: 21 3C 51      ld   hl,$513C
 1228: 22 40 61      ld   (ay_sound_pointer_6140),hl
@@ -2427,11 +2427,11 @@ mainloop_1242:
 12F6: 20 0C         jr   nz,$1304
 12F8: 11 DF 56      ld   de,$56DF
 12FB: 21 11 93      ld   hl,$9311
-12FE: CD F9 30      call display_text_30F9	;  ???
+12FE: CD F9 30      call display_localized_text_30F9	;  ???
 1301: C3 42 12      jp   mainloop_1242
 1304: 11 F2 56      ld   de,$56F2
 1307: 21 11 93      ld   hl,$9311
-130A: CD F9 30      call display_text_30F9	;  ???
+130A: CD F9 30      call display_localized_text_30F9	;  ???
 130D: C3 42 12      jp   mainloop_1242
 
 1310: CD 3F 1E      call $1E3F
@@ -3760,22 +3760,22 @@ one_wagon_player_collision_1DB4:
 display_player_ids_and_credit_1dec:
 1DEC: 11 80 56      ld   de,$5680
 1DEF: 21 A0 93      ld   hl,$93A0
-1DF2: CD F9 30      call display_text_30F9
+1DF2: CD F9 30      call display_localized_text_30F9
 ; display PLAYER 1 again
 1DF5: 11 80 56      ld   de,$5680
 1DF8: 21 20 91      ld   hl,$9120
 ; display BONUS
-1DFB: CD F9 30      call display_text_30F9
+1DFB: CD F9 30      call display_localized_text_30F9
 1DFE: 11 05 57      ld   de,$5705
 1E01: 21 40 92      ld   hl,$9240
-1E04: CD F9 30      call display_text_30F9
+1E04: CD F9 30      call display_localized_text_30F9
 1E07: 3E 02         ld   a,$02
 1E09: 21 40 90      ld   hl,$9040
 1E0C: 77            ld   (hl),a
 ; display CREDIT followed by number of credits
 1E0D: 11 89 56      ld   de,$5689
 1E10: 21 9F 91      ld   hl,$919F
-1E13: CD F9 30      call display_text_30F9
+1E13: CD F9 30      call display_localized_text_30F9
 * credit digits seems useless: wrong and overwritten
 * by the real value read from number_of_credits_6000
 1E16: 3A 04 60      ld   a,(fake_credit_digit_6004)
@@ -4034,7 +4034,7 @@ memset_2054
 
 205C: 21 6E 92      ld   hl,$926E
 205F: 11 A1 56      ld   de,$56A1
-2062: CD F9 30      call display_text_30F9
+2062: CD F9 30      call display_localized_text_30F9
 2065: AF            xor  a
 2066: 32 54 60      ld   (gameplay_allowed_6054),a
 2069: 06 0A         ld   b,$0A
@@ -4057,7 +4057,7 @@ memset_2054
 208D: CD 03 21      call prepare_cleared_screen_2103
 2090: 11 AC 56      ld   de,$56AC
 2093: 21 5A 93      ld   hl,$935A
-2096: CD F9 30      call display_text_30F9
+2096: CD F9 30      call display_localized_text_30F9
 2099: 11 E6 20      ld   de,$20E6
 209C: 21 B5 93      ld   hl,$93B5
 209F: CD D9 55      call display_text_55d9
@@ -4077,7 +4077,7 @@ memset_2054
 20C3: 32 00 A0      ld   (interrupt_control_A000),a
 20C6: CD 34 2C      call $2C34
 20C9: F3            di
-20CA: CD 5B 35      call set_bags_coordinates_355b
+20CA: CD 5B 35      call set_bags_coordinates_easy_level_355b
 20CD: CD 67 35      call set_bags_coordinates_3567
 20D0: CD 63 2A      call $2A63
 20D3: AF            xor  a
@@ -4461,14 +4461,14 @@ draw_object_tiles_22dc:
 24A1: C3 1C 12      jp   $121C
 24A4: 3A 10 62      ld   a,(must_play_music_6210)
 24A7: FE 01         cp   $01
-24A9: 20 3E         jr   nz,write_attribute_2_on_line_24E9
-24AB: 3A 6D 62      ld   a,(unknown_626D)
+24A9: 20 3E         jr   nz,write_attribute_on_first_row_24e9
+24AB: 3A 6D 62      ld   a,(flash_counter_626D)
 24AE: FE 20         cp   $20
 24B0: DC BD 24      call c,$24BD
 24B3: FE 30         cp   $30
 24B5: DC F2 24      call c,$24F2
 24B8: AF            xor  a
-24B9: 32 6D 62      ld   (unknown_626D),a
+24B9: 32 6D 62      ld   (flash_counter_626D),a
 24BC: C9            ret
 24BD: 3A 6E 62      ld   a,(unknown_626E)
 24C0: FE 01         cp   $01
@@ -4477,28 +4477,30 @@ draw_object_tiles_22dc:
 24C7: 28 10         jr   z,$24D9
 ; display PLAYER1
 24C9: 11 5A 57      ld   de,$575A
-24CC: CD F9 30      call display_text_30F9
-24CF: CD E9 24      call write_attribute_2_on_line_24E9
+24CC: CD F9 30      call display_localized_text_30F9
+24CF: CD E9 24      call write_attribute_on_first_row_24e9
 24D2: 3E 01         ld   a,$01
 24D4: 32 6E 62      ld   (unknown_626E),a
 24D7: F1            pop  af
 24D8: C9            ret
 ; display PLAYER2
 24D9: 11 63 57      ld   de,$5763
-24DC: CD F9 30      call display_text_30F9
-24DF: CD E9 24      call write_attribute_2_on_line_24E9
+24DC: CD F9 30      call display_localized_text_30F9
+24DF: CD E9 24      call write_attribute_on_first_row_24e9
 24E2: 3E 01         ld   a,$01
 24E4: 32 6E 62      ld   (unknown_626E),a
 24E7: F1            pop  af
 24E8: C9            ret
 
+write_attribute_on_first_row_24e9:
 24E9: 3E 02         ld   a,$02
 24EB: 21 40 98      ld   hl,$9840
 24EE: CD 05 56      call write_attribute_on_line_5605
 24F1: C9            ret
+
 24F2: CD 01 25      call get_XUP_screen_address_2501
 24F5: 11 6C 57      ld   de,$576C
-24F8: CD F9 30      call display_text_30F9
+24F8: CD F9 30      call display_localized_text_30F9
 24FB: AF            xor  a
 24FC: 32 6E 62      ld   (unknown_626E),a
 24FF: F1            pop  af
@@ -4775,7 +4777,7 @@ display_screen_3_265f:
 2728: 77            ld   (hl),a
 2729: 11 05 57      ld   de,$5705
 272C: 21 40 92      ld   hl,$9240
-272F: CD F9 30      call display_text_30F9
+272F: CD F9 30      call display_localized_text_30F9
 2732: 21 84 65      ld   hl,elevator_struct_6584
 2735: 3E 33         ld   a,$33
 2737: 77            ld   (hl),a
@@ -4790,7 +4792,7 @@ display_screen_3_265f:
 2744: 3A 66 61      ld   a,(unknown_6166)
 2747: 77            ld   (hl),a
 2748: CD 26 1E      call $1E26
-274B: CD 10 31      call $3110
+274B: CD 10 31      call display_player_1_and_2_text_3110
 274E: CD EB 3D      call can_pick_bag_3DEB
 2751: C0            ret  nz
 * play second tune (screen 3)
@@ -4877,7 +4879,7 @@ display_screen_2_275d:
 2823: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2826: 11 05 57      ld   de,$5705
 2829: 21 40 92      ld   hl,$9240
-282C: CD F9 30      call display_text_30F9
+282C: CD F9 30      call display_localized_text_30F9
 282F: 21 84 65      ld   hl,elevator_struct_6584
 2832: 3E 33         ld   a,$33
 2834: 77            ld   (hl),a
@@ -4892,7 +4894,7 @@ display_screen_2_275d:
 2841: 77            ld   (hl),a
 2842: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2845: CD 26 1E      call $1E26
-2848: CD 10 31      call $3110
+2848: CD 10 31      call display_player_1_and_2_text_3110
 284B: C9            ret
 
 display_maze_284c:
@@ -4972,7 +4974,7 @@ display_maze_284c:
 2904: 77            ld   (hl),a
 2905: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 2908: CD 26 1E      call $1E26
-290B: CD 10 31      call $3110
+290B: CD 10 31      call display_player_1_and_2_text_3110
 290E: 3A 10 62      ld   a,(must_play_music_6210)
 2911: FE 00         cp   $00
 2913: C8            ret  z
@@ -5171,12 +5173,12 @@ clear_screen_2a00:
 2A45: 28 09         jr   z,$2A50
 2A47: 11 C3 56      ld   de,$56C3
 2A4A: 21 AF 93      ld   hl,$93AF
-2A4D: CD F9 30      call display_text_30F9
+2A4D: CD F9 30      call display_localized_text_30F9
 2A50: 06 01         ld   b,$01
 2A52: 21 80 65      ld   hl,player_struct_6580
 2A55: 3E 00         ld   a,$00
 2A57: CD F1 29      call $29F1
-2A5A: CD 10 31      call $3110
+2A5A: CD 10 31      call display_player_1_and_2_text_3110
 2A5D: 3E 01         ld   a,$01
 2A5F: 32 03 A0      ld   ($A003),a
 2A62: C9            ret
@@ -5839,13 +5841,13 @@ busy_wait_2f19:
 draw_hiscore_frames_2f2d:
 2F2D: 21 25 93      ld   hl,$9325
 2F30: 11 4F 57      ld   de,$574F
-2F33: CD F9 30      call display_text_30F9
+2F33: CD F9 30      call display_localized_text_30F9
 2F36: 21 05 92      ld   hl,$9205
 2F39: 11 55 57      ld   de,$5755
-2F3C: CD F9 30      call display_text_30F9
+2F3C: CD F9 30      call display_localized_text_30F9
 2F3F: 21 E3 92      ld   hl,$92E3
 2F42: 11 90 56      ld   de,$5690
-2F45: CD F9 30      call display_text_30F9
+2F45: CD F9 30      call display_localized_text_30F9
 2F48: 21 83 98      ld   hl,$9883
 2F4B: 3E 0E         ld   a,$0E
 2F4D: CD 05 56      call write_attribute_on_line_5605
@@ -5948,13 +5950,13 @@ high_score_entry_2ffb:
 2FFD: 32 67 62      ld   (unknown_6267),a
 3000: 21 72 93      ld   hl,$9372
 3003: 11 1E 57      ld   de,$571E
-3006: CD F9 30      call display_text_30F9
+3006: CD F9 30      call display_localized_text_30F9
 3009: 21 73 93      ld   hl,$9373
 300C: 11 37 57      ld   de,$5737
-300F: CD F9 30      call display_text_30F9
+300F: CD F9 30      call display_localized_text_30F9
 3012: 21 7D 93      ld   hl,$937D
 3015: 11 75 57      ld   de,$5775
-3018: CD F9 30      call display_text_30F9
+3018: CD F9 30      call display_localized_text_30F9
 301B: 11 00 4D      ld   de,$4D00
 301E: 21 91 93      ld   hl,$9391
 3021: 3E 12         ld   a,$12
@@ -6059,7 +6061,7 @@ select_highscore_entering_localized_text_30e5:
 30F7: F1            pop  af
 30F8: C9            ret
 
-display_text_30F9:
+display_localized_text_30F9:
 30F9: F5            push af
 * cabinet upright/cocktail
 30FA: 3A 00 B0      ld   a,(dip_switch_B000)
@@ -6075,12 +6077,14 @@ display_text_30F9:
 310B: F1            pop  af
 310C: CD D9 55      call display_text_55d9
 310F: C9            ret
+
+display_player_1_and_2_text_3110:
 3110: 11 5A 57      ld   de,$575A
 3113: 21 A0 93      ld   hl,$93A0
-3116: CD F9 30      call display_text_30F9
+3116: CD F9 30      call display_localized_text_30F9
 3119: 11 63 57      ld   de,$5763
 311C: 21 20 91      ld   hl,$9120
-311F: CD F9 30      call display_text_30F9
+311F: CD F9 30      call display_localized_text_30F9
 3122: C9            ret
 3123: 3A 26 60      ld   a,(player_input_6026)
 3126: FE A5         cp   $A5
@@ -6638,7 +6642,7 @@ set_bags_coordinates_hard_level_354f:
 3558: ED B0         ldir
 355A: C9            ret
 
-set_bags_coordinates_355b:
+set_bags_coordinates_easy_level_355b:
 355B: 11 9C 60      ld   de,bags_coordinates_609C
 355E: 21 E8 5A      ld   hl,$5AE8
 3561: 01 3A 00      ld   bc,$003A
@@ -6684,10 +6688,10 @@ is_background_tile_for_object_drop_3573:
 359F: CD 2C 2A      call $2A2C
 35A2: 11 5A 57      ld   de,$575A
 35A5: 21 74 92      ld   hl,$9274
-35A8: CD F9 30      call display_text_30F9
+35A8: CD F9 30      call display_localized_text_30F9
 35AB: 11 89 56      ld   de,$5689
 35AE: 21 9F 91      ld   hl,$919F
-35B1: CD F9 30      call display_text_30F9
+35B1: CD F9 30      call display_localized_text_30F9
 35B4: 3A 7C 61      ld   a,(current_player_617C)
 35B7: 3C            inc  a
 35B8: 32 94 91      ld   ($9194),a
