@@ -8,6 +8,7 @@
 	.global vb_ticks_count
 	.global highscores_need_saving
 	.global invincible_flag
+	.global	hard_bags_flag
 	.global infinite_lives_flag
 	.global infinite_time_flag
 	.global infinite_pickaxe_time_flag
@@ -58,6 +59,8 @@ invincible_flag:
 infinite_lives_flag:
 	.byte	0
 infinite_time_flag:
+	.byte	0
+hard_bags_flag:
 	.byte	0
 infinite_pickaxe_time_flag:
 	.byte	0

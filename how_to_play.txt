@@ -1,43 +1,60 @@
 Main goal:
 
-Get the bags in the barrow before timer reaches 0
+Get the bags of all 3 screens in the barrow before timer reaches 0
 
 Hazards:
 
 - The guards kill you on contact
 - A fall from a height greater than your height kills you
-- Elevators kill you if they fall onto you
+- Elevators kill you if they fall onto you or move up when you're not completely inside it
 - The mine carts will kill you unless you can grab handles. In that case, you can even drop down to the cart
 - When you're in the cart, you are invincible, unless an elevator falls on you :)
 - When you're carrying bags, you move slower. When carrying the blue bag, you move even slower
 
 Assets:
 
-- use the mine carts to safely & quickly carry bags
+- use the mine carts to safely & quickly carry bags (specially the blue ones)
 - elevators help you to cross screens with the barrow and to reach some otherwise unreachable areas
+  They also are fast and helpful when carrying heavy bags.
 - you need the pickaxe to destroy the wall that protects the blue bag,
 - you can use the pickaxe to frighten/kill the guards (does not work when you're on a ladder)
 - blocking a guard's path on the ladder when on top of it with the pick or the barrow causes the guard to fall down
+- dropping a bag onto a guard in a ladder or a slope also knocks then down,
+  but the drawback is that the bag must be carried up again.
 
 General tactics:
 
 - When the guards are not in your screen, they are guided to your screen automatically.
 - When the guards are not in your screen, they also never wait for elevators
   You can use that to divert them from elevators by switching screens when you're waiting for a free elevator
-- clear screen 1 & all bags from screen 2 except the rightmost ones
+- Do not kill the guards by hitting them with the pickaxe: you'll lose it. Use it on top of ladders to make them
+  fall, or to scare them into elevator shafts or holes.
+- clear screen 1 & all bags from screen 2 except the rightmost upper ones (in the spiral staircase)
   get the blue & yellow bags of bottom screen 2 using the cart before guards come too close and bring them back to screen 1
   when the guards are patrolling at the bottom of screen 1/2, get the bags from the dead end gallery in screen 2 & the other one,
-  still with the barrow on screen 1
+  still with the barrow on screen 1. Alternately, bring the blue bag up using the 2nd screen elevator.
 - when clear, move to screen 3 and clear remaining screen 2 bags and screen 3 bags from here
 - Don't try to play with barrow on screen 2: the guards are too much at advantage on this screen, the elevator is not safe.
   Get all screen 2 bags when barrow is either on screen 1 or on screen 3 as stated above.
-- In screen 3, if you can keep the guards in the elevator or make them go out, you control the situation.
+- In screen 3, if you can keep the guards in the elevator or make them go out, you control the situation by
+  being in the higher or lower part of the screen (guards remain in the elevator when you're in the other
+  half of the screen). Get the maximums of bags up the screen but don't put all bags in barrow yet.
+  Keep a reserve of bags near the barrow in case of wasted time avoiding the guards / waiting for safe way
+  with the elevator.
 - The higher score you get, the fastest the guards run. On the ladders, they always have the same speed.
-- The elevators moves are not independent. They only move when you're on the same screen. They also share direction. If you change
-  to screen 2 and make the elevator go down, when going back to screen 3, the elevator will also go down (and you'll lose a life :))
+- The elevators moves are NOT independent. They only move when you're on the same screen. They also share direction. If you change
+  to screen 2 and make the elevator go down, when going back to screen 3, the elevator will also go down (and you'll lose a life most
+  of the time because of the damn lower wagon or a guard waiting). It's not safe AT ALL to wait
+  for the elevator on the lowest part of screen 3. Wait from the floor where the pickaxe is.
 - When carrying pickaxe for a long distance, drop it from time to time to avoid timeout
-- When dropping the last bag (on screen 3), the barrow will remain there for the next level,
+- When dropping the last bag (on screen 3) in the barrow, the barrow will remain there for the next level,
   which makes the start of the next level difficult. Getting the barrow on screen 2 or even 1
-  when there's only one bag left can be a nice option (leave 1 bag at screen 1/2)
+  when there's only one bag left can be a nice option (leave 1 or 2 bags high enough on screen 1/2, so you can
+  quickly come back to screen one, pick & drop 2 last bags quickly, and when next level starts the barrow
+  is next to you at screen one again! It's rather easy as the guards need time to get back at screen 1
+  so you're alone)
+- Once a score of 40000 is reached, the guards are as fast as the player, and faster when player carries
+  a bag. This & trickier bag locations makes second level very difficult to complete. Can be done, though,
+  but at that point the game wants you dead. Note that each completed level awards an extra life.
 
 JOTD 2010-2023

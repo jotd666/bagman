@@ -234,7 +234,7 @@
 00F5: FD 21 BC 65   ld   iy,previous_guard_2_struct_65BC
 00F9: CD 01 10      call update_sprite_data_1001
 
-00FC: 3A 53 60      ld   a,(unknown_6053)
+00FC: 3A 53 60      ld   a,(game_locked_6053)
 00FF: FE 01         cp   $01
 0101: CA 80 03      jp   z,$0380
 0104: CD 72 04      call handle_demo_mode_0472
@@ -469,7 +469,7 @@
 037A: CD C7 18      call $18C7
 037D: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 0380: CD F9 3D      call update_all_sprites_3df9
-0383: 3A F1 61      ld   a,(unknown_61F1)
+0383: 3A F1 61      ld   a,(game_locked_6151)
 0386: FE 00         cp   $00
 0388: CC BC 0E      call z,start_a_game_0ebc
 038B: CD BE 39      call write_credits_and_lives_39be
@@ -1967,7 +1967,7 @@ start_a_game_0ebc:
 0F22: 3E 01         ld   a,$01
 0F24: 32 9A 60      ld   (guard_2_screen_609A),a
 0F27: AF            xor  a
-0F28: 32 53 60      ld   (unknown_6053),a
+0F28: 32 53 60      ld   (game_locked_6053),a
 0F2B: 32 55 60      ld   (unknown_6055),a
 0F2E: 3C            inc  a
 0F2F: 32 54 60      ld   (gameplay_allowed_6054),a
@@ -2398,7 +2398,7 @@ mainloop_1242:
 12AD: 3E 01         ld   a,$01
 12AF: 32 01 A0      ld   ($A001),a
 12B2: 32 02 A0      ld   ($A002),a
-12B5: 3A 53 60      ld   a,(unknown_6053)
+12B5: 3A 53 60      ld   a,(game_locked_6053)
 12B8: FE 01         cp   $01
 12BA: 20 54         jr   nz,$1310
 12BC: 3A 10 62      ld   a,(must_play_music_6210)
@@ -3833,10 +3833,10 @@ display_player_ids_and_credit_1dec:
 1E84: FE 00         cp   $00
 1E86: 28 06         jr   z,$1E8E
 1E88: 3E 01         ld   a,$01
-1E8A: 32 53 60      ld   (unknown_6053),a
+1E8A: 32 53 60      ld   (game_locked_6053),a
 1E8D: C9            ret
 1E8E: 3E 00         ld   a,$00
-1E90: 32 53 60      ld   (unknown_6053),a
+1E90: 32 53 60      ld   (game_locked_6053),a
 1E93: C9            ret
 
 init_new_game_1E94:
@@ -3917,7 +3917,7 @@ reset_barrow_position_1f25:
 
 player_dies_1f50:
 1F50: 3E 01         ld   a,$01
-1F52: 32 F1 61      ld   (unknown_61F1),a
+1F52: 32 F1 61      ld   (game_locked_6151),a
 1F55: CD 8C 3B      call check_remaining_bags_3B8C
 1F58: 79            ld   a,c
 1F59: FE 01         cp   $01
@@ -4042,13 +4042,13 @@ memset_2054
 206E: 2B            dec  hl
 206F: FB            ei
 2070: 3E 01         ld   a,$01
-2072: 32 53 60      ld   (unknown_6053),a
-2075: 32 F1 61      ld   (unknown_61F1),a
+2072: 32 53 60      ld   (game_locked_6053),a
+2075: 32 F1 61      ld   (game_locked_6151),a
 2078: 7C            ld   a,h
 2079: FE 00         cp   $00
 207B: 20 F1         jr   nz,$206E
 207D: 10 EC         djnz $206B
-207F: CD 03 2D      call $2D03
+207F: CD 03 2D      call check_if_high_score_beaten_2d03
 2082: AF            xor  a
 2083: 32 10 62      ld   (must_play_music_6210),a
 2086: 3A 00 60      ld   a,(number_of_credits_6000)
@@ -4081,8 +4081,8 @@ memset_2054
 20CD: CD 67 35      call set_bags_coordinates_3567
 20D0: CD 63 2A      call $2A63
 20D3: AF            xor  a
-20D4: 32 53 60      ld   (unknown_6053),a
-20D7: 32 F1 61      ld   (unknown_61F1),a
+20D4: 32 53 60      ld   (game_locked_6053),a
+20D7: 32 F1 61      ld   (game_locked_6151),a
 20DA: 3A 00 60      ld   a,(number_of_credits_6000)
 20DD: FE 00         cp   $00
 20DF: CC 00 37      call z,play_intro_3700
@@ -5557,6 +5557,7 @@ check_guards_pick_collisions_2c96:
 2CD2: C9            ret
 
 
+check_if_high_score_beaten_2d03:
 2D03: 3A 10 62      ld   a,(must_play_music_6210)
 2D06: FE 01         cp   $01
 2D08: C0            ret  nz
@@ -6678,7 +6679,7 @@ is_background_tile_for_object_drop_3573:
 3594: FE 01         cp   $01
 3596: C8            ret  z
 3597: 3E 01         ld   a,$01
-3599: 32 53 60      ld   (unknown_6053),a
+3599: 32 53 60      ld   (game_locked_6053),a
 359C: 32 8C 62      ld   (unknown_628C),a
 359F: CD 2C 2A      call $2A2C
 35A2: 11 5A 57      ld   de,$575A
@@ -6737,7 +6738,7 @@ is_background_tile_for_object_drop_3573:
 362B: 20 F7         jr   nz,$3624
 362D: 10 F2         djnz $3621
 362F: 3E 00         ld   a,$00
-3631: 32 53 60      ld   (unknown_6053),a
+3631: 32 53 60      ld   (game_locked_6053),a
 3634: 32 8C 62      ld   (unknown_628C),a
 3637: C9            ret
 

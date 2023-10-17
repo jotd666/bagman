@@ -395,7 +395,7 @@ l_00f1:
 	jbsr	update_sprite_data_1001           	| [$00f9: call update_sprite_data_1001]
 
 l_00fc:
-	move.b	unknown_6053,d0                 	| [$00fc: ld   a,(unknown_6053)]
+	move.b	game_locked_6053,d0                 	| [$00fc: ld   a,(game_locked_6053)]
 	cmp.b	#0x01,d0                         	| [$00ff: cp   $01]
 	jeq	l_0380                             	| [$0101: jp   z,$0380]
 	jbsr	handle_demo_mode_0472                            	| [$0104: call $0472]
@@ -660,7 +660,7 @@ l_0375:
 	           	| [$037d: ld   a,(watchdog_reset_B800)]
 l_0380:
 	jbsr	update_all_sprites_3df9                            	| [$0380: call $3DF9]
-	move.b	unknown_61F1,d0                 	| [$0383: ld   a,(unknown_61F1)]
+	tst.b	game_locked_6151                 	| [$0383: ld   a,(game_locked_6151)]
 	                         	| [$0386: cp   $00]
 	bne.b	0f
 	jbsr	start_a_game_0ebc                            	| [$0388: call z,$0EBC]
@@ -775,7 +775,7 @@ handle_demo_mode_0472:
 	lea	unknown_6151,a3                	| [$0472: ld   iy,unknown_6151]
 	lea	player_struct_6580,a2          	| [$0476: ld   ix,player_struct_6580]
 	move.w	unknown_6154,d6             	| [$047a: ld   hl,(unknown_6154)]
-	move.b	(a3),d0                    	| [$047d: ld   a,(iy+$00)]
+	tst.b	(a3)                    	| [$047d: ld   a,(iy+$00)]
 	                         	| [$0480: cp   $00]
 	bne.b	0f
 	rts                                    	| [$0482: ret  z]
@@ -2530,7 +2530,7 @@ l_0f00:
 	                        	| [$0f22: ld   a,$01]
 	move.b	#1,guard_2_screen_609A          	| [$0f24: ld   (guard_2_screen_609A),a]
                               	| [$0f27: xor  a]
-	clr.b	unknown_6053                 	| [$0f28: ld   (unknown_6053),a]
+	clr.b	game_locked_6053                 	| [$0f28: ld   (game_locked_6053),a]
 	clr.b	unknown_6055                 	| [$0f2b: ld   (unknown_6055),a]
 												| [$0f2e: inc  a]
 	move.b	#1,gameplay_allowed_6054        	| [$0f2f: ld   (gameplay_allowed_6054),a]
@@ -2573,7 +2573,7 @@ l_0f38:
 	clr.b	unknown_6014                 	| [$0f62: ld   (unknown_6014),a]
 	clr.b	player_in_wagon_1_601C                 	| [$0f65: ld   (player_in_wagon_1_601C),a]
 	clr.b	has_bag_6158                 	| [$0f68: ld   (has_bag_6158),a]
-	jbsr	set_bags_coordinates_355b         	| [$0f6b: call set_bags_coordinates_355b]
+	jbsr	set_bags_coordinates_easy_level_355b         	| [$0f6b: call set_bags_coordinates_easy_level_355b]
 	jbsr	set_bags_coordinates_3567                            	| [$0f6e: call $3567]
 	rts                                    	| [$0f71: ret]
 
@@ -2853,7 +2853,7 @@ l_121c:
 	jbsr	play_intro_3700                   	| [$121c: call play_intro_3700]
 
 	* start game
-	jbsr	set_bags_coordinates_355b         	| [$121f: call set_bags_coordinates_355b]
+	jbsr	set_bags_coordinates_easy_level_355b         	| [$121f: call set_bags_coordinates_easy_level_355b]
 	jbsr	set_bags_coordinates_3567                            	| [$1222: call $3567]
 	lea	game_mem+0x513C,a0                      	| [$1225: ld   hl,$513C]
 	move.l	a0,ay_sound_pointer_6140                 	| [$1228: ld   (ay_sound_pointer_6140),hl]
@@ -2942,7 +2942,7 @@ l_12a6:
                    	| [$12ad: ld   a,$01]
                    	| [$12af: ld   ($A001),a]
                    	| [$12b2: ld   ($A002),a]
-	move.b	unknown_6053,d0                 	| [$12b5: ld   a,(unknown_6053)]
+	move.b	game_locked_6053,d0                 	| [$12b5: ld   a,(game_locked_6053)]
 	cmp.b	#0x01,d0                         	| [$12b8: cp   $01]
 	jne	l_1310                             	| [$12ba: jr   nz,$1310]
 	move.b	must_play_music_6210,d0                 	| [$12bc: ld   a,(must_play_music_6210)]
@@ -4692,12 +4692,12 @@ l_1e7a:
 	                         	| [$1e84: cp   $00]
 	jeq	l_1e8e                             	| [$1e86: jr   z,$1E8E]
 	move.b	#0x01,d0                        	| [$1e88: ld   a,$01]
-	move.b	d0,unknown_6053                 	| [$1e8a: ld   (unknown_6053),a]
+	move.b	d0,game_locked_6053                 	| [$1e8a: ld   (game_locked_6053),a]
 l_1e8d:
 	rts                                    	| [$1e8d: ret]
 l_1e8e:
 	clr.b	d0                               	| [$1e8e: ld   a,$00]
-	move.b	d0,unknown_6053                 	| [$1e90: ld   (unknown_6053),a]
+	move.b	d0,game_locked_6053                 	| [$1e90: ld   (game_locked_6053),a]
 	rts                                    	| [$1e93: ret]
 
 
@@ -4715,7 +4715,7 @@ init_new_game_1E94:
 	        	| [$1ea6: xor  a]
 	              	| [$1ea7: ld   (ay_sound_start_6142),a]
 l_1eaa:
-											| [$1eaa: xor  a]
+	jbsr	osd_disable_display										| [$1eaa: xor  a]
 											| [$1eab: ld   ($A003),a]
 	jbsr	display_maze_284c                            	| [$1eae: call $284C]
 	move.b	#0x01,d0                        	| [$1eb1: ld   a,$01]
@@ -4725,7 +4725,7 @@ l_1eaa:
  * init player coordinates
 	move.b	#0x01,player_screen_600D                        	| [$1eb9: ld   a,$01]
 							| [$1ebb: ld   (player_screen_600D),a]
-                      	| [$1ebe: ld   ($A003),a]
+    jbsr	osd_enable_display                  	| [$1ebe: ld   ($A003),a]
 	move.b	#0x20,d0                        	| [$1ec1: ld   a,$20]
 	lea	player_struct_6580,a0          	| [$1ec3: ld   hl,player_struct_6580]
 	move.b	d0,(a0)+                         	| [$1ec6: ld   (hl),a]
@@ -4803,8 +4803,8 @@ table_1F38:
 
 
 player_dies_1f50:
-	move.b	#0x01,d0                        	| [$1f50: ld   a,$01]
-	move.b	d0,unknown_61F1                 	| [$1f52: ld   (unknown_61F1),a]
+	move.b	#0x01,game_locked_6151                        	| [$1f50: ld   a,$01]
+												| [$1f52: ld   (game_locked_6151),a]
 	jbsr	check_remaining_bags_3B8C         	| [$1f55: call check_remaining_bags_3B8C]
 	move.b	d2,d0                           	| [$1f58: ld   a,c]
 	cmp.b	#0x01,d0                         	| [$1f59: cp   $01]
@@ -4940,24 +4940,25 @@ l_205c:
 	lea		game_mem+0x56A1,a1                      	| [$205f: ld   de,$56A1]
 	* "GAME OVER"
 	jbsr	display_text_30F9                 	| [$2062: call display_text_30F9]
-	clr.b	d0                               	| [$2065: xor  a]
-	move.b	d0,gameplay_allowed_6054        	| [$2066: ld   (gameplay_allowed_6054),a]
-	* ???? sound?
-*	move.b	#0x0A,d1                        	| [$2069: ld   b,$0A]
-*l_206b:
-*	lea	game_mem+0x3000,a0                      	| [$206b: ld   hl,$3000]
-*l_206e:
-*	subq.b	#1,a0                           	| [$206e: dec  hl]
-*	jbsr	osd_enable_vblank_interrupt  | ei
-*	move.b	#0x01,d0                        	| [$2070: ld   a,$01]
-*	move.b	d0,unknown_6053                 	| [$2072: ld   (unknown_6053),a]
-*	move.b	d0,unknown_61F1                 	| [$2075: ld   (unknown_61F1),a]
-*	move.b	d5,d0                           	| [$2078: ld   a,h]
-*	cmp.b	#0x00,d0                         	| [$2079: cp   $00]
-*	jne	l_206e                             	| [$207b: jr   nz,$206E]
-*	subq.b	#1,d1                           	| [...]
-*	jne	l_206b                             	| [$207d: djnz $206B]
-	jbsr	l_2d03                            	| [$207f: call $2D03]
+	                               	| [$2065: xor  a]
+	clr.b	gameplay_allowed_6054        	| [$2066: ld   (gameplay_allowed_6054),a]
+	* replacing CPU-dependent loop
+    move.b	#1,game_locked_6053  	| [$2072: ld   (game_locked_6053),a]
+    move.b	#1,game_locked_6151  	| [$2075: ld   (game_locked_6151),a]
+	move.w	#0x60*2,d0                           | [$2069: ld   b,$0A]
+	jbsr	osd_wait
+	
+         	| [$206b: ld   hl,$3000]
+
+     	| [$206e: dec  hl]
+			    | ei
+     	| [$2070: ld   a,$01]
+     	| [$2078: ld   a,h]
+      	| [$2079: cp   $00]
+    	| [$207b: jr   nz,$206E]
+     	| [...]
+    	| [$207d: djnz $206B]
+	jbsr	check_if_high_score_beaten_2d03                            	| [$207f: call $2D03]
 	clr.b	d0                               	| [$2082: xor  a]
 	move.b	d0,must_play_music_6210                 	| [$2083: ld   (must_play_music_6210),a]
 	move.b	number_of_credits_6000,d0       	| [$2086: ld   a,(number_of_credits_6000)]
@@ -4995,12 +4996,12 @@ l_205c:
 	*jbsr	l_2c34                            	| [$20c6: call $2C34]
 l_20c9:
 	jbsr	osd_disable_vblank_interrupt  | [di]
-	jbsr	set_bags_coordinates_355b         	| [$20ca: call set_bags_coordinates_355b]
+	jbsr	set_bags_coordinates_easy_level_355b         	| [$20ca: call set_bags_coordinates_easy_level_355b]
 	jbsr	set_bags_coordinates_3567                            	| [$20cd: call $3567]
 	jbsr	l_2a63                            	| [$20d0: call $2A63]
-	clr.b	d0                               	| [$20d3: xor  a]
-	move.b	d0,unknown_6053                 	| [$20d4: ld   (unknown_6053),a]
-	move.b	d0,unknown_61F1                 	| [$20d7: ld   (unknown_61F1),a]
+	                               	| [$20d3: xor  a]
+	clr.b	game_locked_6053                 	| [$20d4: ld   (game_locked_6053),a]
+	clr.b	game_locked_6151                 	| [$20d7: ld   (game_locked_6151),a]
 	move.b	number_of_credits_6000,d0       	| [$20da: ld   a,(number_of_credits_6000)]
 	                         	| [$20dd: cp   $00]
 	bne.b	0f
@@ -5012,7 +5013,7 @@ l_20c9:
 
 prepare_cleared_screen_2103:
 	                     	| [$2103: ld   a,$00]
-	                    	| [$2105: ld   ($A003),a]
+	jbsr	osd_disable_display                    	| [$2105: ld   ($A003),a]
 	jbsr	clear_screen_2a00                 	| [$2108: call clear_screen_2a00]
 	move.b	#0x30,d0                        	| [$210b: ld   a,$30]
 	jbsr	change_attribute_everywhere_29ec  	| [$210d: call change_attribute_everywhere_29ec]
@@ -5022,7 +5023,7 @@ prepare_cleared_screen_2103:
 	jbsr	l_29f1                            	| [$2117: call $29F1]
 	jbsr	display_player_ids_and_credit_1dec	| [$211a: call display_player_ids_and_credit_1dec]
                      	| [$211d: ld   a,$01]
-                     	| [$211f: ld   ($A003),a]
+    jbsr	osd_enable_display                 	| [$211f: ld   ($A003),a]
 	rts                                    	| [$2122: ret]
 
 
@@ -5502,8 +5503,8 @@ l_2486:
 	move.b	#0x3F,d0                        	| [$2489: ld   a,$3F]
 	jbsr	change_attribute_everywhere_29ec                            	| [$248b: call $29EC]
 	jbsr	clear_screen_2a00                            	| [$248e: call $2A00]
-*	move.b	#0x01,d0                        	| [$2491: ld   a,$01]
-*	move.b	d0,0xA003                       	| [$2493: ld   ($A003),a]
+									| [$2491: ld   a,$01]
+	jbsr	osd_enable_display					| [$2493: ld   ($A003),a]
 	* init highscore table
 	lea	game_mem+0x3696,a0                      	| [$2496: ld   hl,$3696]
 	lea	high_score_table_6217,a1                	| [$2499: ld   de,high_score_table_6217]
@@ -6284,8 +6285,8 @@ l_2a1f:
 
 
 l_2a2c:
-*	clr.b	d0                               	| [$2a2c: ld   a,$00]
-*	move.b	d0,0xA003                       	| [$2a2e: ld   ($A003),a]
+	jbsr	osd_disable_display				| [$2a2c: ld   a,$00]
+											| [$2a2e: ld   ($A003),a]
 	move.b	#0x04,d1                        	| [$2a31: ld   b,$04]
 	move.b	#0xE0,d0                        	| [$2a33: ld   a,$E0]
 	move.w	#0x9000,d6                      	| [$2a35: ld   hl,$9000]
@@ -6306,8 +6307,8 @@ l_2a50:
 	jbsr	l_29f1                            	| [$2a57: call $29F1]
 	jbsr	l_3110                            	| [$2a5a: call $3110]
 	* video enable
-*	move.b	#0x01,d0                        	| [$2a5d: ld   a,$01]
-*	move.b	d0,0xA003                       	| [$2a5f: ld   ($A003),a]
+    jbsr	osd_enable_display                   	| [$2a5d: ld   a,$01]
+                       	| [$2a5f: ld   ($A003),a]
 	rts                                    	| [$2a62: ret]
 l_2a63:
 	lea	player_1_score_6176,a2                      	| [$2a63: ld   ix,$6176]
@@ -6719,7 +6720,7 @@ l_2cd2:
 	rts                                    	| [$2cd2: ret]
 
 
-l_2d03:
+check_if_high_score_beaten_2d03:
 	move.b	must_play_music_6210,d0                 	| [$2d03: ld   a,(must_play_music_6210)]
 	cmp.b	#0x01,d0                         	| [$2d06: cp   $01]
 	beq.b	0f                               	| [$2d08: ret  nz] [...]
@@ -7594,7 +7595,7 @@ l_32ac:
 	jbsr	draw_object_tiles_22dc                            	| [$32c8: call $22DC]
 	jbsr	reposition_wagons_33b1                            	| [$32cb: call $33B1]
 l_32ce:
-											| [$32ce: ld   a,$01]
+	jbsr	osd_enable_display				| [$32ce: ld   a,$01]
 											| [$32d0: ld   ($A003),a]
 	lea	guard_1_struct_6594,a2         	| [$32d3: ld   ix,guard_1_struct_6594]
 	lea	player_struct_6580,a3          	| [$32d7: ld   iy,player_struct_6580]
@@ -7691,7 +7692,7 @@ l_3369:
 	addq.l	#4,a7                        	| [$3372: pop  af]
 	rts                                    	| [$3373: ret]
 l_3374:
-										| [$3374: xor  a]
+	jbsr	osd_disable_display									| [$3374: xor  a]
 										| [$3375: ld   ($A003),a]
 	move.b	holds_barrow_61C7,d0            	| [$3378: ld   a,(holds_barrow_61C7)]
 	                         	| [$337b: cp   $00]
@@ -8007,18 +8008,21 @@ decrease_timer_353e:
 set_bags_coordinates_hard_level_354f:
 	lea	bags_coordinates_609C,a1       	| [$354f: ld   de,bags_coordinates_609C]
 	lea	game_mem+0x5C54,a0                      	| [$3552: ld   hl,$5C54]
-	move.w	#0x3A,d1                        	| [$3555: ld   bc,$003A] 58
-	move.l	a1,-(a7)
-	jbsr	ldir                              	| [$3558: ldir]
-	move.l	(a7)+,a1
-	bsr		correct_bags_endian
-	rts                                    	| [$355a: ret]
+	jra	set_bags_coords            	| [$3555: ld   bc,$003A] 58
+	
+	              	| [$3558: ldir]
+	
+	
+	           	| [$355a: ret]
 
 
-set_bags_coordinates_355b:
+set_bags_coordinates_easy_level_355b:
+	tst.b	hard_bags_flag
+	bne.b	set_bags_coordinates_hard_level_354f
 	lea	bags_coordinates_609C,a1       	| [$355b: ld   de,bags_coordinates_609C]
 0:
 	lea	game_mem+0x5AE8,a0                      	| [$355e: ld   hl,$5AE8]
+set_bags_coords:
 	move.w	#0x003A,d1                        	| [$3561: ld   bc,$003A] 58
 	move.l	a1,-(a7)
 	jbsr	ldir                              	| [$3564: ldir]
@@ -8026,8 +8030,10 @@ set_bags_coordinates_355b:
 	bsr		correct_bags_endian
  	rts                                    	| [$3566: ret]
 
-	
+* this seems useless, as it's only done in the case of easy bag layout
 set_bags_coordinates_3567:
+	rts
+	
 	lea	bags_coordinates_617F,a1                	| [$3567: ld   de,bags_coordinates_617F]
 	bra.b	0b
 
@@ -8087,7 +8093,7 @@ l_3591:
 	rts                                    	| [$3596: ret  z]
 0:
 	move.b	#0x01,d0                        	| [$3597: ld   a,$01]
-	move.b	d0,unknown_6053                 	| [$3599: ld   (unknown_6053),a]
+	move.b	d0,game_locked_6053                 	| [$3599: ld   (game_locked_6053),a]
 	move.b	d0,unknown_628C                 	| [$359c: ld   (unknown_628C),a]
 	jbsr	l_2a2c                            	| [$359f: call $2A2C]
 	* write "PLAYER 1"
@@ -8165,7 +8171,7 @@ l_3591:
 											| [...]
 										| [$362d: djnz $3621]
 	clr.b	d0                               	| [$362f: ld   a,$00]
-	move.b	d0,unknown_6053                 	| [$3631: ld   (unknown_6053),a]
+	move.b	d0,game_locked_6053                 	| [$3631: ld   (game_locked_6053),a]
 	move.b	d0,unknown_628C                 	| [$3634: ld   (unknown_628C),a]
 	rts                                    	| [$3637: ret]
 
@@ -8197,15 +8203,15 @@ l_365a:
 	
 * shows title & intro sequence with bagman+barrow & guard
 play_intro_3700:
-	clr.b	d0                               	| [$3700: ld   a,$00]
-	**move.b	d0,0xA003                       	| [$3702: ld   ($A003),a]
+													| [$3700: ld   a,$00]
+	jbsr	osd_disable_display                      	| [$3702: ld   ($A003),a]
 	jbsr	clear_screen_2a00                            	| [$3705: call $2A00]
 	move.b	#0x3F,d0                        	| [$3708: ld   a,$3F]
 	jbsr	change_attribute_everywhere_29ec                            	| [$370a: call $29EC]
 	jbsr	display_player_ids_and_credit_1dec                            	| [$370d: call $1DEC]
 	move.b	#0x01,d0                        	| [$3710: ld   a,$01]
 	move.b	d0,player_screen_600D           	| [$3712: ld   (player_screen_600D),a]
-	**move.b	d0,0xA003                       	| [$3715: ld   ($A003),a]
+	jbsr	osd_enable_display                       	| [$3715: ld   ($A003),a]
 	move.b	d0,current_guard_screen_index_6098      	| [$3718: ld   (current_guard_screen_index_6098),a]
 	move.b	d0,guard_1_screen_6099          	| [$371b: ld   (guard_1_screen_6099),a]
 	move.b	d0,guard_2_screen_609A          	| [$371e: ld   (guard_2_screen_609A),a]

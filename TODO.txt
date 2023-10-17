@@ -1,8 +1,4 @@
-- screen changes: maybe set palette to 0 when game shuts down display with A003?
-  would avoid graphical artifacts
-- GAME OVER message doesn't stay (busy wait??)
 - "PLAYER 1" flashes with wrong timing
-- press 5 to insert coin works 1 time out of 2 (previous state interfering?)
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
   => screen 2: elevator clut forced at white+orange,
      generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
@@ -19,14 +15,8 @@
 - killed: stop sound
 - start 2P game??
 - joystick/fire to start game/insert coin not working
-- add option to start at hard level directly: done plug it
 - TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 - invincible flag in demo game should be made inefficient
-
-- the original game had a tendency (not all the time) to leave the barrow in the last screen when you completed
-  the level, which is unfair and makes next level very difficult because you have to bring back the barrow or go
-  to last screen right after appearing in the first screen.
-- enhance instructions
 
 
 - debug 2640 with values not 10 or E0 (not at start)

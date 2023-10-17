@@ -89,7 +89,7 @@
 	.global	unknown_604F
 	.global	coin_start_inputs_6051
 	.global	coin_start_prev_inputs_6052
-	.global	unknown_6053
+	.global	game_locked_6053
 	.global	unknown_6055
 	.global	guard_1_not_moving_timeout_counter_6057
 	.global	unknown_6074
@@ -148,7 +148,7 @@
 	.global	unknown_61EB
 	.global	unknown_61EC
 	.global	check_scenery_disabled_61ED
-	.global	unknown_61F1
+	.global	game_locked_6151
 	.global	player_controls_blocked_61F2
 	.global	unknown_61F3
 	.global	unknown_61F4
@@ -330,7 +330,7 @@ coin_start_inputs_6051:
 	ds.b	1
 coin_start_prev_inputs_6052:
 	ds.b	1
-unknown_6053:
+game_locked_6053:
 	ds.b	1
 gameplay_allowed_6054:
 	ds.b	1
@@ -500,7 +500,7 @@ unknown_61EC:
 	ds.b	1
 check_scenery_disabled_61ED:
 	ds.b	4
-unknown_61F1:
+game_locked_6151:
 	ds.b	1
 player_controls_blocked_61F2:
 	ds.b	1
