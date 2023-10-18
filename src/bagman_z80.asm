@@ -5,6 +5,7 @@
 ;;; reverse-engineering done in 2010, then more deeply in 2023
 ;;;
 ;;; Original code (C) 1982 Valadon Automation, singlehandedly coded
+;;; Original code (C) 1982 Valadon Automation, singlehandedly coded
 ;;; by Jacques Brisse
 ;;;
 	;; 554C:	 0 no guard collision
