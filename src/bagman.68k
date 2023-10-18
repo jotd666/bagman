@@ -159,15 +159,20 @@ start_a_sound:
 	
 play_first_tune:
 	move.w	#TUNE1_SND,d0
-	rts
-	
-	jra		osd_sound_start
+	jra		play_tune
 
 play_second_tune:
 	move.w	#TUNE2_SND,d0
-	rts
-	
-	
+play_tune:
+	move.w	d0,-(a7)
+	move.b	time_61E8,d0                    	| [$3ba6: ld   a,(time_61E8)]
+
+	cmp.b	#0x05,d0                         	| [$3bab: cp   $05]
+	movem.w	(a7)+,d0
+	bcc.b	0f                               	| [$3bad: ret  nc] [...]
+	* don't start music if timer is too low
+	rts  
+0:	
 	jra		osd_sound_start
 	
 	
@@ -4827,6 +4832,9 @@ player_dies_1f50:
 	clr.b	d0                               	| [$1f83: xor  a]
 	move.b	d0,wait_flag_6152                 	| [$1f84: ld   (wait_flag_6152),a]
     jbsr	osd_enable_vblank_interrupt
+	* stop music if any
+	jbsr	osd_sound_stop
+
 	* plays "aie aie aie" sample
 	move.w	#PLAYER_KILLED_TALK_SND,d0
 	jbsr	start_a_sound                            	| [$1f88: call $2018]
@@ -7301,7 +7309,7 @@ display_localized_text_30F9:
 	jbsr	osd_read_dipswitches              	| [$30fa: ld   a,(dip_switch_B000)]
 	btst.b	#5,d0                         	| [$30fd: and  $20]
 											| [$30ff: cp   $20]
-	jeq	l_310b                             	| [$3101: jr   z,$310B]
+	jne	l_310b                             	| [$3101: jr   z,$310B]
 	* french: change strings
 	                        	| [$3103: push hl]
 	                       	| [$3104: ex   de,hl]
@@ -8622,6 +8630,9 @@ check_if_level_completed_3b00:
 0:
 	clr.b	next_bag_completes_level_flag
 * level completed
+	* stop music if any
+	jbsr	osd_sound_stop
+	
 	lea		holds_barrow_61C7,a4       	| [$3b07: ld   bc,holds_barrow_61C7] None
 	bsr		exx
 	lea	barrow_screen_params_61C4,a3                	| [$3b0b: ld   iy,barrow_screen_params_61C4]
@@ -8895,6 +8906,11 @@ check_timer_3ba1:
 									| [$3bae: ld   hl,$5B94]
 								| [$3bb1: ld   (ay_sound_pointer_6140),hl]
 	move.b	d0,unknown_61F4                 	| [$3bb4: ld   (unknown_61F4),a]
+	cmp.b	#4,d0
+	bne.b	0f
+	* stop music
+	jbsr	osd_sound_stop
+0:
 	        	| [$3bb7: xor  a]
 	move.w	#TIME_WARN_SND,d0									| [$3bb8: ld   (ay_sound_start_6142),a]
 	jbsr	start_a_sound

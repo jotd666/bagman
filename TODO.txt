@@ -1,28 +1,26 @@
-- default only 1 life should be 2
-- "PLAYER 1" flashes with wrong timing
+- remaster music
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
   => screen 2: elevator clut forced at white+orange,
      generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
 	 but uses third color (red)
 - check level complete in non whdload (SR not reset so....)
 - brown/blue stripe on row 0? disable those rows completely: to retest, seems ok
-- sfx are playing in demo when guard is chasing player
 - make command line options work: done, to test
+- intermission: music doesn't play
 
 - DOS exe: quit then run again => crash
 - set supervisor state at start in DOS mode (revert to user in the end)
-- restore music, block SFX when music is playing (compute music playing time)
-- timer at 400: stop sound
-- killed: stop sound
 - start 2P game??
 - joystick/fire to start game/insert coin not working
-- TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
+
 - invincible flag in demo game should be made inefficient
 
 
-- debug 2640 with values not 10 or E0 (not at start)
+- sfx are playing in demo when guard is chasing player
 
 
 maybe...:
+- debug 2640 with values not 10 or E0 (not at start)
+- TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
 - try to cookie cut bags & pickaxes, avoid to destroy background
 

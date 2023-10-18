@@ -259,12 +259,12 @@ _user:
 	move.l	(A0)+,D0	| STARTLIVES/S
 	beq.b	2f
 	bsr		bcpl_string_to_int
-	subq	#2,d0
+	tst.b	d0
 	bmi.b	2f
 	move.l	d0,dip_switch_start_lives
 	bra.b	3f
 2:
-	move.l	#2,dip_switch_start_lives		| 3 lives default
+	move.l	#3,dip_switch_start_lives		| 3 lives default
 3:
 	
 
@@ -330,11 +330,11 @@ _user:
 	lsl.b	#5,d0
 	
 	move.b	dip_switch_start_lives+3(pc),d1
-	sub.b	#1,d1
-	bpl.b	1f
-	move.w	#2,d1	| 3 lives
+	bne.b	1f
+	moveq	#2,d1	| 3 lives is default
 1:
-	lsl.b	#2,d1
+	* DSW 0 = 2 lives
+	subq.b	#1,d1
 	or.b	d1,d0
 
 	
@@ -347,16 +347,7 @@ _user:
 0:
 	move.b	d0,dip_switches
 
-*	btst	#1,d1
-*	sne.b	quick_maze_draw_flag
-*	btst	#2,d1
-*	sne.b	no_intermissions_flag
-*	btst	#3,d1
-*	sne.b	alternate_music_flag
-	
-	move.l	start_level_option(pc),d0
-	and.b	#0x0F,d0
-	move.b	d0,start_level		| 0-15 => 1-16
+
 	
 
 	move.l	cheat_flags,d0
@@ -616,7 +607,9 @@ _vblank:
 	* here music doesn't loop. We have to stop it when it ends
 	move.w	music_tick(pc),d1
 	beq.b	13f
-	subq.w	#1,d1
+	
+	subq	#1,d1
+
 	move.w	d1,music_tick
 	bne.b	13f
 	bsr		osd_sound_stop
@@ -1026,6 +1019,13 @@ osd_sound_enable:
 osd_sound_disable:	
 	rts
 osd_sound_start:
+	cmp.b	#CREDIT_SND,d0
+	bcs.b	0f			| always play sampled sounds
+	tst.b	music_playing
+	beq.b	0f
+	* don't play AY-sound when music is playing
+	rts
+0:
 	movem.l	d0/d1/a0/a6,-(a7)
 	tst.b	d0
 	jmi	7f		| should stop the sound
@@ -1101,6 +1101,7 @@ osd_sound_start:
 	move.b	(7,a0,d0.w),music_loops
 	move.w	(2,a0,d0.w),music_pattern	| pattern number in .mod file
 	move.w	(4,a0,d0.w),d2
+
 	move.w	d2,music_duration
 	move.w	d2,music_tick
 
@@ -2130,9 +2131,7 @@ _tag:
 		.long	WHDLTAG_CUSTOM1_GET
 cheat_flags:
 		.long	0
-		.long	WHDLTAG_CUSTOM2_GET
-start_level_option:
-		.long	0
+
 		.long	WHDLTAG_CUSTOM3_GET
 misc_options:
 		.long	0
