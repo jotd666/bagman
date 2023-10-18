@@ -98,49 +98,6 @@
 
 
 0000: C3 00 12      jp   $1200
-0003: 04            inc  b
-0004: 03            inc  bc
-0005: 40            ld   b,b
-0006: 64            ld   h,h
-0007: 06 C0         ld   b,$C0
-0009: 40            ld   b,b
-000A: 41            ld   b,c
-000B: 14            inc  d
-000C: 9D            sbc  a,l
-000D: 08            ex   af,af'
-000E: 24            inc  h
-000F: A0            and  b
-0010: 42            ld   b,d
-0011: 06 26         ld   b,$26
-0013: 48            ld   c,b
-0014: 18 00         jr   $0016
-0016: 20 40         jr   nz,$0058
-0018: 07            rlca
-0019: 24            inc  h
-001A: 0C            inc  c
-001B: 50            ld   d,b
-001C: 01 C0 04      ld   bc,$04C0
-001F: 04            inc  b
-0020: 41            ld   b,c
-0021: 05            dec  b
-0022: 01 00 CC      ld   bc,$CC00
-0025: C1            pop  bc
-0026: 60            ld   h,b
-0027: C0            ret  nz
-0028: 29            add  hl,hl
-0029: 04            inc  b
-002A: 1C            inc  e
-002B: E1            pop  hl
-002C: 08            ex   af,af'
-002D: C0            ret  nz
-002E: 01 41 04      ld   bc,$0441
-0031: 50            ld   d,b
-0032: 02            ld   (bc),a
-0033: 40            ld   b,b
-0034: 48            ld   c,b
-0035: C0            ret  nz
-0036: 42            ld   b,d
-0037: 2B            dec  hl
 
 ;; interrupt handler
 0038: F5            push af
@@ -392,7 +349,7 @@
 029D: FD 21 57 60   ld   iy,guard_1_not_moving_timeout_counter_6057
 02A1: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 02A5: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
-02A8: 22 44 60      ld   (unknown_6044),hl
+02A8: 22 44 60      ld   (stored_logical_address_6044),hl
 02AB: 21 35 60      ld   hl,guard_1_ladder_frame_6035
 02AE: FD 21 27 60   ld   iy,guard_1_direction_6027
 02B2: 3A 37 60      ld   a,(guard_1_in_elevator_6037)
@@ -412,11 +369,11 @@
 02D4: 20 03         jr   nz,$02D9
 02D6: CD 9B 11      call guard_2_walk_movement_119B
 02D9: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
-02DC: 22 44 60      ld   (unknown_6044),hl
+02DC: 22 44 60      ld   (stored_logical_address_6044),hl
 02DF: FD 21 97 60   ld   iy,guard_2_not_moving_timeout_counter_6097
 02E3: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 02E7: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
-02EA: 22 44 60      ld   (unknown_6044),hl
+02EA: 22 44 60      ld   (stored_logical_address_6044),hl
 02ED: 21 75 60      ld   hl,guard_2_ladder_frame_6075
 02F0: FD 21 67 60   ld   iy,guard_2_direction_6067
 02F4: 3A 77 60      ld   a,(guard_2_in_elevator_6077)
@@ -606,7 +563,7 @@ guard_ladder_movement_04AD:
 04BD: C0            ret  nz
 	;; down
 04BE: E5            push hl
-04BF: 2A 44 60      ld   hl,(unknown_6044)
+04BF: 2A 44 60      ld   hl,(stored_logical_address_6044)
 04C2: 7E            ld   a,(hl)
 04C3: FE FF         cp   $FF
 04C5: E1            pop  hl
@@ -615,7 +572,7 @@ guard_ladder_movement_04AD:
 04C9: 18 0C         jr   $04D7
 	;; up
 04CB: E5            push hl
-04CC: 2A 44 60      ld   hl,(unknown_6044)
+04CC: 2A 44 60      ld   hl,(stored_logical_address_6044)
 04CF: 2B            dec  hl
 04D0: 7E            ld   a,(hl)
 04D1: FE FF         cp   $FF
@@ -715,7 +672,7 @@ guard_walk_movement_0570:
 0577: 20 0F         jr   nz,$0588
 	;; guard faces right
 0579: E5            push hl
-057A: 2A 44 60      ld   hl,(unknown_6044)
+057A: 2A 44 60      ld   hl,(stored_logical_address_6044)
 057D: CD FA 0C      call character_can_walk_right_0CFA
 0580: E1            pop  hl
 0581: 3A 0B 60      ld   a,(way_clear_flag_600B)
@@ -729,7 +686,7 @@ guard_walk_movement_0570:
 058F: C0            ret  nz	; neither right or left: on ladder? quit
 
 0590: E5            push hl
-0591: 2A 44 60      ld   hl,(unknown_6044)
+0591: 2A 44 60      ld   hl,(stored_logical_address_6044)
 0594: CD 69 0D      call character_can_walk_left_0D69
 0597: E1            pop  hl
 0598: 3A 0B 60      ld   a,(way_clear_flag_600B)
@@ -1283,7 +1240,7 @@ move_a_wagon_0925:
 0993: C9            ret
 
 
-09A0: 3A 12 60		ld   a,($6012)                                      
+09A0: 3A 12 60		ld   a,(elevator_not_moving_6012)                                      
 09A3: FE 00         cp   $00
 09A5: C8            ret  z
 09A6: 3A 11 60      ld   a,(elevator_timer_current_screen_6011)
@@ -1701,7 +1658,7 @@ player_tries_to_move_laterally_0c36:
 0D03: 32 0B 60      ld   (way_clear_flag_600B),a
 0D06: C9            ret
 
-0D07: 3A F2 61      ld   a,(unknown_61F2)
+0D07: 3A F2 61      ld   a,(player_controls_blocked_61F2)
 0D0A: FE 01         cp   $01
 0D0C: 28 F3         jr   z,$0D01
 0D0E: CD 85 25      call check_breakable_wall_2585
@@ -1978,7 +1935,7 @@ start_a_game_0ebc:
 0F38: 77            ld   (hl),a
 0F39: 23            inc  hl
 0F3A: 10 FC         djnz $0F38
-0F3C: 3A 63 61      ld   a,(unknown_6163)
+0F3C: 3A 63 61      ld   a,(flipped_dip_switches_copy_6163)
 0F3F: E6 03         and  $03
 0F41: C6 01         add  a,$01
 0F43: 32 56 60      ld   (lives_6056),a
@@ -2112,13 +2069,13 @@ handle_player_object_carry_1010:
 102D: 20 0E         jr   nz,$103D
 102F: 3A 82 65      ld   a,(player_x_6582)
 1032: C6 08         add  a,$08
-1034: 32 9E 65      ld   (unknown_659E),a
+1034: 32 9E 65      ld   (sprite_object_x_659E),a
 1037: 3E BF         ld   a,$BF
 1039: 32 9C 65      ld   (object_held_struct_659C),a
 103C: C9            ret
 103D: 3A 82 65      ld   a,(player_x_6582)
 1040: D6 08         sub  $08
-1042: 32 9E 65      ld   (unknown_659E),a
+1042: 32 9E 65      ld   (sprite_object_x_659E),a
 1045: 3E 3F         ld   a,$3F
 1047: 32 9C 65      ld   (object_held_struct_659C),a
 104A: C9            ret
@@ -2148,13 +2105,13 @@ handle_player_object_carry_1010:
 107F: 28 0D         jr   z,$108E
 1081: 3A 82 65      ld   a,(player_x_6582)
 1084: C6 0C         add  a,$0C
-1086: 32 9E 65      ld   (unknown_659E),a
+1086: 32 9E 65      ld   (sprite_object_x_659E),a
 1089: 78            ld   a,b
 108A: 32 9C 65      ld   (object_held_struct_659C),a
 108D: C9            ret
 108E: 3A 82 65      ld   a,(player_x_6582)
 1091: D6 0C         sub  $0C
-1093: 32 9E 65      ld   (unknown_659E),a
+1093: 32 9E 65      ld   (sprite_object_x_659E),a
 1096: 78            ld   a,b
 1097: F6 80         or   $80
 1099: 32 9C 65      ld   (object_held_struct_659C),a
@@ -2192,6 +2149,7 @@ set_previous_guard_y_255_10CB:
 10CB: 3E FF         ld   a,$FF
 10CD: FD 77 03      ld   (iy+$03),a
 10D0: C9            ret
+
 speech_management_10D1:
 10D1: 3A 10 62      ld   a,(must_play_music_6210)
 10D4: FE 01         cp   $01
@@ -2219,7 +2177,7 @@ speech_management_10D1:
 1104: C8            ret  z
 1105: 3A 82 65      ld   a,(player_x_6582)
 1108: C6 0E         add  a,$0E
-110A: 32 9E 65      ld   (unknown_659E),a
+110A: 32 9E 65      ld   (sprite_object_x_659E),a
 110D: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 1110: FE 01         cp   $01
 1112: 28 05         jr   z,$1119
@@ -2274,7 +2232,7 @@ guard_1_walk_movement_116F:
 116F: 3A 99 60      ld   a,(guard_1_screen_6099)
 1172: 32 98 60      ld   (current_guard_screen_index_6098),a
 1175: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
-1178: 22 44 60      ld   (unknown_6044),hl
+1178: 22 44 60      ld   (stored_logical_address_6044),hl
 117B: FD 21 57 60   ld   iy,guard_1_not_moving_timeout_counter_6057
 117F: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1183: DD 2A A9 04   ld   ix,($04A9)
@@ -2288,8 +2246,8 @@ guard_1_walk_movement_116F:
 guard_2_walk_movement_119B:
 119B: 3A 9A 60      ld   a,(guard_2_screen_609A)
 119E: 32 98 60      ld   (current_guard_screen_index_6098),a
-11A1: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
-11A4: 22 44 60      ld   (unknown_6044),hl
+11A1: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
+11A4: 22 44 60      ld   (stored_logical_address_6044),hl
 11A7: FD 21 97 60   ld   iy,guard_2_not_moving_timeout_counter_6097
 11AB: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 11AF: DD 2A AB 04   ld   ix,($04AB)
@@ -2428,11 +2386,11 @@ mainloop_1242:
 12F6: 20 0C         jr   nz,$1304
 12F8: 11 DF 56      ld   de,$56DF
 12FB: 21 11 93      ld   hl,$9311
-12FE: CD F9 30      call display_localized_text_30F9	;  ???
+12FE: CD F9 30      call display_localized_text_30F9
 1301: C3 42 12      jp   mainloop_1242
 1304: 11 F2 56      ld   de,$56F2
 1307: 21 11 93      ld   hl,$9311
-130A: CD F9 30      call display_localized_text_30F9	;  ???
+130A: CD F9 30      call display_localized_text_30F9
 130D: C3 42 12      jp   mainloop_1242
 
 1310: CD 3F 1E      call $1E3F
@@ -2509,7 +2467,7 @@ mainloop_1242:
 13E5: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 13E9: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
 13ED: FD 21 98 65   ld   iy,guard_2_struct_6598
-13F1: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
+13F1: ED 5B 78 60   ld   de,(guard_2_logical_address_6078)
 13F5: ED 53 91 60   ld   (guard_logical_address_6091),de
 13F9: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 13FC: 3A 0C 57      ld   a,($570C)
@@ -2534,7 +2492,7 @@ mainloop_1242:
 142E: DD 21 67 60   ld   ix,guard_2_direction_6067
 1432: DD 22 95 60   ld   (guard_direction_pointer_6095),ix
 1436: FD 21 98 65   ld   iy,guard_2_struct_6598
-143A: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
+143A: ED 5B 78 60   ld   de,(guard_2_logical_address_6078)
 143E: ED 53 91 60   ld   (guard_logical_address_6091),de
 1442: DD 21 75 60   ld   ix,guard_2_ladder_frame_6075
 	; guard is stuck for a short time, but sufficiently long for us to worry
@@ -2562,11 +2520,11 @@ mainloop_1242:
 1477: 2A 38 60      ld   hl,(guard_1_logical_address_6038)
 147A: DD 21 94 65   ld   ix,guard_1_struct_6594
 147E: CD 0E 25      call $250E
-1481: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1481: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1484: FD 21 77 60   ld   iy,guard_2_in_elevator_6077
 1488: DD 21 98 65   ld   ix,guard_2_struct_6598
 148C: CD 05 26      call $2605
-148F: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+148F: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1492: DD 21 98 65   ld   ix,guard_2_struct_6598
 1496: CD 0E 25      call $250E
 1499: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
@@ -2644,7 +2602,7 @@ guard_2_sees_player_1525:
 1549: 32 98 60      ld   (current_guard_screen_index_6098),a
 154C: DD 21 80 65   ld   ix,player_struct_6580
 1550: FD 21 98 65   ld   iy,guard_2_struct_6598
-1554: ED 5B 78 60   ld   de,(guard_2_screen_address_6078)
+1554: ED 5B 78 60   ld   de,(guard_2_logical_address_6078)
 1558: 21 7B 60      ld   hl,guard_2_in_elevator_607B
 155B: CD FA 2A      call guard_wait_for_elevator_test_2AFA
 155E: 18 04         jr   $1564
@@ -2824,7 +2782,7 @@ guard_1_sees_player_1560:
 16EB: AF            xor  a
 16EC: 32 5E 61      ld   (bag_sliding_615E),a
 16EF: 32 59 61      ld   (bag_falling_6159),a
-16F2: FD 2A 5C 61   ld   iy,(unknown_615C)
+16F2: FD 2A 5C 61   ld   iy,(unknown_pointer_615C)
 16F6: 3A 0D 60      ld   a,(player_screen_600D)
 16F9: FD 77 02      ld   (iy+$02),a
 16FC: FE 01         cp   $01
@@ -2863,7 +2821,7 @@ guard_1_sees_player_1560:
 1734: 7D            ld   a,l
 1735: FE C0         cp   $C0
 1737: 20 02         jr   nz,$173B
-1739: 3E 68         ld   a,$68		| will be overwritten just after
+1739: 3E 68         ld   a,$68		; will be overwritten just after
 173B: FD 74 01      ld   (iy+$01),h
 173E: 3A 0D 60      ld   a,(player_screen_600D)
 1741: FD 77 02      ld   (iy+$02),a
@@ -3007,7 +2965,7 @@ guard_1_sees_player_1560:
 	;; pickup money bag
 1897: 3E 01         ld   a,$01
 1899: 32 58 61      ld   (has_bag_6158),a
-189C: FD 22 5C 61   ld   (unknown_615C),iy
+189C: FD 22 5C 61   ld   (unknown_pointer_615C),iy
 18A0: FD 66 01      ld   h,(iy+$01)
 18A3: FD 6E 00      ld   l,(iy+$00)
 18A6: 22 F6 61      ld   (picked_up_object_screen_address_61F6),hl
@@ -3128,7 +3086,7 @@ compute_backbuffer_tile_address_1945:
 195D: 57            ld   d,a
 195E: C9            ret
 
-195F: 3A 9E 65      ld   a,(unknown_659E)
+195F: 3A 9E 65      ld   a,(sprite_object_x_659E)
 1962: FE E0         cp   $E0
 1964: D0            ret  nc
 1965: FE 18         cp   $18
@@ -3332,7 +3290,7 @@ analyse_guard_direction_change_19D1:
 1AC8: A0            and  b
 1AC9: CB 0F         rrc  a
 1ACB: 2A 91 60      ld   hl,(guard_logical_address_6091)
-1ACE: 32 44 60      ld   (unknown_6044),a
+1ACE: 32 44 60      ld   (stored_logical_address_6044),a
 1AD1: FD 21 94 65   ld   iy,guard_1_struct_6594
 1AD5: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
 1AD9: 2A 95 60      ld   hl,(guard_direction_pointer_6095) ; contains guard direction pointer unknown_6027 or unknown_6067
@@ -3561,7 +3519,7 @@ handle_guard_1_views_player_1c30:
 1C90: CD 33 1D      call is_way_clear_to_player_1D33
 1C93: C9            ret
 
-1C94: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1C94: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1C97: 22 91 60      ld   (guard_logical_address_6091),hl
 1C9A: FD 21 98 65   ld   iy,guard_2_struct_6598
 1C9E: FD 22 93 60   ld   (guard_struct_pointer_6093),iy
@@ -3589,7 +3547,7 @@ handle_guard_2_views_player_1cc9:
 1CD1: C0            ret  nz
 
 1CD2: DD 21 7D 60   ld   ix,guard_2_sees_player_left_607D
-1CD6: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1CD6: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1CD9: 01 E0 FF      ld   bc,$FFE0
 
 ;; if player has pick reverts tests:	 if sees on the right, actually
@@ -3603,7 +3561,7 @@ handle_guard_2_views_player_1cc9:
 1CE9: 3E 80         ld   a,$80
 1CEB: 08            ex   af,af'
 1CEC: CD 33 1D      call is_way_clear_to_player_1D33
-1CEF: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1CEF: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1CF2: 01 20 00      ld   bc,$0020
 1CF5: DD 21 7C 60   ld   ix,guard_2_sees_player_right_607C
 
@@ -3624,13 +3582,13 @@ handle_guard_2_views_player_1cc9:
 1D0F: CD 33 1D      call is_way_clear_to_player_1D33
 
 	;; up and down (note that having the pick has no effect on those tests)
-1D12: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1D12: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1D15: 01 FF FF      ld   bc,$FFFF
 1D18: 3E 10         ld   a,$10
 1D1A: 08            ex   af,af'
 1D1B: DD 21 7E 60   ld   ix,guard_2_sees_player_up_607E
 1D1F: CD 33 1D      call is_way_clear_to_player_1D33
-1D22: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+1D22: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 1D25: DD 21 7F 60   ld   ix,guard_2_sees_player_down_607F
 1D29: 01 01 00      ld   bc,$0001
 1D2C: 3E 20         ld   a,$20
@@ -3930,7 +3888,7 @@ player_dies_1f50:
 1F6B: DD 21 80 65   ld   ix,player_struct_6580
 1F6F: CD 05 26      call $2605
 1F72: 3E 01         ld   a,$01
-1F74: 32 51 61      ld   (unknown_6151),a
+1F74: 32 51 61      ld   (game_locked_6151),a
 1F77: 32 00 A0      ld   (interrupt_control_A000),a
 1F7A: 21 5E 04      ld   hl,$045E
 1F7D: 22 54 61      ld   (unknown_6154),hl
@@ -4014,7 +3972,7 @@ start_new_life_2026:
 2031: AF            xor  a
 ; set everything player-related to 0
 2032: 32 52 61      ld   (wait_flag_6152),a
-2035: 32 51 61      ld   (unknown_6151),a
+2035: 32 51 61      ld   (game_locked_6151),a
 2038: 32 25 60      ld   (player_death_flag_6025),a
 203B: 32 28 60      ld   (player_controls_frozen_6028),a
 203E: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
@@ -4027,7 +3985,7 @@ start_new_life_2026:
 2053: C9            ret
 
 	;; < b number of bytes to set to a
-memset_2054
+memset_2054:
 2054: DD 77 00      ld   (ix+$00),a
 2057: DD 23         inc  ix
 2059: 10 F9         djnz $2054
@@ -4318,7 +4276,7 @@ convert_logical_to_screen_address_222d:
 22A0: 32 97 60      ld   (guard_2_not_moving_timeout_counter_6097),a
 22A3: 3E 21         ld   a,$21
 22A5: 32 98 65      ld   (guard_2_struct_6598),a
-22A8: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+22A8: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 22AB: FD 21 77 60   ld   iy,guard_2_in_elevator_6077
 22AF: DD 21 98 65   ld   ix,guard_2_struct_6598
 22B3: CD 05 26      call $2605
@@ -5190,7 +5148,7 @@ clear_screen_2a00:
 2A6B: DD 23         inc  ix
 2A6D: 10 FB         djnz $2A6A
 2A6F: C9            ret
-2A70: 3A 63 61      ld   a,(unknown_6163)
+2A70: 3A 63 61      ld   a,(flipped_dip_switches_copy_6163)
 2A73: E6 80         and  $80
 2A75: FE 00         cp   $00
 2A77: 28 0C         jr   z,$2A85
@@ -7057,7 +7015,7 @@ check_if_credit_inserted_38d7:
 397C: CD F6 39      call $39F6
 397F: F1            pop  af
 3980: 47            ld   b,a
-3981: 3A 63 61      ld   a,(unknown_6163)
+3981: 3A 63 61      ld   a,(flipped_dip_switches_copy_6163)
 3984: E6 04         and  $04
 3986: FE 04         cp   $04
 3988: 78            ld   a,b
@@ -7145,7 +7103,7 @@ read_player_controls_39fd:
 3A2F: 32 51 60      ld   (coin_start_inputs_6051),a
 3A32: 3A 00 B0      ld   a,(dip_switch_B000)
 3A35: 2F            cpl
-3A36: 32 63 61      ld   (unknown_6163),a
+3A36: 32 63 61      ld   (flipped_dip_switches_copy_6163),a
 3A39: 3E 01         ld   a,$01
 3A3B: 32 07 A0      ld   ($A007),a
 3A3E: C9            ret
@@ -7155,7 +7113,7 @@ restrict_controls_if_not_playing_3a3f:
 3A40: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 3A43: FE 01         cp   $01
 3A45: 28 09         jr   z,$3A50
-3A47: 3A F2 61      ld   a,(unknown_61F2)
+3A47: 3A F2 61      ld   a,(player_controls_blocked_61F2)
 3A4A: FE 01         cp   $01
 3A4C: 28 02         jr   z,$3A50
 3A4E: F1            pop  af
@@ -7217,14 +7175,14 @@ check_if_level_completed_3b00:
 3B40: 32 9A 65      ld   (guard_2_x_659A),a
 3B43: 3E 01         ld   a,$01
 3B45: 32 00 A0      ld   (interrupt_control_A000),a
-3B48: 32 F2 61      ld   (unknown_61F2),a
+3B48: 32 F2 61      ld   (player_controls_blocked_61F2),a
 3B4B: FB            ei
 3B4C: CD 53 16      call $1653
 3B4F: 3A 82 65      ld   a,(player_x_6582)
 3B52: FE F0         cp   $F0
 3B54: 20 DE         jr   nz,$3B34
 3B56: AF            xor  a
-3B57: 32 F2 61      ld   (unknown_61F2),a
+3B57: 32 F2 61      ld   (player_controls_blocked_61F2),a
 3B5A: 32 C7 61      ld   (holds_barrow_61C7),a
 3B5D: F3            di
 3B5E: 06 40         ld   b,$40
@@ -7443,7 +7401,7 @@ test_non_blocking_tiles_3c85:
 3CF2: FD 21 57 61   ld   iy,unknown_6157
 3CF6: 21 98 65      ld   hl,guard_2_struct_6598
 3CF9: 22 15 62      ld   (guard_struct_pointer_6215),hl
-3CFC: 2A 78 60      ld   hl,(guard_2_screen_address_6078)
+3CFC: 2A 78 60      ld   hl,(guard_2_logical_address_6078)
 3CFF: 11 7B 60      ld   de,guard_2_in_elevator_607B
 3D02: 3A 9A 60      ld   a,(guard_2_screen_609A)
 3D05: 32 98 60      ld   (current_guard_screen_index_6098),a
@@ -7699,7 +7657,7 @@ update_guard_1_screen_address_from_xy_5568:
 
 update_guard_2_screen_address_from_xy_5575:
 5575: DD 21 98 65   ld   ix,guard_2_struct_6598
-5579: FD 21 78 60   ld   iy,guard_2_screen_address_6078
+5579: FD 21 78 60   ld   iy,guard_2_logical_address_6078
 557D: 3A 9A 60      ld   a,(guard_2_screen_609A)
 5580: 18 03         jr   $5585
 
