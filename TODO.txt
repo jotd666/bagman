@@ -1,3 +1,4 @@
+- first A500 boot: locks up: investigate (ok when resetting!!)
 - remaster music
 - sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
   => screen 2: elevator clut forced at white+orange,

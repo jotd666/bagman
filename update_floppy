@@ -6,9 +6,16 @@ protect DF0:$game RWED
 copy readme.md instructions.txt df0:
 
 ;delete $game.rnc
-delete df0:$game.high
-set arc bagman_HD.lha
-delete $arc
+if exists df0:$game.high
+   delete df0:$game.high
+endif
+
+set arc ${game}_HD.lha
+if exists ${arc}
+    echo deleting ${arc}...
+    delete ${arc}
+endif
+
 ; also archive with lha
 lha a -r $arc ${game}_HD
 

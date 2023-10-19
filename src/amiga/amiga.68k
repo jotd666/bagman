@@ -252,7 +252,7 @@ _user:
 	move.l	d0,dip_switch_start_lives
 	bra.b	3f
 2:
-	move.l	#1,dip_switch_start_lives		| 3 lives default
+	move.l	#2,dip_switch_start_lives		| 3 lives default
 3:
 	
 
