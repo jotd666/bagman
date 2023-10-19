@@ -3,20 +3,15 @@
   => screen 2: elevator clut forced at white+orange,
      generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
 	 but uses third color (red)
-- check level complete in non whdload (SR not reset so....)
-- brown/blue stripe on row 0? disable those rows completely: to retest, seems ok
-- make command line options work: done, to test
-- intermission: music doesn't play
+- 
 
-- DOS exe: quit then run again => crash
-- set supervisor state at start in DOS mode (revert to user in the end)
 - start 2P game??
 - joystick/fire to start game/insert coin not working
 
-- invincible flag in demo game should be made inefficient
 
 
-- sfx are playing in demo when guard is chasing player
+- intermission: music doesn't play / sfx are playing in demo when guard is chasing player
+- invincible flag in demo game should be made inefficient: doesn't work: game_locked_6053 during demo???
 
 
 maybe...:

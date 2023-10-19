@@ -327,7 +327,7 @@
 0271: CD 66 0A      call handle_elevators_0a66
 0274: DD 21 80 65   ld   ix,player_struct_6580
 0278: 21 14 60      ld   hl,unknown_6014
-027B: CD A0 09      call $09A0
+027B: CD A0 09      call handle_elevator_stops_09A0
 027E: 3A 56 61      ld   a,(unknown_6156)
 0281: FE 00         cp   $00
 0283: 20 35         jr   nz,$02BA
@@ -1239,7 +1239,9 @@ move_a_wagon_0925:
 0990: DD 77 03      ld   (ix+$03),a
 0993: C9            ret
 
+; < hl = unknown_6014
 
+handle_elevator_stops_09A0:
 09A0: 3A 12 60		ld   a,(elevator_not_moving_6012)                                      
 09A3: FE 00         cp   $00
 09A5: C8            ret  z
@@ -1289,6 +1291,8 @@ move_a_wagon_0925:
 0A10: 3A 4E 60      ld   a,(fatal_fall_height_reached_604E)
 0A13: FE 00         cp   $00
 0A15: 28 0A         jr   z,$0A21
+; check if hl is still pointing on unknown_6014, if it does (which seems
+; to be always true), kill player
 0A17: 7D            ld   a,l
 0A18: FE 14         cp   $14
 0A1A: 20 05         jr   nz,$0A21
@@ -7772,10 +7776,10 @@ write_attribute_on_line_5605:
 write_scores_and_time_560f:
 560F: DD 21 76 61   ld   ix,player_1_score_6176
 5613: 21 E1 92      ld   hl,$92E1
-5616: CD 3C 56      call write_numeric_value_563C
+5616: CD 3C 56      call write_numeric_value_3_bytes_563C
 5619: DD 21 79 61   ld   ix,player_2_score_6179
 561D: 21 61 90      ld   hl,$9061
-5620: CD 3C 56      call write_numeric_value_563C
+5620: CD 3C 56      call write_numeric_value_3_bytes_563C
 5623: DD 21 E8 61   ld   ix,time_61E8
 5627: 21 01 92      ld   hl,$9201
 562A: 06 01         ld   b,$01
@@ -7786,17 +7790,17 @@ write_scores_and_time_560f:
 5638: CD 41 56      call $5641
 563B: C9            ret
 
-write_numeric_value_563C:
+write_numeric_value_3_bytes_563C:
 563C: 06 03         ld   b,$03
 563E: 11 20 00      ld   de,$0020
 5641: DD 7E 00      ld   a,(ix+$00)
-5644: CD 4D 56      call write_byte_value_563C
+5644: CD 4D 56      call write_byte_value_564D
 5647: DD 23         inc  ix
 5649: 19            add  hl,de
 564A: 10 F5         djnz $5641
 564C: C9            ret
 
-write_byte_value_563C:
+write_byte_value_564D:
 564D: F5            push af
 564E: E6 0F         and  $0F
 5650: 77            ld   (hl),a
@@ -7809,7 +7813,7 @@ write_byte_value_563C:
 565B: E6 0F         and  $0F
 565D: 77            ld   (hl),a
 565E: C9            ret
-
+; seems unreached
 565F: ED 52         sbc  hl,de
 5661: 06 11         ld   b,$11
 5663: CD 6A 56      call $566A

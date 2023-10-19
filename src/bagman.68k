@@ -175,6 +175,14 @@ play_tune:
 0:	
 	jra		osd_sound_start
 	
+is_invincible:
+	*tst.b	game_locked_6053
+	*bne.b	0f
+	tst.b	invincible_flag
+	rts
+0:
+	cmp.b	d0,d0
+	rts
 	
 * < D6: ROM offset
 read_rom:
@@ -551,7 +559,7 @@ l_0263:
 	jbsr	handle_elevators_0a66                            	| [$0271: call $0A66]
 	lea	player_struct_6580,a2          	| [$0274: ld   ix,player_struct_6580]
 	lea	unknown_6014,a0                	| [$0278: ld   hl,unknown_6014]
-	jbsr	l_09a0                            	| [$027b: call $09A0]
+	jbsr	handle_elevator_stops_09A0                            	| [$027b: call $09A0]
 	move.b	unknown_6156,d0                 	| [$027e: ld   a,(unknown_6156)]
 	                         	| [$0281: cp   $00]
 	jne	l_02ba                             	| [$0283: jr   nz,$02BA]
@@ -1305,7 +1313,7 @@ l_0753:
 	movem.w	(sp)+,d1/d2                    	| [$0763: pop  bc]
 	rts                                    	| [$0764: ret]
 l_0765:
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	0f
 	move.b	#0x01,d0                        	| [$0765: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$0767: ld   (player_death_flag_6025),a]
@@ -1662,7 +1670,7 @@ l_098c:
 	rts                                    	| [$0993: ret]
 
 
-l_09a0:
+handle_elevator_stops_09A0:
 	tst.b	elevator_not_moving_6012                       	| [$09a0: ld   a,($6012)]
 											| [$09a3: cp   $00]
 	bne.b	0f
@@ -1724,12 +1732,14 @@ l_0a09:
 	tst.b	fatal_fall_height_reached_604E	| [$0a10: ld   a,(fatal_fall_height_reached_604E)]
 	                         	| [$0a13: cp   $00]
 	jeq	l_0a21                             	| [$0a15: jr   z,$0A21]
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	l_0a21
-	* TODO where is D6 defined ? debug this
-	move.b	d6,d0                           	| [$0a17: ld   a,l]
-	cmp.b	#0x14,d0                         	| [$0a18: cp   $14]
+	
+												| [$0a17: ld   a,l]
+	cmp.l	#unknown_6014,a0                      	| [$0a18: cp   $14]
 	jne	l_0a21                             	| [$0a1a: jr   nz,$0A21]
+	* probably always true as routine called with this value in a0
+	* and never changed
 	move.b	#0x01,d0                        	| [$0a1c: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$0a1e: ld   (player_death_flag_6025),a]
 l_0a21:
@@ -2907,7 +2917,7 @@ mainloop_1242:
 	move.b	unknown_6156,d0                 	| [$126f: ld   a,(unknown_6156)]
 	                         	| [$1272: cp   $00]
 	jne	l_127b                             	| [$1274: jr   nz,$127B]
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	l_127b
 	move.b	#0x01,d0                        	| [$1276: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$1278: ld   (player_death_flag_6025),a]
@@ -2934,7 +2944,7 @@ l_127b:
 	move.b	unknown_6157,d0                 	| [$129a: ld   a,(unknown_6157)]
 	                         	| [$129d: cp   $00]
 	jne	l_12a6                             	| [$129f: jr   nz,$12A6]
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	l_12a6
 	move.b	#0x01,d0                        	| [$12a1: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$12a3: ld   (player_death_flag_6025),a]
@@ -3331,7 +3341,7 @@ l_1621:
 	jbsr	guard_collision_with_pick_2AD1    	| [$1629: call guard_collision_with_pick_2AD1]
 	cmp.b	#0x01,d0                         	| [$162c: cp   $01]
 	jne	l_1641                             	| [$162e: jr   nz,$1641]
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	0f
 	move.b	#0x01,d0                        	| [$1630: ld   a,$01]
 	move.b	d0,player_death_flag_6025       	| [$1632: ld   (player_death_flag_6025),a]
@@ -4592,7 +4602,7 @@ one_wagon_player_collision_1DB4:
 	rts                                    	| [$1ddd: ret]
 
 l_1dde:
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	bne.b	l_1dea
 	
 	move.b	(A2),d0                    	| [$1dde: ld   a,(ix+$00)]
@@ -4657,7 +4667,7 @@ l_1e3f:
 	move.b	fall_height_604D,d0             	| [$1e3f: ld   a,(fall_height_604D)]
 	cmp.b	#0x12,d0                         	| [$1e42: cp   $12]
 	jcs	l_1e64                             	| [$1e44: jr   c,$1E64]
-	tst.b	invincible_flag
+	jbsr	is_invincible
 	jne	l_1e64
 	move.b	#0x01,d0                        	| [$1e46: ld   a,$01]
 	move.b	d0,fatal_fall_height_reached_604E	| [$1e48: ld   (fatal_fall_height_reached_604E),a]
@@ -8518,11 +8528,13 @@ write_credits_and_lives_39be:
 	* we're going to be smarter than the original to avoid flickering
 	move.b	#0xE0,d0                        	| [$39d6: ld   a,$E0]
 	move.b	#0x07,d1                        	| [$39d8: ld   b,$07]
+	moveq	#0,d2
 	move.b	lives_6056,d2
 	* only erase the end
 	sub.b	d2,d1
 	move.w	#0x939F,d6                      	| [$39da: ld   hl,$939F]
-	add.b	d2,d6
+	lsl.w	#5,d2		| times 0x20 to advance cursor
+	sub.w	d2,d6
 	jbsr	draw_repeated_char_29bc                   	| [$39dd: call draw_repeated_char_29bc]
 	move.b	lives_6056,d0                   	| [$39e0: ld   a,(lives_6056)]
 	                         	| [$39e3: cp   $00]
@@ -9560,34 +9572,27 @@ l_560a:
 write_scores_and_time_560f:
 	lea	player_1_score_6176,a2                	| [$560f: ld   ix,player_1_score_6176]
 	move.w	#0x92E1,d6                      	| [$5613: ld   hl,$92E1]
-	jbsr	write_numeric_value_563C                            	| [$5616: call $563C]
+	jbsr	write_numeric_value_3_bytes_563C                            	| [$5616: call $563C]
 	lea	player_2_score_6179,a2                	| [$5619: ld   ix,player_2_score_6179]
 	move.w	#0x9061,d6                      	| [$561d: ld   hl,$9061]
-	jbsr	write_numeric_value_563C                            	| [$5620: call $563C]
+	jbsr	write_numeric_value_3_bytes_563C                            	| [$5620: call $563C]
 	lea	time_61E8,a2                   	| [$5623: ld   ix,time_61E8]
 	move.w	#0x9201,d6                      	| [$5627: ld   hl,$9201]
 	moveq	#0x01,d1                        	| [$562a: ld   b,$01]
-	jbsr	l_5641                            	| [$562c: call $5641]
+	jbsr	write_numeric_value_1_byte_5641                            	| [$562c: call $5641]
 	lea	unknown_61E9,a2                	| [$562f: ld   ix,unknown_61E9]
 	move.w	#0x91C1,d6                     	| [$5633: ld   hl,$91C1]
 	moveq	#0x01,d1                        	| [$5636: ld   b,$01]
-	jbsr	l_5641                            	| [$5638: call $5641]
+	jbsr	write_numeric_value_1_byte_5641                            	| [$5638: call $5641]
 	rts                                    	| [$563b: ret]
 
-write_numeric_value_563C:
+write_numeric_value_3_bytes_563C:
 	moveq	#3,d1                        	| [$563c: ld   b,$03]
-l_5641:
+write_numeric_value_1_byte_5641:
 	move.w	#0x0020,d3                      	| [$563e: ld   de,$0020] 32
 	subq.w	#1,d1
 0:
 	move.b	(a2)+,d0                    	| [$5641: ld   a,(ix+$00)]
-	jbsr	write_byte_value_563C                            	| [$5644: call $564D]
-											| [$5647: inc  ix]
-	add.w	d3,d6                            	| [$5649: add  hl,de]
-	dbf		d1,0b                             	| [$564a: djnz $5641]
-	rts                                    	| [$564c: ret]
-	
-write_byte_value_563C:
 	move.w	d0,-(sp)                        	| [$564d: push af]
 	and.b	#0x0F,d0                         	| [$564e: and  $0F]
 	jbsr	osd_w_videoram                         	| [$5650: ld   (hl),a]
@@ -9596,8 +9601,11 @@ write_byte_value_563C:
 	ror.b	#4,d0                            	| [$5653: rrc  a] * 4
 	and.b	#0x0F,d0                         	| [$565b: and  $0F]
 	jbsr	osd_w_videoram                         	| [$565d: ld   (hl),a]
-	rts                                    	| [$565e: ret]
-
+											| [$5647: inc  ix]
+	add.w	d3,d6                            	| [$5649: add  hl,de]
+	dbf		d1,0b                             	| [$564a: djnz $5641]
+	rts                                    	| [$564c: ret]
+	
 
 
  * in:	 d6 contains 16 bit hex value of the points to add

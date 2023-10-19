@@ -71,9 +71,6 @@ SPRITE_CODE = 2
 SPRITE_CLUT = 3
 SPRITE_SIZEOF = 4
 
-start:
-	move.l	a7,old_stack
-	bra	_user
 
 | write current PC value to some address
 .macro LOGPC	address
@@ -126,19 +123,11 @@ w\@:
 	blitz_bypass
 .endm
 
+start:
+	move.l	a7,old_stack
+	bra	_user
     
 	
-* < D0 as native game offset
-* > D0,D1 as amiga X,Y
-.macro GET_XY_FROM_OFFSET
-	move.w	d0,d1
-	subq.w	#2,d1
-	and.w	#0x3F,d1	| Y is computed
-	lsr.w	#6,d0
-	neg.w	d0
-	add.w	#32,d0	| mirror: X is computed
-.endm
-
 
 * exports
 
@@ -165,8 +154,6 @@ w\@:
 		.global osd_write_high_scores
 		.global osd_sound_start
 		.global osd_sound_stop
-		.global osd_sound_enable
-		.global osd_sound_disable
 		.global	osd_get_random
 		.global	osd_wait
 
@@ -212,6 +199,7 @@ _user:
 	move.l	#program_args_end-program_args,d0
 	lsr.l	#2,d0		| number of longs
 	
+
 	bsr	get_args_BCPL
 
 0:	
@@ -259,17 +247,14 @@ _user:
 	move.l	(A0)+,D0	| STARTLIVES/S
 	beq.b	2f
 	bsr		bcpl_string_to_int
-	tst.b	d0
+	subq.b	#1,d0
 	bmi.b	2f
 	move.l	d0,dip_switch_start_lives
 	bra.b	3f
 2:
-	move.l	#3,dip_switch_start_lives		| 3 lives default
+	move.l	#1,dip_switch_start_lives		| 3 lives default
 3:
 	
-
-	
-	bsr		store_system
 
 	lea		_custom,a5
 	lea		debug_copperlist,a0
@@ -316,6 +301,7 @@ _user:
     *move.l  _gfxbase(pc),a4
     *move.l StartList(a4),gfxbase_copperlist
 
+	
     move.l  4,a6
     jsr _LVOForbid(a6)
 
@@ -327,7 +313,7 @@ _user:
 
 .no_forbid:
 	move.l	dip_switch_difficulty(pc),d0
-	lsl.b	#5,d0
+	lsl.b	#3,d0
 	
 	move.b	dip_switch_start_lives+3(pc),d1
 	bne.b	1f
@@ -1014,10 +1000,6 @@ alloc_sprite:
 	
 
 	
-osd_sound_enable:	
-	rts
-osd_sound_disable:	
-	rts
 osd_sound_start:
 	cmp.b	#CREDIT_SND,d0
 	bcs.b	0f			| always play sampled sounds
@@ -1171,6 +1153,7 @@ store_system:
 	btst	#AFB_68010,d0
 	beq.b	1f
 	lea	get_vbr,a5
+
 	jsr		_LVOSupervisor(a6)
 	move.l	d0,system_vbr
 1:
@@ -1202,12 +1185,12 @@ restore_system:
 	move.w	#0x4000,intena(a6)	| ints off
 	lea		old_sysvectors,a0
 	move.l	system_vbr(pc),a1
-	move.l	(a0)+,(0x0064,a1)
-	move.l	(a0)+,(0x0068,a1)
-	move.l	(a0)+,(0x006c,a1)
-	move.l	(a0)+,(0x0070,a1)
-	move.l	(a0)+,(0x0074,a1)
-	move.l	(a0)+,(0x0078,a1)
+	move.l	(a0)+,(0x64,a1)
+	move.l	(a0)+,(0x68,a1)
+	move.l	(a0)+,(0x6c,a1)
+	move.l	(a0)+,(0x70,a1)
+	move.l	(a0)+,(0x74,a1)
+	move.l	(a0)+,(0x78,a1)
 
 
 	bclr	#6,0xbfee01
@@ -1249,6 +1232,10 @@ quit_to_os:
 	tst.l	_resload
 	bne.b	0f
 	bsr		restore_system
+	* set SR to 0 from here, so we return to OS with SR=0
+	* (else it kills the system pretty quickly)
+	* it works as quit_to_os is called from an interrupt
+	move.w	#0,SR
 	move.l	old_stack(pc),a7
 	bsr		save_highscores
 	moveq	#0,d0
@@ -1385,9 +1372,14 @@ osd_enable_display:
 	rts
 	
 osd_disable_display:
-	jbra	set_black_palette
-	rts
-	
+	jbsr	set_black_palette
+	jbsr	wait_tof
+wait_tof:
+0:
+	MOVE.L	0xdff004,D0
+	ANDI.L	#0x0001ff00,D0
+	BNE.S	0b
+    rts
 	
 * < D0: nonzero interrupts enabled
 osd_is_vblank_interrupt_enabled:
@@ -1445,7 +1437,7 @@ osd_w_videoram:
     .ifeq OPT_DISABLE_BG_LAYER
 	movem.l	d0-d3/d6/a0-a2,-(a7)
 	
-	
+
 	sub.w	#SCREEN_ADDRESS,d6
 	bcs.b	0f
 	cmp.w	#0x400,d6
@@ -1485,6 +1477,7 @@ osd_w_videoram:
 	cmp.b	(a1),d0
 	beq.b	0f		| already the proper value
 3:
+
 	move.b	d0,(a1)	| update logical grid
 	lea		bg_colorram,a1
 	move.b	(a1,d6.W),d1
@@ -2093,7 +2086,7 @@ program_args_end:
 read_args_string:
 	.byte	read_args_string_end-read_args_string
 	.ascii	"INVINCIBLE/S,INFLIVES/S,INFTIME/S,INFPICK/S,"
-	.ascii	"CHEATKEYS/S,HARDBAGS/S,SKILL/K/N,STARTLIVES/K/N"
+	.ascii	"CHEATKEYS/S,HARDBAGS/S,FRENCH/S,SKILL/K/N,STARTLIVES/K/N"
 read_args_string_end:
 	.align	2
 
