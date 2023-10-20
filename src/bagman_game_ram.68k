@@ -127,7 +127,7 @@
 	.global	player_1_score_6176
 	.global	player_2_score_6179
 	.global	score_ten_thousands_player_2_617B
-	.global	unknown_617D
+	.global	number_of_players_617D
 	.global	unknown_617E
 	.global	bags_coordinates_617F
 	.global	unknown_61BD
@@ -450,7 +450,7 @@ score_ten_thousands_player_2_617B:
 	ds.b	1
 current_player_617C:
 	ds.b	1
-unknown_617D:
+number_of_players_617D:
 	ds.b	1
 unknown_617E:
 	ds.b	1

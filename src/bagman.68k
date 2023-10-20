@@ -2509,6 +2509,7 @@ l_0ec9:
 	beq.b	0f
 	rts                                    	| [$0eeb: ret  nz]
 0:
+* two players mode
 	CLEAR_XC_FLAG
 	move.b	number_of_credits_6000,d0       	| [$0eec: ld   a,(number_of_credits_6000)]
 	moveq	#1,d7
@@ -2516,11 +2517,11 @@ l_0ec9:
 
 	move.b	d0,number_of_credits_6000       	| [$0ef1: ld   (number_of_credits_6000),a]
 	move.b	#0x02,d0                        	| [$0ef4: ld   a,$02]
-	move.b	d0,unknown_617D                 	| [$0ef6: ld   (unknown_617D),a]
+	move.b	d0,number_of_players_617D                 	| [$0ef6: ld   (number_of_players_617D),a]
 	jra	l_0f00                             	| [$0ef9: jr   $0F00]
 l_0efb:
 	move.b	#0x01,d0                        	| [$0efb: ld   a,$01]
-	move.b	d0,unknown_617D                 	| [$0efd: ld   (unknown_617D),a]
+	move.b	d0,number_of_players_617D                 	| [$0efd: ld   (number_of_players_617D),a]
 l_0f00:
 	clr.b	d0                               	| [$0f00: xor  a]
 	move.b	d0,current_player_617C          	| [$0f01: ld   (current_player_617C),a]
@@ -4870,14 +4871,14 @@ l_1f95:
 	clr.b	d0                               	| [$1fb1: xor  a]
 	move.b	d0,has_bag_6158                 	| [$1fb2: ld   (has_bag_6158),a]
 	move.b	d0,holds_barrow_61C7            	| [$1fb5: ld   (holds_barrow_61C7),a]
-	move.b	unknown_617D,d0                 	| [$1fb8: ld   a,(unknown_617D)]
+	move.b	number_of_players_617D,d0                 	| [$1fb8: ld   a,(number_of_players_617D)]
 	cmp.b	#0x01,d0                         	| [$1fbb: cp   $01]
 	jeq	l_1fd3                             	| [$1fbd: jr   z,$1FD3]
 	move.b	current_player_617C,d0          	| [$1fbf: ld   a,(current_player_617C)]
 	addq.b	#0x01,d0                        	| [$1fc2: add  a,$01]
 	and.b	#0x01,d0                         	| [$1fc4: and  $01]
 	move.b	d0,current_player_617C          	| [$1fc6: ld   (current_player_617C),a]
-	move.b	unknown_617D,d0                 	| [$1fc9: ld   a,(unknown_617D)]
+	move.b	number_of_players_617D,d0                 	| [$1fc9: ld   a,(number_of_players_617D)]
 	move.b	d0,d1                           	| [$1fcc: ld   b,a]
 	cmp.b	#0x02,d0                         	| [$1fcd: cp   $02]
 	bne.b	0f
@@ -4893,7 +4894,7 @@ l_1fd3:
 	addq.b	#0x01,d0                        	| [$1fdd: add  a,$01]
 	and.b	#0x01,d0                         	| [$1fdf: and  $01]
 	move.b	d0,current_player_617C          	| [$1fe1: ld   (current_player_617C),a]
-	move.b	unknown_617D,d0                 	| [$1fe4: ld   a,(unknown_617D)]
+	move.b	number_of_players_617D,d0                 	| [$1fe4: ld   a,(number_of_players_617D)]
 	move.b	d0,d1                           	| [$1fe7: ld   b,a]
 	cmp.b	#0x02,d0                         	| [$1fe8: cp   $02]
 	bne.b	0f
@@ -6806,7 +6807,7 @@ l_2d20:
 	lea		high_score_table_6217,a0
 	jbsr	osd_write_high_scores
 l_2d71:
-	move.b	unknown_617D,d0                 	| [$2d71: ld   a,(unknown_617D)]
+	move.b	number_of_players_617D,d0                 	| [$2d71: ld   a,(number_of_players_617D)]
 	cmp.b	#0x01,d0                         	| [$2d74: cp   $01]
 	jeq	l_2dd3                             	| [$2d76: jr   z,$2DD3]
 	jbsr	osd_read_dipswitches              	| [$2d78: ld   a,(dip_switch_B000)]
@@ -8115,7 +8116,7 @@ compare_d3_d6_20_offset_3585:
 	                       	| [$358f: pop  hl]
 	rts                                    	| [$3590: ret]
 l_3591:
-	move.b	unknown_617D,d0                 	| [$3591: ld   a,(unknown_617D)]
+	move.b	number_of_players_617D,d0                 	| [$3591: ld   a,(number_of_players_617D)]
 	cmp.b	#0x01,d0                         	| [$3594: cp   $01]
 	bne.b	0f
 	rts                                    	| [$3596: ret  z]
@@ -8576,11 +8577,11 @@ read_player_controls_39fd:
 	move.b	d0,player_input_6026            	| [$3a1c: ld   (player_input_6026),a]
 	move.b	coin_start_inputs_6051,coin_start_prev_inputs_6052
 											| [$3a1f: ld   a,(coin_start_inputs_6051)]
-	                	| [$3a22: ld   (coin_start_prev_inputs_6052),a]
-	move.b	#0x0F,d0                        	| [$3a25: ld   a,$0F]
-*out  ($08),a
-*in   a,($0C)
-	not.b	d0                               	| [$3a2b: cpl]
+	* get extra control bits                	| [$3a22: ld   (coin_start_prev_inputs_6052),a]
+	lsr.w	#8,d0                        	| [$3a25: ld   a,$0F]
+												| out  ($08),a
+												| in   a,($0C)
+	not.b	d0                              	| [$3a2b: cpl]
 	jbsr	restrict_controls_if_not_playing_3a3f                            	| [$3a2c: call $3A3F]
 	move.b	d0,coin_start_inputs_6051                 	| [$3a2f: ld   (coin_start_inputs_6051),a]	
 	jbsr	osd_read_dipswitches              	| [$3a32: ld   a,(dip_switch_B000)]

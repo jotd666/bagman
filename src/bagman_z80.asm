@@ -1899,15 +1899,17 @@ start_a_game_0ebc:
 0EE7: E6 04         and  $04
 0EE9: FE 04         cp   $04
 0EEB: C0            ret  nz
+; two players mode
 0EEC: 3A 00 60      ld   a,(number_of_credits_6000)
 0EEF: 3D            dec  a
 0EF0: 27            daa
 0EF1: 32 00 60      ld   (number_of_credits_6000),a
 0EF4: 3E 02         ld   a,$02
-0EF6: 32 7D 61      ld   (unknown_617D),a
+0EF6: 32 7D 61      ld   (number_of_players_617D),a
 0EF9: 18 05         jr   $0F00
+; one player mode
 0EFB: 3E 01         ld   a,$01
-0EFD: 32 7D 61      ld   (unknown_617D),a
+0EFD: 32 7D 61      ld   (number_of_players_617D),a
 0F00: AF            xor  a
 0F01: 32 7C 61      ld   (current_player_617C),a
 	;; remove 1 credit
@@ -3918,14 +3920,14 @@ player_dies_1f50:
 1FB1: AF            xor  a
 1FB2: 32 58 61      ld   (has_bag_6158),a
 1FB5: 32 C7 61      ld   (holds_barrow_61C7),a
-1FB8: 3A 7D 61      ld   a,(unknown_617D)
+1FB8: 3A 7D 61      ld   a,(number_of_players_617D)
 1FBB: FE 01         cp   $01
 1FBD: 28 14         jr   z,$1FD3
 1FBF: 3A 7C 61      ld   a,(current_player_617C)
 1FC2: C6 01         add  a,$01
 1FC4: E6 01         and  $01
 1FC6: 32 7C 61      ld   (current_player_617C),a
-1FC9: 3A 7D 61      ld   a,(unknown_617D)
+1FC9: 3A 7D 61      ld   a,(number_of_players_617D)
 1FCC: 47            ld   b,a
 1FCD: FE 02         cp   $02
 1FCF: 78            ld   a,b
@@ -3937,7 +3939,7 @@ player_dies_1f50:
 1FDD: C6 01         add  a,$01
 1FDF: E6 01         and  $01
 1FE1: 32 7C 61      ld   (current_player_617C),a
-1FE4: 3A 7D 61      ld   a,(unknown_617D)
+1FE4: 3A 7D 61      ld   a,(number_of_players_617D)
 1FE7: 47            ld   b,a
 1FE8: FE 02         cp   $02
 1FEA: 78            ld   a,b
@@ -5571,7 +5573,7 @@ check_if_high_score_beaten_2d03:
 2D68: 32 79 62      ld   (unknown_6279),a
 2D6B: CD 58 2E      call enter_highscore_name_2e58
 2D6E: CD 8D 2F      call draw_highscore_names_and_scores_2f8d
-2D71: 3A 7D 61      ld   a,(unknown_617D)
+2D71: 3A 7D 61      ld   a,(number_of_players_617D)
 2D74: FE 01         cp   $01
 2D76: 28 5B         jr   z,$2DD3
 2D78: 3A 00 B0      ld   a,(dip_switch_B000)
@@ -6642,7 +6644,7 @@ is_background_tile_for_object_drop_3573:
 358E: C1            pop  bc
 358F: E1            pop  hl
 3590: C9            ret
-3591: 3A 7D 61      ld   a,(unknown_617D)
+3591: 3A 7D 61      ld   a,(number_of_players_617D)
 3594: FE 01         cp   $01
 3596: C8            ret  z
 3597: 3E 01         ld   a,$01
