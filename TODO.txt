@@ -1,22 +1,10 @@
 - first A500 boot: locks up: investigate (ok when resetting!!)
-- remaster music
-- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
-  => screen 2: elevator clut forced at white+orange,
-     generate 2 copies of elevator and change CLUT in screen 2 so it still matches player clut
-	 but uses third color (red)
-- 
+- remaster music: in progress
 
 - start 2P game??
 - joystick/fire to start game/insert coin not working
 
-
-
 - intermission: music doesn't play / sfx are playing in demo when guard is chasing player
 - invincible flag in demo game should be made inefficient: doesn't work: game_locked_6053 during demo???
 
-
-maybe...:
-- debug 2640 with values not 10 or E0 (not at start)
-- TODO where is D6 defined ? debug this      	| [$0a17: ld   a,l]
-- try to cookie cut bags & pickaxes, avoid to destroy background
-
+- sometimes carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)

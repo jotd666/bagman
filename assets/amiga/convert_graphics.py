@@ -278,6 +278,7 @@ for k,data in used_sprites.items():
 
 
     for clut_index in data["clut"]:
+
         spritepal = rgb_cluts[clut_index]
         d = iter(sprdat)
         img = Image.new('RGB',(16,16))
@@ -304,11 +305,23 @@ for k,data in used_sprites.items():
                 data["right"] = bitplanelib.palette_image2sprite(ImageOps.mirror(img),None,spritepal)
             data["left"] = left
 
+        if (k,clut_index) == (0x33,4):
+            left_2 = bytearray(left)
+            # change color of the floor to use 3rd color
+            # red elevator: we should generate another image
+            left_2[0x3C:0x44] = bytearray([0,0,255,255,0,0,255,255])
+
+            red_elevator = {"left":bytes(left_2),"name":"red_elevator","mirror":False}
 
         if dump_sprites:
             scaled = ImageOps.scale(img,5,0)
             scaled.save(os.path.join(sprites_dump_dir,outname))
 
+# insert another sprite type so player clut matches elevator clut at level 2
+# (white+red instead of white+orange) which allows to use player+elevator on the same sprite
+# couple on each level (sprites share their palette by pairs on ECS)
+
+used_sprites[10] = red_elevator
 
 with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
     f.write("\t.global\tcharacter_table\n")
