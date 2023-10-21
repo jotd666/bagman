@@ -1,10 +1,10 @@
 - first A500 boot: locks up: investigate (ok when resetting!!)
 - remaster music: in progress
+- start 2P game: issue with "PLAYER x" screen tiles error
 
-- start 2P game: issue with "PLAYER 1" screen tiles error?
-- joystick/fire to start game/insert coin not working
 
 - intermission: music doesn't play / sfx are playing in demo when guard is chasing player
 - invincible flag in demo game should be made inefficient: doesn't work: game_locked_6053 during demo???
+- hard bag layout appeared once in 2P mode!
 
 - sometimes (very rare) carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)

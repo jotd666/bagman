@@ -1921,7 +1921,7 @@ start_a_game_0ebc:
 0F0C: 3E 0A         ld   a,$0A
 0F0E: 32 7D 62      ld   (unknown_627D),a
 0F11: 32 90 62      ld   (unknown_6290),a
-0F14: CD 91 35      call $3591
+0F14: CD 91 35      call current_player_start_screen_3591
 0F17: 3E 01         ld   a,$01
 0F19: 32 10 62      ld   (must_play_music_6210),a
 0F1C: CD 94 1E      call init_new_game_1E94
@@ -3949,7 +3949,7 @@ player_dies_1f50:
 1FF3: 28 67         jr   z,$205C
 1FF5: 3D            dec  a
 1FF6: 32 56 60      ld   (lives_6056),a
-1FF9: CD 91 35      call $3591
+1FF9: CD 91 35      call current_player_start_screen_3591
 1FFC: AF            xor  a
 1FFD: 32 08 60      ld   (unknown_6008),a
 2000: 32 4E 60      ld   (fatal_fall_height_reached_604E),a
@@ -6644,6 +6644,8 @@ is_background_tile_for_object_drop_3573:
 358E: C1            pop  bc
 358F: E1            pop  hl
 3590: C9            ret
+
+current_player_start_screen_3591:
 3591: 3A 7D 61      ld   a,(number_of_players_617D)
 3594: FE 01         cp   $01
 3596: C8            ret  z

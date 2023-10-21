@@ -318,7 +318,7 @@ game_tick_0038:
 	
 	jbsr	l_3c47                            	| [$0046: call $3C47]
 										| [$0049: xor  a]
-    jbsr	osd_disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
+        jbsr	osd_disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
 
 	jbsr	l_3123                            	| [$004e: call $3123]
 	jbsr	l_38fa                            	| [$0051: call $38FA]
@@ -1453,6 +1453,7 @@ l_0818:
 	move.b	d0,player_controls_frozen_6028  	| [$081c: ld   (player_controls_frozen_6028),a]
 	move.b	d0,player_in_wagon_flag_6029    	| [$081f: ld   (player_in_wagon_flag_6029),a]
 	move.b	d0,unknown_602B                 	| [$0822: ld   (unknown_602B),a]
+	move.b	d0,pickup_flag_6160    | backport from sbagman!!
 	move.b	#0x19,d0                        	| [$0825: ld   a,$19]
 	move.b	d0,player_struct_6580           	| [$0827: ld   (player_struct_6580),a]
 	move.b	#0x01,d0                        	| [$082a: ld   a,$01]
@@ -1734,7 +1735,8 @@ l_0a09:
 	jeq	l_0a21                             	| [$0a15: jr   z,$0A21]
 	jbsr	is_invincible
 	bne.b	l_0a21
-	
+* check if hl is still pointing on unknown_6014, if it does (which seems
+* to be always true), kill player
 												| [$0a17: ld   a,l]
 	cmp.l	#unknown_6014,a0                      	| [$0a18: cp   $14]
 	jne	l_0a21                             	| [$0a1a: jr   nz,$0A21]
@@ -1915,7 +1917,7 @@ l_0b2e:
 0:
 	move.b	#0x01,d0                        	| [$0b53: ld   a,$01]
 	move.b	d0,unknown_61F5                 	| [$0b55: ld   (unknown_61F5),a]
-	** TODO sound play
+	** TODO sound play which sound????
 	*lea		game_mem+0x3F45,a0                      	| [$0b58: ld   hl,$3F45]
 	*jbsr	start_a_sound                            	| [$0b5b: call $2018]
 	rts                                    	| [$0b5e: ret]
@@ -2143,8 +2145,8 @@ try_left_0c96:
 	                         	| [$0cc5: cp   $00]
 	jne	l_0ccf                             	| [$0cc7: jr   nz,$0CCF]
 	* player walk (left) sound
-*	move.w	#PLAYER_WALK_SND,d0
-*	jbsr	start_a_sound
+	move.w	#PLAYER_WALK_SND,d0
+	jbsr	start_a_sound
 								| [$0cc9: ld   hl,$3F33]
 	                           	| [$0ccc: call $2018]
 l_0ccf:
@@ -2434,7 +2436,7 @@ l_0e60:
 	move.w	#PLAYER_CLIMB_SND,d0                      	| [$0e67: ld   hl,$3F27]
 	jbsr	start_a_sound                            	| [$0e6a: call $2018]
 l_0e6d:
-	move.b	has_bag_6158,d0                 	| [$0e6d: ld   a,(has_bag_6158)]
+	tst.b	has_bag_6158                 	| [$0e6d: ld   a,(has_bag_6158)]
 	                         	| [$0e70: cp   $00]
 	bne.b	0f
 	rts                                    	| [$0e72: ret  z]
@@ -2536,7 +2538,7 @@ l_0f00:
 	move.b	#0x0A,d0                        	| [$0f0c: ld   a,$0A]
 	move.b	d0,unknown_627D                 	| [$0f0e: ld   (unknown_627D),a]
 	move.b	d0,unknown_6290                 	| [$0f11: ld   (unknown_6290),a]
-	jbsr	l_3591                            	| [$0f14: call $3591]
+	jbsr	current_player_start_screen_3591                            	| [$0f14: call $3591]
 	move.b	#0x01,d0                        	| [$0f17: ld   a,$01]
 	move.b	d0,must_play_music_6210                 	| [$0f19: ld   (must_play_music_6210),a]
 	jbsr	init_new_game_1E94                 	| [$0f1c: call init_new_game_1E94]
@@ -2651,7 +2653,7 @@ l_103d:
 	move.b	d0,object_held_struct_659C                 	| [$1047: ld   (object_held_struct_659C),a]
 	rts                                    	| [$104a: ret]
 l_104b:
-	move.b	has_pick_61CF,d0                	| [$104b: ld   a,(has_pick_61CF)]
+	tst.b	has_pick_61CF                  	| [$104b: ld   a,(has_pick_61CF)]
 	                         	| [$104e: cp   $00]
 	bne.b	0f
 	rts                                    	| [$1050: ret  z]
@@ -2776,7 +2778,7 @@ handle_pick_hold_timer_113c:
 	bne.b	0f
 	rts                                    	| [$1141: ret  z]
 0:
-	move.w	pickaxe_timer_duration_61E0,d5             	| [$1142: ld   hl,(pickaxe_timer_duration_61E0)]  FUCK
+	move.w	pickaxe_timer_duration_61E0,d5             	| [$1142: ld   hl,(pickaxe_timer_duration_61E0)]
 												| [$1145: ld   a,l]
 												| [$1146: cp   $00]
 												| [$1148: jr   nz,$1150]
@@ -2861,7 +2863,7 @@ guard_2_walk_movement_119B:
 * global init
 l_1200:
 	clr.b	d0                               	| [$1200: xor  a]
-	jbsr	osd_disable_vblank_interrupt
+	jbsr	osd_disable_display
 	addq.b	#1,d0                           	| [$1205: inc  a]
 	jra	l_2480                             	| [$1206: jp   $2480]
 
@@ -2876,7 +2878,7 @@ l_121c:
  * reset guards and player
 l_122b:
 
-	jbsr	osd_disable_vblank_interrupt | jbsr	osd_disable_vblank_interrupt
+	jbsr	osd_disable_vblank_interrupt 
 									| [$122c: ld   a,(io_read_shit_B800)]
 	            	| [$122c: ld   a,(io_read_shit_B800)]
 	jbsr	init_new_game_1E94                 	| [$122f: call init_new_game_1E94]
@@ -4910,7 +4912,7 @@ l_1ff5:
 	subq.b	#1,d0                           	| [$1ff5: dec  a]
 	move.b	d0,lives_6056                   	| [$1ff6: ld   (lives_6056),a]
 0:
-	jbsr	l_3591                            	| [$1ff9: call $3591]
+	jbsr	current_player_start_screen_3591                            	| [$1ff9: call $3591]
 	clr.b	d0                               	| [$1ffc: xor  a]
 	move.b	d0,unknown_6008                 	| [$1ffd: ld   (unknown_6008),a]
 	move.b	d0,fatal_fall_height_reached_604E	| [$2000: ld   (fatal_fall_height_reached_604E),a]
@@ -6312,6 +6314,7 @@ l_2a1f:
 l_2a2c:
 	jbsr	osd_disable_display				| [$2a2c: ld   a,$00]
 											| [$2a2e: ld   ($A003),a]
+	* clear screen
 	move.b	#0x04,d1                        	| [$2a31: ld   b,$04]
 	move.b	#0xE0,d0                        	| [$2a33: ld   a,$E0]
 	move.w	#0x9000,d6                      	| [$2a35: ld   hl,$9000]
@@ -8115,12 +8118,23 @@ compare_d3_d6_20_offset_3585:
 	movem.w	(sp)+,d6                    	| [$358e: pop  bc]
 	                       	| [$358f: pop  hl]
 	rts                                    	| [$3590: ret]
-l_3591:
+	
+current_player_start_screen_3591:
 	move.b	number_of_players_617D,d0                 	| [$3591: ld   a,(number_of_players_617D)]
 	cmp.b	#0x01,d0                         	| [$3594: cp   $01]
 	bne.b	0f
+	* one player: no player start screen
 	rts                                    	| [$3596: ret  z]
 0:
+	* added to clear sprites 
+	lea	barrow_sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,barrow_sprite_shadow_ram_65A0]
+	moveq	#7,d0
+1:
+	clr.l	(a0)+
+	dbf		d0,1b
+	
+	jbsr	osd_update_sprites						| [$00a4: ld   bc,$0020] 32
+
 	move.b	#0x01,d0                        	| [$3597: ld   a,$01]
 	move.b	d0,game_locked_6053                 	| [$3599: ld   (game_locked_6053),a]
 	move.b	d0,unknown_628C                 	| [$359c: ld   (unknown_628C),a]
@@ -8150,7 +8164,7 @@ l_3591:
 	move.w	#0x9840,d6                      	| [$35d2: ld   hl,$9840]
 	jbsr	write_attribute_on_line_5605      	| [$35d5: call write_attribute_on_line_5605]
 	move.w	#0x9293,d6                      	| [$35d8: ld   hl,$9293]
-	lea	game_mem+3638,a1                      	| [$35db: ld   de,$3638]
+	lea	game_mem+0x3638,a1                      	| [$35db: ld   de,$3638]
 	move.b	#0x1F,d0                        	| [$35de: ld   a,$1F]
 	exg	d0,d7                              	| [$35e0: ex   af,af']
 	jbsr	write_text_55f0                   	| [$35e1: call write_text_55f0]
@@ -8188,6 +8202,10 @@ l_3591:
 	jbsr	osd_w_colorram
 	move.w	#0x981F,d6                       	| [$361c: ld   ($981F),a]
 	jbsr	osd_w_colorram
+	
+	
+	move.w	#120,d0
+	jbsr	osd_wait
 	                        	| [$361f: ld   b,$06]
 							
 											| [$3621: ld   hl,$0000] 0

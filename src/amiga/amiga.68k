@@ -669,11 +669,28 @@ osd_get_sync_period:
 	
 
 * < D0: number of 1/60Hz ticks
+* can work with interrupts enabled or disabled
 osd_wait:
 	move.w	d0,delay_timer
+	jbsr	osd_is_vblank_interrupt_enabled
+	tst.w	d0
+	jne		2f
+	* interrupts are disabled: timer isn't going to change
+	* wait using vertical blank interrupt request (we don't need it!)
+	
 0:
-	tst.w	delay_timer
+	move.w	#0x20,_custom+intreq
+1:
+	move.w	_custom+intreqr,d0
+	btst	#5,d0
+	beq.b	1b
+	subq.w	#1,delay_timer
 	bne.b	0b
+	rts
+	
+2:
+	tst.w	delay_timer
+	bne.b	2b
 	rts
 	
 *osd_calibrate_display:
@@ -1390,7 +1407,7 @@ wait_tof:
 * < D0: nonzero interrupts enabled
 osd_is_vblank_interrupt_enabled:
 	move.w	_custom+intenar,d0
-	and.w	#0x8000,d0
+	and.w	#0x0030,d0
 	rts
 	
 * 60Hz VBLANK interrupt (also keyboard)
@@ -1869,10 +1886,13 @@ osd_read_inputs:
 	beq.b	0f
 	bclr	#7,d0
 0:
-* gameplay_allowed_6054?
-	tst.b	check_scenery_disabled_61ED
+	* test all those flags to see if normal controls
+	* could be used to insert coins/start game
+	tst.b	gameplay_allowed_6054
+	beq.b	1f			| demo mode: enable
+	tst.b	check_scenery_disabled_61ED		| intro: enable
 	bne.b	1f
-	tst.b	player_controls_blocked_61F2
+	tst.b	game_locked_6053		| start screen: enable
 	beq.b	3f
 1:
 	move.l	d2,-(a7)
@@ -1887,11 +1907,11 @@ osd_read_inputs:
 	beq.b	0f
 	bclr	#2,d0
 0:
-*	* game not in play, accept start 2P game with "down"
-*	btst	#JPB_BTN_DOWN,d1
-*	beq.b	0f
-*	bclr	#6+16,d0
-*0:
+	* game not in play, accept start 2P game with "down"
+	btst	#JPB_BTN_DOWN,d1
+	beq.b	0f
+	bclr	#10,d0
+0:
 	btst	#JPB_BTN_RED,d1
 	beq.b	0f
 	btst	#JPB_BTN_RED,d2

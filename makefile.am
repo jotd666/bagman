@@ -43,7 +43,7 @@ $(AMIGASRC)/graphics.68k: $(ASSETS)/convert_graphics.py $(ASSETS)/../bagman_gfx.
 	cmd /c $(ASSETS)\convert_graphics.py
 
 
-$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME).mod
+$(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNAME)500_conv.mod
 	cmd /c $(ASSETS)\convert_sounds.py
 	
 $(MAIN): $(OBJS)
