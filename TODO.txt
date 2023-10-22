@@ -1,6 +1,5 @@
 - first A500 boot: locks up: investigate (ok when resetting!!)
   vblank works, but doesn't call player walks right...
-- intermission: music (second tune) doesn't play
 
 minor:
 

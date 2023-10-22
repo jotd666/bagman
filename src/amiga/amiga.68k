@@ -600,6 +600,7 @@ _vblank:
 	bne.b	13f
 	bsr		osd_sound_stop
 13:
+	
 	* ack vbl twice (040/pistorm bug)
 	move.w	#0x20,(intreq,a5)
 	move.w	#0x20,(intreq,a5)	

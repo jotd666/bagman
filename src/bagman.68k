@@ -8745,12 +8745,15 @@ l_3b65:
 	                           	| [$3b66: inc  hl]
 	subq.b	#1,d1                           	| [...]
 	jne	l_3b65                             	| [$3b67: djnz $3B65]
-	lea		game_mem+0x5200,a0                      	| [$3b69: ld   hl,$5200]
-	move.l	a0,ay_sound_pointer_6140                 	| [$3b6c: ld   (ay_sound_pointer_6140),hl]
-	clr.b	d0                               	| [$3b6f: xor  a]
-	move.b	d0,ay_sound_start_6142                 	| [$3b70: ld   (ay_sound_start_6142),a]
-	move.b	#0x01,d0                        	| [$3b73: ld   a,$01]
-	move.b	d0,is_intermission_6274         	| [$3b75: ld   (is_intermission_6274),a]
+	
+	jbsr	play_second_tune
+	
+												| [$3b69: ld   hl,$5200]
+												| [$3b6c: ld   (ay_sound_pointer_6140),hl]
+										| [$3b6f: xor  a]
+												| [$3b70: ld   (ay_sound_start_6142),a]
+											| [$3b73: ld   a,$01]
+	move.b	#1,is_intermission_6274         	| [$3b75: ld   (is_intermission_6274),a]
 	jbsr	play_intro_3700                   	| [$3b78: call play_intro_3700]
 	                               	| [$3b7b: xor  a]
 	clr.b	is_intermission_6274         	| [$3b7c: ld   (is_intermission_6274),a]
