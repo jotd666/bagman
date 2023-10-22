@@ -657,16 +657,6 @@ osd_break:
 	
 
 	
-* speed regulation for game mainloop, the bigger, the faster
-* Slightly depends on PAL/NTSC.
-* tried to calibrated it the best possible by recording
-* the demo game on MAME and on this version and comparing
-* them. 12 makes a slightly slower game, 13 should be all right
-
-osd_get_sync_period:
-	move.w	#13,d0
-	rts
-	
 
 * < D0: number of 1/60Hz ticks
 * can work with interrupts enabled or disabled
@@ -679,6 +669,7 @@ osd_wait:
 	* wait using vertical blank interrupt request (we don't need it!)
 	
 0:
+	move.w	#0x20,_custom+intreq
 	move.w	#0x20,_custom+intreq
 1:
 	move.w	_custom+intreqr,d0
@@ -1586,6 +1577,7 @@ update_bg_tile:
 	btst	#4,D1
 	beq.b	0f
 	add.w	#0x200,d0
+	
 0:
 	* is it upper part of bank ?
 	btst	#5,D1
@@ -1595,6 +1587,14 @@ update_bg_tile:
 	* color tile
 	and.w	#0xF,d1
 	
+	* special case parasite brown N when switching screens
+	cmp.w	#0x2E0,d0
+	bne.b	0f
+	cmp.b	#3,d1
+	beq.b	0f
+	* "N" of "PRESENTS", but not purple: skip
+	rts
+0:
 	cmp.w	#0x3C0,d6
 	bcc.b	0f
 	cmp.w	#0x40,d6

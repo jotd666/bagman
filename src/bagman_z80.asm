@@ -196,7 +196,7 @@
 00FF: FE 01         cp   $01
 0101: CA 80 03      jp   z,$0380
 0104: CD 72 04      call handle_demo_mode_0472
-0107: 3A 51 61      ld   a,(unknown_6151)
+0107: 3A 51 61      ld   a,(game_locked_6151)
 010A: FE 01         cp   $01
 010C: CA 80 03      jp   z,$0380
 010F: CD 9A 5C      call $5C9A
@@ -515,7 +515,7 @@
 0436: C9            ret
 
 handle_demo_mode_0472:
-0472: FD 21 51 61   ld   iy,unknown_6151
+0472: FD 21 51 61   ld   iy,game_locked_6151
 0476: DD 21 80 65   ld   ix,player_struct_6580
 047A: 2A 54 61      ld   hl,(unknown_6154)
 047D: FD 7E 00      ld   a,(iy+$00)
@@ -6677,12 +6677,17 @@ current_player_start_screen_3591:
 35DB: 11 38 36      ld   de,$3638
 35DE: 3E 1F         ld   a,$1F
 35E0: 08            ex   af,af'
+; write upper part of orange wireframe 
+; that goes around "player" text
 35E1: CD F0 55      call write_text_55f0
 35E4: 21 95 92      ld   hl,$9295
 35E7: 11 43 36      ld   de,$3643
 35EA: 3E 1F         ld   a,$1F
 35EC: 08            ex   af,af'
+; write lower part of orange wireframe 
+; that goes around "player" text
 35ED: CD F0 55      call write_text_55f0
+; the frame lateral sides
 35F0: 3E 8E         ld   a,$8E
 35F2: 32 74 91      ld   ($9174),a
 35F5: 3E 8B         ld   a,$8B
@@ -6700,6 +6705,7 @@ current_player_start_screen_3591:
 3616: 32 17 98      ld   ($9817),a
 3619: 32 1B 98      ld   ($981B),a
 361C: 32 1F 98      ld   ($981F),a
+; long delay loop
 361F: 06 06         ld   b,$06
 3621: 21 00 00      ld   hl,$0000
 3624: 2B            dec  hl

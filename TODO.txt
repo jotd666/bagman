@@ -1,10 +1,14 @@
 - first A500 boot: locks up: investigate (ok when resetting!!)
-- remaster music: in progress
-- start 2P game: issue with "PLAYER x" screen tiles error
+  vblank works, but doesn't call player walks right...
+- intermission: music (second tune) doesn't play
 
+minor:
 
-- intermission: music doesn't play / sfx are playing in demo when guard is chasing player
-- invincible flag in demo game should be made inefficient: doesn't work: game_locked_6053 during demo???
+- sprite allocation issue: sometimes (very rare) player/carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)
+
+probable original game bugs, won't be fixed:
+
+- in demo, guard appears at screen 2, falls and immediately disappears: this is also
+  happening in real arcade game demo! So original game bug, fortunately not occurring
+  while playing!
 - hard bag layout appeared once in 2P mode!
-
-- sometimes (very rare) carried yellow bag becomes blue (sprite alloc with too many sprites displayed with wagons)

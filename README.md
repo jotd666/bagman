@@ -37,14 +37,18 @@ History:
 #### CREDITS:
 
 - Jean-Francois Fabre (aka jotd): Z80 reverse engineering, Z80 to 68k transcode, Amiga code and assets
-- J.M.D: remade amiga tunes
+- Andrzej Dobrowolski (aka no9): music/sfx conversion
+- J.M.D: remade amiga tunes (first version)
 - phx: ptplayer sound/music replay Amiga code
-- Valadon Automation: original game :)
+- Valadon Automation / Jacques Brisse: original game :)
 
 #### SPECIAL THANKS:
 
 - Toni Wilen for WinUAE
-
+- Mark Mc Dougall for converting me to the global idea of transcoding the things,
+  the C graphical rip format he created and that I'm using from now, and also
+  the nice e-mail conversations that we have.
+  
 #### CONTROLS (Amiga: joystick required):
 
 - fire/5 key: insert coin (from menu)

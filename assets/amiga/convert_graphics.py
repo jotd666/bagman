@@ -87,6 +87,10 @@ used_cluts[0x254] = [0x8]
 
 used_cluts.update({k:[0x4] for k in range(0x255,0x25D)})
 
+# wireframe for highscore/player start screen: red & orange
+
+used_cluts.update({k+0x200:[0x2,0xF] for k in range(0x8A,0x90+1)})
+
 dump_tiles = True
 dump_sprites = True
 if dump_tiles:
@@ -107,7 +111,8 @@ opposite = {"left":"right","right":"left"}
 block_dict = {}
 
 # hackish convert of c gfx table to dict of lists
-# (Thanks to Mark Mc Dougall for providing the ripped gfx as C tables)
+# (reusing Mark Mc Dougall ripped gfx as C tables format, now I'm producing it
+# with MAME tile saving edition + custom python scripts)
 with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
     block = []
     block_name = ""
@@ -138,15 +143,11 @@ with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
 palette = block_dict["palette"]["data"]
 
 
-# TODO: reorder so sprites can use upper palette 16-31
 
 palette = [tuple(x) for x in palette]
 
 
 
-
-# for some reason, colors 1 and 2 of the cluts must be swapped to match
-# the palette! invert the colors back for perfect coloring of sprites & tiles!!
 bg_cluts = block_dict["clut"]["data"]
 
 cluts = bg_cluts

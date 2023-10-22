@@ -131,10 +131,24 @@
 	roxl.b	#1,d7
 	.endm
 
-* walk/climb/pick sounds are played continuously
-* if a sound is played too close to the same one,
-* don't play it
+* walk/climb/pick sounds are played continuously (probably how the sound
+* hardware works, it serializes the requests, but on a sample player it doesn't
+* work that way and the next sample plays immediately)
+*
+* now, if a sound is played too close to the same one,
+* don't play it. The frequency I've chosen (empiric) seems to work well.
+
 start_a_sound:
+	cmp.w	#CREDIT_SND,d0
+	bne.b	0f
+	* credit sound can be interrupted all right and played anytime
+	jbra		osd_sound_start
+0:
+	tst.b	check_scenery_disabled_61ED
+	beq.b	0f
+	rts
+0:
+	
 	movem.l	a0/d1,-(a7)
 	lea		last_played_sound_timer_table,a0
 	
@@ -176,11 +190,12 @@ play_tune:
 	jra		osd_sound_start
 	
 is_invincible:
-	*tst.b	game_locked_6053
-	*bne.b	0f
+	tst.b	gameplay_allowed_6054
+	beq.b	0f
 	tst.b	invincible_flag
 	rts
 0:
+	* demo mode: no invincible_flag
 	cmp.b	d0,d0
 	rts
 	
@@ -412,7 +427,7 @@ l_00fc:
 	cmp.b	#0x01,d0                         	| [$00ff: cp   $01]
 	jeq	l_0380                             	| [$0101: jp   z,$0380]
 	jbsr	handle_demo_mode_0472                            	| [$0104: call $0472]
-	move.b	unknown_6151,d0                 	| [$0107: ld   a,(unknown_6151)]
+	move.b	game_locked_6151,d0                 	| [$0107: ld   a,(game_locked_6151)]
 	cmp.b	#0x01,d0                         	| [$010a: cp   $01]
 	jeq	l_0380                             	| [$010c: jp   z,$0380]
 	jbsr	l_5c9a                            	| [$010f: call $5C9A]
@@ -785,7 +800,7 @@ l_042c:
 	rts                                    	| [$0436: ret]
 
 handle_demo_mode_0472:
-	lea	unknown_6151,a3                	| [$0472: ld   iy,unknown_6151]
+	lea	game_locked_6151,a3                	| [$0472: ld   iy,game_locked_6151]
 	lea	player_struct_6580,a2          	| [$0476: ld   ix,player_struct_6580]
 	move.w	unknown_6154,d6             	| [$047a: ld   hl,(unknown_6154)]
 	tst.b	(a3)                    	| [$047d: ld   a,(iy+$00)]
@@ -4837,7 +4852,7 @@ player_dies_1f50:
 	lea	player_struct_6580,a2          	| [$1f6b: ld   ix,player_struct_6580]
 	jbsr	l_2605                            	| [$1f6f: call $2605]
 	move.b	#0x01,d0                        	| [$1f72: ld   a,$01]
-	move.b	d0,unknown_6151                 	| [$1f74: ld   (unknown_6151),a]
+	move.b	d0,game_locked_6151                 	| [$1f74: ld   (game_locked_6151),a]
 								| [$1f77: ld   (interrupt_control_A000),a]
 	move.w	#0x045E,unknown_6154                      	| [$1f7a: ld   hl,$045E]
 	                 	| [$1f7d: ld   (unknown_6154),hl]
@@ -4935,7 +4950,7 @@ start_new_life_2026:
 	clr.b	d0                               	| [$2031: xor  a]
 * set everything player-related to 0
 	clr.b	wait_flag_6152                 	| [$2032: ld   (wait_flag_6152),a]
-	clr.b	unknown_6151                 	| [$2035: ld   (unknown_6151),a]
+	clr.b	game_locked_6151                 	| [$2035: ld   (game_locked_6151),a]
 	clr.b	player_death_flag_6025       	| [$2038: ld   (player_death_flag_6025),a]
 	clr.b	player_controls_frozen_6028  	| [$203b: ld   (player_controls_frozen_6028),a]
 	clr.b	fatal_fall_height_reached_604E	| [$203e: ld   (fatal_fall_height_reached_604E),a]
@@ -8108,7 +8123,7 @@ is_background_tile_for_object_drop_3573:
 compare_d3_d6_20_offset_3585:
 
 	                        	| [$3585: push hl]
-	movem.	d6,-(sp)                    	| [$3586: push bc]
+	movem.w	d6,-(sp)                    	| [$3586: push bc]
 												| [$3587: ld   bc,$FFE0] 65504
 												| [$3587: ld   bc,$FFE0] 65504
 	sub.w	#0x20,d6                            	| [$358a: add  hl,bc]
@@ -8126,7 +8141,7 @@ current_player_start_screen_3591:
 	* one player: no player start screen
 	rts                                    	| [$3596: ret  z]
 0:
-	* added to clear sprites 
+	* jotd: added to clear sprites 
 	lea	barrow_sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,barrow_sprite_shadow_ram_65A0]
 	moveq	#7,d0
 1:
@@ -8167,12 +8182,17 @@ current_player_start_screen_3591:
 	lea	game_mem+0x3638,a1                      	| [$35db: ld   de,$3638]
 	move.b	#0x1F,d0                        	| [$35de: ld   a,$1F]
 	exg	d0,d7                              	| [$35e0: ex   af,af']
+* write upper part of orange wireframe 
+* that goes around "player" text
 	jbsr	write_text_55f0                   	| [$35e1: call write_text_55f0]
 	move.w	#0x9295,d6                      	| [$35e4: ld   hl,$9295]
 	lea	game_mem+0x3643,a1                      	| [$35e7: ld   de,$3643]
 	move.b	#0x1F,d0                        	| [$35ea: ld   a,$1F]
 	exg	d0,d7                              	| [$35ec: ex   af,af']
+* write lower part of orange wireframe 
+* that goes around "player" text
 	jbsr	write_text_55f0                   	| [$35ed: call write_text_55f0]
+* the frame lateral sides
 	move.b	#0x8E,d0                        	| [$35f0: ld   a,$8E]
 	move.w	#0x9174,d6                       	| [$35f2: ld   ($9174),a]
 	jbsr	osd_w_videoram
@@ -8202,7 +8222,7 @@ current_player_start_screen_3591:
 	jbsr	osd_w_colorram
 	move.w	#0x981F,d6                       	| [$361c: ld   ($981F),a]
 	jbsr	osd_w_colorram
-	
+
 	
 	move.w	#120,d0
 	jbsr	osd_wait
@@ -9558,24 +9578,24 @@ display_text_55d9:
 * < D6: screen address
 * < D7: attribute
 write_text_55f0:
-	move.w	#-0x20,d1                        	| [$55f0: ld   bc,$FFE0] 65504
+	                        	| [$55f0: ld   bc,$FFE0] 65504
 										| [$55f0: ld   bc,$FFE0] 65504
-	move.b	(a1),d0                         	| [$55f3: ld   a,(de)]
-	cmp.b	#0x3F,d0                         	| [$55f4: cp   $3F]
+	move.b	(a1)+,d0                         	| [$55f3: ld   a,(de)]
+	cmp.b	#0x3F,d0                         	| [$55f4: cp   $3F] end of string
 	bne.b	0f
 	rts                                    	| [$55f6: ret  z]
 0:
 	jbsr	osd_w_videoram                         	| [$55f7: ld   (hl),a]
 
-	move.w	d6,-(sp)                        	| [$55f8: push hl]
+	                        	| [$55f8: push hl]
 	add.w	#0x0800,d6                           	| [$55f9: ld   a,h]
 	                           	| [$55fc: ld   h,a]
 	exg	d0,d7                              	| [$55fd: ex   af,af']
 	jbsr	osd_w_colorram                         	| [$55fe: ld   (hl),a]
 	exg	d0,d7                              	| [$55ff: ex   af,af']
-	move.w	(sp)+,d6                        	| [$5600: pop  hl]
-	addq.w	#1,a1                           	| [$5601: inc  de]
-	add.w	d1,d6                            	| [$5602: add  hl,bc]
+	                        	| [$5600: pop  hl]
+											| [$5601: inc  de]
+	sub.w	#0x820,d6                            	| [$5602: add  hl,bc] next char
 	jra	write_text_55f0                             	| [$5603: jr   $55F0]
 	
 write_attribute_on_line_5605:
