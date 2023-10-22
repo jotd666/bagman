@@ -91,6 +91,11 @@ used_cluts.update({k:[0x4] for k in range(0x255,0x25D)})
 
 used_cluts.update({k+0x200:[0x2,0xF] for k in range(0x8A,0x90+1)})
 
+# in ascii range, but not used/blank/nonsense
+for to_drop in [0xc,0xd,0xe,0x36,0x37,0xa,0xb]:
+    used_cluts.pop(to_drop)
+
+
 dump_tiles = True
 dump_sprites = True
 if dump_tiles:

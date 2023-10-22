@@ -131,6 +131,16 @@
 	roxl.b	#1,d7
 	.endm
 
+zero_sprites:
+	lea	barrow_sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,barrow_sprite_shadow_ram_65A0]
+	moveq	#7,d0
+1:
+	clr.l	(a0)+
+	dbf		d0,1b
+	
+	lea	barrow_sprite_shadow_ram_65A0,a0
+	jbra	osd_update_sprites						| [$00a4: ld   bc,$0020] 32
+	
 * walk/climb/pick sounds are played continuously (probably how the sound
 * hardware works, it serializes the requests, but on a sample player it doesn't
 * work that way and the next sample plays immediately)
@@ -158,7 +168,7 @@ start_a_sound:
 	sub.w	sound_timer,d1
 	jcc		0f			| wrap around
 	neg.w	d1
-	cmp.w	#35,d1		| empiric
+	cmp.w	#42,d1		| empiric
 	jcc		0f
 	* too close: don't play
 	movem.l	(a7)+,a0/d1
@@ -309,7 +319,15 @@ bagman_reset:
 	jra	l_1200                             	| [$0000: jp   $1200]
 
 bagman_irq:
-
+	move.b	vb_ticks_count,d0
+0:
+	move.w	d0,-(a7)
+	bsr.b	game_tick_0038
+	move.w	(a7)+,d0
+	subq.b	#1,d0
+	bne.b	0b
+	rts
+	
 game_tick_0038:
 	addq.w	#1,sound_timer
 	bne.b	0f
@@ -333,7 +351,7 @@ game_tick_0038:
 	
 	jbsr	l_3c47                            	| [$0046: call $3C47]
 										| [$0049: xor  a]
-        jbsr	osd_disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
+	jbsr	osd_disable_vblank_interrupt  	| [$004a: ld   (interrupt_control_A000),a]
 
 	jbsr	l_3123                            	| [$004e: call $3123]
 	jbsr	l_38fa                            	| [$0051: call $38FA]
@@ -351,6 +369,7 @@ l_0067:
 	* AY-8192 handling
 	*jbsr	l_0f7f                            	| [$0067: call z,$0F7F]
 *0:
+	
 	move.b	unknown_626F,d0                 	| [$006a: ld   a,(unknown_626F)]
 	cmp.b	#0x01,d0                         	| [$006d: cp   $01]
 	jeq	l_0394                             	| [$006f: jp   z,$0394]
@@ -449,7 +468,7 @@ l_00fc:
 	jeq	l_0140                             	| [$0138: jr   z,$0140]
 	jbsr	player_grip_handle_test_0784      	| [$013a: call player_grip_handle_test_0784]
 	           	| [$013d: ld   a,(watchdog_reset_B800)]
-l_0140:
+l_0140:	
 	jbsr	l_07d5                            	| [$0140: call $07D5]
 	clr.b	d0                               	| [$0143: xor  a]
 	move.b	d0,unknown_602C                 	| [$0144: ld   (unknown_602C),a]
@@ -1289,9 +1308,9 @@ l_0710:
 l_0720:
 	jbsr	l_0730                            	| [$0720: call $0730]
 	jbsr	l_0753                            	| [$0723: call $0753]
-	move.b	(a3),d0                    	| [$0726: ld   a,(iy+$00)]
-	addq.b	#3,d0                           	| [$0729: inc  a] * 3
-	move.b	d0,(a3)                    	| [$072c: ld   (iy+$00),a]
+	addq.b	#3,(a3)                    	| [$0726: ld   a,(iy+$00)]
+										| [$0729: inc  a] * 3
+									| [$072c: ld   (iy+$00),a]
 	rts                                    	| [$072f: ret]
 l_0730:
 	lea	game_mem+0x074F,a1                      	| [$0730: ld   de,$074F]
@@ -2607,7 +2626,7 @@ l_0f38:
 	clr.b	player_in_wagon_1_601C                 	| [$0f65: ld   (player_in_wagon_1_601C),a]
 	clr.b	has_bag_6158                 	| [$0f68: ld   (has_bag_6158),a]
 	jbsr	set_bags_coordinates_easy_level_355b         	| [$0f6b: call set_bags_coordinates_easy_level_355b]
-	jbsr	set_bags_coordinates_3567                            	| [$0f6e: call $3567]
+	jbsr	copy_bags_coordinates_player_2_3567                            	| [$0f6e: call $3567]
 	rts                                    	| [$0f71: ret]
 
 align_character_x_0f72:
@@ -2887,7 +2906,7 @@ l_121c:
 
 	* start game
 	jbsr	set_bags_coordinates_easy_level_355b         	| [$121f: call set_bags_coordinates_easy_level_355b]
-	jbsr	set_bags_coordinates_3567                            	| [$1222: call $3567]
+	jbsr	copy_bags_coordinates_player_2_3567                            	| [$1222: call $3567]
 	lea	game_mem+0x513C,a0                      	| [$1225: ld   hl,$513C]
 	move.l	a0,ay_sound_pointer_6140                 	| [$1228: ld   (ay_sound_pointer_6140),hl]
  * reset guards and player
@@ -5033,7 +5052,7 @@ l_205c:
 l_20c9:
 	jbsr	osd_disable_vblank_interrupt  | [di]
 	jbsr	set_bags_coordinates_easy_level_355b         	| [$20ca: call set_bags_coordinates_easy_level_355b]
-	jbsr	set_bags_coordinates_3567                            	| [$20cd: call $3567]
+	jbsr	copy_bags_coordinates_player_2_3567                            	| [$20cd: call $3567]
 	jbsr	l_2a63                            	| [$20d0: call $2A63]
 	                               	| [$20d3: xor  a]
 	clr.b	game_locked_6053                 	| [$20d4: ld   (game_locked_6053),a]
@@ -8054,6 +8073,7 @@ decrease_timer_353e:
 	
 set_bags_coordinates_hard_level_354f:
 	lea	bags_coordinates_609C,a1       	| [$354f: ld   de,bags_coordinates_609C]
+set_bags_coordinates_hard_level_354f_2:
 	lea	game_mem+0x5C54,a0                      	| [$3552: ld   hl,$5C54]
 	jra	set_bags_coords            	| [$3555: ld   bc,$003A] 58
 	
@@ -8064,10 +8084,10 @@ set_bags_coordinates_hard_level_354f:
 
 
 set_bags_coordinates_easy_level_355b:
-	tst.b	hard_bags_flag
-	bne.b	set_bags_coordinates_hard_level_354f
 	lea	bags_coordinates_609C,a1       	| [$355b: ld   de,bags_coordinates_609C]
 0:
+	tst.b	hard_bags_flag
+	bne.b	set_bags_coordinates_hard_level_354f_2
 	lea	game_mem+0x5AE8,a0                      	| [$355e: ld   hl,$5AE8]
 set_bags_coords:
 	move.w	#0x003A,d1                        	| [$3561: ld   bc,$003A] 58
@@ -8077,10 +8097,7 @@ set_bags_coords:
 	bsr		correct_bags_endian
  	rts                                    	| [$3566: ret]
 
-* this seems useless, as it's only done in the case of easy bag layout
-set_bags_coordinates_3567:
-	rts
-	
+copy_bags_coordinates_player_2_3567:
 	lea	bags_coordinates_617F,a1                	| [$3567: ld   de,bags_coordinates_617F]
 	bra.b	0b
 
@@ -8141,14 +8158,8 @@ current_player_start_screen_3591:
 	* one player: no player start screen
 	rts                                    	| [$3596: ret  z]
 0:
-	* jotd: added to clear sprites 
-	lea	barrow_sprite_shadow_ram_65A0,a0                	| [$00a1: ld   hl,barrow_sprite_shadow_ram_65A0]
-	moveq	#7,d0
-1:
-	clr.l	(a0)+
-	dbf		d0,1b
-	
-	jbsr	osd_update_sprites						| [$00a4: ld   bc,$0020] 32
+	* jotd: added to clear sprites
+	bsr		zero_sprites
 
 	move.b	#0x01,d0                        	| [$3597: ld   a,$01]
 	move.b	d0,game_locked_6053                 	| [$3599: ld   (game_locked_6053),a]
@@ -8223,6 +8234,7 @@ current_player_start_screen_3591:
 	move.w	#0x981F,d6                       	| [$361c: ld   ($981F),a]
 	jbsr	osd_w_colorram
 
+	bsr		zero_sprites
 	
 	move.w	#120,d0
 	jbsr	osd_wait

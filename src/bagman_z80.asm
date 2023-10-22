@@ -1960,7 +1960,7 @@ start_a_game_0ebc:
 0F65: 32 1C 60      ld   (player_in_wagon_1_601C),a
 0F68: 32 58 61      ld   (has_bag_6158),a
 0F6B: CD 5B 35      call set_bags_coordinates_easy_level_355b
-0F6E: CD 67 35      call set_bags_coordinates_3567
+0F6E: CD 67 35      call copy_bags_coordinates_player_2_3567
 0F71: C9            ret
 
 align_character_x_0f72:
@@ -2284,7 +2284,7 @@ guard_2_walk_movement_119B:
 
 121C: CD 00 37      call play_intro_3700
 121F: CD 5B 35      call set_bags_coordinates_easy_level_355b
-1222: CD 67 35      call set_bags_coordinates_3567
+1222: CD 67 35      call copy_bags_coordinates_player_2_3567
 1225: 21 3C 51      ld   hl,$513C
 1228: 22 40 61      ld   (ay_sound_pointer_6140),hl
 	;; reset guards and player
@@ -4043,7 +4043,7 @@ memset_2054:
 20C6: CD 34 2C      call $2C34
 20C9: F3            di
 20CA: CD 5B 35      call set_bags_coordinates_easy_level_355b
-20CD: CD 67 35      call set_bags_coordinates_3567
+20CD: CD 67 35      call copy_bags_coordinates_player_2_3567
 20D0: CD 63 2A      call $2A63
 20D3: AF            xor  a
 20D4: 32 53 60      ld   (game_locked_6053),a
@@ -6614,7 +6614,7 @@ set_bags_coordinates_easy_level_355b:
 3564: ED B0         ldir
 3566: C9            ret
 
-set_bags_coordinates_3567:
+copy_bags_coordinates_player_2_3567:
 3567: 11 7F 61      ld   de,bags_coordinates_617F
 356A: 21 E8 5A      ld   hl,$5AE8
 356D: 01 3A 00      ld   bc,$003A

@@ -640,6 +640,7 @@ sprite_object_x_659E:
 	ds.b	1
 sprite_object_y_659F:
 	ds.b	1
+	.align	2
 barrow_sprite_shadow_ram_65A0:
 	ds.b	3
 unknown_65A3:
