@@ -556,7 +556,12 @@ demo_game:
 		jmp			bagman_reset					| pass control to the bagman core
 		
 	
-				
+* just in case some hardware calls nmi
+_nmi:
+	move.w	#0x7FFF,_custom+intreq
+	move.w	#0x7FFF,_custom+intreq
+	rts
+	
 _vblank:
     movem.l d0-d7/a0-a6,-(a7)
 	lea		_custom,a5
@@ -1197,6 +1202,7 @@ store_system:
 	move.l	(0x70,a1),(a0)+
 	move.l	(0x74,a1),(a0)+
 	move.l	(0x78,a1),(a0)+
+	move.l	(0x7C,a1),(a0)+
 	rts
 
 restore_system:
@@ -1212,6 +1218,7 @@ restore_system:
 	move.l	(a0)+,(0x70,a1)
 	move.l	(a0)+,(0x74,a1)
 	move.l	(a0)+,(0x78,a1)
+	move.l	(a0)+,(0x7C,a1)
 
 
 	bclr	#6,0xbfee01
@@ -1336,6 +1343,8 @@ platform_init:
 	move.l	(a7)+,(0x68,a1)
 	pea		_vblank(pc)
 	move.l	(a7)+,(0x6C,a1)
+	pea		_nmi(pc)
+	move.l	(a7)+,(0x7C,a1)
 
 	* soundfx lib
 	lea		_custom,a6
@@ -2146,7 +2155,7 @@ old_intena:
 old_dmacon:
 	.long	0
 old_sysvectors:
-	ds.l	8
+	ds.l	10
 old_vbr:
 	.long	0
 old_syscoplist:

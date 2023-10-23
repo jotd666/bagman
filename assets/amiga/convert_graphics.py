@@ -87,9 +87,11 @@ used_cluts[0x254] = [0x8]
 
 used_cluts.update({k:[0x4] for k in range(0x255,0x25D)})
 
-# wireframe for highscore/player start screen: red & orange
+# wireframe player start screen: orange (wireframe for highscore is already in hiscorescreen binary)
 
-used_cluts.update({k+0x200:[0x2,0xF] for k in range(0x8A,0x90+1)})
+for k in range(0x8A,0x90+1):
+    used_cluts[k+0x200].add(0xF)
+
 
 # in ascii range, but not used/blank/nonsense
 for to_drop in [0xc,0xd,0xe,0x36,0x37,0xa,0xb]:
