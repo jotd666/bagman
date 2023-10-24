@@ -2859,7 +2859,7 @@ guard_1_sees_player_1560:
 1772: CD D5 17      call $17D5
 1775: 21 1B 3F      ld   hl,$3F1B
 1778: CD 18 20      call play_sample_2018
-177B: CD EB 3D      call can_pick_bag_3DEB
+177B: CD EB 3D      call is_ay_sound_playing_3DEB
 177E: 20 0A         jr   nz,$178A
 1780: 21 78 5B      ld   hl,$5B78
 1783: 22 40 61      ld   (ay_sound_pointer_6140),hl
@@ -2962,7 +2962,7 @@ guard_1_sees_player_1560:
 1880: DD 7E 02      ld   a,(ix+$02)
 1883: D6 08         sub  $08
 1885: DD 77 1E      ld   (ix+$1e),a
-1888: CD EB 3D      call can_pick_bag_3DEB
+1888: CD EB 3D      call is_ay_sound_playing_3DEB
 188B: 20 0A         jr   nz,$1897
 188D: 21 A8 5B      ld   hl,$5BA8
 1890: 22 40 61      ld   (ay_sound_pointer_6140),hl
@@ -3808,7 +3808,7 @@ init_new_game_1E94:
 1E94: 3A 10 62      ld   a,(must_play_music_6210)
 1E97: FE 01         cp   $01
 1E99: 20 0F         jr   nz,$1EAA
-1E9B: CD EB 3D      call can_pick_bag_3DEB
+1E9B: CD EB 3D      call is_ay_sound_playing_3DEB
 1E9E: 20 0A         jr   nz,$1EAA
 * play first tune
 1EA0: 21 00 50      ld   hl,$5000
@@ -4758,7 +4758,7 @@ display_screen_3_265f:
 2747: 77            ld   (hl),a
 2748: CD 26 1E      call $1E26
 274B: CD 10 31      call display_player_1_and_2_text_3110
-274E: CD EB 3D      call can_pick_bag_3DEB
+274E: CD EB 3D      call is_ay_sound_playing_3DEB
 2751: C0            ret  nz
 * play second tune (screen 3)
 2752: 21 00 52      ld   hl,$5200
@@ -4943,7 +4943,7 @@ display_maze_284c:
 290E: 3A 10 62      ld   a,(must_play_music_6210)
 2911: FE 00         cp   $00
 2913: C8            ret  z
-2914: CD EB 3D      call can_pick_bag_3DEB
+2914: CD EB 3D      call is_ay_sound_playing_3DEB
 2917: C0            ret  nz
 2918: 21 00 50      ld   hl,$5000
 291B: 22 40 61      ld   (ay_sound_pointer_6140),hl
@@ -7326,10 +7326,7 @@ draw_elevator_wire_tile_3c2c:
 3C3C: 12            ld   (de),a
 3C3D: D1            pop  de
 3C3E: C9            ret
-3C3F: FB            ei
-3C40: FA F9 F8      jp   m,$F8F9
-3C43: F7            rst  $30
-3C44: F6 F5         or   $F5
+
 
 3C47: 2A 91 60		ld   hl,(guard_logical_address_6091)
 3C4A: 22 FF 61      ld   (unknown_61FF),hl
@@ -7512,7 +7509,7 @@ test_non_blocking_tiles_3c85:
 3DE7: 32 53 61      ld   (unknown_6153),a
 3DEA: C9            ret
 	;; test if can pick bag
-can_pick_bag_3DEB:
+is_ay_sound_playing_3DEB:
 3DEB: DD E5         push ix
 3DED: DD 2A 40 61   ld   ix,(ay_sound_pointer_6140)
 3DF1: DD 7E 03      ld   a,(ix+$03)

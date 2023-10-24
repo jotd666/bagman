@@ -6823,7 +6823,7 @@ l_2d20:
 	                      	| [$2d4d: ld   de,$FFF0]
 	sub.w	#0x10,a2                            	| [$2d50: add  ix,de]
 	                        	| [$2d52: pop  de]
-	                    	| [$2d52: pop  de]
+
 
 	move.l	a2,-(sp)                        	| [$2d53: push ix]
 	* 2 rows below (highscore name)
@@ -7058,7 +7058,7 @@ l_2ed0:
 	and.b	#0xF0,d0                         	| [$2ed1: and  $F0]
 	                         	| [$2ed3: cp   $00]
 	jne	l_2edb                             	| [$2ed5: jr   nz,$2EDB]
-	move.b	d6,d0                           	| [$2ed7: ld   a,h]
+	move.w	d6,d0                           	| [$2ed7: ld   a,h]
 	lsr.w	#8,d0
 	cmp.b	#0x92,d0                         	| [$2ed8: cp   $92]
 	bne.b	0f                               	| [$2eda: ret  z] [...]
@@ -7406,7 +7406,7 @@ l_313d:
 	rts                                    	| [$3150: ret]
 	
 draw_bag_3151:
-	LOAD_AX_BE_WORD_DY	a2,d6
+	
 											| [$3155: ld   a,(ix+$01)]
 						
 										| [$3151: ld   a,(ix+$00)]
@@ -7831,7 +7831,7 @@ l_33ee:
 	move.b	d0,player_screen_600D           	| [$33f3: ld   (player_screen_600D),a]
 	move.b	#0x53,d0                        	| [$33f6: ld   a,$53]
 
-	move.l	d6,-(sp)                        	| [$33f8: push hl]
+	move.w	d6,-(sp)                        	| [$33f8: push hl]
 	movem.w	d3/d4,-(sp)                    	| [$33f9: push de]
 	movem.w	d1/d2,-(sp)                    	| [$33fa: push bc]
 	move.w	#0x93B6,d6                      	| [$33fb: ld   hl,$93B6]
@@ -7856,7 +7856,7 @@ l_3403:
 
 	movem.w	(sp)+,d1/d2                    	| [$3413: pop  bc]
 	movem.w	(sp)+,d3/d4                    	| [$3414: pop  de]
-	move.l	(sp)+,d6                        	| [$3415: pop  hl]
+	move.w	(sp)+,d6                        	| [$3415: pop  hl]
 	rts                                    	| [$3416: ret]	
 	
 * < D0: tile code
