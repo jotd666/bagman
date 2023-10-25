@@ -4964,7 +4964,8 @@ l_1ff5:
 start_new_life_2026:
 	lea	unknown_6144,a2                	| [$2026: ld   ix,unknown_6144]
 	clr.b	d0                               	| [$202a: ld   a,$00]
-	move.b	#0x06,d1                        	| [$202c: ld   b,$06]
+	* 32 bit pointer in 6146 adds 2
+	move.b	#0x08,d1                        	| [$202c: ld   b,$06]
 	jbsr	memset_2054                       	| [$202e: call memset_2054]  clear region 6144-6144+6
 	clr.b	d0                               	| [$2031: xor  a]
 * set everything player-related to 0
@@ -6517,7 +6518,8 @@ l_2b31:
 	move.l	unknown_pointer_6146,a0     	| [$2b49: ld   hl,(unknown_pointer_6146)]
 												| [$2b4c: inc  hl] * 4
 	move.b	#0x01,d0                        	| [$2b50: ld   a,$01]
-	move.b	d0,(4,a0)                         	| [$2b52: ld   (hl),a]
+	* 4 => 6
+	move.b	d0,(6,a0)                         	| [$2b52: ld   (hl),a]
 	move.l	(sp)+,a0                        	| [$2b53: pop  hl]
 	* HL pointed on 603B or 607B
                   	| [$2b54: push de]
