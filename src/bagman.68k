@@ -4130,8 +4130,8 @@ l_1ab4:
 	move.b	d0,d1                           	| [$1ac4: ld   b,a]
 	move.b	(0x15,a2),d0                    	| [$1ac5: ld   a,(ix+$15)]  restore new direction
 	and.b	d1,d0                            	| [$1ac8: and  b]
-	move.w	guard_logical_address_6091,stored_logical_address_6044             	| [$1acb: ld   hl,(guard_logical_address_6091)]
-											| [$1ace: ld   (stored_logical_address_6044),a]
+	move.w	guard_logical_address_6091,d6             	| [$1acb: ld   hl,(guard_logical_address_6091)]
+	move.b	d0,stored_logical_address_6044					| [$1ace: ld   (stored_logical_address_6044),a]
 	lea	guard_1_struct_6594,a3         	| [$1ad1: ld   iy,guard_1_struct_6594]
 	move.l	a3,guard_struct_pointer_6093         	| [$1ad5: ld   (guard_struct_pointer_6093),iy]
 	move.l	guard_direction_pointer_6095,a0             	| [$1ad9: ld   hl,(guard_direction_pointer_6095)] contains guard direction pointer unknown_6027 or unknown_6067
@@ -4174,7 +4174,7 @@ guard_goes_left_1b10:
 	or.b	#0x04,(0x15,a2)                          	| [$1b13: or   $04]
 	                    	| [$1b15: ld   (ix+$15),a]
 	rts                                    	| [$1b18: ret]
-guard_goes_left_1b19:
+guard_goes_right_1b19:
 	or.b	#0x08,(0x15,a2)                    	| [$1b19: ld   a,(ix+$15)]
 									| [$1b1c: or   $08]
 										| [$1b1e: ld   (ix+$15),a]
@@ -4545,7 +4545,7 @@ l_1d4e:
 
 	                        	| [$1d4f: push hl]
 	move.w	player_logical_address_6009,d3	| [$1d50: ld   de,(player_logical_address_6009)]
-	subq.b	#2,d3                           	| [$1d54: dec  de] * 2
+	subq.w	#2,d3                           	| [$1d54: dec  de] * 2
 	                               	| [$1d56: xor  a]
 	cmp.w  d3,d6
 	                        	| [$1d59: pop  hl]
@@ -4678,6 +4678,8 @@ display_player_ids_and_credit_1dec:
 	lea	game_mem+0x5689,a1                      	| [$1e0d: ld   de,$5689]
 	move.w	#0x919F,d6                      	| [$1e10: ld   hl,$919F]
 	jbsr	display_localized_text_30F9                 	| [$1e13: call display_localized_text_30F9]
+* credit digits seems useless: wrong and overwritten
+* by the real value read from number_of_credits_6000
 	move.b	fake_credit_digit_6004,d0                 	| [$1e16: ld   a,(unknown_6004)]
 	move.w	#0x909F,d6
 	jbsr	osd_w_videoram                       	| [$1e19: ld   ($909F),a]
@@ -5017,6 +5019,7 @@ l_205c:
 	jbsr	check_if_high_score_beaten_2d03                            	| [$207f: call $2D03]
 	clr.b	d0                               	| [$2082: xor  a]
 	move.b	d0,must_play_music_6210                 	| [$2083: ld   (must_play_music_6210),a]
+	move.b	d0,current_player_617C   | fix from super bagman
 	move.b	number_of_credits_6000,d0       	| [$2086: ld   a,(number_of_credits_6000)]
 										| [$2089: cp   $00]
 	jne	l_20c9                             	| [$208b: jr   nz,$20C9]
@@ -5185,6 +5188,7 @@ pick_up_object_2176:
 	* we just picked up pickaxe
 	* resets the LSB of pickaxe timer
 	* which means that if timer gets past 0x100 once during a life
+	* or until a pick is lost (not dropped)
 	* it's not reset (all picks will now only last half the time
 	* until a life is lost!)
 	* not sure if it's a bug or on purpose...
