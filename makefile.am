@@ -11,8 +11,10 @@ OPT_RELEASE_LINK = -g
 endif
 
 # Bebbo's package usually installs itself there
-GCC_BIN = C:\amiga-gcc\bin
-ASM_BASE = $(GCC_BIN)/m68k-amigaos-as -c --defsym __amiga__=1 
+GCC_BIN = C:/amiga-gcc/bin/
+# if you have the tools in the path, just leave blank
+GCC_BIN =
+ASM_BASE = $(GCC_BIN)m68k-amigaos-as -c --defsym __amiga__=1 
 ASM = $(ASM_BASE) -m68000 $(OPT_RELEASE) 
 ASM_020 = $(ASM_BASE) -m68020 
 MAIN_OBJ = amiga.o
@@ -39,7 +41,7 @@ all: $(AMIGASRC)/graphics.68k $(AMIGASRC)/sounds.68k $(MAIN) $(WHDLOADER) $(WHDL
 clean:
 	del $(OBJS) "$(MAIN)"
 	
-$(AMIGASRC)/graphics.68k: $(ASSETS)/convert_graphics.py $(ASSETS)/../bagman_gfx.c
+$(AMIGASRC)/graphics.68k: $(ASSETS)/convert_graphics.py $(ASSETS)/../$(PROGNAME)_gfx.c
 	cmd /c $(ASSETS)\convert_graphics.py
 
 
@@ -47,7 +49,7 @@ $(AMIGASRC)/sounds.68k: $(ASSETS)/convert_sounds.py $(ASSETS)/../sounds/$(PROGNA
 	cmd /c $(ASSETS)\convert_sounds.py
 	
 $(MAIN): $(OBJS)
-	$(GCC_BIN)/m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN) $(OBJS)
+	$(GCC_BIN)m68k-amigaos-ld $(OPT_RELEASE_LINK) -o $(MAIN) $(OBJS)
 
 $(PROGNAME).o: $(PROGNAME).68k $(PROGNAME).inc $(PROGNAME)_ram.68k $(PROGNAME)_game_ram.68k
 	$(ASM) $(PROGNAME).68k -o $(PROGNAME).o

@@ -4039,7 +4039,7 @@ l_1a18:
 0:
 								| [$1a42: pop  af]
 		
-	jbsr	guard_goes_left_1b19                            	| [$1a43: call c,$1B19]
+	jbsr	guard_goes_right_1b19                            	| [$1a43: call c,$1B19]
 1:
 	move.b	player_y_6583,d0                	| [$1a46: ld   a,(player_y_6583)]
 	move.b	d0,d1                           	| [$1a49: ld   b,a]
@@ -6995,6 +6995,7 @@ l_2e66:
 	jbsr	read_controls_highscore_309c                            	| [$2e66: call read_controls_highscore_309c]
 	jra	l_2e77                             	| [$2e69: jr   $2E77]
 l_2e6b:
+	* 2P cocktail
 	jbsr	osd_read_dipswitches              	| [$2e6b: ld   a,(dip_switch_B000)]
 	and.b	#0x80,d0                         	| [$2e6e: and  $80]
 	cmp.b	#0x80,d0                         	| [$2e70: cp   $80]
