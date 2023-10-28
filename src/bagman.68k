@@ -7413,7 +7413,7 @@ l_313d:
 	rts                                    	| [$3150: ret]
 	
 draw_bag_3151:
-	
+	LOAD_AX_BE_WORD_DY	a2,d6
 											| [$3155: ld   a,(ix+$01)]
 						
 										| [$3151: ld   a,(ix+$00)]
