@@ -660,7 +660,7 @@ osd_wait:
 	jne		2f
 	* interrupts are disabled: timer isn't going to change
 	* wait using vertical blank interrupt request (we don't need it!)
-	
+	clr.w	one_out_of_five
 0:
 	move.w	#0x20,_custom+intreq
 	move.w	#0x20,_custom+intreq
@@ -668,8 +668,16 @@ osd_wait:
 	move.w	_custom+intreqr,d0
 	btst	#5,d0
 	beq.b	1b
+	addq.w	#1,one_out_of_five
+	cmp.w	#5,one_out_of_five
+	bne.b	5f
+	subq.w	#1,delay_timer	
+	clr.w	one_out_of_five
+5:
 	subq.w	#1,delay_timer
-	bne.b	0b
+	beq.b	4f
+	bpl.b	0b
+4:
 	rts
 	
 2:
@@ -2237,6 +2245,8 @@ _gfxbase:
 _dosbase:
 	.long	0
 delay_timer:
+	.word	0
+one_out_of_five:
 	.word	0
 bg_drawed_screen_ptr:
 	.long	bg_screen_data_1

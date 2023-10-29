@@ -39,6 +39,8 @@ History:
 - Jean-Francois Fabre (aka jotd): Z80 reverse engineering, Z80 to 68k transcode, Amiga code and assets
 - Andrzej Dobrowolski (aka no9): music/sfx conversion
 - J.M.D: remade amiga tunes (first version)
+- S. Campbell: boxart
+- PascalDe73: icon
 - phx: ptplayer sound/music replay Amiga code
 - Valadon Automation / Jacques Brisse: original game :)
 

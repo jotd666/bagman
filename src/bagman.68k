@@ -8416,7 +8416,14 @@ l_37cd:
 	* disabling this forced tick, let the interrupt do its job!
 	* im 1 <= enables periodic interrupt mode
 	**jbsr	game_tick_0038                            	| [$37ff: rst  $38]
-
+	
+	* jotd credits
+	.ifdef	__amiga__
+	lea		jotd_credits,a1
+	move.w	#0x9314,d6
+	move.b	#0x08,d7
+	jbsr	write_text_55f0
+	.endif
 l_3800:
 	move.b	player_input_6026,d0            	| [$3800: ld   a,(player_input_6026)]
 	or.b	#0x08,d0                          	| [$3803: or   $08]
@@ -9813,3 +9820,6 @@ l_5e69:
 	jra	l_38c9                             	| [$5e71: jp   $38C9]
 direction_table_5970:
 	dc.b	0x80,0x40,0x20,0x10
+jotd_credits:
+* PORTED BY JOTD 2023
+    .byte   0x20,0x1f,0x22,0x24,0x15,0x14,0xe0,0x12,0x29,0xe0,0x1a,0x1f,0x24,0x14,0xe0,0x02,0x00,0x02,0x03,0x3f
