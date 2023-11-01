@@ -1375,6 +1375,11 @@ l_0772:
 player_grip_handle_test_0784:
 	jbsr	update_player_screen_address_from_xy_555E	| [$0784: call update_player_screen_address_from_xy_555E]
 	move.w	player_logical_address_6009,d6	| [$0787: ld   hl,(player_logical_address_6009)]
+	bne.b	0f
+	* jotd: can be null at times!
+	rts
+0:
+
 	subq.w	#3,d6                           	| [$078a: dec  hl] * 3
 	bsr		read_rom                         	| [$078d: ld   a,(hl)] check what's above player head on screen
 	cmp.b	#0xDC,d0                         	| [$078e: cp   $DC]
@@ -5042,7 +5047,10 @@ l_205c:
 	move.w	#0x9BB5,d6                       	| [$20b4: ld   ($9BB5),a]
 	jbsr	osd_w_colorram
  	jbsr	draw_highscore_names_and_scores_2f8d                            	| [$20b7: call $2F8D]
-	* protection shit
+	* peek at the timer, wait a while
+	move.w	#300,d0		| 5 seconds
+	jbsr	osd_wait
+* was it supposed to wait a while? doesn't work that well
 *l_20ba:
 *	move.w	#0x91B5,d6                       	| [$20ba: ld   a,($91B5)]
 *	jbsr	osd_r_videoram

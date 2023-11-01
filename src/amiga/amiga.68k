@@ -1413,10 +1413,18 @@ osd_disable_display:
 	jbsr	set_black_palette
 	jbsr	wait_tof
 wait_tof:
+	movem.w	d0/d1,-(a7)
+	move.w	#250,d1
 0:
-	MOVE.L	0xdff004,D0
-	ANDI.L	#0x0001ff00,D0
+	* just in case loop locks up as it sometimes
+	* happens...
+	subq.w	#1,d1
+	beq.b	1f
+	MOVE.w	_custom+vhposr,D0
+	ANDI.w	#0xff00,D0
 	BNE.S	0b
+1:
+	movem.w	(a7)+,d0/d1
     rts
 	
 * < D0: nonzero interrupts enabled

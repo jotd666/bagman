@@ -9,4 +9,4 @@ probable original game bugs, won't be fixed:
 - in demo, guard appears at screen 2, falls and immediately disappears: this is also
   happening in real arcade game demo! So original game bug, fortunately not occurring
   while playing!
-- hard bag layout appeared once in 2P mode!
+
