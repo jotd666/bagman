@@ -1414,7 +1414,7 @@ osd_disable_display:
 	jbsr	wait_tof
 wait_tof:
 	movem.w	d0/d1,-(a7)
-	move.w	#250,d1
+	move.w	#300,d1
 0:
 	* just in case loop locks up as it sometimes
 	* happens...
