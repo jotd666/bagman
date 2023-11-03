@@ -61,9 +61,9 @@
 	.global	unknown_6008
 	.global	way_clear_flag_600B
 	.global	unknown_600C
-	.global	unknown_6013
-	.global	unknown_6014
-	.global	unknown_6015
+	.global	player_in_elevator_6013
+	.global	player_in_elevator_6014
+	.global	elevator_going_down_6015
 	.global	wagon_direction_array_6016
 	.global	unknown_6019
 	.global	unknown_601A
@@ -241,11 +241,11 @@ elevator_timer_current_screen_6011:
 	ds.b	1
 elevator_not_moving_6012:
 	ds.b	1
-unknown_6013:
+player_in_elevator_6013:
 	ds.b	1
-unknown_6014:
+player_in_elevator_6014:
 	ds.b	1
-unknown_6015:
+elevator_going_down_6015:
 	ds.b	1
 * 601C = 6016+6 don't add data in between!
 wagon_direction_array_6016:

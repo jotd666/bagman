@@ -549,7 +549,7 @@ l_0140:
 	jne	l_021e                             	| [$01fa: jr   nz,$021E]
 	jbsr	update_player_screen_address_from_xy_555E	| [$01fc: call update_player_screen_address_from_xy_555E]
 	jbsr	l_3d65                            	| [$01ff: call $3D65]
-	move.b	unknown_6014,d0                 	| [$0202: ld   a,(unknown_6014)]
+	move.b	player_in_elevator_6014,d0                 	| [$0202: ld   a,(player_in_elevator_6014)]
 	cmp.b	#0x01,d0                         	| [$0205: cp   $01]
 	jne	l_0210                             	| [$0207: jr   nz,$0210]
 	move.b	elevator_not_moving_6012,d0     	| [$0209: ld   a,(elevator_not_moving_6012)]
@@ -567,7 +567,7 @@ l_021e:
 	move.b	d0,unknown_628A                 	| [$0226: ld   (unknown_628A),a]
 	move.b	player_screen_600D,d0           	| [$0229: ld   a,(player_screen_600D)]
 	move.b	d0,current_guard_screen_index_6098      	| [$022c: ld   (current_guard_screen_index_6098),a]
-	lea	unknown_6014,a0                	| [$022f: ld   hl,unknown_6014]
+	lea	player_in_elevator_6014,a0                	| [$022f: ld   hl,player_in_elevator_6014]
 	lea	player_struct_6580,a2          	| [$0232: ld   ix,player_struct_6580]
 	jbsr	l_0a27                            	| [$0236: call $0A27]
 	           	| [$0239: ld   a,(watchdog_reset_B800)]
@@ -579,9 +579,9 @@ l_021e:
 	lea	unknown_6008,a0                	| [$0249: ld   hl,unknown_6008]
 	lea	fall_height_604D,a3            	| [$024c: ld   iy,fall_height_604D]
 	lea	player_struct_6580,a2          	| [$0250: ld   ix,player_struct_6580]
-	move.b	unknown_6014,d0                 	| [$0254: ld   a,(unknown_6014)]
+	move.b	player_in_elevator_6014,d0                 	| [$0254: ld   a,(player_in_elevator_6014)]
 	move.b	d0,d2                           	| [$0257: ld   c,a]
-	move.b	unknown_6013,d0                 	| [$0258: ld   a,(unknown_6013)]
+	move.b	player_in_elevator_6013,d0                 	| [$0258: ld   a,(player_in_elevator_6013)]
 	move.b	#0x19,d1                        	| [$025b: ld   b,$19]
 	jbsr	l_0b2e                            	| [$025d: call $0B2E]
 	           	| [$0260: ld   a,(watchdog_reset_B800)]
@@ -589,10 +589,10 @@ l_0263:
 	move.b	player_screen_600D,d0           	| [$0263: ld   a,(player_screen_600D)]
 	move.b	d0,current_guard_screen_index_6098      	| [$0266: ld   (current_guard_screen_index_6098),a]
 	lea	player_struct_6580,a2          	| [$0269: ld   ix,player_struct_6580]
-	lea	unknown_6014,a3                	| [$026d: ld   iy,unknown_6014]
+	lea	player_in_elevator_6014,a3                	| [$026d: ld   iy,player_in_elevator_6014]
 	jbsr	handle_elevators_0a66                            	| [$0271: call $0A66]
 	lea	player_struct_6580,a2          	| [$0274: ld   ix,player_struct_6580]
-	lea	unknown_6014,a0                	| [$0278: ld   hl,unknown_6014]
+	lea	player_in_elevator_6014,a0                	| [$0278: ld   hl,player_in_elevator_6014]
 	jbsr	handle_elevator_stops_09A0                            	| [$027b: call $09A0]
 	move.b	unknown_6156,d0                 	| [$027e: ld   a,(unknown_6156)]
 	                         	| [$0281: cp   $00]
@@ -1728,7 +1728,7 @@ handle_elevator_stops_09A0:
 	move.b	d0,elevator_timer_current_screen_6011	| [$09b1: ld   (elevator_timer_current_screen_6011),a]
 	move.b	d0,elevator_not_moving_6012     	| [$09b4: ld   (elevator_not_moving_6012),a]
 	addq.b	#1,d0                           	| [$09b7: inc  a]
-	move.b	d0,unknown_6015                 	| [$09b8: ld   (unknown_6015),a]
+	move.b	d0,elevator_going_down_6015                 	| [$09b8: ld   (elevator_going_down_6015),a]
 	move.b	player_screen_600D,d0           	| [$09bb: ld   a,(player_screen_600D)]
 	cmp.b	#0x02,d0                         	| [$09be: cp   $02]
 	jeq	l_09c8                             	| [$09c0: jr   z,$09C8]
@@ -1774,10 +1774,10 @@ l_0a09:
 	jeq	l_0a21                             	| [$0a15: jr   z,$0A21]
 	jbsr	is_invincible
 	bne.b	l_0a21
-* check if hl is still pointing on unknown_6014, if it does (which seems
+* check if hl is still pointing on player_in_elevator_6014, if it does (which seems
 * to be always true), kill player
 												| [$0a17: ld   a,l]
-	cmp.l	#unknown_6014,a0                      	| [$0a18: cp   $14]
+	cmp.l	#player_in_elevator_6014,a0                      	| [$0a18: cp   $14]
 	jne	l_0a21                             	| [$0a1a: jr   nz,$0A21]
 	* probably always true as routine called with this value in a0
 	* and never changed
@@ -1808,7 +1808,7 @@ l_0a38:
 	rts                                    	| [$0a41: ret]
 
 * < a2: player struct (6580)
-* < a3: unknown_6014
+* < a3: player_in_elevator_6014
 
 handle_elevators_0a66:
 	move.b	elevator_not_moving_6012,d0                       	| [$0a66: ld   a,($6012)]
@@ -1823,7 +1823,7 @@ handle_elevators_0a66:
 	move.b	(a0),d0                         	| [$0a76: ld   a,(hl)]
 	cmp.b	#0x12,d0                         	| [$0a77: cp   $12]
 	jcs	l_0add                             	| [$0a79: jr   c,$0ADD]
-	move.b	unknown_6015,d0                 	| [$0a7b: ld   a,(unknown_6015)]
+	move.b	elevator_going_down_6015,d0                 	| [$0a7b: ld   a,(elevator_going_down_6015)]
 	cmp.b	#0x01,d0                         	| [$0a7e: cp   $01]
 	jeq	l_0aae                             	| [$0a80: jp   z,$0AAE]
 	move.b	player_screen_600D,d0           	| [$0a83: ld   a,(player_screen_600D)]
@@ -1850,7 +1850,7 @@ l_0a99:
 l_0aae:
 	subq.b	#1,(a0)                         	| [$0aae: dec  (hl)]
 	clr.b	d0                               	| [$0aaf: xor  a]
-	move.b	d0,unknown_6015                 	| [$0ab0: ld   (unknown_6015),a]
+	move.b	d0,elevator_going_down_6015                 	| [$0ab0: ld   (elevator_going_down_6015),a]
 	move.b	(A3),d0                    	| [$0ab3: ld   a,(iy+$00)]
 	cmp.b	#0x01,d0                         	| [$0ab6: cp   $01]
 	jne	l_0ac1                             	| [$0ab8: jr   nz,$0AC1]
@@ -2627,7 +2627,7 @@ l_0f38:
 											| [$0f5b: xor  a]
 	clr.b	holds_barrow_61C7            	| [$0f5c: ld   (holds_barrow_61C7),a]
 	clr.b	has_pick_61CF                	| [$0f5f: ld   (has_pick_61CF),a]
-	clr.b	unknown_6014                 	| [$0f62: ld   (unknown_6014),a]
+	clr.b	player_in_elevator_6014                 	| [$0f62: ld   (player_in_elevator_6014),a]
 	clr.b	player_in_wagon_1_601C                 	| [$0f65: ld   (player_in_wagon_1_601C),a]
 	clr.b	has_bag_6158                 	| [$0f68: ld   (has_bag_6158),a]
 	jbsr	set_bags_coordinates_easy_level_355b         	| [$0f6b: call set_bags_coordinates_easy_level_355b]
@@ -4725,7 +4725,7 @@ l_1e3f:
 	jbsr	cpdr                              	| [$1e58: cpdr]
 	movem.l	(sp)+,a0                        	| [$1e5a: pop  hl]
 	jne	l_1e68                             	| [$1e5b: jr   nz,$1E68]
-	move.b	unknown_6014,d0                 	| [$1e5d: ld   a,(unknown_6014)]
+	move.b	player_in_elevator_6014,d0                 	| [$1e5d: ld   a,(player_in_elevator_6014)]
 	cmp.b	#0x01,d0                         	| [$1e60: cp   $01]
 	jeq	l_1e70                             	| [$1e62: jr   z,$1E70]
 l_1e64:
@@ -4821,7 +4821,7 @@ l_1ee0:
 	clr.b	guard_2_not_moving_timeout_counter_6097                 	| [$1efe: ld   (guard_2_not_moving_timeout_counter_6097),a]
 	clr.b	unknown_6288                 	| [$1f01: ld   (unknown_6288),a]
 	clr.b	unknown_6008                 	| [$1f04: ld   (unknown_6008),a]
-	clr.b	unknown_6013                 	| [$1f07: ld   (unknown_6013),a]
+	clr.b	player_in_elevator_6013                 	| [$1f07: ld   (player_in_elevator_6013),a]
 	clr.b	player_in_wagon_flag_6029    	| [$1f0a: ld   (player_in_wagon_flag_6029),a]
 	clr.b	player_gripping_handle_602A  	| [$1f0d: ld   (player_gripping_handle_602A),a]
 	clr.b	fatal_fall_height_reached_604E	| [$1f10: ld   (fatal_fall_height_reached_604E),a]
@@ -4829,8 +4829,8 @@ l_1ee0:
 	clr.b	player_controls_frozen_6028  	| [$1f16: ld   (player_controls_frozen_6028),a]
 	clr.w	pickaxe_timer_duration_61E0  	| [$1f19: ld   (pickaxe_timer_duration_61E0),a]
 	                 	| [$1f1c: ld   (unknown_61E1),a]
-	clr.b	unknown_6014                 	| [$1f1f: ld   (unknown_6014),a]
-	clr.b	unknown_6013                 	| [$1f22: ld   (unknown_6013),a]
+	clr.b	player_in_elevator_6014                 	| [$1f1f: ld   (player_in_elevator_6014),a]
+	clr.b	player_in_elevator_6013                 	| [$1f22: ld   (player_in_elevator_6013),a]
 reset_barrow_position_1f25:
 	* set barrow screen params only if not already set
 	move.b	barrow_screen_params_61C4+1,d0                 	| [$1f25: ld   a,(barrow_screen_params_61C4)]
@@ -4982,7 +4982,7 @@ start_new_life_2026:
 	clr.b	player_controls_frozen_6028  	| [$203b: ld   (player_controls_frozen_6028),a]
 	clr.b	fatal_fall_height_reached_604E	| [$203e: ld   (fatal_fall_height_reached_604E),a]
 	clr.b	player_in_wagon_flag_6029    	| [$2041: ld   (player_in_wagon_flag_6029),a]
-	clr.b	unknown_6013                 	| [$2044: ld   (unknown_6013),a]
+	clr.b	player_in_elevator_6013                 	| [$2044: ld   (player_in_elevator_6013),a]
 	clr.b	fall_height_604D             	| [$2047: ld   (fall_height_604D),a]
 	clr.b	bag_falling_6159                 	| [$204a: ld   (bag_falling_6159),a]
 	clr.b	bag_sliding_615E                 	| [$204d: ld   (bag_sliding_615E),a]
