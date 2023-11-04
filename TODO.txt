@@ -1,3 +1,23 @@
+floppy aftr highscore load: change_attribute_everywhere_29ec
+
+00c1a85a 1400                     move.b d0,d2
+00c1a85c 10c0                     move.b d0,(a0)+ [00]
+00c1a85e 5302                     subq.b #$01,d2
+00c1a860 66fa                     bne.b #$fa == $00c1a85c (T)
+00c1a862 5301                     subq.b #$01,d1
+00c1a864 66f4                     bne.b #$f4 == $00c1a85a (T)
+00c1a866 6000 f878                bra.w #$f878 == $00c1a0e0 (T)
+00c1a86a 123c 0004                move.b #$04,d1
+00c1a86e 3c3c 9800                move.w #$9800,d6
+00c1a872 4202                     clr.b d2
+00c1a874 4eb9 00c0 a77c           jsr $00c0a77c
+00c1a87a 5246                     addq.w #$01,d6  <= 9C0A !!!!!!!!
+00c1a87c 5302                     subq.b #$01,d2
+00c1a87e 66f4                     bne.b #$f4 == $00c1a874 (T)
+00c1a880 5301                     subq.b #$01,d1
+00c1a882 66ee                     bne.b #$ee == $00c1a872 (T)
+00c1a884 4e75                     rts  == $00c1a0ec
+
 minor gfx errors (can't be fixed easily):
 
 - sprite colormap allocation issue: sometimes player/carried yellow bag becomes blue (sprite alloc with too many sprites displayed 

@@ -11,6 +11,7 @@ def ensure_empty(d):
     else:
         os.mkdir(d)
 
+gamename = "bagman"
 
 this_dir = os.path.dirname(__file__)
 src_dir = os.path.join(this_dir,"../../src/amiga")
@@ -33,14 +34,15 @@ NB_POSSIBLE_SPRITES = 128  # not a lot are really used
 used_sprites = {}
 
 
-def add_sprites(start,stop,clut,name,mirror=True):
+def add_sprites(start,stop,clut,name,mirror=True,multiple=False):
     for i in range(start,stop+1):
-        add_sprite(i,clut,name,mirror)
-def add_sprite(start,clut,name,mirror=True):
+        add_sprite(i,clut,name,mirror,multiple)
+def add_sprite(start,clut,name,mirror=True,multiple=False):
     if start in used_sprites:
         used_sprites[start]["clut"].add(clut)
     else:
-        used_sprites[start] = {"name":name,"clut":{clut},"mirror":mirror}
+        used_sprites[start] = {"name":name,"clut":{clut},
+                                "mirror":mirror,"multiple":multiple}
 
 
 
@@ -120,7 +122,7 @@ block_dict = {}
 # hackish convert of c gfx table to dict of lists
 # (reusing Mark Mc Dougall ripped gfx as C tables format, now I'm producing it
 # with MAME tile saving edition + custom python scripts)
-with open(os.path.join(this_dir,"..","bagman_gfx.c")) as f:
+with open(os.path.join(this_dir,"..",f"{gamename}_gfx.c")) as f:
     block = []
     block_name = ""
     start_block = False
@@ -201,7 +203,7 @@ with open(os.path.join(src_dir,"palette.68k"),"w") as f:
 # combination instead of ripping them from running game. Besides, the game has a tendency
 # to display sprites with wrong clut (briefly but would still be logged)
 
-add_sprites(0x21,0x31,0xC,"guard")
+add_sprites(0x21,0x31,0xC,"guard",multiple=True)
 # player frames symmetric but sometimes not useful
 # (saves memory!)
 add_sprite(0x12,0x8,"player",True)
@@ -214,7 +216,7 @@ add_sprites(0x77,0x78,0x9,"pickaxe")
 # barrow frames
 add_sprites(0x7A,0x7B,0x8,"barrow",False)
 # wagon
-add_sprite(0x35,4,"wagon",False)
+add_sprite(0x35,4,"wagon",mirror=False,multiple=True)
 # elevators!!
 add_sprite(0x33,4,"elevator",False)
 add_sprite(0x33,8,"elevator",False)
@@ -319,7 +321,7 @@ for k,data in used_sprites.items():
             # red elevator: we should generate another image
             left_2[0x3C:0x44] = bytearray([0,0,255,255,0,0,255,255])
 
-            red_elevator = {"left":bytes(left_2),"name":"red_elevator","mirror":False}
+            red_elevator = {"left":bytes(left_2),"name":"red_elevator","mirror":False,"multiple":False}
 
         if dump_sprites:
             scaled = ImageOps.scale(img,5,0)
@@ -396,11 +398,21 @@ with open(os.path.join(src_dir,"graphics.68k"),"w") as f:
     for i in range(NB_POSSIBLE_SPRITES):
         sprite = used_sprites.get(i)
         if sprite:
+            multiple = sprite["multiple"]
             name = f"{sprite['name']}_{i:02x}"
-            for j in range(8):
-                f.write(f"{name}_{j}_left:")
+            if multiple:
+                for j in range(8):
+                    f.write(f"{name}_{j}_left:")
+                    bitplanelib.dump_asm_bytes(sprite["left"],f,mit_format=True)
+                    if sprite["mirror"]:
+                        f.write(f"{name}_{j}_right:")
+                        bitplanelib.dump_asm_bytes(sprite["right"],f,mit_format=True)
+            else:
+                for j in range(8):
+                    f.write(f"{name}_{j}_left:\n")
                 bitplanelib.dump_asm_bytes(sprite["left"],f,mit_format=True)
                 if sprite["mirror"]:
-                    f.write(f"{name}_{j}_right:")
+                    for j in range(8):
+                        f.write(f"{name}_{j}_right:\n")
                     bitplanelib.dump_asm_bytes(sprite["right"],f,mit_format=True)
 

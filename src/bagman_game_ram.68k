@@ -50,7 +50,7 @@
 	.global	previous_guard_1_struct_65B8
 	.global	previous_guard_2_struct_65BC
 	.global	score_ten_thousands_player_1_6178
-	.global	current_guard_screen_index_6098
+	.global	current_character_screen_index_6098
 	.global	time_61E8
 	.global	is_intermission_6274
 	.global	extra_life_awarded_6286
@@ -374,7 +374,7 @@ guard_direction_pointer_6095:
 	ds.l	1
 guard_2_not_moving_timeout_counter_6097:
 	ds.b	1
-current_guard_screen_index_6098:
+current_character_screen_index_6098:
 	ds.b	1
 guard_1_screen_6099:
 	ds.b	1
