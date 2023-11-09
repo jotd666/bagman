@@ -217,8 +217,10 @@ read_rom:
 	.endif
 	
 	* .w is okay as D6 can't go over 7FFF
+	move.l	a0,-(a7)
 	lea		game_mem,a0
 	move.b	(a0,d6.w),d0
+	move.l	(a7)+,a0
 	
 	rts
 	
@@ -2575,7 +2577,7 @@ l_0f00:
 
 	move.b	d0,number_of_credits_6000       	| [$0f09: ld   (number_of_credits_6000),a]
 	move.b	#0x0A,d0                        	| [$0f0c: ld   a,$0A]
-	move.b	d0,unknown_627D                 	| [$0f0e: ld   (unknown_627D),a]
+	move.b	d0,tile_at_the_destroyable_wall_location_627D                 	| [$0f0e: ld   (tile_at_the_destroyable_wall_location_627D),a]
 	move.b	d0,unknown_6290                 	| [$0f11: ld   (unknown_6290),a]
 	jbsr	current_player_start_screen_3591                            	| [$0f14: call $3591]
 	move.b	#0x01,d0                        	| [$0f17: ld   a,$01]
@@ -4033,10 +4035,10 @@ l_1a18:
 	* try to get closer to player
 	move.b	player_x_6582,d0                	| [$1a32: ld   a,(player_x_6582)]
 	move.b	d0,d1                           	| [$1a35: ld   b,a]
-	move.l	(sp)+,a3                        	| [$1a36: pop  iy]
+	move.l	(sp),a3                        	| [$1a36: pop  iy]
 	move.b	(0x02,a3),d0                    	| [$1a38: ld   a,(iy+$02)]  guard x
 
-	move.l	a3,-(sp)                        	| [$1a3b: push iy]
+												| [$1a3b: push iy]
 	cmp.b	d1,d0                            	| [$1a3d: cp   b]
 												| [$1a3e: push af]
 	bcs.b	0f
@@ -5737,7 +5739,7 @@ l_255a:
 l_2562:
 	move.w	#0x9318,d6                       	| [$2562: ld   a,($9318)
 	jbsr	osd_r_videoram
-	move.b	d0,unknown_627D                 	| [$2565: ld   (unknown_627D),a]
+	move.b	d0,tile_at_the_destroyable_wall_location_627D                 	| [$2565: ld   (tile_at_the_destroyable_wall_location_627D),a]
 	rts                                    	| [$2568: ret]
 
 check_blocked_by_breakable_wall_2569:
@@ -5828,7 +5830,7 @@ l_25dd:
 l_2605:
 	jbsr	l_2640                            	| [$2605: call $2640]
 	move.b	d1,d0                           	| [$2608: ld   a,b]
-	move.b	d0,unknown_600C                 	| [$2609: ld   (unknown_600C),a]
+	move.b	d0,player_y_modulus_8_600C                 	| [$2609: ld   (player_y_modulus_8_600C),a]
 	                         	| [$260c: cp   $00]
 	bne.b	0f
 	rts                                    	| [$260e: ret  z]
@@ -5851,7 +5853,7 @@ l_261c:
 										| [$261f: inc  de]
 	subq.b	#1,d1                           	| [...]
 	jne	l_261c                             	| [$2620: djnz $261C]
-	move.b	unknown_600C,d0                 	| [$2622: ld   a,(unknown_600C)]
+	move.b	player_y_modulus_8_600C,d0                 	| [$2622: ld   a,(player_y_modulus_8_600C)]
 	cmp.b	#0x05,d0                         	| [$2625: cp   $05]
 	jcc	l_2632                             	| [$2627: jr   nc,$2632]
 	move.b	d0,d1                           	| [$2629: ld   b,a]
@@ -6422,10 +6424,10 @@ l_2a70:
 	move.b	d0,unknown_617E                       	| [$2aaa: ld   ($617E),a]
 	move.b	unknown_6290,d0                       	| [$2aad: ld   a,($6290)]
 	move.w	d0,-(sp)                        	| [$2ab0: push af]
-	move.b	unknown_627D,d0                       	| [$2ab1: ld   a,($627D)]
+	move.b	tile_at_the_destroyable_wall_location_627D,d0                       	| [$2ab1: ld   a,($627D)]
 	move.b	d0,unknown_6290                       	| [$2ab4: ld   ($6290),a]
 	move.w	(sp)+,d0                        	| [$2ab7: pop  af]
-	move.b	d0,unknown_627D                       	| [$2ab8: ld   ($627D),a]
+	move.b	d0,tile_at_the_destroyable_wall_location_627D                       	| [$2ab8: ld   ($627D),a]
 	rts                                    	| [$2abb: ret]
 l_2abc:
 	move.b	(A2),d0                    	| [$2abc: ld   a,(ix+$00)]
@@ -7832,7 +7834,7 @@ l_33d1:
 	rts                                    	| [$33e2: ret]
 	
 switch_to_screen_2_33e3:
-	move.b	unknown_627D,d0                 	| [$33e3: ld   a,(unknown_627D)]
+	move.b	tile_at_the_destroyable_wall_location_627D,d0                 	| [$33e3: ld   a,(tile_at_the_destroyable_wall_location_627D)]
 	move.w	#0x9318,d6
 	jbsr	osd_w_videoram                       	| [$33e6: ld   ($9318),a]
  	cmp.b	#0xE0,d0                         	| [$33e9: cp   $E0]
@@ -9816,14 +9818,14 @@ l_5e46:
 
 l_5e60:
 	move.b	#0x0A,d0                        	| [$5e60: ld   a,$0A]
-	move.b	d0,unknown_627D                 	| [$5e62: ld   (unknown_627D),a]
+	move.b	d0,tile_at_the_destroyable_wall_location_627D                 	| [$5e62: ld   (tile_at_the_destroyable_wall_location_627D),a]
 	move.b	#0x01,d2                        	| [$5e65: ld   c,$01]
 	rts                                    	| [$5e67: ret]
 
 l_5e69:
 	move.b	d0,check_scenery_disabled_61ED                 	| [$5e69: ld   (check_scenery_disabled_61ED),a]
 	move.b	#0x0A,d0                        	| [$5e6c: ld   a,$0A]
-	move.b	d0,unknown_627D                 	| [$5e6e: ld   (unknown_627D),a]
+	move.b	d0,tile_at_the_destroyable_wall_location_627D                 	| [$5e6e: ld   (tile_at_the_destroyable_wall_location_627D),a]
 	jra	l_38c9                             	| [$5e71: jp   $38C9]
 direction_table_5970:
 	dc.b	0x80,0x40,0x20,0x10

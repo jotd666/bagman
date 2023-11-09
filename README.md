@@ -2,11 +2,15 @@
 
 Bagman remake by JOTD in 2010-2023
 
-Original game by Valadon Automation
+Original game by Valadon Automation (c) 1982
 ROM strings show that it has been coded by Jacques Brisse (still head of Valadon in 2015 at least)
 
 Game has been resourced (Z80) and A.I & speeds extracted from the first versions. Now the Amiga version
-uses 100% of the transcoded original code for better accuracy.
+uses 99% of the transcoded original code for better accuracy.
+
+Music never loses the tempo.
+Sound use samples.
+Game still has original bugs left
 
 History: 
 
@@ -41,6 +45,7 @@ History:
 - J.M.D: remade amiga tunes (first version)
 - S. Campbell: boxart
 - PascalDe73: icon
+- DamienD: floppy menus
 - phx: ptplayer sound/music replay Amiga code
 - Valadon Automation / Jacques Brisse: original game :)
 
