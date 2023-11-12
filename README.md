@@ -9,6 +9,7 @@ Game has been resourced (Z80) and A.I & speeds extracted from the first versions
 uses 99% of the transcoded original code for better accuracy.
 
 Music never loses the tempo.
+Highscore entry fixed (could not enter "Z" in highscores)
 Sound use samples.
 Game still has original bugs left
 
@@ -28,9 +29,6 @@ History:
 #### AMIGA
 
 - fully playable with sound
-- still bugs
-- missing features
-- stuck on highscore screen
 
 #### NEO GEO
 

@@ -7050,8 +7050,10 @@ l_2e77:
 	jbsr	write_current_highscore_name_letter_2f0a                            	| [$2ead: call $2F0A]
 	jra	l_2e5f                             	| [$2eb0: jr   $2E5F]
 l_2eb2:
-	move.b	d1,d0                           	| [$2eb2: ld   a,b]
-	cmp.b	#0x29,d0                         	| [$2eb3: cp   $29]
+	                           	| [$2eb2: ld   a,b]
+	* original game bug: can't enter "Z"
+	* (was fixed in Super Bagman)
+	cmp.b	#0x2A,d1                         	| [$2eb3: cp   $29]
 	jne	l_2eb9                             	| [$2eb5: jr   nz,$2EB9]
 	move.b	#0x10,d1                        	| [$2eb7: ld   b,$10]
 l_2eb9:
@@ -7060,10 +7062,12 @@ l_2eb9:
 	jbsr	busy_wait_2f19                            	| [$2ebd: call $2F19]
 	rts                                    	| [$2ec0: ret]
 l_2ec1:
-	move.b	d1,d0                           	| [$2ec1: ld   a,b]
-	cmp.b	#0x10,d0                         	| [$2ec2: cp   $10]
+												| [$2ec1: ld   a,b]
+	cmp.b	#0x10,d1                         	| [$2ec2: cp   $10]
 	jne	l_2ec8                             	| [$2ec4: jr   nz,$2EC8]
-	move.b	#0x2A,d1                        	| [$2ec6: ld   b,$2A]
+	* original game bug: can't enter "Z"
+	* (was fixed in Super Bagman)
+	move.b	#0x2B,d1                        	| [$2ec6: ld   b,$2A]
 l_2ec8:
 	subq.b	#1,d1                           	| [$2ec8: dec  b]
 	jbsr	write_current_highscore_name_letter_2f0a                            	| [$2ec9: call $2F0A]
