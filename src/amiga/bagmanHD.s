@@ -43,6 +43,7 @@ _config
 	dc.b    "C1:X:cheat keys:4;"
 	dc.b	"C3:X:hard bags layout:0;"
 	dc.b	"C3:X:french language:1;"
+	dc.b	"C3:X:bonus life at 40000:2;"
 	dc.b    "C4:L:difficulty:easy,medium,hard,hardest;"
 	dc.b    "C5:L:start lives:default,2,3,4,5;"
 	dc.b	0
@@ -52,7 +53,7 @@ _config
 	ENDC
 
 DECL_VERSION:MACRO
-	dc.b	"1.0"
+	dc.b	"1.1"
 	IFD BARFLY
 		dc.b	" "
 		INCBIN	"T:date"

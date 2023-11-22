@@ -128,8 +128,8 @@
 	.global	player_2_score_6179
 	.global	score_ten_thousands_player_2_617B
 	.global	number_of_players_617D
-	.global	unknown_617E
-	.global	bags_coordinates_617F
+	.global	other_player_lives_617E
+	.global	other_player_bags_coordinates_617F
 	.global	unknown_61BD
 	.global	unknown_61C0
 	.global	barrow_screen_params_61C4
@@ -155,7 +155,7 @@
 	.global	unknown_61F5
 	.global	picked_up_object_screen_address_61F6
 	.global	unknown_61F9
-	.global	unknown_screen_address_61FA
+	.global	other_player_barrow_screen_params_61FA
 	.global	unknown_61FC
 	.global	unknown_61FD
 	.global	unknown_61FF
@@ -191,8 +191,8 @@
 	.global	unknown_6285
 	.global	unknown_6288
 	.global	unknown_628A
-	.global	unknown_628C
-	.global	unknown_6290
+	.global	game_aleady_started_628C
+	.global	other_player_tile_at_the_destroyable_wall_location_6290
 	.global	elevator_struct_6584
 	.global	wagon_1_struct_6588
 	.global	unknown_658B
@@ -452,9 +452,9 @@ current_player_617C:
 	ds.b	1
 number_of_players_617D:
 	ds.b	1
-unknown_617E:
+other_player_lives_617E:
 	ds.b	1
-bags_coordinates_617F:
+other_player_bags_coordinates_617F:
 	ds.b	62
 unknown_61BD:
 	ds.b	3
@@ -516,7 +516,7 @@ picked_up_object_screen_address_61F6:
 unknown_61F9:
 	ds.b	1
 	.align	2
-unknown_screen_address_61FA:
+other_player_barrow_screen_params_61FA:
 	ds.w	1
 unknown_61FC:
 	ds.b	1
@@ -596,9 +596,9 @@ unknown_6288:
 	ds.b	2
 unknown_628A:
 	ds.b	2
-unknown_628C:
+game_aleady_started_628C:
 	ds.b	4
-unknown_6290:
+other_player_tile_at_the_destroyable_wall_location_6290:
 	ds.b	752
 player_struct_6580:
 	ds.b	2

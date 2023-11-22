@@ -2578,7 +2578,7 @@ l_0f00:
 	move.b	d0,number_of_credits_6000       	| [$0f09: ld   (number_of_credits_6000),a]
 	move.b	#0x0A,d0                        	| [$0f0c: ld   a,$0A]
 	move.b	d0,tile_at_the_destroyable_wall_location_627D                 	| [$0f0e: ld   (tile_at_the_destroyable_wall_location_627D),a]
-	move.b	d0,unknown_6290                 	| [$0f11: ld   (unknown_6290),a]
+	move.b	d0,other_player_tile_at_the_destroyable_wall_location_6290                 	| [$0f11: ld   (other_player_tile_at_the_destroyable_wall_location_6290),a]
 	jbsr	current_player_start_screen_3591                            	| [$0f14: call $3591]
 	move.b	#0x01,d0                        	| [$0f17: ld   a,$01]
 	move.b	d0,must_play_music_6210                 	| [$0f19: ld   (must_play_music_6210),a]
@@ -2619,10 +2619,10 @@ l_0f38:
 	addq.b	#0x01,d0                        	| [$0f41: add  a,$01]
 	move.b	d0,lives_6056                   	| [$0f43: ld   (lives_6056),a]
 	addq.b	#1,d0                           	| [$0f46: inc  a]
-	move.b	d0,unknown_617E                 	| [$0f47: ld   (unknown_617E),a]
+	move.b	d0,other_player_lives_617E                 	| [$0f47: ld   (other_player_lives_617E),a]
 	move.w  #0x91C2,d6                      	| [$0f4a: ld   hl,$91C2]
 	move.w	d6,barrow_screen_params_61C4                 	| [$0f4d: ld   (barrow_screen_params_61C4),hl]
-	move.w	d6,unknown_screen_address_61FA                 	| [$0f50: ld   (unknown_screen_address_61FA),hl]
+	move.w	d6,other_player_barrow_screen_params_61FA                 	| [$0f50: ld   (other_player_barrow_screen_params_61FA),hl]
 	move.b	#0x01,d0                        	| [$0f53: ld   a,$01]
 	move.b	d0,barrow_screen_61C6                 	| [$0f55: ld   (barrow_screen_61C6),a]
 	move.b	d0,unknown_61FC                 	| [$0f58: ld   (unknown_61FC),a]
@@ -6369,7 +6369,7 @@ l_2a2c:
 	jbsr	l_2a07                            	| [$2a38: call $2A07]
 	move.b	#0x3F,d0                        	| [$2a3b: ld   a,$3F]
 	jbsr	change_attribute_everywhere_29ec                            	| [$2a3d: call $29EC]
-	move.b	unknown_628C,d0                       	| [$2a40: ld   a,($628C)]
+	move.b	game_aleady_started_628C,d0                       	| [$2a40: ld   a,($628C)]
 	cmp.b	#0x01,d0                         	| [$2a43: cp   $01]
 	jeq	l_2a50                             	| [$2a45: jr   z,$2A50]
 	lea	game_mem+0x56C3,a1                      	| [$2a47: ld   de,$56C3]
@@ -6409,23 +6409,23 @@ l_2a70:
 *	move.b	d0,0xA002                       	| [$2a82: ld   ($A002),a]
 *l_2a85:
 	lea	bags_coordinates_609C,a2                      	| [$2a85: ld   ix,$609C]
-	lea	bags_coordinates_617F,a3                      	| [$2a89: ld   iy,$617F]
+	lea	other_player_bags_coordinates_617F,a3                      	| [$2a89: ld   iy,$617F]
 	move.b	#0x36,d1                        	| [$2a8d: ld   b,$36]
 	jbsr	l_2abc                            	| [$2a8f: call $2ABC]
 	lea	barrow_screen_params_61C4,a2                      	| [$2a92: ld   ix,$61C4]
-	lea	unknown_screen_address_61FA,a3                      	| [$2a96: ld   iy,$61FA]
+	lea	other_player_barrow_screen_params_61FA,a3                      	| [$2a96: ld   iy,$61FA]
 	move.b	#0x03,d1                        	| [$2a9a: ld   b,$03]
 	jbsr	l_2abc                            	| [$2a9c: call $2ABC]
 	move.b	lives_6056,d0                   	| [$2a9f: ld   a,(lives_6056)]
 	move.w	d0,-(sp)                        	| [$2aa2: push af]
-	move.b	unknown_617E,d0                       	| [$2aa3: ld   a,($617E)]
+	move.b	other_player_lives_617E,d0                       	| [$2aa3: ld   a,($617E)]
 	move.b	d0,lives_6056                   	| [$2aa6: ld   (lives_6056),a]
 	move.w	(sp)+,d0                        	| [$2aa9: pop  af]
-	move.b	d0,unknown_617E                       	| [$2aaa: ld   ($617E),a]
-	move.b	unknown_6290,d0                       	| [$2aad: ld   a,($6290)]
+	move.b	d0,other_player_lives_617E                       	| [$2aaa: ld   ($617E),a]
+	move.b	other_player_tile_at_the_destroyable_wall_location_6290,d0                       	| [$2aad: ld   a,($6290)]
 	move.w	d0,-(sp)                        	| [$2ab0: push af]
 	move.b	tile_at_the_destroyable_wall_location_627D,d0                       	| [$2ab1: ld   a,($627D)]
-	move.b	d0,unknown_6290                       	| [$2ab4: ld   ($6290),a]
+	move.b	d0,other_player_tile_at_the_destroyable_wall_location_6290                       	| [$2ab4: ld   ($6290),a]
 	move.w	(sp)+,d0                        	| [$2ab7: pop  af]
 	move.b	d0,tile_at_the_destroyable_wall_location_627D                       	| [$2ab8: ld   ($627D),a]
 	rts                                    	| [$2abb: ret]
@@ -7138,7 +7138,7 @@ write_highscore_name_letter_2f0e:
 	rts                                    	| [$2f18: ret]
 busy_wait_2f19:
 	* wait some time (highscore letter input)
-	move.w	#30,d0
+	move.w	#20,d0
 	jbsr	osd_wait
 	rts                                    	| [$2f2c: ret]
 	
@@ -8118,7 +8118,7 @@ set_bags_coords:
  	rts                                    	| [$3566: ret]
 
 copy_bags_coordinates_player_2_3567:
-	lea	bags_coordinates_617F,a1                	| [$3567: ld   de,bags_coordinates_617F]
+	lea	other_player_bags_coordinates_617F,a1                	| [$3567: ld   de,other_player_bags_coordinates_617F]
 	bra.b	0b
 
 correct_bags_endian:
@@ -8183,7 +8183,7 @@ current_player_start_screen_3591:
 
 	move.b	#0x01,d0                        	| [$3597: ld   a,$01]
 	move.b	d0,game_locked_6053                 	| [$3599: ld   (game_locked_6053),a]
-	move.b	d0,unknown_628C                 	| [$359c: ld   (unknown_628C),a]
+	move.b	d0,game_aleady_started_628C                 	| [$359c: ld   (game_aleady_started_628C),a]
 	jbsr	l_2a2c                            	| [$359f: call $2A2C]
 	* write "PLAYER 1"
 	lea	game_mem+0x575A,a1                      	| [$35a2: ld   de,$575A]
@@ -8271,7 +8271,7 @@ current_player_start_screen_3591:
 										| [$362d: djnz $3621]
 	clr.b	d0                               	| [$362f: ld   a,$00]
 	move.b	d0,game_locked_6053                 	| [$3631: ld   (game_locked_6053),a]
-	move.b	d0,unknown_628C                 	| [$3634: ld   (unknown_628C),a]
+	move.b	d0,game_aleady_started_628C                 	| [$3634: ld   (game_aleady_started_628C),a]
 	rts                                    	| [$3637: ret]
 
 
@@ -9790,7 +9790,7 @@ l_5d1c:
 l_5d2a:
 	move.w	#0x91C2,d6                      	| [$5d2a: ld   hl,$91C2]
 	move.w	d6,barrow_screen_params_61C4	| [$5d2d: ld   (barrow_screen_params_61C4),hl]
-	move.w	d6,unknown_screen_address_61FA  	| [$5d30: ld   (unknown_screen_address_61FA),hl]
+	move.w	d6,other_player_barrow_screen_params_61FA  	| [$5d30: ld   (other_player_barrow_screen_params_61FA),hl]
 	move.b	#0x01,d0                        	| [$5d33: ld   a,$01]
 	move.b	d0,barrow_screen_61C6                 	| [$5d35: ld   (barrow_screen_61C6),a]
 	move.b	d0,unknown_61FC                 	| [$5d38: ld   (unknown_61FC),a]

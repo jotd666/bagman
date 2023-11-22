@@ -245,8 +245,10 @@ _user:
 2:
 	move.l	#2,dip_switch_start_lives		| 3 lives default
 3:
-	
-
+	move.l	(A0)+,D0	| EXTRA40000/S
+	beq.b	2f
+	or.l	#4,misc_options
+2:
 	lea		_custom,a5
 	lea		debug_copperlist,a0
 	move.l	a0,cop1lc(a5)
@@ -321,6 +323,10 @@ _user:
 	btst	#1,d1
 	beq.b	0f
 	bset	#5,d0
+0:
+	btst	#2,d1
+	beq.b	0f
+	bset	#6,d0
 0:
 	move.b	d0,dip_switches
 
@@ -2150,7 +2156,7 @@ program_args_end:
 read_args_string:
 	.byte	read_args_string_end-read_args_string
 	.ascii	"INVINCIBLE/S,INFLIVES/S,INFTIME/S,INFPICK/S,"
-	.ascii	"CHEATKEYS/S,HARDBAGS/S,FRENCH/S,SKILL/K/N,STARTLIVES/K/N"
+	.ascii	"CHEATKEYS/S,HARDBAGS/S,FRENCH/S,SKILL/K/N,STARTLIVES/K/N,EXTRA40000/S"
 read_args_string_end:
 	.align	2
 
