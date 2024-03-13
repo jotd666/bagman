@@ -1071,7 +1071,7 @@ osd_sound_start:
 	beq.b	3f
 	* looped sound
 	jsr		_mt_loopfx
-	beq.b	1f
+	bra.b	1f
 3:
 	jsr		_mt_playfx
 1:

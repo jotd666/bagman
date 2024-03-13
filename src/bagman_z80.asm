@@ -100,6 +100,7 @@
 0000: C3 00 12      jp   $1200
 
 ;; interrupt handler
+game_tick_0038:
 0038: F5            push af
 0039: C5            push bc
 003A: D5            push de
@@ -666,6 +667,7 @@ guard_ladder_movement_04AD:
 	;;
 guard_walk_movement_0570:
 	;; handle the right side
+guard_walk_movement_0570:
 0570: FD 7E 00      ld   a,(iy+$00) ;  guard direction
 0573: E6 80         and  $80
 0575: FE 80         cp   $80	;  to right?
@@ -775,6 +777,7 @@ guard_move_if_fast_enough_05E0:
 
 guard_unconditional_move_0614:
 	;; actually move
+guard_unconditional_move_0614:
 0614: F5            push af
 0615: C5            push bc
 0616: 3A F5 61      ld   a,(unknown_61F5)
@@ -795,7 +798,7 @@ guard_unconditional_move_0614:
 0637: FD 77 00      ld   (iy+$00),a
 063A: 78            ld   a,b
 063B: FE 80         cp   $80
-063D: 28 19         jr   z,$0658
+063D: 28 19         jr   z,move_to_the_left_0658
 063F: DD 7E 02      ld   a,(ix+$02)
 0642: 3C            inc  a
 0643: DD 77 02      ld   (ix+$02),a
@@ -810,6 +813,8 @@ guard_unconditional_move_0614:
 0653: 32 98 60      ld   (current_guard_screen_index_6098),a
 0656: F1            pop  af
 0657: C9            ret
+
+move_to_the_left_0658:
 0658: DD 7E 02      ld   a,(ix+$02)
 065B: 3D            dec  a
 065C: DD 77 02      ld   (ix+$02),a
@@ -1182,6 +1187,7 @@ move_wagons_08f4:
 
 move_a_wagon_0925:
 ; direction test
+move_a_wagon_0925:
 0925: DD 7E 00      ld   a,(ix+$00)
 0928: FE 00         cp   $00
 092A: C2 61 09      jp   nz,$0961
@@ -1566,7 +1572,7 @@ player_tries_to_move_laterally_0c36:
 0C36: F5            push af
 0C37: 78            ld   a,b
 0C38: FE 80         cp   $80
-0C3A: 28 5A         jr   z,$0C96
+0C3A: 28 5A         jr   z,try_left_0c96
 0C3C: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C3F: CD FA 0C      call character_can_walk_right_0CFA
 0C42: 3A 0B 60      ld   a,(way_clear_flag_600B)
@@ -1605,6 +1611,8 @@ player_tries_to_move_laterally_0c36:
 0C8F: 21 3F 3F      ld   hl,$3F3F
 0C92: CD 18 20      call play_sample_2018
 0C95: C9            ret
+
+try_left_0c96:
 0C96: 2A 09 60      ld   hl,(player_logical_address_6009)
 0C99: CD 69 0D      call character_can_walk_left_0D69
 0C9C: 3A 0B 60      ld   a,(way_clear_flag_600B)
@@ -1655,6 +1663,7 @@ player_tries_to_move_laterally_0c36:
 0CF9: C9            ret
 
 	;; character_can_walk_left_CFA
+character_can_walk_right_0CFA:
 0CFA: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 0CFD: FE 01         cp   $01
 0CFF: 20 06         jr   nz,$0D07
@@ -1723,7 +1732,7 @@ character_can_walk_left_0D69:
 0D70: 3E 02         ld   a,$02
 0D72: 32 0B 60      ld   (way_clear_flag_600B),a
 0D75: C9            ret
-0D76: CD 69 25      call $2569
+0D76: CD 69 25      call check_blocked_by_breakable_wall_2569
 0D79: 3A 0B 60      ld   a,(way_clear_flag_600B)
 0D7C: FE 02         cp   $02
 0D7E: C8            ret  z
@@ -1765,7 +1774,7 @@ check_against_space_tiles_0da2:
 0DCD: 3A 26 60      ld   a,(player_input_6026)
 0DD0: E6 20         and  $20
 0DD2: FE 20         cp   $20	; up
-0DD4: 28 13         jr   z,$0DE9
+0DD4: 28 13         jr   z,can_player_climb_up_0de9
 0DD6: 3A 26 60      ld   a,(player_input_6026)
 0DD9: E6 40         and  $40
 0DDB: FE 40         cp   $40	; down
@@ -2448,7 +2457,7 @@ mainloop_1242:
 1392: DD 21 3B 60   ld   ix,guard_1_in_elevator_603B
 1396: 21 57 60      ld   hl,guard_1_not_moving_timeout_counter_6057
 1399: 11 48 61      ld   de,unknown_6148
-139C: CD 08 19      call $1908
+139C: CD 08 19      call check_for_not_moving_timeout_1908
 139F: 3A 48 61      ld   a,(unknown_6148)
 13A2: FE 00         cp   $00
 13A4: 20 2D         jr   nz,$13D3
@@ -2482,7 +2491,7 @@ mainloop_1242:
 1405: DD 21 7B 60   ld   ix,guard_2_in_elevator_607B
 1409: 21 97 60      ld   hl,guard_2_not_moving_timeout_counter_6097
 140C: 11 49 61      ld   de,unknown_6149
-140F: CD 08 19      call $1908
+140F: CD 08 19      call check_for_not_moving_timeout_1908
 1412: CD 53 16      call $1653
 1415: 3A 49 61      ld   a,(unknown_6149)
 1418: FE 00         cp   $00
@@ -2590,6 +2599,7 @@ mainloop_1242:
 	;; guard_2_sees_player
 	
 guard_2_sees_player_1525:
+guard_1_sees_player_1525:
 1525: AF            xor  a
 1526: 32 48 61      ld   (unknown_6148),a
 1529: DD 21 7C 60   ld   ix,guard_2_sees_player_right_607C
@@ -2614,10 +2624,11 @@ guard_2_sees_player_1525:
 155E: 18 04         jr   $1564
 
 guard_1_sees_player_1560:
+guard_2_sees_player_1560:
 1560: AF            xor  a
 1561: 32 49 61      ld   (unknown_6149),a
 1564: FB            ei
-1565: CD DE 17      call $17DE
+1565: CD DE 17      call check_if_can_pick_bag_17de
 1568: CD 53 16      call $1653
 156B: 3A CF 61      ld   a,(has_pick_61CF)
 156E: FE 01         cp   $01
@@ -2709,7 +2720,7 @@ guard_1_sees_player_1560:
 163E: CA 2B 12      jp   z,$122B
 1641: FB            ei
 1642: CD 4D 2C      call compute_guard_speed_from_dipsw_2C4D
-1645: CD A1 3B      call $3BA1
+1645: CD A1 3B      call check_timer_3ba1
 1648: 3A ED 61      ld   a,(check_scenery_disabled_61ED)
 164B: FE 00         cp   $00
 164D: CC DC 22      call z,draw_object_tiles_22dc
@@ -2849,14 +2860,14 @@ guard_1_sees_player_1560:
 175A: 28 02         jr   z,$175E
 175C: 18 42         jr   $17A0
 175E: DD E5         push ix
-1760: CD D5 17      call $17D5
+1760: CD D5 17      call award_timer_score_17d5
 1763: 3A 9D 65      ld   a,(unknown_659D)
 1766: FE 24         cp   $24
 1768: 20 0B         jr   nz,$1775
 176A: 3E 20         ld   a,$20
 176C: 32 9D 65      ld   (unknown_659D),a
-176F: CD D5 17      call $17D5
-1772: CD D5 17      call $17D5
+176F: CD D5 17      call award_timer_score_17d5
+1772: CD D5 17      call award_timer_score_17d5
 1775: 21 1B 3F      ld   hl,$3F1B
 1778: CD 18 20      call play_sample_2018
 177B: CD EB 3D      call is_ay_sound_playing_3DEB
@@ -2882,10 +2893,13 @@ guard_1_sees_player_1560:
 17AA: DD 77 03      ld   (ix+$03),a
 17AD: C9            ret
 
+award_timer_score_17d5:
 17D5: 2A E7 61      ld   hl,(timer_high_prec_61E7)
 17D8: 2E 00         ld   l,$00
 17DA: CD 90 5C      call add_to_score_5C90
 17DD: C9            ret
+
+check_if_can_pick_bag_17de:
 17DE: 3A 58 61      ld   a,(has_bag_6158)
 17E1: FE 00         cp   $00
 17E3: C2 5F 19      jp   nz,$195F
@@ -2923,7 +2937,7 @@ guard_1_sees_player_1560:
 1826: ED 52         sbc  hl,de
 1828: E1            pop  hl
 1829: 28 13         jr   z,$183E
-182B: CD 85 35      call $3585
+182B: CD 85 35      call compare_d3_d6_20_offset_3585
 182E: 28 0E         jr   z,$183E
 1830: FD 23         inc  iy
 1832: FD 23         inc  iy
@@ -3157,9 +3171,9 @@ test_pickup_flag_19A4:
 19CF: 4B            ld   c,e
 19D0: E0            ret  po
 
-	;; < $6095:	pointer on direction ($6027/$6067)
+	;; < guard_direction_pointer_6095:	pointer on direction (guard_1_direction_6027/guard_2_direction_6067)
 	;; < de:	guard screen address
-	;; < $6098:	guard screen index
+	;; < current_character_screen_index_6098:	guard screen index
 	;; < ix:	6035 or 6057 guard ????? what????
 	;; < iy:	guard struct
 
@@ -3331,6 +3345,7 @@ guard_goes_left_1b10:
 1B15: DD 77 15      ld   (ix+$15),a
 1B18: C9            ret
 guard_goes_left_1b19:
+guard_goes_right_1b19:
 1B19: DD 7E 15      ld   a,(ix+$15)
 1B1C: F6 08         or   $08
 1B1E: DD 77 15      ld   (ix+$15),a
@@ -3402,6 +3417,7 @@ set_guard_direction_left_1B8B:
 1BA8: C9            ret
 
 set_guard_direction_down_1ba9:
+set_guard_direction_down_1BA9:
 1BA9: AF            xor  a
 1BAA: E5            push hl
 1BAB: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
@@ -3845,7 +3861,7 @@ init_new_game_1E94:
 1EDD: 32 66 61      ld   (unknown_6166),a
 
 1EE0: 11 C7 61      ld   de,holds_barrow_61C7
-1EE3: 21 38 1F      ld   hl,$1F38
+1EE3: 21 38 1F      ld   hl,table_1F38
 1EE6: 01 18 00      ld   bc,$0018
 1EE9: ED B0         ldir
 1EEB: 3E 40         ld   a,$40
@@ -3994,7 +4010,7 @@ start_new_life_2026:
 memset_2054:
 2054: DD 77 00      ld   (ix+$00),a
 2057: DD 23         inc  ix
-2059: 10 F9         djnz $2054
+2059: 10 F9         djnz memset_2054
 205B: C9            ret
 
 205C: 21 6E 92      ld   hl,$926E
@@ -4069,7 +4085,7 @@ prepare_cleared_screen_2103:
 211D: 3E 01         ld   a,$01
 211F: 32 03 A0      ld   ($A003),a
 2122: C9            ret
-;; put random direction (amongst $80,$40,$20,$10) in ($6095,ind)
+;; put random direction (amongst $80,$40,$20,$10) in (guard_direction_pointer_6095,ind)
 choose_guard_random_direction_2123:
 2123: 3A 00 A0      ld   a,(vertical_beam_pos_A000)   ; random 0-3 direction
 2126: 21 70 59      ld   hl,direction_table_5970
@@ -4110,7 +4126,7 @@ check_object_pickup_2137:
 2162: ED 52         sbc  hl,de
 2164: E1            pop  hl
 2165: 28 07         jr   z,$216E
-2167: CD 85 35      call $3585
+2167: CD 85 35      call compare_d3_d6_20_offset_3585
 216A: 28 02         jr   z,$216E
 216C: D1            pop  de
 216D: C9            ret
@@ -4429,12 +4445,14 @@ draw_object_tiles_22dc:
 24A9: 20 3E         jr   nz,write_attribute_on_first_row_24e9
 24AB: 3A 6D 62      ld   a,(flash_counter_626D)
 24AE: FE 20         cp   $20
-24B0: DC BD 24      call c,$24BD
+24B0: DC BD 24      call c,display_player_text_24bd
 24B3: FE 30         cp   $30
-24B5: DC F2 24      call c,$24F2
+24B5: DC F2 24      call c,erase_player_text_24f2
 24B8: AF            xor  a
 24B9: 32 6D 62      ld   (flash_counter_626D),a
 24BC: C9            ret
+
+display_player_text_24bd:
 24BD: 3A 6E 62      ld   a,(unknown_626E)
 24C0: FE 01         cp   $01
 24C2: 28 13         jr   z,$24D7
@@ -4463,6 +4481,7 @@ write_attribute_on_first_row_24e9:
 24EE: CD 05 56      call write_attribute_on_line_5605
 24F1: C9            ret
 
+erase_player_text_24f2:
 24F2: CD 01 25      call get_XUP_screen_address_2501
 24F5: 11 6C 57      ld   de,$576C
 24F8: CD F9 30      call display_localized_text_30F9
@@ -4529,6 +4548,7 @@ handle_player_destroying_wall_2517:
 2568: C9            ret
 
 check_blocked_by_breakabke_wall_2569:
+check_blocked_by_breakable_wall_2569:
 2569: C5            push bc
 256A: E5            push hl
 256B: D5            push de
@@ -4571,6 +4591,7 @@ check_breakable_wall_2585:
 ; as this wall can be broken
 check_breakable_wall_present_25a1:
 ; address of the wall
+check_breakable_wall_present_25a1:
 25A1: 21 18 93      ld   hl,$9318
 25A4: 7E            ld   a,(hl)
 25A5: 21 AE 25      ld   hl,$25AE
@@ -5000,6 +5021,7 @@ init_guard_directions_and_wagons_2957:
 297A: C9            ret
 
 write_line_of_zero_attributes_297b:
+write_line_of_1F_attributes_297b:
 297B: 3E 1F         ld   a,$1F
 297D: 11 20 00      ld   de,$0020
 2980: 77            ld   (hl),a
@@ -5084,6 +5106,7 @@ draw_repeated_char_29bc:
 
 change_attribute_everywhere_29ec:
 ; 8 is too much as it writes beyond $9C00
+change_attribute_everywhere_29ec:
 29EC: 06 08         ld   b,$08
 29EE: 21 00 98      ld   hl,$9800
 29F1: 0E 00         ld   c,$00
@@ -5385,17 +5408,19 @@ get_elevator_exit_y_2BD1:
 2BF9: DD 7E 03      ld   a,(ix+$03) ; player y
 2BFC: FE 78         cp   $78
 2BFE: 3E 29         ld   a,$29
-2C00: 38 15         jr   c,$2C17 ;  exits at y=$29 (below the top exit) if player y < $78
+2C00: 38 15         jr   c,change_guard_direction_2c17 ;  exits at y=$29 (below the top exit) if player y < $78
 2C02: DD 7E 03      ld   a,(ix+$03)
 2C05: FE A0         cp   $A0
 2C07: 3E 71         ld   a,$71
-2C09: 38 0C         jr   c,$2C17 ;  exits at y=$71 (slope exit) if player y < $A0
+2C09: 38 0C         jr   c,change_guard_direction_2c17 ;  exits at y=$71 (slope exit) if player y < $A0
 2C0B: DD 7E 03      ld   a,(ix+$03)
 2C0E: FE C0         cp   $C0
 2C10: 3E A9         ld   a,$A9
-2C12: 38 03         jr   c,$2C17 ;  exits at y=$A9 (pickaxe exit) if player y < $C0
+2C12: 38 03         jr   c,change_guard_direction_2c17 ;  exits at y=$A9 (pickaxe exit) if player y < $C0
 2C14: 3E C8         ld   a,$C8	; exits at the bottom else
 2C16: C9            ret
+
+change_guard_direction_2c17:
 2C17: E5            push hl
 2C18: 2A 95 60      ld   hl,(guard_direction_pointer_6095)
 2C1B: 70            ld   (hl),b
@@ -6417,6 +6442,7 @@ switch_to_screen_2_33e3:
 
 draw_object_tiles_3417:
 * check code in case screen MSB address is null
+draw_object_tiles_3417:
 3417: C5            push bc
 3418: 47            ld   b,a
 3419: 7C            ld   a,h
@@ -6430,22 +6456,24 @@ draw_object_tiles_3417:
 3421: FE D0         cp   $D0		| if bag top don't draw tile
 3423: 28 06         jr   z,$342B
 3425: F1            pop  af
-3426: CD 41 34      call $3441
+3426: CD 41 34      call write_next_object_tile_3441
 3429: 18 01         jr   $342C
 342B: F1            pop  af
 342C: 23            inc  hl
 342D: 3C            inc  a
-342E: CD 41 34      call $3441
+342E: CD 41 34      call write_next_object_tile_3441
 3431: D5            push de
 3432: 11 1F 00      ld   de,$001F
 3435: 19            add  hl,de
 3436: D1            pop  de
 3437: 3C            inc  a
-3438: CD 41 34      call $3441
+3438: CD 41 34      call write_next_object_tile_3441
 343B: 23            inc  hl
 343C: 3C            inc  a
-343D: CD 41 34      call $3441
+343D: CD 41 34      call write_next_object_tile_3441
 3440: C9            ret
+
+write_next_object_tile_3441:
 3441: 77            ld   (hl),a
 3442: E5            push hl
 3443: F5            push af
@@ -6635,6 +6663,8 @@ is_background_tile_for_object_drop_3573:
 3581: C8            ret  z
 3582: FE E6         cp   $E6
 3584: C9            ret
+
+compare_d3_d6_20_offset_3585:
 3585: E5            push hl
 3586: C5            push bc
 3587: 01 E0 FF      ld   bc,$FFE0
@@ -6905,13 +6935,13 @@ play_intro_3700:
 3881: CD D7 38      call check_if_credit_inserted_38d7
 3884: 3A 82 65      ld   a,(player_x_6582)
 3887: FE 10         cp   $10
-3889: 38 39         jr   c,$38C4
+3889: 38 39         jr   c,intro_end_38c4
 388B: 3A 74 62      ld   a,(is_intermission_6274)
 388E: FE 01         cp   $01
 3890: 28 07         jr   z,$3899
 3892: 3A 48 92      ld   a,($9248)
 3895: FE F6         cp   $F6
-3897: 20 2B         jr   nz,$38C4
+3897: 20 2B         jr   nz,intro_end_38c4
 3899: 3A 82 65      ld   a,(player_x_6582)
 389C: FE 03         cp   $03
 389E: DD 21 94 65   ld   ix,guard_1_struct_6594
@@ -6930,6 +6960,7 @@ play_intro_3700:
 38BE: FE 00         cp   $00
 38C0: 20 F7         jr   nz,$38B9
 38C2: 10 F2         djnz $38B6
+intro_end_38c4:
 38C4: 3E 00         ld   a,$00
 38C6: C3 69 5E      jp   $5E69
 38C9: 06 01         ld   b,$01
@@ -6952,7 +6983,7 @@ check_if_credit_inserted_38d7:
 38E5: 32 ED 61      ld   (check_scenery_disabled_61ED),a
 38E8: 3A 00 B8      ld   a,(io_read_shit_B800)    ; kick watchdog
 38EB: E1            pop  hl
-38EC: 18 D6         jr   $38C4
+38EC: 18 D6         jr   intro_end_38c4
 38EE: 20 08         jr   nz,$38F8
 38F0: F0            ret  p
 38F1: C0            ret  nz
@@ -7105,7 +7136,7 @@ read_player_controls_39fd:
 3A13: DB 0C         in   a,($0C)
 3A15: 2F            cpl
 3A16: CD 3F 3A      call restrict_controls_if_not_playing_3a3f
-3A19: CD 54 3A      call $3A54
+3A19: CD 54 3A      call handle_cocktail_3a54
 3A1C: 32 26 60      ld   (player_input_6026),a
 3A1F: 3A 51 60      ld   a,(coin_start_inputs_6051)
 3A22: 32 52 60      ld   (coin_start_prev_inputs_6052),a
@@ -7135,6 +7166,8 @@ restrict_controls_if_not_playing_3a3f:
 3A50: F1            pop  af
 3A51: E6 07         and  $07
 3A53: C9            ret
+
+handle_cocktail_3a54:
 3A54: 47            ld   b,a
 3A55: 3A 00 B0      ld   a,(dip_switch_B000)
 3A58: 2F            cpl
@@ -7232,6 +7265,7 @@ check_remaining_bags_3B8C:
 3B9C: 10 F6         djnz $3B94
 3B9E: C3 60 5E      jp   $5E60
 
+check_timer_3ba1:
 3BA1: 21 F4 61      ld   hl,unknown_61F4
 3BA4: 7E            ld   a,(hl)
 3BA5: 47            ld   b,a
@@ -7682,13 +7716,14 @@ compute_player_logical_address_from_xy_5582:
 ; < ix: character structure
 ; < iy: where to update
 compute_logical_address_from_xy_558c:
-558C: CD AC 55      call $55AC
-558F: CD 9A 55      call $559A
+558C: CD AC 55      call process_x_55ac
+558F: CD 9A 55      call process_y_559a
 5592: FD 75 00      ld   (iy+$00),l
 5595: FD 74 01      ld   (iy+$01),h
 5598: C9            ret
 5599: C9            ret
 
+process_y_559a:
 559A: DD 7E 03      ld   a,(ix+$03) ;  character y value
 559D: C6 10         add  a,$10
 559F: CB 3F         srl  a
@@ -7701,6 +7736,7 @@ compute_logical_address_from_xy_558c:
 55AA: 67            ld   h,a
 55AB: C9            ret
 
+process_x_55ac:
 55AC: DD 7E 02      ld   a,(ix+$02) ;  character x value
 55AF: C6 07         add  a,$07
 55B1: 2F            cpl
@@ -7790,21 +7826,22 @@ write_scores_and_time_560f:
 5623: DD 21 E8 61   ld   ix,time_61E8
 5627: 21 01 92      ld   hl,$9201
 562A: 06 01         ld   b,$01
-562C: CD 41 56      call $5641
+562C: CD 41 56      call write_numeric_value_1_byte_5641
 562F: DD 21 E9 61   ld   ix,unknown_61E9
 5633: 21 C1 91      ld   hl,$91C1
 5636: 06 01         ld   b,$01
-5638: CD 41 56      call $5641
+5638: CD 41 56      call write_numeric_value_1_byte_5641
 563B: C9            ret
 
 write_numeric_value_3_bytes_563C:
 563C: 06 03         ld   b,$03
 563E: 11 20 00      ld   de,$0020
+write_numeric_value_1_byte_5641:
 5641: DD 7E 00      ld   a,(ix+$00)
 5644: CD 4D 56      call write_byte_value_564D
 5647: DD 23         inc  ix
 5649: 19            add  hl,de
-564A: 10 F5         djnz $5641
+564A: 10 F5         djnz write_numeric_value_1_byte_5641
 564C: C9            ret
 
 write_byte_value_564D:
@@ -7840,7 +7877,7 @@ add_to_score_5C90:
 5C90: 3A 54 60      ld   a,(gameplay_allowed_6054)
 5C93: FE 00         cp   $00
 5C95: C8            ret  z
-5C96: CD 00 55      call $5500
+5C96: CD 00 55      call really_add_to_score_5500
 5C99: C9            ret
 
 5C9A: C3 46 5E      jp   $5E46
