@@ -249,6 +249,24 @@ _user:
 	beq.b	2f
 	or.l	#4,misc_options
 2:
+	bsr		load_highscores
+
+    * check if "floppy" file is here
+    
+    move.l  _dosbase(pc),a6
+    move.l   #floppy_file,d1
+    move.l  #1005,d2   | MODE_OLDFILE
+    jsr     _LVOOpen(a6)
+    move.l  d0,d1
+    beq.b   .no_floppy
+    
+    * "floppy" file found
+    jsr     _LVOClose(a6)
+    * wait 2 seconds for floppy drive to switch off
+    move.l  #100,d1
+    jsr     _LVODelay(a6)
+.no_floppy:
+
 	lea		_custom,a5
 	lea		debug_copperlist,a0
 	move.l	a0,cop1lc(a5)
@@ -268,23 +286,6 @@ _user:
 	jsr	_LVOWaitTOF(a6)
 	jsr	_LVOWaitTOF(a6)
 
-	bsr		load_highscores
-
-    * check if "floppy" file is here
-    
-    move.l  _dosbase(pc),a6
-    move.l   #floppy_file,d1
-    move.l  #1005,d2   | MODE_OLDFILE
-    jsr     _LVOOpen(a6)
-    move.l  d0,d1
-    beq.b   .no_floppy
-    
-    * "floppy" file found
-    jsr     _LVOClose(a6)
-    * wait 2 seconds for floppy drive to switch off
-    move.l  #100,d1
-    jsr     _LVODelay(a6)
-.no_floppy:
 
 .startup:
 
@@ -2376,6 +2377,7 @@ blank_sound:
 	ds.l	4
 	
 debug_copperlist:
+	dc.w	bplcon0,0x200
 	dc.w	color
 debug_color:
 	dc.w	0
